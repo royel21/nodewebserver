@@ -1,6 +1,6 @@
 
 var users = [
-    {Id: 1, UserId: "RC00#", UserName: "Rael Combo 1"},
+    {Id: 1, UserId: "RC001", UserName: "Rael Combo 1"},
     {Id: 2, UserId: "RC002", UserName: "Rael Combo 2"},
     {Id: 3, UserId: "RC003", UserName: "Rael Combo 3"},
     {Id: 4, UserId: "RC004", UserName: "Rael Combo 4"},

@@ -1,0 +1,16 @@
+
+
+
+#login-container{
+    max-width: 450px;
+}
+
+#login-form{
+    justify-content: center;
+    align-items: center;
+    padding: 10px 15px;
+}
+
+#login-form label{
+    width: 90px;
+}

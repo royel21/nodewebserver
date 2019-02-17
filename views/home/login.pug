@@ -1,0 +1,22 @@
+extends ../share/layout
+
+block css
+    link(rel="stylesheet" href="/css/login.css" type="text/css")
+
+block content
+    #login-container.card.text-light.bg-dark.rounded.text-center.mx-2.my-4
+        form#login-form(method="post" action="/login")
+            h3.text-center Log In
+            input(type="hidden" name="_csrf" value=""+ csrfToken)
+            .mt-4.d-flex.flex-column.justify-content-end
+                div.input-group.mb-3
+                    .input-group-prepend
+                        label.input-group-text(for="userid") ID Usuario
+                    input#userid.form-control(required="" name="userid" value="")
+                .input-group.mt-2
+                    .input-group-prepend
+                        label.input-group-text(for="password" value="") Clave 
+                    input#password.form-control(type="password" name="Password" value="")
+
+            .text-center.mt-2
+                button.btn.btn-primary.ml-2(type="submit") Login
