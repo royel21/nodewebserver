@@ -1,0 +1,8 @@
+extends share/layout
+
+block content
+  .text-left
+    button.btn.btn-primary( onclick="history.back()") Go Back
+  h1= message
+  h2= error.status
+  pre.text-light You are trying to access to a page that don't not exist please make sure that the link is correct

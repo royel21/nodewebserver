@@ -1,0 +1,39 @@
+
+.navbar {
+    padding: .1rem 1rem;
+}
+
+.navbar-brand {
+    margin-left: -5px;
+    padding: 0;
+}
+
+.navbar img {
+    vertical-align: middle;
+}
+
+.navbar label{
+    line-height: 1;
+    margin: 0;
+}
+
+.navbar #toggle-menu{
+    display: none;
+}
+
+@media screen and (max-width: 575px) {
+
+    #navbarSupportedContent
+    {
+        display: block;
+        height: 0;
+        opacity: 0;
+        transition: all .3s;
+    }
+
+    .navbar #toggle-menu:checked + #navbarSupportedContent
+    {
+        height: 175px;
+        opacity: 1;
+    }
+}

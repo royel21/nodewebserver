@@ -1,0 +1,258 @@
+#main{
+    padding: 0;
+}
+
+#video-viewer {
+    display: block;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    padding-bottom: 53px;
+}
+
+body .clock {
+    bottom: 69px;
+}
+
+body .content {
+    overflow-y: hidden;
+}
+
+body:-webkit-full-screen .clock {
+    bottom: 5px;
+    right: 5px;
+}
+
+body:-webkit-full-screen .clock .time {
+    font-size: 20px;
+}
+
+#player {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+}
+
+.v-controls {
+    position: fixed;
+    bottom: 0px;
+    left: 0;
+    right: 0;
+    font-size: initial;
+}
+
+body:-webkit-full-screen #v-control-2{
+    display: inline-block;
+    padding: 5px 0px 5px 5px;
+    background-color: rgba(0,0,0,0.4);
+    border-radius: 5px;
+}
+
+.hide-vcontrols {
+    opacity: 0;
+}
+
+.v-controls > *,
+.v-controls > * > * {
+    position: initial;
+    left: initial;
+}
+
+.v-controls span {
+    position: initial;
+    left: initial;
+    display: inline-block;
+    height: 25px;
+    width: 32.5px;
+    margin: 0 5px;
+}
+
+body:-webkit-full-screen .footer > span i {
+    background-color: black;
+    padding: 2px 4px;
+    border-radius: 5px;
+}
+
+body:-webkit-full-screen .v-controls span{
+    height: 20px;
+}
+
+.v-controls span i {
+    color: #fff;
+    font-size: 20px;
+}
+
+.v-controls span i:active {
+    transform: scale(1.2)
+}
+
+.v-controls span i.fa-volume-up:active {
+    transform: scale(1)
+}
+
+#v-total-time {
+    position: fixed;
+    left: 10px;
+    bottom: 5px;
+    font-size: 14px;
+    color: white;
+    z-index: 10;
+    font-weight: bold;
+    z-index: 1000;
+}
+
+body:-webkit-full-screen #v-total-time {
+    font-size: 14px;
+    background-color: black;
+    border-radius: 5px;
+    padding: 0 6px;
+    bottom: 2px;
+    border: 1px solid;
+}
+
+body:-webkit-full-screen #video-viewer {
+    padding: 0;
+}
+
+#v-index {
+    width: 70px;
+}
+
+.v-controls input[type=number] {
+    font-size: 20px;
+    background-color: transparent;
+    color: white;
+    text-align: center;
+    outline: none;
+    border-radius: 5px;
+}
+
+.v-controls input[type=number] {
+    transition: all 0.30s ease-in-out;
+    outline: none;
+    border: 1px solid #DDDDDD;
+}
+
+.v-controls input[type=number]:focus {
+    box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+    border: 1px solid rgba(81, 203, 238, 1);
+}
+
+
+#v-mute,
+#v-play {
+    display: none;
+}
+
+#v-play:checked+i:before {
+    content: "\f28b";
+}
+
+.v-controls .v-vol *{
+    cursor: pointer;
+}
+
+.v-controls .v-vol {
+    position: absolute;
+    width: max-content;
+    right: 0px;
+    top: 26px;
+}
+
+body:-webkit-full-screen .v-controls .v-vol {
+    position: relative;
+    width: max-content;
+}
+
+body:-webkit-full-screen .v-controls .vol-show{
+    position: fixed;
+   transform: rotate(270deg);
+   bottom: 126px;
+   right: -50px;
+}
+.v-controls .v-vol label{
+    position: relative;
+    width: 45px;
+}
+
+.v-controls .v-vol #v-vol-control {
+    position: relative;
+    width: auto;
+    height: 8px;
+    top: -3px;
+    right: -8px;
+}
+
+#v-vol-control::-webkit-slider-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    padding: 8px;
+    background: #fff;
+    -webkit-app-region: no-drag;
+}
+ 
+#mute-icon {
+    display: inline-block;
+    position: absolute;
+    top: 35%;
+    left: 5px;
+    background-color: red;
+    height: 4px;
+    width: 30px;
+    pointer-events: none;
+    transition: all .3s;
+    border-radius: 4px;
+    transform: rotateZ(360deg) scaleX(0);
+    z-index: 5;
+}
+
+.v-controls .v-vol #v-vol-control[value="0"] + label #mute-icon,
+.vol-ctrl:checked + #mute-icon {
+    transform: rotateZ(45deg) scaleX(1);
+}
+
+body:not(:-webkit-full-screen) .v-controls {
+    opacity: 1;
+}
+
+#slider-container {
+    height: 30px;
+    margin: 0 20px;
+    margin-bottom: -2px;
+}
+
+#slider-container .rc-slider {
+    top: 9px;
+}
+
+.footer .popup-caction{
+    position: relative;
+    height: 0;
+    width: 0;
+    display: initial;
+}
+
+.footer .popup-caction:after{
+    content: attr(data-title);
+    display: none;
+    position: absolute;
+    top: -50px;
+    left: -45px;
+    width: max-content;
+    padding: 2px 5px;
+    background-color: red;
+    border-radius: 5px;
+    z-index: 5;
+}
+
+.footer span:hover .popup-caction:after{
+    display: inline-block;
+}
+
+
+@media all and (max-width: 760px) {
+    body #v-control-2{
+        padding-right: 70px;
+    }
+}
