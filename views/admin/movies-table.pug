@@ -1,0 +1,28 @@
+mixin movies_table(movies) 
+    #table-container.text-light.bg-dark.rounded.text-center.mx-2.my-4
+        #table-controls
+            span.add-form
+                i.fa.fa-plus-squre.text-primary
+            form.d-inline-block.ml-2(action="/movies/search" method="POST")    
+                .input-group.mb-3
+                    .input-group-prepend
+                        label#btn-search.input-group-text(for="searchtext") Search
+                    input#search-input.form-control(required="" type="text" name="searchtext" value="" placeholder="Enter Search")
+            
+            span.badge.badge-primary #{movies.count}
+        
+        table.table.table-dark.user-table.table-hover
+            thead
+                tr
+                    th Editar	
+                    th Nombre
+                    th Remover
+            tbody
+                each video in movies.rows
+                    tr(id=""+ video.Id)
+                        td.text-primary
+                            span.user-form
+                                i.fas.fa-edit.fa-2x
+                        td= video.name
+                        td.text-danger.text-center
+                            i.fas.fa-trash-alt.fa-2x

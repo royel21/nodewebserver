@@ -10,7 +10,10 @@ exports.index = (req, res) => {
 }
 
 exports.login = (req, res) => {
-    res.render("home/login.pug", { title: "Log in", csrfToken: req.csrfToken() });
+    if(req.user){
+        return res.redirect('/');
+    }else
+    res.render("home/login.pug", { title: "Log in", csrfToken: req.csrfToken(), message: req.flash() });
 }
 
 exports.loginPost = (req, res, next) => {

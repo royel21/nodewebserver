@@ -35,19 +35,20 @@ app.use(passport.session());
 app.use(flash());
 
 app.locals.moment = require('moment');
+app.locals.roles = { user: "Usurario", manager: "Manager", admin: "Administrador" };
 
+app.use(function (req, res, next) {
+  if (req.user) {
+    app.locals.user = req.user;
+  } else if (req.url !== "/login") {
+    return res.redirect('/login');
+  }
+
+  next();
+});
 
 app.use("/", home);
 
-app.use(function (req, res, next) {
-  if(req.user){
-    console.log("user logged");
-    app.locals.user = req.user;
-  }else{
-    return res.redirect('/login');
-  }
-  next();
-});
 
 app.use("/videoplayer", vplayer);
 app.use('/admin', admin);
@@ -61,12 +62,11 @@ app.use(function (req, res, next) {
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
-  res.locals.error = err;
-
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
-  console.log("some errors:",err);
+  console.log("some errors:", err);
+  return res.render('error');
 });
 
 db.init().then(() => {

@@ -1,20 +1,30 @@
-export default (sequelize, DataTypes) => {
-    const Users = sequelize.define('Users', {
-      username: {
-        allowNull: false,
-        type: DataTypes.STRING,
-        unique: true,
-        validate: {
-          notEmpty: true
-        }
-      },
-      password: {
-        allowNull: false,
-        type: DataTypes.STRING,
-        validate: {
-          notEmpty: true
-        }
-      }
+module.exports = (sequelize, DataTypes) => {
+
+  const User = sequelize.define('user', {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
+    },
+    username: {
+      type: DataTypes.STRING(100),
+      unique: true,
+      allowNull: false
+    },
+    password: {
+      type: DataTypes.STRING(32),
+      allowNull: false
+    },
+    role: {
+      type: DataTypes.STRING(20),
+      defaultValue: "User"
+    },
+    createdAt: {
+      type: DataTypes.DATE
+    }
+  }, {
+      timestamps: false
     });
-    return Users;
-  };
+
+  return User;
+}

@@ -17,7 +17,7 @@ mixin navbar2(user)
             ul.ml-auto.nav.navbar-nav
                 li.nav-item
                 if user
-                    a.nav-link(href="/admin") Hello - #{user.UserName}
+                    a.nav-link(href="/admin") Hello - #{user.username}
                 if(user)
                     li.nav-item
                         a.nav-link(href="/logout") Logout

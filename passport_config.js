@@ -3,16 +3,14 @@ let bcrypt = require('bcrypt');
 let db = require('./models/models');
 
 module.exports = (passport) => {
-    console.log("initialize passport");
     passport.serializeUser((user, done) => {
-        done(null, user.UserName);
+        done(null, user.username);
     });
 
     passport.deserializeUser((username, done) => {
-        console.log('search user:' + username)
-        db.User.findOne({
+        db.user.findOne({
             where: {
-                UserName: username
+                username: username
             }
         }).then((user) => {
             if (user) {
@@ -29,39 +27,33 @@ module.exports = (passport) => {
         passReqToCallback: true
     }, function (req, username, password, done) {
         if (username == null || username == "") {
-            req.flash('message', 'Id de usuario vacio');
+            req.flash('userError', 'Id de usuario vacio');
             return done(null, false);
         } else if (password == "" || password == undefined) {
-            req.flash('message', 'Clave vacia');
+            req.flash('passwordError', 'Clave vacia');
             return done(null, false);
         }
 
-        return db.User.findOne({
+        return db.user.findOne({
             where: {
-                UserName: username
+                username: username
             }
         }).then(user => {
             if (user) {
-                console.log(username, password)
-                console.log(user.UserName)
-                bcrypt.compare(password, user.Password, (err, result) => {
-                    console.log("password:" + result);
+                bcrypt.compare(password, user.password, (err, result) => {
                     if (result) {
                         return done(null, user);
                     } else {
-                        req.flash('message', 'Clave incorrecta');
-                        console.log("password Error");
+                        req.flash('passwordError', 'Clave incorrecta');
                         return done(null, false);
                     }
                 });
             } else {
-                console.log("user no found");
-                req.flash('message', 'Usuario no autorizado');
+                req.flash('userError', 'Usuario no autorizado');
                 return done(null, false);
             }
 
         }).catch(err => {
-            console.log(err)
             done(err, false);
         });
     }))

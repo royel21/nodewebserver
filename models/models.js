@@ -4,11 +4,11 @@ const fs = require('fs-extra');
 var dbPath = path.join('./video.db');
 var bcrypt = require('bcrypt');
 
-const generateHash = (password) => bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+const db = {};
 
 const Op = Sequelize.Op
 const DataTypes = Sequelize.DataTypes
-const db = new Sequelize('sqlite:./' + dbPath, {
+const sequelize = new Sequelize('sqlite:./' + dbPath, {
     logging: false,
     operatorsAliases: {
         $and: Op.and,
@@ -22,114 +22,38 @@ const db = new Sequelize('sqlite:./' + dbPath, {
     }
 });
 
-const User = db.define('user', {
-    Id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true
-    },
-    UserName: {
-        type: Sequelize.STRING,
-        unique: true,
-        allowNull: false
-    },
-    Password: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    createdAt: {
-        type: Sequelize.DATE
-    }
-}, {
-        timestamps: false
-    });
+db.Op = Op;
+db.user = require('./user')(sequelize, DataTypes);
+db.video = require('./video')(sequelize, DataTypes);
+db.category = require('./category')(sequelize, DataTypes);
+db.favorite = require('./favorites')(sequelize, DataTypes);
+db.sequelize = sequelize;
+db.generateHash = (password) => bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 
-const Video = db.define('Videos', {
-    Id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    VideoName: {
-        type: Sequelize.STRING,
-        unique: true,
-        allowNull: false
-    },
-    TotalTime: {
-        type: Sequelize.INTEGER(5).UNSIGNED,
-        defaultValue: 0
-    }
-}, {
-        timestamps: false
-    });
 
-Video.findByName = (name) => {
-    return Video.findOne({
-        where: {
-            Name: name
-        }
-    });
-}
-
-const FavoriteVideo = db.define('favoritevideos', {
-    Id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    UserName: {
-        type: Sequelize.STRING(100),
-        unique: true,
-        allowNull: false
-    }
-}, {
-        timestamps: false
-    });
-
-const Category = db.define('Category', {
-    Id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    Name: {
-        type: Sequelize.STRING(100),
-        unique: true
-    }
-}, {
-        timestamps: false
-    });
-
-Video.belongsToMany(Category, {
+db.video.belongsToMany(db.category, {
     through: 'videocategory',
     as: 'Category',
     foreignKey: 'VideoId'
 });
 
-FavoriteVideo.hasMany(Video);
-FavoriteVideo.belongsTo(User);
+db.favorite.hasMany(db.video);
+db.favorite.belongsTo(db.user);
 
-init = async (isforce) => {
+db.init = async (isforce) => {
     if (!fs.existsSync(dbPath) || isforce) {
-        await db.sync({
+        await sequelize.sync({
             logging: console.log,
             force: isforce
         });
 
-        await User.create({
-            UserName: "Admin",
-            Password: generateHash("Admin"),
+        await db.user.create({
+            username: "Admin",
+            password: db.generateHash("Admin"),
+            role: "admin",
             createdAt: new Date()
         });
     }
 }
 
-module.exports = {
-    User,
-    Video,
-    FavoriteVideo,
-    init,
-    Op,
-    db,
-    generateHash
-}
+module.exports = db;

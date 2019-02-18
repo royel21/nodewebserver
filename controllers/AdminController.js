@@ -12,30 +12,26 @@ exports.users = (req, res) => {
     let begin = ((page - 1) * userPerPage);
     let val =  "";
 
-    db.User.findAndCountAll({
+    db.user.findAndCountAll({
         //order: ['Name'],
         offset: begin,
         limit: userPerPage,
         where: {
-            UserName: {
+            username: {
                 [db.Op.like]: "%" + val + "%"
             }
         }
     }).then(users => {
         var numberOfPages = Math.ceil(users.count / userPerPage);
         res.render("admin/index.pug", { title: "Administrator", users });
-        console.log("user: ");
     }).catch(err => {
-        console.log("my error: ")
-        console.log(err)
         res.status(500).send('Internal Server Error');
     });
 }
 
 exports.user_modal = (req, res) => {
-    var uid = req.query.uid
-    console.log(uid);
-    db.User.findOne({
+    var uid = req.query.uid;
+    db.user.findOne({
         where: {
             Id: uid
         }
@@ -48,7 +44,6 @@ exports.user_modal = (req, res) => {
             });
 
     }).catch(err => {
-        console.log(err);
         res.status(500).send('Internal Server Error');
     });
 }
@@ -56,28 +51,24 @@ exports.user_modal = (req, res) => {
 
 
 exports.create_user = (req, res) => {
-    console.log(req.body);
-
     if (req.body.username === "" || req.body.username === undefined) {
         return res.send({ err: "Nombre no puede estar vacio" });
     } else if (req.body.password == "" || req.body.password === undefined) {
         return res.send({ err: "password no puede estar vacio" })
     }
-    console.log("no empty");
-    db.User.create({
-        UserName: req.body.username,
-        Password: db.generateHash(req.body.password),
+    
+    db.user.create({
+        username: req.body.username,
+        password: db.generateHash(req.body.password),
         createdAt: new Date()
     }).then(newUser => {
-        console.log("user:" + req.body.username + " save");
-        console.log(newUser)
+        
         res.render("admin/user-row", {
             Id: newUser.Id,
-            UserName: newUser.UserName,
+            username: newUser.username,
             createdA: newUser.createdAt
         });
     }).catch(err => {
-        console.log(err)
         res.send({ err: "Id de usuario duplicado" + req.body.username })
     });
 }
