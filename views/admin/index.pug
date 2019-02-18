@@ -2,7 +2,7 @@ extends ../share/layout
 
 
 block css
-    link(rel="stylesheet" href="/css/account.css" type="text/css")
+    link(rel="stylesheet" href="/css/admin.css" type="text/css")
     link(rel="stylesheet" href="/css/main.css" type="text/css")
     link(rel="stylesheet" href="/css/modal.css" type="text/css")
 
@@ -15,11 +15,11 @@ block navbar
     .sidenav
         ul#mytab.navbar.navbar-dark.nav-tabs(role="tablist")
             li.nav-item
-                a.nav-link.active(href="/admin")
+                a.nav-link(href="/admin/users" class=""+(users ? "active" : ""))
                     i.fa.fa-users.text-primary
                         span Usuarios
             li.nav-item
-                a.nav-link(href="/admin")
+                a.nav-link(href="/admin/movies" class=""+(movies ? "active" : ""))
                     i.fas.fa-video.text-primary
                         span Peliculas
 

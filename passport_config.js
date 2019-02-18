@@ -1,16 +1,16 @@
 let LocalStrategy = require('passport-local').Strategy;
 let bcrypt = require('bcrypt');
-let db = require('./models/models');
+let db = require('./models');
 
 module.exports = (passport) => {
     passport.serializeUser((user, done) => {
-        done(null, user.username);
+        done(null, user.Name);
     });
 
     passport.deserializeUser((username, done) => {
         db.user.findOne({
             where: {
-                username: username
+                Name: username
             }
         }).then((user) => {
             if (user) {
@@ -36,11 +36,11 @@ module.exports = (passport) => {
 
         return db.user.findOne({
             where: {
-                username: username
+                Name: username
             }
         }).then(user => {
             if (user) {
-                bcrypt.compare(password, user.password, (err, result) => {
+                bcrypt.compare(password, user.Password, (err, result) => {
                     if (result) {
                         return done(null, user);
                     } else {

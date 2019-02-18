@@ -1,8 +1,10 @@
-tr(id=""+ Id)
+tr(id=""+ id)
     td.text-primary
-        span.user-form
+        span.show-form
             i.fas.fa-edit.fa-2x
-    td= UserName
-    td= moment(user.createdAt).format("LLL")
+    td= username
+    td= roles[role]
+    td= state
+    td= moment(createdAt).format("LLL")
     td.text-danger.text-center
         i.fas.fa-trash-alt.fa-2x

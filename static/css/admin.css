@@ -11,6 +11,7 @@
     min-width: 90%;
     border: 2px solid white;
     padding: 15px;
+    overflow-x: auto;
 }
 
 .nav-tabs .nav-link {
@@ -53,7 +54,6 @@
 
 .sidenav li {
     border-bottom: 1px solid #BBB;
-    padding: 5px;
 }
 
 .sidenav li:hover {
@@ -66,6 +66,7 @@
 
 .nav-item i span{
     margin-left: 5px;
+    font-size: 1.2rem;
 }
 
 #ctl-nav {
@@ -86,76 +87,13 @@
     transition: all 0.3s ease;
 }
 
-.selector {
-    display: inline-block;
-    position: relative;
-}
-
-.sidenav .active {
-    color: white;
-}
-
-/* User Form Style*/
-.selector {
-    width: 100%;
-}
-
-.page-control {
-    display: inline-block;
-    position: relative;
-}
-
-.page-control span {
-    display: inline-block;
-    margin: 0 2px;
-}
-
-.page-control span .fa-plus-square {
-    position: absolute;
-    font-size: 2.4em;
-    top: -7px;
-    left: -3px;
-}
-
-.page-control span .fa-pencil-square {
-    position: absolute;
-    font-size: 2.4em;
-    top: -7px;
-    left: 41px;
-}
-
-.page-control span .fa-trash {
-    position: absolute;
-    font-size: 2.4em;
-    top: -8px;
-    left: 85px;
-}
-
-#fix-list-control {
-    position: relative;
-    width: 45px;
-    font-size: 2.6em;
-}
-
-#fix-list-control span .fa {
-    left: 0;
-    top: -27px;
-    position: absolute;
-}
-
-.file-content {
-    position: relative;
-}
-
 
 #table-controls{
     position: relative;
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     font-size: 2.1em;
-    /* min-height: 50px; */
 }
 
 #table-controls form{
@@ -166,7 +104,9 @@
     cursor: pointer;
 }
 
-#table-controls #btn-search:active{font-size: .9rem;}
+#table-controls #btn-search:active{
+    font-size: .9rem;
+}
 
 @media screen and (min-width: 980px) {
     .table-responsive-md, .table-responsive-sm {
@@ -190,7 +130,6 @@
     }
 
     .sidenav ul {
-        margin-top: 20px;
         text-align: center;
     }
 
@@ -218,7 +157,26 @@
     }
 }
 
-tbody:hover > i{
-    cursor: pointer;
-    text-shadow: 0px 0px 20px rgb(53, 237, 243);
+@media screen and (max-width: 450px) {
+    #table-controls .badge{
+        position: relative;
+        top: -2px;
+        left: 8px;
+        align-self: center;
+    }
+}
+
+/******************************Movies CSS************************************************/
+#table-controls .fa-video{
+    position: relative;
+    top: 5px;
+    font-size: 1.2em;
+}
+
+#table-controls .fa-plus-square{
+    position: absolute;
+    top: 9px;
+    left: 5px;
+    color: white;
+    font-size: 22px;
 }

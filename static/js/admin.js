@@ -1,34 +1,55 @@
-$(document).on("click",".user-form",(e)=>{
-    console.log("clicked")
-    var tr = e.target.closest('tr');
-    var uid = tr ? tr.id : "";
-    
-    $.get("/admin/user-modal",{uid},(resp)=>{
+$(document).on("click", ".show-form", (e) => {
+
+    let tr = e.target.closest('tr');
+    let uid = tr ? tr.id : "";
+    let action = $('#table-container').data('action');
+    console.log(action, uid)
+    $.get(action, { uid }, (resp) => {
         $('body').prepend(resp);
         $('#modal').fadeIn();
     });
 });
 
-hideForm = ()=>{
-    $('#modal-container').fadeOut(()=>{
+hideForm = () => {
+    $('#modal-container').fadeOut(() => {
         $('#modal-container').remove();
     });
 }
 
-$(document).on("click",".close-modal",hideForm);
+$(document).on("click", ".close-modal", hideForm);
 
-$(document).on('submit', '#create-edit',(e)=>{
+var confirm = (message) => {
+    $('#create-edit').remove();
+    $('#modal-header').addClass('text-success').text(message)
+    $('#modal').append($('<div class="text-center mt-3"><button class="btn btn-primary">Close<div>'));
+    $('#modal').on('click', 'button',(e)=>{
+        hideForm();
+    });
+}
+
+$(document).on('submit', '#create-edit', (e) => {
     e.preventDefault();
     var $form = $('#create-edit');
-    $.post($form.attr('action'), $form.serialize(),(resp)=>{
+    $.post($form.attr('action'), $form.serialize(), (resp) => {
         console.log(resp)
-        if(resp.err){
-            console.log(resp.err);
-        }else{
-            if($('tbody tr').length < 5){
-                $('tbody').append(resp);
+
+        switch (resp.state) {
+            case "error": {
+                $('#errors').append($('<span>').text(resp.data));
+                break;
             }
-            hideForm();
+            case "update": {
+                $('#' + $('input[name="id"]').val()).replaceWith($(resp.data));
+                confirm("Usuario " + resp.name + " Actualizado Con Exito");
+                break;
+            }
+            case "create": {
+                if ($('tbody tr').length < 5) {
+                    $('tbody').append(resp.data);
+                }
+                confirm("Usuario " + resp.name + " Agregado Con Exito");
+                break;
+            }
         }
     });
 });

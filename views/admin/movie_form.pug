@@ -1,0 +1,31 @@
+#modal-container
+    #modal.card.bg-dark.text-light
+        #modal-header.text-center
+            h3= modalTitle
+        form#create-edit(method="post" action="/admin/create-edit-user")
+            input(type="hidden" name="id" value=""+ (movie.Id ? movie.Id :  ""))
+            input(type="hidden" name="_csrf" value=""+ csrfToken)
+            #errors.text-danger.text-center
+            .input-group.my-3
+                .input-group-prepend
+                    label.input-group-text(for="name") Nombre
+                input#name.form-control(required="" type="text" name="name" value=""+ (movie.Name ? movie.Name : ""))
+            .input-group.my-3
+                .input-group-prepend
+                    label.input-group-text(for="year" value="") Año 
+                input#year.form-control(type="number" name="year" value=""+ (movie.Name ? movie.Name : "2000"))
+            .my-3
+                .text-area-head.text-center.input-group-text
+                    label(for="description") categorias
+            .my-3
+                .text-area-head.text-center.input-group-text
+                    label(for="description") Descripcion
+                textarea#description.form-control(type="textarea" name="description" value=""+ (movie.Descreption ? movie.Descreption : ""))
+            .input-group.my-3
+                .input-group-prepend
+                    label.input-group-text(for="description") Ruta Archivo
+                input#description.form-control(required="" type="File" name="description" value=""+ (movie.FilePath ? movie.FilePath : ""))
+            .text-center.mt-3
+                button.btn.btn-secondary.close-modal(type="button") Cancelar
+                button.btn.btn-primary.ml-2(type="submit") Guardar
+        

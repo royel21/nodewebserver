@@ -4,22 +4,23 @@ block css
     link(rel="stylesheet" href="/css/login.css" type="text/css")
 
 block content
-    #login-container.card.text-light.bg-dark.rounded.text-center.mx-2.my-4
-        form#login-form(method="post" action="/login")
-            h3.text-center Log In
-            input(type="hidden" name="_csrf" value=""+ csrfToken)
-            .mt-4.d-flex.flex-column.justify-content-end
-                div.input-group.my-2
-                    .input-group-prepend
-                        label.input-group-text(for="username") ID Usuario
-                    input#username.form-control(required="" name="username" value="")
-                if message.userError
-                    .alert.alert-danger.p-0.m-0= message.userError
-                .input-group.my-2
-                    .input-group-prepend
-                        label.input-group-text(for="password" value="") Clave 
-                    input#password.form-control(type="password" name="password" value="")
-                if message.passwordError
-                    .alert.alert-danger.p-0.m-0= message.passwordError
-            .text-center.my-2
-                button.btn.btn-primary.ml-2(type="submit") Login
+    #center-login
+        #login-container.card.text-light.bg-dark.rounded.text-center.mx-2.my-4
+            form#login-form(method="post" action="/login")
+                h3.text-center Log In
+                input(type="hidden" name="_csrf" value=""+ csrfToken)
+                .mt-4.d-flex.flex-column.justify-content-end
+                    div.input-group.my-2
+                        .input-group-prepend
+                            label.input-group-text(for="username") ID Usuario
+                        input#username.form-control(required="" name="username" value="")
+                    if message.userError
+                        .alert.alert-danger.p-0.m-0= message.userError
+                    .input-group.my-2
+                        .input-group-prepend
+                            label.input-group-text(for="password" value="") Clave 
+                        input#password.form-control(type="password" name="password" value="")
+                    if message.passwordError
+                        .alert.alert-danger.p-0.m-0= message.passwordError
+                .text-center.my-2
+                    button.btn.btn-primary.ml-2(type="submit") Login

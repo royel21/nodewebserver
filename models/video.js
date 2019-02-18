@@ -6,10 +6,21 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true,
             autoIncrement: true
         },
-        VideoName: {
+        Name: {
             type: DataTypes.STRING,
             unique: true,
             allowNull: false
+        },
+        Year:{
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
+        Description:{
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+        FilePath:{
+            type: DataTypes.STRING
         },
         TotalTime: {
             type: DataTypes.INTEGER(6).UNSIGNED,

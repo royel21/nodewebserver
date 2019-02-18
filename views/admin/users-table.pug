@@ -1,7 +1,7 @@
 mixin users_table(users)
-    #table-container.text-light.bg-dark.rounded.text-center.mx-2.my-4
+    #table-container.text-light.bg-dark.rounded.text-center.mx-2(data-action="/admin/user-modal")
         #table-controls
-            span.user-form
+            span.show-form
                 i.fa.fa-user-plus.text-primary
             form.d-inline-block.ml-2(action="/users/search" method="POST")    
                 .input-group.mb-3
@@ -17,16 +17,18 @@ mixin users_table(users)
                     th Editar	
                     th Id Usuario
                     th Rol
+                    th Estado
                     th Agregado En
                     th Remover
             tbody
                 each user in users.rows
-                    tr(id=""+ user.id)
+                    tr(id=""+ user.Id)
                         td.text-primary
-                            span.user-form
+                            span.show-form
                                 i.fas.fa-edit.fa-2x
-                        td= user.username
-                        td= roles[user.role]
-                        td= moment(user.createdAt).format("LLL")
+                        td= user.Name
+                        td= roles[user.Role]
+                        td= user.State
+                        td= moment(user.CreatedAt).format("LLL")
                         td.text-danger.text-center
                             i.fas.fa-trash-alt.fa-2x

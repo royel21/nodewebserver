@@ -4,12 +4,12 @@ var cors = require('cors');
 var cookieParser = require('cookie-parser')
 var passport = require('passport');
 var session = require('express-session');
-var db = require('./models/models');
+var db = require('./models');
 var flash = require('connect-flash');
 //Routes
-var home = require("./routes/home");
-var vplayer = require("./routes/videoplayer");
-var admin = require('./routes/admin');
+var home = require("./routes/homeRoute");
+var vplayer = require("./routes/videoPlayerRoute");
+var admin = require('./routes/adminRoute');
 
 require('./passport_config')(passport);
 

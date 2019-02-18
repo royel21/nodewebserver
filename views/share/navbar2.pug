@@ -11,13 +11,11 @@ mixin navbar2(user)
                     a.nav-link(href="#") Home
                 li.nav-item
                     a.nav-link(href="#") New Release
-                li.nav-item
-                    a.nav-link(href="#")
 
             ul.ml-auto.nav.navbar-nav
                 li.nav-item
-                if user
-                    a.nav-link(href="/admin") Hello - #{user.username}
-                if(user)
-                    li.nav-item
-                        a.nav-link(href="/logout") Logout
+                    if user
+                        a.nav-link(href="/admin") Hello - #{user.Name}
+                    if(user)
+                        li.nav-item
+                            a.nav-link(href="/logout") Logout

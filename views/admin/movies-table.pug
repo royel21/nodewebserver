@@ -1,8 +1,9 @@
 mixin movies_table(movies) 
-    #table-container.text-light.bg-dark.rounded.text-center.mx-2.my-4
+    #table-container.text-light.bg-dark.rounded.text-center.mx-2(data-action="/admin/movies-modal")
         #table-controls
-            span.add-form
-                i.fa.fa-plus-squre.text-primary
+            span.show-form
+                i.fas.fa-video.text-primary
+                    i.far.fa-plus-square
             form.d-inline-block.ml-2(action="/movies/search" method="POST")    
                 .input-group.mb-3
                     .input-group-prepend
@@ -21,8 +22,8 @@ mixin movies_table(movies)
                 each video in movies.rows
                     tr(id=""+ video.Id)
                         td.text-primary
-                            span.user-form
+                            span.show-form
                                 i.fas.fa-edit.fa-2x
-                        td= video.name
+                        td= video.Name
                         td.text-danger.text-center
                             i.fas.fa-trash-alt.fa-2x

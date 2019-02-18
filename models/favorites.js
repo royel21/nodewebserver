@@ -1,12 +1,12 @@
 module.exports = (sequelize, DataTypes) => {
 
-    const FavoriteVideo = sequelize.define('favoritevideos', {
-        id: {
+    const FavoriteVideo = sequelize.define('FavoriteVideos', {
+        Id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true
         },
-        username: {
+        Name: {
             type: DataTypes.STRING(100),
             unique: true,
             allowNull: false

@@ -38,7 +38,7 @@ db.video.belongsToMany(db.category, {
 });
 
 db.favorite.hasMany(db.video);
-db.favorite.belongsTo(db.user);
+db.user.hasOne(db.favorite);
 
 db.init = async (isforce) => {
     if (!fs.existsSync(dbPath) || isforce) {
@@ -46,12 +46,24 @@ db.init = async (isforce) => {
             logging: console.log,
             force: isforce
         });
-
-        await db.user.create({
-            username: "Admin",
-            password: db.generateHash("Admin"),
-            role: "admin",
-            createdAt: new Date()
+        let users = [{
+            Name: "Admin",
+            Password: db.generateHash("Admin"),
+            Role: "admin",
+            CreatedAt: new Date()
+        }, {
+            Name: "Rconsoro",
+            Password: db.generateHash("123456"),
+            CreatedAt: new Date()
+        }, {
+            Name: "Rmarero",
+            Password: db.generateHash("123456"),
+            CreatedAt: new Date()
+        }];
+        db.user.bulkCreate(users).then(()=>{
+            console.log("users created")
+        }).catch(err=>{
+            console.log(err)
         });
     }
 }

@@ -29,11 +29,24 @@
         height: 0;
         opacity: 0;
         transition: all .3s;
+        visibility: hidden;
+    }
+
+    #navbarSupportedContent li
+    {
+        height: 0px;
+        transition: all .3s;
+    }
+
+    .navbar #toggle-menu:checked + #navbarSupportedContent li
+    {
+        height: 33px;
     }
 
     .navbar #toggle-menu:checked + #navbarSupportedContent
     {
-        height: 175px;
+        height: 145px;
         opacity: 1;
+        visibility: visible;
     }
 }
