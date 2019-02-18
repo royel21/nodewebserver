@@ -3,7 +3,7 @@ $(document).on("click",".user-form",(e)=>{
     var tr = e.target.closest('tr');
     var uid = tr ? tr.id : "";
     
-    $.get("admin/user-modal",{uid},(resp)=>{
+    $.get("/admin/user-modal",{uid},(resp)=>{
         $('body').prepend(resp);
         $('#modal').fadeIn();
     });
@@ -21,10 +21,13 @@ $(document).on('submit', '#create-edit',(e)=>{
     e.preventDefault();
     var $form = $('#create-edit');
     $.post($form.attr('action'), $form.serialize(),(resp)=>{
-        if(resp.error){
-            console.log(resp.error);
+        console.log(resp)
+        if(resp.err){
+            console.log(resp.err);
         }else{
-            $('tbody').prepend(resp);
+            if($('tbody tr').length < 5){
+                $('tbody').append(resp);
+            }
             hideForm();
         }
     });

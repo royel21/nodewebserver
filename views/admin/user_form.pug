@@ -1,0 +1,20 @@
+#modal-container
+    #modal.card.bg-dark.text-light
+        #modal-header.text-center
+            h3= modalTitle
+        form#create-edit(method="post" action="/admin/create-user")
+            input(type="hidden" name="Id" value=""+ (user.Id ? user.Id :  ""))
+            input(type="hidden" name="_csrf" value=""+ csrfToken)
+            .mt-4.d-flex.flex-column.justify-content-end
+            .input-group.mb-3
+                .input-group-prepend
+                    label.input-group-text(for="username") ID Usuario
+                input#firstname.form-control(required="" type="text" name="username" value=""+ (user.UserName ? user.UserName : ""))
+            .input-group.mt-2
+                .input-group-prepend
+                    label.input-group-text(for="password" value="") Clave 
+                input#password.form-control(type="password" name="password" value="" autocomplete="new-password")
+            .text-center.mt-2
+                button.btn.btn-secondary.close-modal(type="button") Cancelar
+                button.btn.btn-primary.ml-2(type="submit") Guardar
+        

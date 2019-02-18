@@ -47,13 +47,6 @@ Array.prototype.removeBy = function (obj, by) {
     }
 }
 
-Object.defineProperty(Array.prototype, "last", {
-    get: function () {
-        return this[this.length - 1];
-    }
-});
-
-
 formatTime = (time) => {
     var h = Math.floor(time / 3600);
     var min = Math.floor((time / 3600 - h) * 60);

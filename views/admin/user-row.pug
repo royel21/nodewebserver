@@ -1,7 +1,8 @@
 tr(id=""+ Id)
     td.text-primary
-        i.fas.fa-edit.fa-2x
-    td= UserId
+        span.user-form
+            i.fas.fa-edit.fa-2x
     td= UserName
+    td= moment(user.createdAt).format("LLL")
     td.text-danger.text-center
         i.fas.fa-trash-alt.fa-2x

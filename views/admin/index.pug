@@ -8,7 +8,8 @@ block css
 
 block navbar
     include ../share/navbar2
-    <input id="ctl-nav" type="checkbox">
+    +navbar2(user)
+    input#ctl-nav(type="checkbox")
     label#nav-btn(for="ctl-nav")
         i.fa.fa-chevron-circle-right
     .sidenav
@@ -23,7 +24,7 @@ block navbar
                         span Peliculas
 
 block content
-    #table-container.card.text-light.bg-dark.rounded.text-center.mx-2.my-4
+    #table-container.text-light.bg-dark.rounded.text-center.mx-2.my-4
         #table-controls
             span.user-form
                 i.fa.fa-user-plus.text-primary
@@ -32,25 +33,24 @@ block content
                     .input-group-prepend
                         label#btn-search.input-group-text(for="searchtext") Search
                     input#search-input.form-control(required="" type="text" name="searchtext" value="" placeholder="Enter Search")
-             
-                   
-            span.badge.badge-primary #{users.length}
+            
+            span.badge.badge-primary #{users.count}
         
         table.table.table-dark.user-table.table-hover
             thead
                 tr
-                    th Edit	
-                    th User Id
-                    th Name
-                    th Delete
+                    th Editar	
+                    th Id Usuario
+                    th Agregado En
+                    th Remover
             tbody
-                each user in users
+                each user in users.rows
                     tr(id=""+ user.Id)
                         td.text-primary
                             span.user-form
                                 i.fas.fa-edit.fa-2x
-                        td= user.UserId
                         td= user.UserName
+                        td= moment(user.createdAt).format("LLL")
                         td.text-danger.text-center
                             i.fas.fa-trash-alt.fa-2x
 

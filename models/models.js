@@ -1,9 +1,10 @@
 const Sequelize = require("sequelize");
 const path = require('path');
 const fs = require('fs-extra');
-const os = require('os');
+var dbPath = path.join('./video.db');
+var bcrypt = require('bcrypt');
 
-var dbPath = path.join(os.homedir(), './video.db');
+const generateHash = (password) => bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 
 const Op = Sequelize.Op
 const DataTypes = Sequelize.DataTypes
@@ -29,12 +30,19 @@ const User = db.define('user', {
     },
     UserName: {
         type: Sequelize.STRING,
-        unique: true
+        unique: true,
+        allowNull: false
     },
     Password: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    createdAt: {
+        type: Sequelize.DATE
     }
-});
+}, {
+        timestamps: false
+    });
 
 const Video = db.define('Videos', {
     Id: {
@@ -42,19 +50,14 @@ const Video = db.define('Videos', {
         primaryKey: true,
         autoIncrement: true
     },
-    Name: {
-        type: Sequelize.STRING
+    VideoName: {
+        type: Sequelize.STRING,
+        unique: true,
+        allowNull: false
     },
-    Current: {
+    TotalTime: {
         type: Sequelize.INTEGER(5).UNSIGNED,
         defaultValue: 0
-    },
-    Total: {
-        type: Sequelize.INTEGER(5).UNSIGNED,
-        defaultValue: 0
-    },
-    Size: {
-        type: Sequelize.INTEGER.UNSIGNED
     }
 }, {
         timestamps: false
@@ -76,7 +79,8 @@ const FavoriteVideo = db.define('favoritevideos', {
     },
     UserName: {
         type: Sequelize.STRING(100),
-        unique: true
+        unique: true,
+        allowNull: false
     }
 }, {
         timestamps: false
@@ -96,8 +100,12 @@ const Category = db.define('Category', {
         timestamps: false
     });
 
-Video.hasMany(Category);
-Category.hasMany(Video);
+Video.belongsToMany(Category, {
+    through: 'videocategory',
+    as: 'Category',
+    foreignKey: 'VideoId'
+});
+
 FavoriteVideo.hasMany(Video);
 FavoriteVideo.belongsTo(User);
 
@@ -106,6 +114,12 @@ init = async (isforce) => {
         await db.sync({
             logging: console.log,
             force: isforce
+        });
+
+        await User.create({
+            UserName: "Admin",
+            Password: generateHash("Admin"),
+            createdAt: new Date()
         });
     }
 }
@@ -116,5 +130,6 @@ module.exports = {
     FavoriteVideo,
     init,
     Op,
-    db
+    db,
+    generateHash
 }

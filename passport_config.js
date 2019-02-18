@@ -2,49 +2,66 @@ let LocalStrategy = require('passport-local').Strategy;
 let bcrypt = require('bcrypt');
 let db = require('./models/models');
 
-const validPassword = (user, password)=>{
-    return bcrypt.compareSync(password, user.Password);
-}
-
 module.exports = (passport) => {
+    console.log("initialize passport");
     passport.serializeUser((user, done) => {
-        done(null, user.Id);
+        done(null, user.UserName);
     });
-    passport.deserializeUser((Id, done) => {
+
+    passport.deserializeUser((username, done) => {
+        console.log('search user:' + username)
         db.User.findOne({
             where: {
-                Id: Id
+                UserName: username
             }
         }).then((user) => {
             if (user) {
-                done(new Error('Wrong user Id.'))
+                done(null, user);
             } else {
-                done(user);
+                done(new Error('Wrong user Id.'))
             }
         })
     });
+
     passport.use(new LocalStrategy({
-        usernameField: 'userid',
+        usernameField: 'username',
         passwordField: 'password',
         passReqToCallback: true
-    }, (req, userid, password, done) => {
+    }, function (req, username, password, done) {
+        if (username == null || username == "") {
+            req.flash('message', 'Id de usuario vacio');
+            return done(null, false);
+        } else if (password == "" || password == undefined) {
+            req.flash('message', 'Clave vacia');
+            return done(null, false);
+        }
+
         return db.User.findOne({
             where: {
-                Id: Id
+                UserName: username
             }
         }).then(user => {
-            if(user){
-                req.flash('message', 'Id de usuario incorrecto');
-                return done(null, false);
-            }else if(user.Password || user.Password == undefined){
-                req.flash('message', 'Clave no puede estar vacia');
-                return done(null, false);
-            }else if(validPassword(user, password)){
-                req.flash('message', 'Clave incorrecta');
+            if (user) {
+                console.log(username, password)
+                console.log(user.UserName)
+                bcrypt.compare(password, user.Password, (err, result) => {
+                    console.log("password:" + result);
+                    if (result) {
+                        return done(null, user);
+                    } else {
+                        req.flash('message', 'Clave incorrecta');
+                        console.log("password Error");
+                        return done(null, false);
+                    }
+                });
+            } else {
+                console.log("user no found");
+                req.flash('message', 'Usuario no autorizado');
                 return done(null, false);
             }
-            return done(null, user);
-        }).catch(err =>{
+
+        }).catch(err => {
+            console.log(err)
             done(err, false);
         });
     }))

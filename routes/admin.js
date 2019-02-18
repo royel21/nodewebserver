@@ -8,6 +8,8 @@ var csrfProtection = csrf({ cookie: true });
 var parseForm = bodyParser.urlencoded({ extended: false });
 
 router.get("/", AdminController.index);
+router.get("/users", AdminController.users);
+router.get("/users/:pagen", AdminController.users);
 router.get("/user-modal",csrfProtection, AdminController.user_modal);
 router.post("/create-user", parseForm, csrfProtection, AdminController.create_user);
 
