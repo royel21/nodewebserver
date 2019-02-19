@@ -21,7 +21,7 @@ router.get("/movies-modal", csrfProtection, moviesController.movie_modal);
 
 router.get("/categories", categoriesController.categories);
 router.get("/categories/:page", categoriesController.categories);
-router.get("/categories-modal", csrfProtection, categoriesController.category_modal);
+router.get("/category-modal", csrfProtection, categoriesController.category_modal);
 
 
 module.exports = router;

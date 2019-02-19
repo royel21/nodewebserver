@@ -1,5 +1,5 @@
 mixin users_table(users)
-    #table-container.text-light.bg-dark.rounded.text-center.mx-2(data-action="/admin/user-modal")
+    #table-container.text-light.bg-dark.rounded.mx-2(data-action="/admin/user-modal")
         #table-controls
             span.show-form
                 i.fa.fa-user-plus.text-primary
@@ -14,21 +14,19 @@ mixin users_table(users)
         table.table.table-dark.user-table.table-hover
             thead
                 tr
-                    th Editar	
+                    th.text-center Acciones
                     th Id Usuario
                     th Rol
                     th Estado
                     th Agregado En
-                    th Remover
             tbody
                 each user in users.rows
                     tr(id=""+ user.Id)
-                        td.text-primary
+                        td.text-primary.text-center
                             span.show-form
                                 i.fas.fa-edit.fa-2x
+                                i.ml-2.text-danger.fas.fa-trash-alt.fa-2x
                         td= user.Name
                         td= roles[user.Role]
                         td= user.State
                         td= moment(user.CreatedAt).format("LLL")
-                        td.text-danger.text-center
-                            i.fas.fa-trash-alt.fa-2x

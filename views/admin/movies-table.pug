@@ -1,9 +1,9 @@
 mixin movies_table(movies) 
-    #table-container.text-light.bg-dark.rounded.text-center.mx-2(data-action="/admin/movies-modal")
+    #table-container.text-light.bg-dark.rounded.mx-2(data-action="/admin/movies-modal")
         #table-controls
             span.show-form
                 i.fas.fa-video.text-primary
-                    i.far.fa-plus-square
+                    i.far.fa-plus-square.text-dark
             form.d-inline-block.ml-2(action="/movies/search" method="POST")    
                 .input-group.mb-3
                     .input-group-prepend
@@ -15,15 +15,14 @@ mixin movies_table(movies)
         table.table.table-dark.user-table.table-hover
             thead
                 tr
+                    th.text-center Acciones
                     th Editar	
                     th Nombre
-                    th Remover
             tbody
                 each video in movies.rows
                     tr(id=""+ video.Id)
-                        td.text-primary
+                        td.text-primary.text-center
                             span.show-form
                                 i.fas.fa-edit.fa-2x
+                                i.ml-2.text-danger.fas.fa-trash-alt.fa-2x
                         td= video.Name
-                        td.text-danger.text-center
-                            i.fas.fa-trash-alt.fa-2x
