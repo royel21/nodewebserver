@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var csrf = require('csurf');
 var bodyParser = require('body-parser')
-var homeController = require('../controllers/HomeControler')
+var homeController = require('../controllers/homeControler')
 
 var csrfProtection = csrf({ cookie: true });
 var parseForm = bodyParser.urlencoded({ extended: false });

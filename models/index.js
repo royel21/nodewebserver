@@ -61,6 +61,33 @@ db.init = async (isforce) => {
             CreatedAt: new Date()
         }];
         await db.user.bulkCreate(users);
+
+        let categories = [{
+            Name: "Aventuras"
+        }, {
+            Name: "Acción"
+        }, {
+            Name: "Ciencia Ficción"
+        }, {
+            Name: "Animación"
+        }, {
+            Name: "Artes Marciales‎"
+        }, {
+            Name: "Histórico"
+        }, {
+            Name: "Guerras"
+        }, {
+            Name: "Misterio"
+        }, {
+            Name: "Infantiles"
+        }, {
+            Name: "Documentales"
+        }, {
+            Name: "Dramas"
+        }, {
+            Name: "Fantacias"
+        }];
+        await db.category.bulkCreate(categories);
     }
 }
 

@@ -22,15 +22,21 @@ block navbar
                 a.nav-link(href="/admin/movies" class=""+(movies ? "active" : ""))
                     i.fas.fa-video.text-primary
                         span Peliculas
+            li.nav-item
+                a.nav-link(href="/admin/categories" class=""+(categories ? "active" : ""))
+                    i.fas.fa-video.text-primary
+                        span Categorias
 
 block content
     if users
         include ./users-table
         +users_table(users)
-    else
+    else if movies
         include ./movies-table
         +movies_table(movies)
-
+    else if categories
+        include ./categories-table
+        +categories_table(categories)
 
 block script
     script(src="/js/admin.js")

@@ -173,9 +173,9 @@
     font-size: 1.2em;
 }
 
-#table-controls .fa-plus-square{
+#table-controls .fa-video .fa-plus-square{
     position: absolute;
-    top: 9px;
+    top: 10px;
     left: 5px;
     color: white;
     font-size: 22px;

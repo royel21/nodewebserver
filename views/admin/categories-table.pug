@@ -1,0 +1,22 @@
+mixin categories_table(categories) 
+    #table-container.text-light.bg-dark.rounded.text-center.mx-2(data-action="/admin/category-modal")
+        #table-controls
+            span.show-form
+                i.far.fa-plus-square.text-primary
+            span.badge.badge-primary #{categories.count}
+        
+        table.table.table-dark.user-table.table-hover
+            thead
+                tr
+                    th Editar	
+                    th Nombre
+                    th Remover
+            tbody
+                each category in categories.rows
+                    tr(id=""+ category.Id)
+                        td.text-primary
+                            span.show-form
+                                i.fas.fa-edit.fa-2x
+                        td= category.Name
+                        td.text-danger.text-center
+                            i.fas.fa-trash-alt.fa-2x

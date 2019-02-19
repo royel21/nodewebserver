@@ -14,9 +14,11 @@
                 .input-group-prepend
                     label.input-group-text(for="year" value="") Año 
                 input#year.form-control(type="number" name="year" value=""+ (movie.Name ? movie.Name : "2000"))
-            .my-3
-                .text-area-head.text-center.input-group-text
-                    label(for="description") categorias
+            .input-group.my-3
+                .input-group-prepend
+                    label.input-group-text(for="state" value="") Categorias
+                select#state.form-control(name="state")
+                    option(value="") Activo
             .my-3
                 .text-area-head.text-center.input-group-text
                     label(for="description") Descripcion
