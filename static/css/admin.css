@@ -1,7 +1,3 @@
-.pagination {
-    margin-bottom: 0;
-}
-
 #content {
     margin-left: 170px;
     transition: all 0.3s ease;
@@ -33,7 +29,7 @@
     position: fixed;
     z-index: 1;
     left: 0;
-    top: 46px;
+    top: 42px;
     background-color: #111;
     overflow-x: hidden;
     width: 160px;
@@ -93,7 +89,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 2.1em;
+    font-size: 2em;
 }
 
 #table-controls form{
@@ -108,12 +104,34 @@
     font-size: .9rem;
 }
 
+#table-controls #items{
+    display: inline-flex;
+    max-width: 129px;
+    top: -3px;
+    margin-right: 5px;
+    max-height: 34px;
+}
+
+#table-controls #items *{
+   /* padding: 0; */
+}
+
+#table-controls #itemsPerPage{
+   position: relative;
+   top: -3px;
+}
+
+#table-controls #pager a{
+    font-weight: inherit;
+    font-size: 1.6rem;
+}
 @media screen and (min-width: 980px) {
     .table-responsive-md, .table-responsive-sm {
         overflow-y: hidden;
         overflow-x: auto;
     }
 }
+
 
 @media screen and (max-width: 975px) {
 
@@ -164,6 +182,9 @@
         left: 8px;
         align-self: center;
     }
+    #itemsPerPage{
+        display: none;
+    }
 }
 
 /******************************Movies CSS************************************************/
@@ -178,4 +199,9 @@
     top: 10px;
     left: 5px;
     font-size: 22px;
+}
+
+#pagination span{
+    margin: 0 5px;
+    cursor: pointer;
 }

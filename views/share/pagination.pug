@@ -1,0 +1,46 @@
+mixin pagination(data)
+    -let currentPage = parseInt(data.currentPage)
+    -let totalPages = parseInt(data.totalPages)
+    -let itemsPerPage = parseInt(data.itemsPerPage)
+    div#pager
+        ul.pagination(data-action="/admin/categories/")
+            if currentPage == 1
+                li.page-item.disabled
+                    a.page-link
+                        i.fa.fa-angle-double-left
+                li.page-item.disabled
+                    a.page-link
+                        i.fa.fa-angle-left
+            else
+                li.page-item
+                    a.page-link(href="/admin/categories/"+1+"/"+itemsPerPage)
+                        i.fa.fa-angle-double-left
+                li.page-item
+                    a.page-link(href="/admin/categories/"+(currentPage-1)+"/"+itemsPerPage)
+                        i.fa.fa-angle-left
+                
+            -for (let i = currentPage - 4; i <= currentPage - 1; i++)
+                -if (i > 0)
+                    li.page-item
+                        a.page-link(href="/admin/categories/"+i+"/"+itemsPerPage)= i
+            li.page-item.active
+                a.page-link= currentPage
+
+            -for (let i = currentPage + 1; i <= currentPage + 4; i++)
+                -if (i < parseInt(totalPages)+1)
+                    li.page-item
+                        a.page-link(href="/admin/categories/"+i+"/"+itemsPerPage)= i
+            if currentPage == totalPages
+                li.page-item.disabled
+                    a.page-link
+                        i.fa.fa-angle-double-right
+                li.page-item.disabled
+                    a.page-link
+                        i.fa.fa-angle-right
+            else
+                li.page-item
+                    a.page-link(href="/admin/categories/"+(parseInt(currentPage)+1)+"/"+itemsPerPage)
+                        i.fa.fa-angle-right
+                li.page-item
+                    a.page-link(href="/admin/categories/"+totalPages+"/"+itemsPerPage)
+                        i.fa.fa-angle-double-right

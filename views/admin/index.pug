@@ -23,7 +23,7 @@ block navbar
                         span Peliculas
             li.nav-item
                 a.nav-link(href="/admin/categories" class=""+(categories ? "active" : ""))
-                    i.fas.fa-video.text-primary
+                    i.fas.fa-tags.text-primary
                         span Categorias
 
 block content
@@ -35,7 +35,7 @@ block content
         +movies_table(movies)
     else if categories
         include ./categories-table
-        +categories_table(categories)
+        +categories_table(categories, pagesData)
 
 block script
     script(src="/js/admin.js")

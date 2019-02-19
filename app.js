@@ -70,7 +70,7 @@ app.use(function (err, req, res, next) {
 });
 
 db.init().then(() => {
-  var server = app.listen(5000, function () {
-    console.log('Node server is running.. at http://localhost:5000');
+  var server = app.listen(5080, function () {
+    console.log('Node server is running.. at http://localhost:5080');
   });
 })

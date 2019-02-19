@@ -25,6 +25,7 @@ mixin users_table(users)
                         td.text-primary.text-center
                             span.show-form
                                 i.fas.fa-edit.fa-2x
+                            span.show-delete(data-action="/admin/user-delete")
                                 i.ml-2.text-danger.fas.fa-trash-alt.fa-2x
                         td= user.Name
                         td= roles[user.Role]

@@ -1,3 +1,4 @@
+
 $(document).on("click", ".show-form", (e) => {
 
     let tr = e.target.closest('tr');
@@ -22,9 +23,10 @@ var confirm = (message) => {
     $('#create-edit').remove();
     $('#modal-header').addClass('text-success').text(message)
     $('#modal').append($('<div class="text-center mt-3"><button class="btn btn-primary">Close<div>'));
-    $('#modal').on('click', 'button',(e)=>{
+    $('#modal').on('click', 'button', (e) => {
         hideForm();
     });
+    $('#modal button').focus();
 }
 
 $(document).on('submit', '#create-edit', (e) => {
@@ -40,14 +42,14 @@ $(document).on('submit', '#create-edit', (e) => {
             }
             case "update": {
                 $('#' + $('input[name="id"]').val()).replaceWith($(resp.data));
-                confirm("Usuario " + resp.name + " Actualizado Con Exito");
+                confirm(resp.action + " " + resp.name + " Actualizado Con Exito");
                 break;
             }
             case "create": {
-                if ($('tbody tr').length < 5) {
+                if ($('tbody tr').length < 10) {
                     $('tbody').append(resp.data);
                 }
-                confirm("Usuario " + resp.name + " Agregado Con Exito");
+                confirm(resp.action + " " + resp.name + " Agregado Con Exito");
                 break;
             }
         }

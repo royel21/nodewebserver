@@ -21,17 +21,19 @@ body{
 #main{
     color: white;
     position: relative;
-    background-color: #14243d;
-    background: radial-gradient(ellipse at center, #14243d 0%,#030611 100%);
+    /* background-color: #14243d; */
+    /* background: radial-gradient(ellipse at center, #14243d 0%,#030611 100%); */
     height: 100%;
-    padding-top: 50px;
-    overflow-y: auto;
+    padding-top: 43px;
+    background-image: url("/images/line.jpg");
 }
 
 #content{
     position: relative;
     min-height: 100%;
     height: 100%;
+    overflow-y: auto;
+    padding: 5px 0;
 }
 
 #nav-menu{
@@ -66,4 +68,24 @@ body{
 .fas:active,
 .fa:active{
     transform: scale(1.2);
+}
+/*************************Scrollbar Style********************************/
+ ::-webkit-scrollbar {
+    width: 15px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgba(0, 123, 255, .95);
+    box-shadow: inset 0 0 6px rgba(15, 1, 228, 0.9);
+}
+/************************* End ********************************/
+
+.pagination {
+    margin-bottom: 0;
+}
+
+.pagination .page-link{
+    padding: 0 0.25em;
+    font-size: 1.7rem;
 }

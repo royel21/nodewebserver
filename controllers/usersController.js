@@ -2,11 +2,11 @@
 let db = require('../models');
 
 exports.index = (req, res) => {
-    res.redirect('/admin/users');
+   res.redirect('/admin/users');
 }
 
 exports.users = (req, res) => {
-    console.log("my params: ", req.params.page)
+    console.log("my params: ", req.params)
     let userPerPage = 20;
     let page = 1;
     let begin = ((page - 1) * userPerPage);
@@ -46,7 +46,12 @@ exports.user_modal = (req, res) => {
         res.status(500).send('Internal Server Error');
     });
 }
-
+const sendPostResponse = (res, action, state, user) =>{
+    return res.render("admin/user-row", {user}, (err, html) => {
+        console.log(err)
+        res.send({ action, state, name: user.Name, data: html });
+    });
+}
 
 const createUser = (req, res) => {
     console.log("creating");
@@ -62,16 +67,7 @@ const createUser = (req, res) => {
         Role: req.body.role,
         CreatedAt: new Date()
     }).then(newUser => {
-
-        res.render("admin/user-row", {
-            id: newUser.Id,
-            username: newUser.Name,
-            state: newUser.State,
-            role: newUser.Role,
-            createdA: newUser.CreatedAt
-        }, (err, html) => {
-            res.send({ state: "create", name: newUser.Name, data: html });
-        });
+        sendPostResponse(res, "Usuario", "create", newUser);
     }).catch(err => {
         res.send({ state: "error", data: "Nombre de usuario en uso" });
     });
@@ -93,17 +89,10 @@ const updateUser = (req, res) => {
             user_found.update({
                 Name: req.body.username,
                 Role: req.body.role,
+                State: req.body.state,
                 Password: pass
             }).then(updatedUser => {
-                res.render("admin/user-row", {
-                    id: user_found.Id,
-                    username: updatedUser.Name,
-                    state: updatedUser.State,
-                    role: updatedUser.Role,
-                    createdA: updatedUser.CreatedAt
-                }, (err, html) => {
-                    res.send({ state: "update", name: updatedUser.Name, data: html });
-                });
+                sendPostResponse(res, "Usuario", "update", updatedUser);
             });
         } else {
             res.send({ state: "error", data: "Usuario no encontrado" });

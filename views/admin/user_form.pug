@@ -3,13 +3,13 @@
         #modal-header.text-center
             h3= modalTitle
         form#create-edit(method="post" action="/admin/create-edit-user")
-            input(type="hidden" name="id" value=""+ (user.Id ? user.Id :  ""))
+            input(type="hidden" name="id" value=""+ (user.Id || ""))
             input(type="hidden" name="_csrf" value=""+ csrfToken)
             #errors.text-danger.text-center
             .input-group.my-3
                 .input-group-prepend
                     label.input-group-text(for="username") ID Usuario
-                input#username.form-control(required="" type="text" name="username" value=""+ (user.Name ? user.Name : ""))
+                input#username.form-control(required="" type="text" name="username" value=""+ (user.Name || ""))
             .input-group.my-3
                 .input-group-prepend
                     label.input-group-text(for="password" value="") Clave 
