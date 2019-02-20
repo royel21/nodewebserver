@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Touch Example 1</title>
+
+    <!-- IE Specific to remove tap highlight -->
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            width: 100%;
+            height: 100%;
+
+            background-color: #d3e2fc;
+
+            font-family: 'Roboto', sans-serif;
+            color: #ecf0f1;
+        }
+
+        .content {
+            padding: 32px;
+            box-sizing: border-box;
+
+            overflow: hidden;
+        }
+
+        .swipe-element {
+            position: relative;
+
+            width: 100%;
+            height: 60px;
+        }
+
+        .swipe-front {
+            position: absolute;
+
+            width: 100%;
+            height: 60px;
+
+            left: 0;
+            top: 0;
+
+            margin: 0;
+            padding: 8px;
+            box-sizing: border-box;
+
+            text-align: center;
+
+            color: #ecf0f1;
+            line-height: 44px;
+            vertical-align: center;
+
+            background-color: #4285f4;
+
+            z-index: 2;
+
+            -ms-touch-action: none;
+            /* // [START touch-action-example] */
+            /* Pass all touches to javascript */
+            touch-action: none;
+            /* // [END touch-action-example] */
+        }
+
+        .swipe-back {
+            position: absolute;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+
+            width: 100%;
+            height: 60px;
+
+            left: 0;
+            top: 0;
+
+            -ms-flex-direction: row;
+            -webkit-flex-direction: row;
+            flex-direction: row;
+
+            -ms-flex-pack: justify;
+            -webkit-justify-content: space-around;
+            justify-content: space-around;
+
+            -ms-flex-align: center;
+            -webkit-align-items: center;
+            align-items: center;
+
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+
+        .swipe-back button {
+            display: inline-block;
+
+            width: 40px;
+            height: 40px;
+
+            background-color: #4285f4;
+
+            border-radius: 100%;
+            border-style: none;
+        }
+
+        .swipe-back button:nth-child(2) {
+            background-color: #0f9d58;
+        }
+
+        .swipe-back button:nth-child(3) {
+            background-color: #cb4437;
+        }
+
+        .swipe-back button:nth-child(4) {
+            background-color: #f4b400;
+        }
+
+        .promote-layer {
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+    </style>
+</head>
+
+<body>
+
+    <section class="content">
+        <div class="swipe-element">
+            <div class="swipe-back">
+                <button></button>
+                <button></button>
+                <button></button>
+                <button></button>
+            </div>
+            <p class="swipe-front promote-layer">Swipe Me 
+                <a href="./touch.html">other pages</a></p>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="swipe-element">
+            <div class="swipe-back">
+                <button></button>
+                <button></button>
+                <button></button>
+                <button></button>
+            </div>
+            <p class="swipe-front promote-layer">Swipe Me Too</p>
+        </div>
+    </section>
+
+    <script>
+        // Shim for requestAnimationFrame from Paul Irishpaul ir
+        // http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
+
+
+        /* // [START pointereventsupport] */
+        this.handleGestureMove = function (evt) {
+                evt.preventDefault();
+
+                //   if(!initialTouchPos) {
+                //     return;
+                //   }
+
+                //   lastTouchPos = getGesturePointFromEvent(evt);
+
+                //   if(rafPending) {
+                //     return;
+                //   }
+
+                console.log("moving");
+            }.bind(this);
+            /* // [END handle-move] */
+
+            /* // [START handle-end-gesture] */
+            // Handle end gestures
+           
+            /* // [END handle-end-gesture] */
+
+            /* // [END on-anim-frame] */
+
+            /* // [START addlisteners] */
+            // Check if pointer events are supported.
+            if (window.PointerEvent) {
+                // Add Pointer Event Listener
+                // swipeFrontElement.addEventListener('pointerdown', this.handleGestureStart, true);
+                document.body.addEventListener('pointermove', this.handleGestureMove, true);
+                // swipeFrontElement.addEventListener('pointerup', this.handleGestureEnd, true);
+                // swipeFrontElement.addEventListener('pointercancel', this.handleGestureEnd, true);
+                console.log("pointer event");
+            } 
+    </script>
+
+    <script>
+    //   var registerInteraction = function () {
+    //     'use strict';
+    //     window.sampleCompleted('touch-demo-1.html-SwipeFrontTouch');
+    //   };
+
+    //   var swipeFronts = document.querySelectorAll('.swipe-front');
+    //   for(var i = 0; i < swipeFronts.length; i++) {
+    //     swipeFronts[i].addEventListener('touchstart', registerInteraction);
+    //   }
+    </script>
+</body>
+
+</html>

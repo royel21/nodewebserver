@@ -80,7 +80,8 @@ player.onloadedmetadata = function (e) {
     player.muted = btnMuted.checked;
     //config.isMuted = btnMuted.checked;
     $('.fa-volume-up').attr('data-title', btnMuted.checked ? "Unmute" : "Mute");
-    console.log(player.muted)
+    console.log(player.muted);
+    proccessTouch(player);
 }
 
 Slider = new SliderRange('#slider-container');
@@ -103,22 +104,21 @@ player.onended = function () {
     if (fileN < filesList.length - 1) {
         var waitEnd = setTimeout(() => {
             if (player.ended)
-               // processFile(filesList[++fileN].Name);
-            clearTimeout(waitEnd);
+                // processFile(filesList[++fileN].Name);
+                clearTimeout(waitEnd);
         }, 3000)
     } else {
-       // returnToFb();
+        // returnToFb();
     }
 }
-console.log("keyMapped")
+
 document.onkeydown = (e) => {
     var keys = config.playerkey;
-    console.log(e.keyCode)
     switch (e.keyCode) {
         case keys.fullscreen.keycode:
             {
                 if (e.ctrlKey == keys.fullscreen.isctrl)
-                   setfullscreen();
+                    setfullscreen();
                 break;
             }
         case keys.playpause.keycode:
@@ -168,9 +168,9 @@ document.onkeydown = (e) => {
             {
                 if (e.ctrlKey == keys.nextfile.isctrl) {
                     if (fileN < filesList.length - 1) {
-                       // processFile(filesList[++fileN].Name);
+                        // processFile(filesList[++fileN].Name);
                     } else {
-                       // returnToFb();
+                        // returnToFb();
                     }
                 }
                 break;
@@ -181,7 +181,7 @@ document.onkeydown = (e) => {
                     if (fileN > 0) {
                         //processFile(filesList[--fileN].Name);
                     } else {
-                       // returnToFb();
+                        // returnToFb();
                     }
                 }
                 break;
@@ -198,15 +198,27 @@ pauseOrPlay = () => {
         playPause = "Pause";
     }
     $('.fa-play-circle').attr('data-title', playPause);
-   // btnPlay.checked = config.paused = player.paused;
+    // btnPlay.checked = config.paused = player.paused;
 
 }
-
-$(player).click((e) => {
+var pressStart;
+$(player).mousedown((e) => {
     if (e.which == 1) {
-        pauseOrPlay();
+        pressStart = new Date();
     }
 });
+
+$(player).mouseup((e) => {
+    if (e.which == 1) {
+        pressStart = new Date();
+    }
+});
+
+// $(player).click((e) => {
+//     if (e.which == 1) {
+//         pauseOrPlay();
+//     }
+// });
 
 volcontrol.oninput = (e) => {
     player.volume = volcontrol.value;
@@ -295,6 +307,59 @@ $(document).on('webkitfullscreenchange', (e) => {
     }
 });
 
-$('#v-exit-to-fb').click((e)=>{
+$('#v-exit-to-fb').click((e) => {
     window.history.back();
 });
+
+var proccessTouch = (player) => {
+    var pressStart, detectTap = false;
+    var point = { X: 0, Y: 0 };
+    $(player).on('pointerdown', function (e) {
+        e.preventDefault();
+        detectTap = true;
+        pressStart = new Date();
+        point.X = e.clientX;
+        point.Y = e.clientY;
+    });
+
+    $(player).on('pointerup pointercancel', (e) => {
+        e.preventDefault();
+        detectTap = false;
+    });
+
+    $(player).on('pointermove', function (e) {
+        e.preventDefault();
+        if (detectTap) {
+            if ((new Date() - pressStart) < 200) {
+                pauseOrPlay();
+                console.log("playorPause");
+            } else {
+                let offset = 2;
+                let diffY = e.clientY - point.Y;
+                if (diffY < -offset) {
+                    console.log("Up: " + diffY);
+                    volcontrol.value = player.volume + 0.05;
+                    player.volume = volcontrol.value;
+                }
+
+                if (diffY > offset) {
+                    console.log("Down: " + (e.clientY - point.Y));
+                    volcontrol.value -= 0.05;
+                    player.volume = volcontrol.value;
+                }
+                let diffX = e.clientX - point.X;
+                if (diffX > offset) {
+                    console.log("right: " + diffX);
+                    player.currentTime += 2;
+                }
+
+                if (diffX < -offset) {
+                    console.log("letf: " + (e.clientX - point.X));
+                    player.currentTime -= 2;
+                }
+                point.X = e.clientX;
+                point.Y = e.clientY;
+            }
+        }
+    });
+}
