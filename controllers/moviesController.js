@@ -4,9 +4,9 @@ let db = require('../models');
 exports.movies = (req, res) => {
     console.log("my params: ", req.param.page)
     let moviePerPage = 20;
-    let page =  1;
+    let page = 1;
     let begin = ((page - 1) * moviePerPage);
-    let val =  "";
+    let val = "";
 
     db.video.findAndCountAll({
         //order: ['Name'],
@@ -35,11 +35,15 @@ exports.movie_modal = (req, res) => {
         }
     }).then(data => {
         let movie = data ? data : {};
-        res.render("admin/movie_form",
-            {
-                movie, csrfToken: req.csrfToken(),
-                modalTitle: uid ? "Editar Pelicula" : "Agregar Pelicula"
-            });
+        db.category.findAll({ order: ['Name'] }).then(ca => {
+            var categories = ca ? ca : [];
+            res.render("admin/movie_form",
+                {
+                    movie, csrfToken: req.csrfToken(),
+                    categories,
+                    modalTitle: uid ? "Editar Pelicula" : "Agregar Pelicula"
+                });
+        });
     }).catch(err => {
         res.status(500).send('Internal Server Error');
     });
@@ -99,4 +103,9 @@ exports.movieModalPost = (req, res) => {
     } else {
         updateMovie(req, res);
     }
+}
+
+exports.testPost = (req, res) =>{
+    console.log(req.body);
+    res.send("ok");
 }

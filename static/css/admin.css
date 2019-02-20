@@ -44,6 +44,11 @@
     vertical-align: middle;
 }
 
+
+.table td:first-child {
+    color: #007bff;
+}
+
 .sidenav .navbar {
     padding: 0;
 }
@@ -104,12 +109,15 @@
     font-size: .9rem;
 }
 
+#table-controls form{
+    display: inline-block;
+}
+
 #table-controls #items{
     display: inline-flex;
     max-width: 129px;
     top: -3px;
     margin-right: 5px;
-    max-height: 34px;
 }
 
 #table-controls #items *{

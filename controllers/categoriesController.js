@@ -3,7 +3,7 @@ let db = require('../models');
 
 exports.categories = (req, res) => {
     console.log("my params: ", req.params)
-    let itemsPerPage = req.params.items || 10;
+    let itemsPerPage = req.params.items || req.query.items || 10;
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
     let val = "";
@@ -31,6 +31,10 @@ exports.categories = (req, res) => {
         console.log(err)
         res.status(500).send('Internal Server Error');
     });
+}
+
+exports.categoriesPost = (req, res) =>{
+    return res.redirect('/admin/categories/1/'+req.body.items);
 }
 
 exports.category_modal = (req, res) => {

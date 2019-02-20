@@ -3,19 +3,20 @@ mixin categories_table(categories, pagesdata)
         #table-controls
             span.show-form
                 i.far.fa-plus-square.text-primary
-            include ../share/pagination
-            +pagination(pagesdata)
-            span#itemsPerPage
+            if pagesdata.totalPages > 1 
+                include ../share/pagination
+                +pagination(pagesdata)
+            span#itemsPerPage(data-itemsperpage=pagesdata.itemsPerPage)
                 if categories.count > 10
-                    #items.input-group
-                        .input-group-prepend
-                            label.input-group-text(for="items" value="") Items
-                        select#item.form-control(name="items")
-                            -for(let i = 10; i < categories.count; i += 10)
-                                option(value=i)= i
-                            option(value=categories.count)= categories.count
+                    form(action="/admin/categories" method="POST" onchange="submit()")
+                        #items.input-group
+                            .input-group-prepend
+                                label.input-group-text(for="items" value="") Items
+                            select#item.form-control(name="items")
+                                -for(let i = 10; i < categories.count; i += 10)
+                                    option(value=""+i selected=(pagesdata.itemsPerPage == i ? true : false))= i
+                                option(value=""+categories.count selected=(pagesdata.itemsPerPage == categories.count ? true : false))= categories.count
                 span.badge.badge-primary #{categories.count}
-        
         table.table.table-dark.user-table.table-hover
             thead
                 tr
@@ -24,7 +25,7 @@ mixin categories_table(categories, pagesdata)
             tbody
                 each category in categories.rows
                     tr(id=""+ category.Id)
-                        td.text-primary
+                        td
                             span.show-form
                                 i.fas.fa-edit.fa-2x
                             span.show-delete(data-action="/admin/category-delete")

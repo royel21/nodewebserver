@@ -19,8 +19,9 @@ router.get("/movies", moviesController.movies);
 router.get("/movies/:page", moviesController.movies);
 router.get("/movies-modal", csrfProtection, moviesController.movie_modal);
 router.get("/movies-modal/create-edit-movie", parseForm, csrfProtection, moviesController.movieModalPost);
+router.post("/array-test",moviesController.testPost);
 
-// router.get("/categories", categoriesController.categories);
+router.post("/categories", categoriesController.categoriesPost);
 router.get("/categories/:page?/:items?", categoriesController.categories);
 router.get("/categories/:page", categoriesController.categories);
 router.get("/category-modal", csrfProtection, categoriesController.category_modal);
