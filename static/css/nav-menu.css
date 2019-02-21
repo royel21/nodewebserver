@@ -14,14 +14,15 @@
 
 .navbar label{
     line-height: 1;
-    margin: 0;
+    padding: 0.2rem .2rem;
+    margin: 5px 0;
 }
 
 .navbar #toggle-menu{
     display: none;
 }
 
-@media screen and (max-width: 575px) {
+@media screen and (max-width: 576px) {
 
     #navbarSupportedContent
     {

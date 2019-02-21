@@ -81,7 +81,6 @@ player.onloadedmetadata = function (e) {
     //config.isMuted = btnMuted.checked;
     $('.fa-volume-up').attr('data-title', btnMuted.checked ? "Unmute" : "Mute");
     console.log(player.muted);
-    proccessTouch(player);
 }
 
 Slider = new SliderRange('#slider-container');
@@ -311,55 +310,52 @@ $('#v-exit-to-fb').click((e) => {
     window.history.back();
 });
 
-var proccessTouch = (player) => {
-    var pressStart, detectTap = false;
-    var point = { X: 0, Y: 0 };
-    $(player).on('pointerdown', function (e) {
-        e.preventDefault();
-        detectTap = true;
-        pressStart = new Date();
+var pressStart, detectTap = false;
+var point = { X: 0, Y: 0 };
+$(player).on('pointerdown', function (e) {
+    e.preventDefault();
+    detectTap = true;
+    pressStart = new Date();
+    point.X = e.clientX;
+    point.Y = e.clientY;
+});
+
+$(player).on('pointerup pointercancel', (e) => {
+    e.preventDefault();
+    detectTap = false;
+    if ((new Date() - pressStart) < 200) {
+        pauseOrPlay();
+        console.log("playorPause");
+    }
+});
+
+$(player).on('pointermove', function (e) {
+    e.preventDefault();
+    if (detectTap) {
+        let offset = 2;
+        let diffY = e.clientY - point.Y;
+        if (diffY < -offset) {
+            console.log("Up: " + diffY);
+            volcontrol.value = player.volume + 0.05;
+            player.volume = volcontrol.value;
+        }
+
+        if (diffY > offset) {
+            console.log("Down: " + (e.clientY - point.Y));
+            volcontrol.value -= 0.05;
+            player.volume = volcontrol.value;
+        }
+        let diffX = e.clientX - point.X;
+        if (diffX > offset) {
+            console.log("right: " + diffX);
+            player.currentTime += 2;
+        }
+
+        if (diffX < -offset) {
+            console.log("letf: " + (e.clientX - point.X));
+            player.currentTime -= 2;
+        }
         point.X = e.clientX;
         point.Y = e.clientY;
-    });
-
-    $(player).on('pointerup pointercancel', (e) => {
-        e.preventDefault();
-        detectTap = false;
-    });
-
-    $(player).on('pointermove', function (e) {
-        e.preventDefault();
-        if (detectTap) {
-            if ((new Date() - pressStart) < 200) {
-                pauseOrPlay();
-                console.log("playorPause");
-            } else {
-                let offset = 2;
-                let diffY = e.clientY - point.Y;
-                if (diffY < -offset) {
-                    console.log("Up: " + diffY);
-                    volcontrol.value = player.volume + 0.05;
-                    player.volume = volcontrol.value;
-                }
-
-                if (diffY > offset) {
-                    console.log("Down: " + (e.clientY - point.Y));
-                    volcontrol.value -= 0.05;
-                    player.volume = volcontrol.value;
-                }
-                let diffX = e.clientX - point.X;
-                if (diffX > offset) {
-                    console.log("right: " + diffX);
-                    player.currentTime += 2;
-                }
-
-                if (diffX < -offset) {
-                    console.log("letf: " + (e.clientX - point.X));
-                    player.currentTime -= 2;
-                }
-                point.X = e.clientX;
-                point.Y = e.clientY;
-            }
-        }
-    });
-}
+    }
+});
