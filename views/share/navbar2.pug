@@ -1,5 +1,5 @@
 mixin navbar2(user)
-    nav#menu.navbar.navbar-expand-md.navbar-dark.bg-dark
+    nav#menu.navbar.navbar-expand-sm.navbar-dark.bg-dark
         a.navbar-brand(href="/")
             img(src="/images/home.png" height="35" alt="Movie server")
         label.navbar-toggler(for="toggle-menu")
@@ -11,7 +11,8 @@ mixin navbar2(user)
                     a.nav-link(href="#") Home
                 li.nav-item
                     a.nav-link(href="#") New Release
-
+                li.na-item
+                    a.nav-link(href="/videoplayer") Player
             ul.ml-auto.nav.navbar-nav
                 li.nav-item
                     if user

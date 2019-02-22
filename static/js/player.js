@@ -76,16 +76,16 @@ player.onloadedmetadata = function (e) {
     Slider.value = 0;
     vDuration = formatTime(player.duration);
     update = true;
-    btnMuted.checked = true;
+    btnMuted.checked = config.isMuted;
     player.muted = btnMuted.checked;
-    //config.isMuted = btnMuted.checked;
     $('.fa-volume-up').attr('data-title', btnMuted.checked ? "Unmute" : "Mute");
-    console.log(player.muted);
+     $vTotalTime.text(formatTime(player.currentTime) + "/" + vDuration)
 }
 
 Slider = new SliderRange('#slider-container');
 Slider.oninput = (value) => {
     player.currentTime = value;
+    console.log(value)
 }
 
 $(player).dblclick((e) => {
@@ -93,9 +93,10 @@ $(player).dblclick((e) => {
 });
 
 player.ontimeupdate = (e) => {
+    console.log(update, Slider == undefined)
     if (update && Slider) {
         Slider.value = Math.floor(player.currentTime);
-        $vTotalTime.text(formatTime(player.currentTime) + "/" + vDuration)
+        $vTotalTime.text(formatTime(player.currentTime) + "/" + vDuration);
     }
 }
 
@@ -113,6 +114,7 @@ player.onended = function () {
 
 document.onkeydown = (e) => {
     var keys = config.playerkey;
+    console.log(e.keyCode);
     switch (e.keyCode) {
         case keys.fullscreen.keycode:
             {
@@ -197,7 +199,7 @@ pauseOrPlay = () => {
         playPause = "Pause";
     }
     $('.fa-play-circle').attr('data-title', playPause);
-    // btnPlay.checked = config.paused = player.paused;
+    btnPlay.checked = config.paused = player.paused;
 
 }
 var pressStart;
@@ -213,31 +215,22 @@ $(player).mouseup((e) => {
     }
 });
 
-// $(player).click((e) => {
-//     if (e.which == 1) {
-//         pauseOrPlay();
-//     }
-// });
-
 volcontrol.oninput = (e) => {
     player.volume = volcontrol.value;
 }
-
-//player.onplay = player.onpause = hideFooter;
-
 
 btnPlay.onchange = pauseOrPlay;
 
 btnMuted.onchange = () => {
     player.muted = btnMuted.checked;
-    //config.isMuted = btnMuted.checked;
+    config.isMuted = btnMuted.checked;
     $('.fa-volume-up').attr('data-title', btnMuted.checked ? "Unmute" : "Mute");
 }
 
 var volTimer = null;
 
 player.onvolumechange = function (e) {
-    //config.volume = player.volume;
+    config.volume = player.volume;
     if ($('.footer').hasClass('hide-footer') && document.webkitIsFullScreen) {
         $('.v-vol').addClass('vol-show');
 
@@ -294,6 +287,8 @@ hideFooter = () => {
         }, config.hidecontrolduration * 1000);
     }
 }
+
+player.onplay = player.onpause = hideFooter;
 
 $(document).on('webkitfullscreenchange', (e) => {
     if (document.webkitIsFullScreen) {

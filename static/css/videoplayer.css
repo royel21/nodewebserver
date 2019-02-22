@@ -2,6 +2,7 @@
 #content{
     padding: 0;
     overflow-y: hidden;
+    touch-action: none;
 }
 
 
@@ -71,8 +72,8 @@ body:-webkit-full-screen #v-control-2{
     left: initial;
     display: inline-block;
     height: 25px;
-    width: 32.5px;
     margin: 0 5px;
+    padding: 0 5px;
 }
 
 body:-webkit-full-screen .footer > span i {
@@ -81,13 +82,10 @@ body:-webkit-full-screen .footer > span i {
     border-radius: 5px;
 }
 
-body:-webkit-full-screen .v-controls span{
-    height: 20px;
-}
 
 .v-controls span i {
     color: #fff;
-    font-size: 20px;
+    font-size: 25px;
 }
 
 .v-controls span i:active {
@@ -113,8 +111,7 @@ body:-webkit-full-screen #v-total-time {
     font-size: 14px;
     background-color: black;
     border-radius: 5px;
-    padding: 0 6px;
-    bottom: 2px;
+    padding: 1px 5px;
     border: 1px solid;
 }
 
@@ -162,8 +159,12 @@ body:-webkit-full-screen #video-viewer {
 
 .v-controls .v-vol {
     position: absolute;
-    width: max-content;
+    width: auto;
     right: 0px;
+}
+
+.v-controls #v-control-2{
+    padding-right: 70px;
 }
 
 body:-webkit-full-screen .v-controls .v-vol {
@@ -186,8 +187,8 @@ body:-webkit-full-screen .v-controls .vol-show{
     position: relative;
     width: auto;
     height: 8px;
-    top: -3px;
-    right: -8px;
+    top: -5.5px;
+    right: -5px;
 }
 
 #v-vol-control::-webkit-slider-thumb {
@@ -199,10 +200,10 @@ body:-webkit-full-screen .v-controls .vol-show{
     -webkit-app-region: no-drag;
 }
  
-#mute-icon {
+.v-controls .mute-icon {
     display: inline-block;
     position: absolute;
-    top: 35%;
+    top: 34%;
     left: 5px;
     background-color: red;
     height: 4px;
@@ -214,8 +215,11 @@ body:-webkit-full-screen .v-controls .vol-show{
     z-index: 5;
 }
 
-.v-controls .v-vol #v-vol-control[value="0"] + label #mute-icon,
-.vol-ctrl:checked + #mute-icon {
+.v-controls .v-vol #v-vol-control[value="0"] + label .mute-icon{
+    transform: rotateZ(45deg) scaleX(1);
+}
+
+.v-controls .vol-ctrl:checked + .mute-icon {
     transform: rotateZ(45deg) scaleX(1);
 }
 
@@ -257,9 +261,35 @@ body:not(:-webkit-full-screen) .v-controls {
     display: inline-block;
 }
 
-
-@media all and (max-width: 760px) {
-    body #v-control-2{
-        padding-right: 70px;
+@media all and (max-width: 580px) {
+    #player{
+        height: initial;
+    }
+    #video-viewer{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .v-controls #v-control-2{
+       position: relative;
+       display: flex;
+       flex-wrap: wrap;
+       align-items: center;
+       justify-content: space-between;
+       padding-right: 0;
+    }
+    #mobile-control{
+        height: 40px;
+    }
+    .v-controls #v-cont1{
+        display: none;
+    }
+    .v-controls #v-cont2{
+    top: 30px;
+    }
+    .v-controls .v-vol{
+        position: absolute;
+        top: 34px;
     }
 }

@@ -57,8 +57,7 @@ formatTime = (time) => {
 
 setfullscreen = () => {
     if (!document.webkitIsFullScreen) {
-        document.body.webkitRequestFullscreen();
-       
+        document.body.webkitRequestFullscreen();  
     } else {
         document.webkitCancelFullScreen();
     }

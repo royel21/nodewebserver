@@ -34,7 +34,6 @@ body{
     height: 100%;
     overflow-y: auto;
     padding: 5px 0;
-    touch-action: none;
 }
 
 #nav-menu{
