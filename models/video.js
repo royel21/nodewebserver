@@ -1,33 +1,44 @@
 module.exports = (sequelize, DataTypes) => {
-
+    let crc16 = require('crc').crc16;
     const Video = sequelize.define('Video', {
         Id: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING(15),
             primaryKey: true,
-            autoIncrement: true
+            unique: true
+
         },
         Name: {
             type: DataTypes.STRING,
             unique: true,
             allowNull: false
         },
-        Year:{
-            type: DataTypes.INTEGER,
+        Year: {
+            type: DataTypes.DATE,
             allowNull: true
         },
-        Description:{
+        Description: {
             type: DataTypes.TEXT,
             allowNull: true
         },
-        FilePath:{
+        FilePath: {
             type: DataTypes.STRING
         },
         TotalTime: {
-            type: DataTypes.INTEGER(6).UNSIGNED,
+            type: DataTypes.FLOAT(5, 4),
             defaultValue: 0
         }
     }, {
-            timestamps: false
+            timestamps: false,
+            hooks: {
+                beforeCreate: (video, options) => {
+                    video.Id = crc16(video.Name).toString(16);
+                },
+                beforeBulkCreate: (videos, options) => {
+                    videos.forEach((video) => {
+                        video.Id = crc16(video.Name).toString(16);
+                    });
+                }
+            }
         });
 
     Video.findByName = (name) => {

@@ -1,22 +1,11 @@
-mixin categories_table(categories, pagesdata) 
+mixin categories_table(categories, pagesdata, action) 
     #table-container.text-light.bg-dark.rounded.mx-2(data-action="/admin/category-modal")
         #table-controls
             span.show-form
                 i.far.fa-plus-square.text-primary
-            if pagesdata.totalPages > 1 
-                include ../share/pagination
-                +pagination(pagesdata)
-            span#itemsPerPage(data-itemsperpage=pagesdata.itemsPerPage)
-                if categories.count > 10
-                    form(action="/admin/categories" method="POST" onchange="submit()")
-                        #items.input-group
-                            .input-group-prepend
-                                label.input-group-text(for="items" value="") Items
-                            select#item.form-control(name="items")
-                                -for(let i = 10; i < categories.count; i += 10)
-                                    option(value=""+i selected=(pagesdata.itemsPerPage == i ? true : false))= i
-                                option(value=""+categories.count selected=(pagesdata.itemsPerPage == categories.count ? true : false))= categories.count
-                span.badge.badge-primary #{categories.count}
+            include ../share/pagination
+            +pagination(categories.count, pagesdata, action)
+            
         table.table.table-dark.user-table.table-hover
             thead
                 tr

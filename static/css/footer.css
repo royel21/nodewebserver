@@ -3,10 +3,6 @@
 }
 
 .footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
     background-color: rgba(67, 66, 75, 1);
     color: white;
     z-index: 9;
@@ -235,3 +231,4 @@ nav span:active > i,
     border-color: #007bff;
     cursor: pointer;
 }
+

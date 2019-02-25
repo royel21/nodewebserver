@@ -11,11 +11,18 @@ video{
 }
 
 #video-viewer {
-    display: block;
+    display: flex;
+    flex-direction: column;
     height: 100%;
     width: 100%;
     background-color: black;
-    padding-bottom: 53px;
+    padding: 0;
+}
+
+#video-container{
+    height: 100%;
+    width: 100%;
+    padding-bottom: 56px;
 }
 
 body .clock {
@@ -50,11 +57,15 @@ body:-webkit-full-screen .clock .time {
     font-size: initial;
 }
 
-body:-webkit-full-screen #v-control-2{
+#video-viewer:-webkit-full-screen #v-control-2{
     display: inline-block;
-    padding: 5px 0px 5px 5px;
+    padding: 10px 0px 5px 5px;
     background-color: rgba(0,0,0,0.4);
     border-radius: 5px;
+}
+
+#video-viewer:-webkit-full-screen #video-container{
+    padding: 0;
 }
 
 .hide-vcontrols {
@@ -76,7 +87,7 @@ body:-webkit-full-screen #v-control-2{
     padding: 0 5px;
 }
 
-body:-webkit-full-screen .footer > span i {
+#video-viewer:-webkit-full-screen .footer > span i {
     background-color: black;
     padding: 2px 4px;
     border-radius: 5px;
@@ -99,7 +110,7 @@ body:-webkit-full-screen .footer > span i {
 #v-total-time {
     position: fixed;
     left: 10px;
-    bottom: 5px;
+    bottom: 0px;
     font-size: 14px;
     color: white;
     z-index: 10;
@@ -107,15 +118,16 @@ body:-webkit-full-screen .footer > span i {
     z-index: 1000;
 }
 
-body:-webkit-full-screen #v-total-time {
+#video-viewer:-webkit-full-screen #v-total-time {
     font-size: 14px;
     background-color: black;
     border-radius: 5px;
     padding: 1px 5px;
     border: 1px solid;
+    bottom: 10px;
 }
 
-body:-webkit-full-screen #video-viewer {
+#video-viewer:-webkit-full-screen #video-viewer {
     padding: 0;
 }
 
@@ -167,12 +179,12 @@ body:-webkit-full-screen #video-viewer {
     padding-right: 70px;
 }
 
-body:-webkit-full-screen .v-controls .v-vol {
+#video-viewer:-webkit-full-screen .v-controls .v-vol {
     position: relative;
     width: max-content;
 }
 
-body:-webkit-full-screen .v-controls .vol-show{
+#video-viewer:-webkit-full-screen .v-controls .vol-show{
     position: fixed;
    transform: rotate(270deg);
    bottom: 126px;
@@ -223,7 +235,7 @@ body:-webkit-full-screen .v-controls .vol-show{
     transform: rotateZ(45deg) scaleX(1);
 }
 
-body:not(:-webkit-full-screen) .v-controls {
+#video-viewer:not(:-webkit-full-screen) .v-controls {
     opacity: 1;
 }
 

@@ -1,5 +1,4 @@
 let LocalStrategy = require('passport-local').Strategy;
-let bcrypt = require('bcrypt');
 let db = require('./models');
 
 module.exports = (passport) => {
@@ -40,7 +39,7 @@ module.exports = (passport) => {
             }
         }).then(user => {
             if (user) {
-                bcrypt.compare(password, user.Password, (err, result) => {
+                user.validPassword(password).then((result) => {
                     if (result) {
                         return done(null, user);
                     } else {

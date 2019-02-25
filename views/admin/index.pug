@@ -4,6 +4,7 @@ extends ../share/layout
 block css
     link(rel="stylesheet" href="/css/admin.css" type="text/css")
     link(rel="stylesheet" href="/css/modal.css" type="text/css")
+    link(rel="stylesheet" href="/css/tree-view.css" type="text/css")
 
 block navbar
     include ../share/navbar2
@@ -25,17 +26,24 @@ block navbar
                 a.nav-link(href="/admin/categories" class=""+(categories ? "active" : ""))
                     i.fas.fa-tags.text-primary
                         span Categorias
+            li.nav-item
+                a.nav-link(href="/admin/configs" class=""+(configs ? "active" : ""))
+                    i.fas.fa-cogs.text-primary
+                        span Configuraciones
 
 block content
     if users
         include ./users-table
-        +users_table(users)
+        +users_table(users, pagesData, "/admin/users/", csrfToken)
     else if movies
         include ./movies-table
         +movies_table(movies)
     else if categories
         include ./categories-table
-        +categories_table(categories, pagesData)
+        +categories_table(categories, pagesData, "/admin/categories/")
+    else if configs
+        include ./configs/configs
+        +configs(configs, disks)
 
 block script
     script(src="/js/admin.js")

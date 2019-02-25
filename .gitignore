@@ -1,2 +1,7 @@
 node_modules
 temp.pug
+local_modules/win-explorer/node_modules
+local_modules/win-explorer/.vscode
+local_modules/win-explorer/bin
+local_modules/win-explorer/build
+local_modules/win-explorer/test

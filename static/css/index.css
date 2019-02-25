@@ -61,7 +61,7 @@ body{
 .far:hover,
 .fas:hover,
 .fa:hover {
-    text-shadow: 0 0 5px #fff;
+    text-shadow: 0 0 2px #fff;
     cursor: pointer;
 }
 
@@ -88,4 +88,38 @@ body{
 .pagination .page-link{
     padding: 0 0.25em;
     font-size: 1.7rem;
+}
+
+#popup {
+    display: none;
+    position: absolute;
+    min-width: 60px;
+    width: max-content;
+    max-width: 225px;
+    z-index: 1000;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.9);
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-size: 14px;
+    pointer-events: none;
+    word-wrap: break-word;
+    text-align: center;
+    pointer-events: none;
+}
+
+#popup:after {
+    content: " ";
+    position: absolute;
+    height: 12px;
+    width: 12px;
+    top: -6px;
+    right: calc(100% / 2 - 6px);
+    transform: rotate(45deg);
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+#popup.popup-top:after {
+    top: auto;
+    bottom: -6px
 }

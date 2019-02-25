@@ -6,6 +6,9 @@ var passport = require('passport');
 var session = require('express-session');
 var db = require('./models');
 var flash = require('connect-flash');
+const bodyParser = require('body-parser');
+const csrf = require('csurf');
+
 //Routes
 var home = require("./routes/homeRoute");
 var vplayer = require("./routes/videoPlayerRoute");
@@ -14,10 +17,13 @@ var admin = require('./routes/adminRoute');
 require('./passport_config')(passport);
 
 var app = express();
+const server = require('http').Server(app);
+require('./socketio-server')(server, app);
 
 app.set('view engine', 'pug');
 app.set('views', './views');
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -46,10 +52,8 @@ app.use(function (req, res, next) {
 
   next();
 });
-
+app.use(csrf({ cookie: true }))
 app.use("/", home);
-
-
 app.use("/videoplayer", vplayer);
 app.use('/admin', admin);
 // catch 404 and forward to error handler
@@ -65,12 +69,13 @@ app.use(function (err, req, res, next) {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
   // render the error page
   res.status(err.status || 500);
+  console.log(req.url)
   console.log("some errors:", err);
   return res.render('error');
 });
 
 db.init().then(() => {
-  var server = app.listen(5080, function () {
+  server.listen(5080, function () {
     console.log('Node server is running.. at http://localhost:5080');
   });
 })

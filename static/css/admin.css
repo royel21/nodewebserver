@@ -1,5 +1,5 @@
 #content {
-    margin-left: 170px;
+    margin-left: 190px;
     transition: all 0.3s ease;
 }
 
@@ -32,7 +32,7 @@
     top: 42px;
     background-color: #111;
     overflow-x: hidden;
-    width: 160px;
+    width: 185px;
     transition: all 0.3s ease;
 }
 
@@ -58,11 +58,22 @@
 }
 
 .sidenav li:hover {
-    background-color: #4800ff;
+    background-color: rgba(0,0,0,.9);
+}
+.sidenav .fa:hover,
+.sidenav .far:hover,
+.sidenav .fas:hover{
+    text-shadow: initial;
 }
 
-.sidenav a:hover {
+.sidenav .nav-tabs .nav-link{
+    border-color: initial;
+    border: initial;
+}
+.sidenav .nav-tabs .nav-link:hover {
     color: #f1f1f1;
+    border-color: initial;
+    border: initial;
 }
 
 .nav-item i span{
@@ -98,7 +109,7 @@
 }
 
 #table-controls form{
-    height: 40px;
+    height: 30px;
 }
 
 #table-controls #btn-search{
@@ -119,9 +130,19 @@
     top: -3px;
     margin-right: 5px;
 }
+#search-form .input-group-prepend,
+#search-form .form-control,
+#table-controls .badge,
+#items select.form-control,
+#items .input-group-prepend{
+    height: 32px;
+}
+#table-controls .badge{
+    font-size: 24px;
+}
 
-#table-controls #items *{
-   /* padding: 0; */
+#table-controls #items label{
+    padding: 0rem 0.75rem;
 }
 
 #table-controls #itemsPerPage{
@@ -130,9 +151,33 @@
 }
 
 #table-controls #pager a{
-    font-weight: inherit;
-    font-size: 1.6rem;
+    font-weight: 100;
+    font-size: 24px;
 }
+
+#table-controls #pager .fa{
+    font-weight: 600;
+    font-size: 22px;
+}
+#search-input{
+    position: relative;
+    border-radius: 0px 5px 5px 0px;
+}
+
+#table-controls #clear-search .fa-times-circle{
+    display: none;
+    position: absolute;
+    top: 6px;
+    right: 5px;
+    font-size: 20px;
+    color: firebrick;
+    z-index: 99;
+}
+
+#table-controls #search-input:valid + #clear-search .fa-times-circle{
+    display: initial;
+}
+
 @media screen and (min-width: 980px) {
     .table-responsive-md, .table-responsive-sm {
         overflow-y: hidden;

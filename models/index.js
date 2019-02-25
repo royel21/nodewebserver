@@ -2,14 +2,13 @@ const Sequelize = require("sequelize");
 const path = require('path');
 const fs = require('fs-extra');
 var dbPath = path.join('./video.db');
-var bcrypt = require('bcrypt');
 
 const db = {};
 
 const Op = Sequelize.Op
 const DataTypes = Sequelize.DataTypes
 const sequelize = new Sequelize('sqlite:./' + dbPath, {
-    logging: false,
+    logging: console.log,
     operatorsAliases: {
         $and: Op.and,
         $or: Op.or,
@@ -28,8 +27,6 @@ db.video = require('./video')(sequelize, DataTypes);
 db.category = require('./category')(sequelize, DataTypes);
 db.favorite = require('./favorites')(sequelize, DataTypes);
 db.sequelize = sequelize;
-db.generateHash = (password) => bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
-
 
 db.video.belongsToMany(db.category, {
     through: 'videocategory',
@@ -43,22 +40,19 @@ db.user.hasOne(db.favorite);
 db.init = async (isforce) => {
     if (!fs.existsSync(dbPath) || isforce) {
         await sequelize.sync({
-            logging: console.log,
+            logging: false,
             force: isforce
         });
         let users = [{
             Name: "Admin",
-            Password: db.generateHash("Admin"),
-            Role: "admin",
-            CreatedAt: new Date()
+            Password: "Admin",
+            Role: "admin"
         }, {
             Name: "Rconsoro",
-            Password: db.generateHash("123456"),
-            CreatedAt: new Date()
+            Password: "123456"
         }, {
             Name: "Rmarero",
-            Password: db.generateHash("123456"),
-            CreatedAt: new Date()
+            Password: "123456"
         }];
         await db.user.bulkCreate(users);
 

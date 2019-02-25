@@ -9,7 +9,8 @@ router.get('/', function (req, res) {
 //hello
 router.get("/movie.mp4",(req, res)=>{
   console.log("loading movie")
-    var file = "D:\\Anime\\One Piece\\[by d_a_HD] One Piece (788).mp4";
+    // var file = "D:\\Anime\\One Piece\\[by d_a_HD] One Piece (788).mp4";
+    var file = "D:\\Download\\Jav\\ADN-189.mp4"
     fs.stat(file, function (err, stats) {
       if (err) {
         if (err.code === 'ENOENT') {
@@ -32,7 +33,7 @@ router.get("/movie.mp4",(req, res)=>{
       var chunksize = (end - start) + 1;
 
       // poor hack to send smaller chunks to the browser
-      var maxChunk = 1024 * 1024; // 1MB at a time
+      var maxChunk = 2048 * 1024; // 1MB at a time
       if (chunksize > maxChunk) {
         end = start + maxChunk - 1;
         chunksize = (end - start) + 1;

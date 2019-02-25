@@ -1,15 +1,22 @@
-mixin users_table(users)
+mixin users_table(users, pagesdata, action, csrfToken)
     #table-container.text-light.bg-dark.rounded.mx-2(data-action="/admin/user-modal")
         #table-controls
             span.show-form
                 i.fa.fa-user-plus.text-primary
-            form.d-inline-block.ml-2(action="/users/search" method="POST")    
+            form#search-form.d-inline-block.ml-2(action="/admin/users/search" method="POST") 
+                input(type="hidden" name="_csrf" value=""+ csrfToken)
+                input(type="hidden" name="page" value=""+ pagesdata.currentPage)
+                input(type="hidden" name="items" value=""+ pagesdata.itemsPerPage)
                 .input-group.mb-3
                     .input-group-prepend
-                        label#btn-search.input-group-text(for="searchtext") Search
-                    input#search-input.form-control(required="" type="text" name="searchtext" value="" placeholder="Enter Search")
+                        button#btn-search.input-group-text(type="submit")
+                            i.fa.fa-search
+                    input#search-input.form-control(type="text" name="search" value=pagesdata.search placeholder="Enter Search" required)
+                    span#clear-search
+                        i.fas.fa-times-circle
             
-            span.badge.badge-primary #{users.count}
+            include ../share/pagination
+            +pagination(users.count, pagesdata, action, csrfToken)
         
         table.table.table-dark.user-table.table-hover
             thead

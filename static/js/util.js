@@ -1,3 +1,4 @@
+window.local = localStorage;
 
 $.expr[":"].contains = $.expr.createPseudo(function (arg) {
     return function (elem) {
@@ -55,10 +56,11 @@ formatTime = (time) => {
         String(min).padStart(2, "0") + ':' + String(sec).padStart(2, "0");
 }
 
-setfullscreen = () => {
+setfullscreen = (element) => {
     if (!document.webkitIsFullScreen) {
-        document.body.webkitRequestFullscreen();  
+        element.webkitRequestFullscreen();  
     } else {
         document.webkitCancelFullScreen();
     }
+    $('.fa-expand-arrows-alt').attr('data-title', document.webkitIsFullScreen ? "Pantalla Completa" : "Salir Pantalla Completa");
 }

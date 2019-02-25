@@ -7,7 +7,8 @@ mixin movies_table(movies)
             form.d-inline-block.ml-2(action="/movies/search" method="POST")    
                 .input-group.mb-3
                     .input-group-prepend
-                        label#btn-search.input-group-text(for="searchtext") Search
+                        label#btn-search.input-group-text(for="searchtext")
+                            .fa.fa-search
                     input#search-input.form-control(required="" type="text" name="searchtext" value="" placeholder="Enter Search")
             
             span.badge.badge-primary #{movies.count}

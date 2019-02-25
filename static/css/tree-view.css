@@ -1,0 +1,38 @@
+ul,
+.tree-view{
+    list-style-type: none;
+    font-weight: bold;
+}
+
+#paths li:first-child:not(:only-child){
+    display: none;
+}
+
+.tree-item {
+    position: relative;
+}
+
+.caret{
+    position: absolute;
+    left: -20px;
+    cursor: pointer;
+    margin-right: 5px;
+    transform: rotate(90deg);
+}
+.caret:last-child{
+    transform: rotate(0);
+}
+
+.tree-item .dir{
+    position: relative;
+    cursor: pointer;
+} 
+.tree-item .dir:active{
+    color: lightblue;
+}
+.tree-item .dir:hover:after{
+    content: 'Add';
+    position: absolute;
+    right: -40px;
+    color: blue;
+}

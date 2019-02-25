@@ -2,31 +2,48 @@
 let db = require('../models');
 
 exports.index = (req, res) => {
-   res.redirect('/admin/users');
+    res.redirect('/admin/users');
 }
 
 exports.users = (req, res) => {
     console.log("my params: ", req.params)
-    let userPerPage = 20;
-    let page = 1;
-    let begin = ((page - 1) * userPerPage);
-    let val = "";
+
+    let itemsPerPage = req.params.items || req.query.items || 10;
+    let currentPage = req.params.page || 1;
+    let begin = ((currentPage - 1) * itemsPerPage);
+    let val = req.params.search || "";
 
     db.user.findAndCountAll({
         order: ['Role'],
         offset: begin,
-        limit: userPerPage,
+        limit: itemsPerPage,
         where: {
             Name: {
                 [db.Op.like]: "%" + val + "%"
             }
         }
     }).then(users => {
-        var numberOfPages = Math.ceil(users.count / userPerPage);
-        res.render("admin/index.pug", { title: "Administrator", users });
+        var totalPages = Math.ceil(users.count / itemsPerPage);
+        res.render("admin/index.pug", {
+            title: "Administrar Usuarios", users,
+            pagesData: {
+                currentPage,
+                itemsPerPage,
+                totalPages,
+                search: val
+            },
+            csrfToken: req.csrfToken()
+        });
     }).catch(err => {
         res.status(500).send('Internal Server Error');
     });
+}
+
+exports.postSearch = (req, res) =>{
+    let itemsPerPage = req.body.items || 10;
+    let currentPage = req.body.page || 1;
+    let val = req.body.search || "";
+    res.redirect(`/admin/users/${currentPage}/${itemsPerPage}/${val}`)
 }
 
 exports.user_modal = (req, res) => {
@@ -46,8 +63,8 @@ exports.user_modal = (req, res) => {
         res.status(500).send('Internal Server Error');
     });
 }
-const sendPostResponse = (res, action, state, user) =>{
-    return res.render("admin/user-row", {user}, (err, html) => {
+const sendPostResponse = (res, action, state, user) => {
+    return res.render("admin/user-row", { user }, (err, html) => {
         console.log(err)
         res.send({ action, state, name: user.Name, data: html });
     });
@@ -63,7 +80,7 @@ const createUser = (req, res) => {
 
     db.user.create({
         Name: req.body.username,
-        Password: db.generateHash(req.body.password),
+        Password: req.body.password,
         Role: req.body.role,
         CreatedAt: new Date()
     }).then(newUser => {
