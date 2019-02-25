@@ -1,9 +1,9 @@
-mixin configs(configs, disks)
-    #table-container.text-light.bg-dark.rounded.mx-2(data-action="/admin/configs-modal")
+mixin configs(configs, pagedatas)
+    #table-container.text-light.bg-dark.rounded.mx-
         .text-center.text-light
             h2 Directorios Agregados
 
-        ul#paths.list-group.text-dark.font-weight-bold(data-action-delete="/admin/category-delete")
+        ul#paths.list-group.text-dark.font-weight-bold(data-csrf=pagedatas.csrfToken)
             li.list-group-item.list-group-item-action No hay Directorios Agregados
             each path in configs.paths
                 li.list-group-item.list-group-item-action
@@ -11,11 +11,8 @@ mixin configs(configs, disks)
                         i.ml-2.text-danger.fas.fa-trash-alt
                     span.ml-2= path
 
-        div.card.text-dark
+        .card.text-dark
             .text-center.text-light
-            h2 Todos los Discos Duros
-            ul.tree-view
-                each disk in disks
-                    li.tree-item
-                        span.dir= disk
-                        span.caret &#x25B6;
+            #disks
+                h2 Espere Por favor.
+                        

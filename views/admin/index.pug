@@ -1,6 +1,5 @@
 extends ../share/layout
 
-
 block css
     link(rel="stylesheet" href="/css/admin.css" type="text/css")
     link(rel="stylesheet" href="/css/modal.css" type="text/css")
@@ -33,17 +32,17 @@ block navbar
 
 block content
     if users
-        include ./users-table
-        +users_table(users, pagesData, "/admin/users/", csrfToken)
+        include ./users/users-table
+        +users_table(users, pagedatas)
     else if movies
-        include ./movies-table
-        +movies_table(movies, pagesData, "/admin/movies/", csrfToken)
+        include ./movies/movies-table
+        +movies_table(movies, pagedatas)
     else if categories
-        include ./categories-table
-        +categories_table(categories, pagesData, "/admin/categories/", csrfToken)
+        include ./categories/categories-table
+        +categories_table(categories, pagedatas)
     else if configs
         include ./configs/configs
-        +configs(configs, disks)
+        +configs(configs, pagedatas)
 
 block script
     script(src="/js/admin.js")

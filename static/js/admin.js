@@ -1,3 +1,5 @@
+const socket = io();
+window.history.replaceState(document.title, document.title, document.location.href);
 
 $(document).on("click", ".show-form", (e) => {
     let tr = e.target.closest('tr');
@@ -42,7 +44,7 @@ $(document).on('submit', '#create-edit', (e) => {
         console.log(formData);
         formData.push({ name: "cats", value: cats });
     }
-    
+
     $.post($form.attr('action'), formData, (resp) => {
         console.log(resp)
 
@@ -80,7 +82,6 @@ $('body').on('click', '#add-cat', (e) => {
         let cat = `<label class="cat badge badge-primary mx-1" data-val="${val}">${text}</label>`
         $('#cat-group').append($(cat))
     }
-    console.log($('#cat-group').find('.cat[data-val="' + val + '"]').length)
     // $.post("/admin/array-test", {data:JSON.stringify(["one", "two", "three"])}, (resp)=>{
     //     console.log(resp);
     // })
@@ -92,7 +93,10 @@ $('body').on('click', '.tree-view .caret', (e) => {
         let dir = $(treeItem).find('.dir').text();
         let path = e.target.closest('ul').dataset.path;
 
-        $.post('/admin/folder-content', { path, folder: dir }, (resp) => {
+        $.post('/admin/configs/folder-content', {
+            path, folder: dir,
+            _csrf: $("#paths").data('csrf')
+        }, (resp) => {
 
             $(treeItem).append(resp)
         });
@@ -104,7 +108,10 @@ $('body').on('click', '.tree-view .caret', (e) => {
 $('body').on('click', '.tree-view .dir', (e) => {
     let dir = e.target.textContent;
     let path = e.target.closest('ul').dataset.path;
-    $.post('/admin/add-path', { path, folder: dir }, (resp) => {
+    $.post('/admin/configs/add-path', {
+        path,
+        folder: dir, _csrf: $("#paths").data('csrf')
+    }, (resp) => {
         $("#paths").append(resp);
     });
 });
@@ -112,8 +119,10 @@ $('body').on('click', '.tree-view .dir', (e) => {
 $('body').on('click', '#paths .fa-trash-alt', (e) => {
 
     let li = e.target.closest('li');
-    $.post('/admin/delete-path', { path: li.textContent }, (resp) => {
-        console.log(resp);
+    $.post('/admin/configs/delete-path', {
+        path: li.textContent,
+        _csrf: $("#paths").data('csrf')
+    }, (resp) => {
         if (resp == "ok") {
             $(li).fadeOut((e) => {
                 li.remove();
@@ -122,9 +131,64 @@ $('body').on('click', '#paths .fa-trash-alt', (e) => {
     });
 });
 
-$('#clear-search').click((e)=>{
-    $('#search-input').val("");
-    $('#search-form').submit();
-})
+const loadPartialPage = (url) =>{
+    if(!url) return;
 
-const socket = io();
+    $.get(url, { partial: true }, (resp) => {
+        $('#table-container').replaceWith(resp);
+        if (url.includes('config')) {
+            socket.emit('load-disks', "load now");
+        }
+    });
+}
+
+$('.sidenav .nav-link').click((e) => {
+    e.preventDefault();
+    let a = e.target.closest('a');
+    let url = a.href;
+
+    window.history.pushState(a.textContent, a.textContent, url);
+    document.title = a.textContent;
+    $('.sidenav a').removeClass("active");
+    a.classList.add('active');
+    loadPartialPage(url);
+});
+
+window.onpopstate = function(e) {
+    let url = document.location.href;
+    $('.sidenav a').removeClass("active");
+    $(`.sidenav .nav-link:contains("${e.state}")`).addClass('active');
+    loadPartialPage(url);
+}
+
+socket.on("disk-loaded",(data)=>{
+    $('#disks').empty().append(data);
+    console.log('data-loaded');
+});
+
+socket.emit('load-disks',"load now");
+
+$('body').on('click', '.page-item',(e)=>{
+    e.preventDefault();
+    let url = e.target.tagName == 'I' ? e.target.closest('a').href : e.target.href;
+    loadPartialPage(url);
+});
+const submitItemAndSearchForm = (e) =>{
+    let form;
+    if(e.tagName == "FORM"){
+        form = e;
+    }else{
+        e.preventDefault();
+        form = e.target.closest('form');
+    }
+    let url = $(form).attr('action');
+    $.post(url, $(form).serialize(),(resp)=>{
+        $('#table-container').replaceWith(resp);
+        if (url.includes('config')) {
+            socket.emit('load-disks', "load now");
+        }
+    });
+}
+
+$('body').on('submit', '#search-form', submitItemAndSearchForm);
+ 

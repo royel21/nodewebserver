@@ -18,16 +18,18 @@ exports.movies = (req, res) => {
         }
     }).then(movies => {
         var totalPages = Math.ceil(movies.count / itemsPerPage);
-        res.render("admin/index.pug", {
-            title: "Administrar Peliculas",
+        let view = req.query.partial ? "admin/movies/partial-movies-table" : "admin/index.pug";
+        res.render(view, {
+            title: "Peliculas",
             movies,
-            pagesData: {
+            pagedatas: {
                 currentPage,
                 itemsPerPage,
                 totalPages,
-                search: val
-            },
-            csrfToken: req.csrfToken()
+                search: val,
+                action:"/admin/movies/",
+                csrfToken: req.csrfToken()
+            }
         });
     }).catch(err => {
         console.log(err)
@@ -39,7 +41,7 @@ exports.postSearch = (req, res) =>{
     let itemsPerPage = req.body.items || 10;
     let currentPage = req.body.page || 1;
     let val = req.body.search || "";
-    res.redirect(`/admin/movies/${currentPage}/${itemsPerPage}/${val}`)
+    res.redirect(`/admin/movies/${currentPage}/${itemsPerPage}/${val}?partial=true`)
 }
 
 exports.movie_modal = (req, res) => {
@@ -52,7 +54,7 @@ exports.movie_modal = (req, res) => {
         let movie = data ? data : {};
         db.category.findAll({ order: ['Name'] }).then(ca => {
             var categories = ca ? ca : [];
-            res.render("admin/movie_form",
+            res.render("admin/movies/movie_form",
                 {
                     movie, csrfToken: req.csrfToken(),
                     categories,
@@ -75,7 +77,7 @@ const createMovie = (req, res) => {
         Name: req.body.name
     }).then(newMovie => {
 
-        res.render("admin/user-row", {
+        res.render("admin/movies/user-row", {
             id: newMovie.Id,
             name: newMovie.Name
         }, (err, html) => {

@@ -1,23 +1,24 @@
-mixin movies_table(movies, pagesdata, action, csrfToken) 
-    #table-container.text-light.bg-dark.rounded.mx-2(data-action="/admin/movies-modal")
+mixin movies_table(movies, pagedatas) 
+    #table-container.text-light.bg-dark.rounded.mx-2(data-action=pagedatas.action+"modal")
         #table-controls
             span.show-form
                 i.fas.fa-video.text-primary
                     i.far.fa-plus-square.text-light
-            form#search-form.d-inline-block.ml-2(action=action+"search" method="POST") 
-                input(type="hidden" name="_csrf" value=""+ csrfToken)
+            
+            form#search-form.d-inline-block.ml-2(action=pagedatas.action+"search" method="POST") 
+                input(type="hidden" name="_csrf" value=""+ pagedatas.csrfToken)
                 input(type="hidden" name="page" value="1")
-                input(type="hidden" name="items" value=""+ pagesdata.itemsPerPage)
+                input(type="hidden" name="items" value=""+ pagedatas.itemsPerPage)
                 .input-group.mb-3
                     .input-group-prepend
                         button#btn-search.input-group-text(type="submit")
                             i.fa.fa-search
-                    input#search-input.form-control(type="text" name="search" value=pagesdata.search placeholder="Enter Search" required)
+                    input#search-input.form-control(type="text" name="search" value=pagedatas.search placeholder="Enter Search" required)
                     span#clear-search
                         i.fas.fa-times-circle
             
-            include ../share/pagination
-            +pagination(movies.count, pagesdata, action, csrfToken)
+            include ../../share/pagination
+            +pagination(movies.count, pagedatas)
         
         table.table.table-dark.user-table.table-hover
             thead
@@ -30,6 +31,6 @@ mixin movies_table(movies, pagesdata, action, csrfToken)
                         td
                             span.show-form
                                 i.fas.fa-edit.fa-2x
-                            span.show-delete(data-action="/admin/movie-delete")
+                            span.show-delete(data-action=pagedatas.action+"delete")
                                 i.ml-2.text-danger.fas.fa-trash-alt.fa-2x
                         td= video.Name

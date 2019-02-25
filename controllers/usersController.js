@@ -6,8 +6,6 @@ exports.index = (req, res) => {
 }
 
 exports.users = (req, res) => {
-    console.log("my params: ", req.params)
-
     let itemsPerPage = req.params.items || req.query.items || 10;
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
@@ -24,16 +22,19 @@ exports.users = (req, res) => {
         }
     }).then(users => {
         var totalPages = Math.ceil(users.count / itemsPerPage);
-        res.render("admin/index.pug", {
-            title: "Administrar Usuarios", users,
-            pagesData: {
+        let view = req.query.partial ? "admin/users/partial-users-table" : "admin/index";
+        res.render(view, {
+            title: "Usuarios", users,
+            pagedatas: {
                 currentPage,
                 itemsPerPage,
                 totalPages,
-                search: val
-            },
-            csrfToken: req.csrfToken()
+                search: val,
+                action:"/admin/users/",
+                csrfToken: req.csrfToken()
+            }
         });
+        
     }).catch(err => {
         res.status(500).send('Internal Server Error');
     });
@@ -43,7 +44,7 @@ exports.postSearch = (req, res) =>{
     let itemsPerPage = req.body.items || 10;
     let currentPage = req.body.page || 1;
     let val = req.body.search || "";
-    res.redirect(`/admin/users/${currentPage}/${itemsPerPage}/${val}`)
+    res.redirect(`/admin/users/${currentPage}/${itemsPerPage}/${val}?partial=true`)
 }
 
 exports.user_modal = (req, res) => {

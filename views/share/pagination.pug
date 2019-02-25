@@ -1,11 +1,11 @@
-mixin pagination(total, data, action, csrfToken)
+mixin pagination(total, data)
     -let currentPage = parseInt(data.currentPage)
     -let totalPages = parseInt(data.totalPages)
     -let itemsPerPage = parseInt(data.itemsPerPage)
     -let search = data.search
-    if data.totalPages > 1 
+    if totalPages > 1 
         div#pager
-            ul.pagination(data-action=action)
+            ul.pagination(data-action=data.action)
                 if currentPage == 1
                     li.page-item.disabled
                         a.page-link
@@ -15,23 +15,23 @@ mixin pagination(total, data, action, csrfToken)
                             i.fa.fa-angle-left
                 else
                     li.page-item
-                        a.page-link(href=action+1+"/"+itemsPerPage+"/"+search)
+                        a.page-link(href=data.action+1+"/"+itemsPerPage+"/"+search)
                             i.fa.fa-angle-double-left
                     li.page-item
-                        a.page-link(href=action+(currentPage-1)+"/"+itemsPerPage+"/"+search)
+                        a.page-link(href=data.action+(currentPage-1)+"/"+itemsPerPage+"/"+search)
                             i.fa.fa-angle-left
                     
                 -for (let i = currentPage - 2; i <= currentPage - 1; i++)
                     -if (i > 0)
                         li.page-item
-                            a.page-link(href=action+i+"/"+itemsPerPage+"/"+search)= i
+                            a.page-link(href=data.action+i+"/"+itemsPerPage+"/"+search)= i
                 li.page-item.active
                     a.page-link= currentPage
 
                 -for (let i = currentPage + 1; i <= currentPage + 2; i++)
                     -if (i < parseInt(totalPages)+1)
                         li.page-item
-                            a.page-link(href=action+i+"/"+itemsPerPage+"/"+search)= i
+                            a.page-link(href=data.action+i+"/"+itemsPerPage+"/"+search)= i
                 if currentPage == totalPages
                     li.page-item.disabled
                         a.page-link
@@ -41,15 +41,15 @@ mixin pagination(total, data, action, csrfToken)
                             i.fa.fa-angle-right
                 else
                     li.page-item
-                        a.page-link(href=action+(parseInt(currentPage)+1)+"/"+itemsPerPage)
+                        a.page-link(href=data.action+(parseInt(currentPage)+1)+"/"+itemsPerPage)
                             i.fa.fa-angle-right
                     li.page-item
-                        a.page-link(href=action+totalPages+"/"+itemsPerPage)
+                        a.page-link(href=data.action+totalPages+"/"+itemsPerPage)
                             i.fa.fa-angle-double-right
     span#itemsPerPage(data-itemsperpage=itemsPerPage)
         if total > 10
-            form(action=action+"search" method="POST" onchange="submit()")
-                input(type="hidden" name="_csrf" value=""+ csrfToken)
+            form#items-form(action=data.action+"search" method="POST" onchange="submitItemAndSearchForm(this)")
+                input(type="hidden" name="_csrf" value=""+ data.csrfToken)
                 input(type="hidden" name="page" value="1")
                 input(type="hidden" name="search" value=""+ search)
                 #items.input-group

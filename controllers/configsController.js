@@ -1,5 +1,4 @@
 
-const drivelist = require('drivelist');
 const windrive = require('win-explorer')
 const path = require('path')
 const fs = require('fs-extra')
@@ -9,29 +8,24 @@ const configPath = './config/configs.json'
 const configs = fs.readJsonSync(configPath);
 
 exports.configs = (req, res, next) => {
-    drivelist.list((error, drives) => {
-        if (error) return next(createError(500));
-
-        let disks = [];
-        if (drives) {
-            for (let disk of drives) {
-                disks.push(disk.mountpoints[0].path);
-            }
+    let view = req.query.partial ? "admin/configs/partial-configs" : "admin/index.pug"; 
+    res.render(view, {
+        title: "Configuraciones", configs, pagedatas: {
+            action: "/admin/configs/",
+            csrfToken: req.csrfToken()
         }
-        disks.sort();
-        res.render('admin/index.pug', { title: "Configuraciones", configs, disks });
     });
 }
 
 exports.folderContent = (req, res) => {
-    
+
     let dir = "";
     if (req.body.path) {
         dir = path.join(req.body.path, req.body.folder);
     } else {
         dir = req.body.folder;
     }
-    
+
     let folders = windrive.ListFiles(dir, [], { hidden: false, file: false, directory: true });
     return folders.length == 0 ? res.send("") : res.render('admin/configs/tree-node', { fpath: dir, folders });
 }

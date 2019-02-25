@@ -17,14 +17,18 @@ exports.categories = (req, res) => {
             }
         }
     }).then(categories => {
-        var totalPages = Math.ceil(categories.count / itemsPerPage);
-        res.render("admin/index.pug", { 
-            title: "Administrar Categorias", 
+        let totalPages = Math.ceil(categories.count / itemsPerPage);
+        let view = req.query.partial ? "admin/categories/partial-categories-table" : "admin/index.pug"; 
+        res.render(view, { 
+            title: "Categorias", 
             categories, 
-            pagesData: {
+            pagedatas: {
                 currentPage,
                 itemsPerPage,
-                totalPages
+                totalPages,
+                search: val,
+                action:"/admin/categories/",
+                csrfToken: req.csrfToken()
             }
         });
     }).catch(err => {
@@ -33,8 +37,12 @@ exports.categories = (req, res) => {
     });
 }
 
-exports.categoriesPost = (req, res) =>{
-    return res.redirect('/admin/categories/1/'+req.body.items);
+
+exports.postSearch = (req, res) =>{
+    let itemsPerPage = req.body.items || 10;
+    let currentPage = req.body.page || 1;
+    let val = req.body.search || "";
+    res.redirect(`/admin/categories/${currentPage}/${itemsPerPage}/${val}?partial=true`)
 }
 
 exports.category_modal = (req, res) => {
@@ -45,7 +53,7 @@ exports.category_modal = (req, res) => {
         }
     }).then(data => {
         let category = data ? data : {};
-        res.render("admin/category_form",
+        res.render("admin/categories/category_form",
             {
                 category,
                 csrfToken: req.csrfToken(),
@@ -57,7 +65,7 @@ exports.category_modal = (req, res) => {
 }
 
 const sendPostResponse = (res, action, state, category) =>{
-    return res.render("admin/category-row", {category}, (err, html) => {
+    return res.render("admin/categories/category-row", {category}, (err, html) => {
         console.log(html)
         res.send({ action, state, name: category.Name, data: html });
     });
