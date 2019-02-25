@@ -18,10 +18,11 @@ router.post("/create-edit-user", usersController.userModalPost);
 router.post("/users/search", usersController.postSearch);
 
 router.get("/movies", moviesController.movies);
-router.get("/movies/:page", moviesController.movies);
+router.get("/movies/:page?/:items?/:search?", moviesController.movies);
 router.get("/movies-modal", moviesController.movie_modal);
 router.get("/movies-modal/create-edit-movie", moviesController.movieModalPost);
 router.post("/array-test", moviesController.testPost);
+router.post("/movies/search", moviesController.postSearch);
 
 router.post("/categories", categoriesController.categoriesPost);
 router.get("/categories/:page?/:items?", categoriesController.categories);

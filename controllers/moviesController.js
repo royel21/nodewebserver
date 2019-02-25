@@ -2,30 +2,45 @@
 let db = require('../models');
 
 exports.movies = (req, res) => {
-    console.log("my params: ", req.param.page)
-    let moviePerPage = 20;
-    let page = 1;
-    let begin = ((page - 1) * moviePerPage);
-    let val = "";
+    let itemsPerPage = req.params.items || req.query.items || 10;
+    let currentPage = req.params.page || 1;
+    let begin = ((currentPage - 1) * itemsPerPage);
+    let val = req.params.search || "";
 
     db.video.findAndCountAll({
-        //order: ['Name'],
+        order: ['Name'],
         offset: begin,
-        limit: moviePerPage,
+        limit: itemsPerPage,
         where: {
             Name: {
                 [db.Op.like]: "%" + val + "%"
             }
         }
     }).then(movies => {
-        var numberOfPages = Math.ceil(movies.count / moviePerPage);
-        res.render("admin/index.pug", { title: "Administrar Peliculas", movies });
+        var totalPages = Math.ceil(movies.count / itemsPerPage);
+        res.render("admin/index.pug", {
+            title: "Administrar Peliculas",
+            movies,
+            pagesData: {
+                currentPage,
+                itemsPerPage,
+                totalPages,
+                search: val
+            },
+            csrfToken: req.csrfToken()
+        });
     }).catch(err => {
         console.log(err)
         res.status(500).send('Internal Server Error');
     });
 }
 
+exports.postSearch = (req, res) =>{
+    let itemsPerPage = req.body.items || 10;
+    let currentPage = req.body.page || 1;
+    let val = req.body.search || "";
+    res.redirect(`/admin/movies/${currentPage}/${itemsPerPage}/${val}`)
+}
 
 exports.movie_modal = (req, res) => {
     var uid = req.query.uid;
@@ -105,7 +120,7 @@ exports.movieModalPost = (req, res) => {
     }
 }
 
-exports.testPost = (req, res) =>{
+exports.testPost = (req, res) => {
     console.log(req.body);
     res.send("ok");
 }

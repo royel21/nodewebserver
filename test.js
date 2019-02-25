@@ -41,28 +41,27 @@ ffmpeg.setFfprobePath(ffpstatic.path) //Argument path is a string with the full 
 // }
 const db = require('./models')
 const path = require('path')
+const crc16 = require('crc').crc16;
+var timer;
+var tempFiles = [];
 
 PopulateDB = async (folder, files, id) => {
     var filteredFile = files.filter((f) => {
         return f.isDirectory || ['mp4','mkv','avi', 'ogg'].includes(f.extension.toLocaleLowerCase()) &&
             !f.isHidden
     });
-
-
-    var tempFiles = [];
+    
     for (let f of filteredFile) {
         try {
             if (!f.isDirectory) {
-                let file = await db.video.findOne({
-                    where: {
-                        Name: f.FileName
-                    }
-                });
-                if (file == null) {
+                let found = tempFiles.filter(v => v.Name === f.FileName);
+                if(found.length === 0){
                     tempFiles.push({
                         Name: f.FileName,
                         FilePath: path.join(folder, f.FileName)
                     });
+                }else{
+                    console.log(found);
                 }
             } else {
                 await PopulateDB(f.FileName, f.Files);
@@ -71,12 +70,17 @@ PopulateDB = async (folder, files, id) => {
             console.log(error)
         }
     }
-    if (tempFiles.length > 0) await db.video.bulkCreate(tempFiles);
+    //
 }
 
 scanOneDir = async (dir) => {
+    timer = new Date();
     var fis = WinDrive.ListFilesRO(dir);
     await PopulateDB(dir, fis);
+    if (tempFiles.length > 0) await db.video.bulkCreate(tempFiles);
+    timer = new Date()-timer;
+    console.log("End:",timer/1000);
+    console.log(tempFiles.length);
 }
 
-scanOneDir("D:\\Download\\Anime")
+scanOneDir("D:\\Anime")

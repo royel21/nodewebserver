@@ -37,10 +37,10 @@ block content
         +users_table(users, pagesData, "/admin/users/", csrfToken)
     else if movies
         include ./movies-table
-        +movies_table(movies)
+        +movies_table(movies, pagesData, "/admin/movies/", csrfToken)
     else if categories
         include ./categories-table
-        +categories_table(categories, pagesData, "/admin/categories/")
+        +categories_table(categories, pagesData, "/admin/categories/", csrfToken)
     else if configs
         include ./configs/configs
         +configs(configs, disks)

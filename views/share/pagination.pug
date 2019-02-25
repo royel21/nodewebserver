@@ -21,14 +21,14 @@ mixin pagination(total, data, action, csrfToken)
                         a.page-link(href=action+(currentPage-1)+"/"+itemsPerPage+"/"+search)
                             i.fa.fa-angle-left
                     
-                -for (let i = currentPage - 4; i <= currentPage - 1; i++)
+                -for (let i = currentPage - 2; i <= currentPage - 1; i++)
                     -if (i > 0)
                         li.page-item
                             a.page-link(href=action+i+"/"+itemsPerPage+"/"+search)= i
                 li.page-item.active
                     a.page-link= currentPage
 
-                -for (let i = currentPage + 1; i <= currentPage + 4; i++)
+                -for (let i = currentPage + 1; i <= currentPage + 2; i++)
                     -if (i < parseInt(totalPages)+1)
                         li.page-item
                             a.page-link(href=action+i+"/"+itemsPerPage+"/"+search)= i
@@ -50,7 +50,7 @@ mixin pagination(total, data, action, csrfToken)
         if total > 10
             form(action=action+"search" method="POST" onchange="submit()")
                 input(type="hidden" name="_csrf" value=""+ csrfToken)
-                input(type="hidden" name="page" value=""+ pagesdata.currentPage)
+                input(type="hidden" name="page" value="1")
                 input(type="hidden" name="search" value=""+ search)
                 #items.input-group
                     .input-group-prepend

@@ -1,10 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
-    let crc16 = require('crc').crc16;
+    
     const Video = sequelize.define('Video', {
         Id: {
-            type: DataTypes.STRING(15),
+            type: DataTypes.INTEGER,
             primaryKey: true,
-            unique: true
+            autoincrement: true
 
         },
         Name: {
@@ -29,16 +29,16 @@ module.exports = (sequelize, DataTypes) => {
         }
     }, {
             timestamps: false,
-            hooks: {
-                beforeCreate: (video, options) => {
-                    video.Id = crc16(video.Name).toString(16);
-                },
-                beforeBulkCreate: (videos, options) => {
-                    videos.forEach((video) => {
-                        video.Id = crc16(video.Name).toString(16);
-                    });
-                }
-            }
+            // hooks: {
+            //     beforeCreate: (video, options) => {
+            //         video.Id = crc16(video.Name).toString(16);
+            //     },
+            //     beforeBulkCreate: (videos, options) => {
+            //         videos.forEach((video) => {
+            //             video.Id = crc16(video.Name).toString(16);
+            //         });
+            //     }
+            // }
         });
 
     Video.findByName = (name) => {
