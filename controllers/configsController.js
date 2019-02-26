@@ -8,11 +8,19 @@ const configPath = './config/configs.json'
 const configs = fs.readJsonSync(configPath);
 
 exports.configs = (req, res, next) => {
+        
     let view = req.query.partial ? "admin/configs/partial-configs" : "admin/index.pug"; 
     res.render(view, {
         title: "Configuraciones", configs, pagedatas: {
             action: "/admin/configs/",
             csrfToken: req.csrfToken()
+        }
+    },(err, html) => {
+        if(req.query.partial){
+            res.send({ url: req.url, data: html });
+
+        }else{
+            res.send(html);
         }
     });
 }

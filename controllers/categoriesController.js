@@ -2,7 +2,6 @@
 let db = require('../models');
 
 exports.categories = (req, res) => {
-    console.log("my params: ", req.params)
     let itemsPerPage = req.params.items || req.query.items || 10;
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
@@ -17,6 +16,7 @@ exports.categories = (req, res) => {
             }
         }
     }).then(categories => {
+        
         let totalPages = Math.ceil(categories.count / itemsPerPage);
         let view = req.query.partial ? "admin/categories/partial-categories-table" : "admin/index.pug"; 
         res.render(view, { 
@@ -30,9 +30,15 @@ exports.categories = (req, res) => {
                 action:"/admin/categories/",
                 csrfToken: req.csrfToken()
             }
+        },(err, html) => {
+            if(req.query.partial){
+                res.send({ url: req.url, data: html });
+
+            }else{
+                res.send(html);
+            }
         });
     }).catch(err => {
-        console.log(err)
         res.status(500).send('Internal Server Error');
     });
 }
@@ -66,13 +72,11 @@ exports.category_modal = (req, res) => {
 
 const sendPostResponse = (res, action, state, category) =>{
     return res.render("admin/categories/category-row", {category}, (err, html) => {
-        console.log(html)
         res.send({ action, state, name: category.Name, data: html });
     });
 }
 
 const createCategory = (req, res) => {
-    console.log("creating");
     if (req.body.name === "" || req.body.name === undefined) {
         return res.send({ err: "Nombre no puede estar vacio" });
     }
@@ -87,7 +91,7 @@ const createCategory = (req, res) => {
 }
 
 const updateCategory = (req, res) => {
-    console.log("updating", req.body);
+
     db.category.findOne({
         where: { Id: req.body.id }
     }).then(category => {

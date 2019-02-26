@@ -7,6 +7,10 @@ ul,
 #paths li:first-child:not(:only-child){
     display: none;
 }
+.tree-view .tree-item span,
+#paths li{
+    font-size: 1.4rem;
+}
 
 .tree-item {
     position: relative;
@@ -14,7 +18,7 @@ ul,
 
 .caret{
     position: absolute;
-    left: -20px;
+    left: -25px;
     cursor: pointer;
     margin-right: 5px;
     transform: rotate(90deg);
@@ -34,10 +38,18 @@ ul,
 .tree-item .dir:hover:after{
     content: 'Add';
     position: absolute;
-    right: -40px;
-    color: blue;
+    right: -54px;
+    color: #007bff;
 }
 
 #paths .list-group-item:nth-child(2){
     border-radius: .25rem;
+}
+
+@media screen and (max-width: 600px) {
+    .tree-view .tree-item{
+       
+    }
+
+
 }

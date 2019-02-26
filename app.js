@@ -17,8 +17,6 @@ var admin = require('./routes/adminRoute');
 require('./passport_config')(passport);
 
 var app = express();
-const server = require('http').Server(app);
-require('./socketio-server')(server, app);
 
 app.set('view engine', 'pug');
 app.set('views', './views');
@@ -75,7 +73,9 @@ app.use(function (err, req, res, next) {
 });
 
 db.init().then(() => {
-  server.listen(5080, function () {
+  let server = app.listen(5080, function () {
     console.log('Node server is running.. at http://localhost:5080');
   });
+  
+  require('./socketio-server')(server, app);
 })

@@ -42,12 +42,12 @@
 
     .navbar #toggle-menu:checked + #navbarSupportedContent li
     {
-        height: 33px;
+        height: 32px;
     }
 
     .navbar #toggle-menu:checked + #navbarSupportedContent
     {
-        height: 145px;
+        height: 170px;
         opacity: 1;
         visibility: visible;
     }

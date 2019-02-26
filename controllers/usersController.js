@@ -21,6 +21,7 @@ exports.users = (req, res) => {
             }
         }
     }).then(users => {
+        
         var totalPages = Math.ceil(users.count / itemsPerPage);
         let view = req.query.partial ? "admin/users/partial-users-table" : "admin/index";
         res.render(view, {
@@ -32,6 +33,13 @@ exports.users = (req, res) => {
                 search: val,
                 action:"/admin/users/",
                 csrfToken: req.csrfToken()
+            }
+        },(err, html) => {
+            if(req.query.partial){
+                res.send({ url: req.url, data: html });
+
+            }else{
+                res.send(html);
             }
         });
         
@@ -48,6 +56,7 @@ exports.postSearch = (req, res) =>{
 }
 
 exports.user_modal = (req, res) => {
+    
     var uid = req.query.uid;
     db.user.findOne({
         where: {
@@ -55,24 +64,26 @@ exports.user_modal = (req, res) => {
         }
     }).then(data => {
         let user = data ? data : {};
-        res.render("admin/user_form",
+        res.render("admin/users/user_form",
             {
                 user: user, csrfToken: req.csrfToken(),
                 modalTitle: uid ? "Editar usuario" : "Crear Usuario"
             });
     }).catch(err => {
+        
         res.status(500).send('Internal Server Error');
     });
 }
+
 const sendPostResponse = (res, action, state, user) => {
-    return res.render("admin/user-row", { user }, (err, html) => {
-        console.log(err)
+    return res.render("admin/users/user-row", { user }, (err, html) => {
+        
         res.send({ action, state, name: user.Name, data: html });
     });
 }
 
 const createUser = (req, res) => {
-    console.log("creating");
+    
     if (req.body.username === "" || req.body.username === undefined) {
         return res.send({ err: "Nombre no puede estar vacio" });
     } else if (req.body.password == "" || req.body.password === undefined) {
@@ -92,12 +103,12 @@ const createUser = (req, res) => {
 }
 
 const updateUser = (req, res) => {
-    console.log("updating", req.body);
+    
     db.user.findOne({
         where: { Id: req.body.id }
     }).then(user_found => {
         if (user_found) {
-            console.log("rq.user", req.body);
+            
             if (req.user.Name === user_found.Name) {
                 return res.send({ state: "error", data: "No puede actualizar usuario en uso" });
             }

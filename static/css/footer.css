@@ -7,7 +7,7 @@
     color: white;
     z-index: 9;
     transition: all .3s;
-    z-index: 999;
+    z-index: 1000;
 }
 
 .footer>span {

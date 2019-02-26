@@ -5,7 +5,7 @@ $(document).on("click", ".show-form", (e) => {
     let tr = e.target.closest('tr');
     let uid = tr ? tr.id : "";
     let action = $('#table-container').data('action');
-    console.log(action, uid)
+
     $.get(action, { uid }, (resp) => {
         $('body').prepend(resp);
         $('#modal').fadeIn();
@@ -36,17 +36,16 @@ $(document).on('submit', '#create-edit', (e) => {
     let formData = $(e.target).serializeArray();
     if ($form.attr('action').includes('movie')) {
         let cats = [];
-        console.log("movies");
+
         $('#cat-group .cat').each((i, el) => {
-            console.log(el.dataset.val, i);
+
             cats.push(el.dataset.val);
         });
-        console.log(formData);
+
         formData.push({ name: "cats", value: cats });
     }
 
     $.post($form.attr('action'), formData, (resp) => {
-        console.log(resp)
 
         switch (resp.state) {
             case "error": {
@@ -60,7 +59,6 @@ $(document).on('submit', '#create-edit', (e) => {
             }
             case "create": {
                 let items = $('#itemsPerPage').data('itemsperpage');
-                console.log(items || 10)
                 if ($('tbody tr').length < (items || 10)) {
                     $('tbody').append(resp.data);
                 }
@@ -131,11 +129,11 @@ $('body').on('click', '#paths .fa-trash-alt', (e) => {
     });
 });
 
-const loadPartialPage = (url) =>{
-    if(!url) return;
+const loadPartialPage = (url) => {
+    if (!url) return;
 
     $.get(url, { partial: true }, (resp) => {
-        $('#table-container').replaceWith(resp);
+        $('#table-container').replaceWith(resp.data);
         if (url.includes('config')) {
             socket.emit('load-disks', "load now");
         }
@@ -154,41 +152,58 @@ $('.sidenav .nav-link').click((e) => {
     loadPartialPage(url);
 });
 
-window.onpopstate = function(e) {
+window.onpopstate = function (e) {
     let url = document.location.href;
+    document.title = e.state;
     $('.sidenav a').removeClass("active");
     $(`.sidenav .nav-link:contains("${e.state}")`).addClass('active');
     loadPartialPage(url);
 }
 
-socket.on("disk-loaded",(data)=>{
+socket.on("disk-loaded", (data) => {
     $('#disks').empty().append(data);
-    console.log('data-loaded');
 });
 
-socket.emit('load-disks',"load now");
-
-$('body').on('click', '.page-item',(e)=>{
+$('body').on('click', '.page-item', (e) => {
     e.preventDefault();
+    let title = document.title;
     let url = e.target.tagName == 'I' ? e.target.closest('a').href : e.target.href;
+    window.history.pushState(title, title, url);
     loadPartialPage(url);
 });
-const submitItemAndSearchForm = (e) =>{
+
+const submitItemAndSearchForm = (e) => {
     let form;
-    if(e.tagName == "FORM"){
+
+    if (e.tagName == "FORM") {
         form = e;
-    }else{
+    } else {
         e.preventDefault();
         form = e.target.closest('form');
     }
+
     let url = $(form).attr('action');
-    $.post(url, $(form).serialize(),(resp)=>{
-        $('#table-container').replaceWith(resp);
+
+    $.post(url, $(form).serialize(), (resp) => {
+
+        $('#table-container').replaceWith(resp.data);
+        let title = document.title;
+        window.history.pushState(title, title, "/admin" + resp.url.replace('?partial=true', ''));
         if (url.includes('config')) {
             socket.emit('load-disks', "load now");
         }
     });
 }
 
+$('body').on('click', '#clear-search', (e) => {
+    $('#search-input').val('');
+    submitItemAndSearchForm(e.target.closest('form'));
+});
+
 $('body').on('submit', '#search-form', submitItemAndSearchForm);
- 
+
+$(() => {
+    if (window.location.href.includes('config')) {
+        socket.emit('load-disks', "load now");
+    }
+});

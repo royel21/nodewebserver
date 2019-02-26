@@ -17,6 +17,7 @@ exports.movies = (req, res) => {
             }
         }
     }).then(movies => {
+        
         var totalPages = Math.ceil(movies.count / itemsPerPage);
         let view = req.query.partial ? "admin/movies/partial-movies-table" : "admin/index.pug";
         res.render(view, {
@@ -30,9 +31,15 @@ exports.movies = (req, res) => {
                 action:"/admin/movies/",
                 csrfToken: req.csrfToken()
             }
+        },(err, html) => {
+            if(req.query.partial){
+                res.send({ url: req.url, data: html });
+
+            }else{
+                res.send(html);
+            }
         });
     }).catch(err => {
-        console.log(err)
         res.status(500).send('Internal Server Error');
     });
 }
@@ -68,7 +75,6 @@ exports.movie_modal = (req, res) => {
 
 
 const createMovie = (req, res) => {
-    console.log("creating");
     if (req.body.name === "" || req.body.name === undefined) {
         return res.send({ err: "Nombre no puede estar vacio" });
     }
@@ -89,7 +95,6 @@ const createMovie = (req, res) => {
 }
 
 const updateMovie = (req, res) => {
-    console.log("updating", req.body);
     db.movie.findOne({
         where: { Id: req.body.id }
     }).then(movie_found => {
@@ -123,6 +128,5 @@ exports.movieModalPost = (req, res) => {
 }
 
 exports.testPost = (req, res) => {
-    console.log(req.body);
     res.send("ok");
 }

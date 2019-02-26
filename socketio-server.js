@@ -5,10 +5,9 @@ module.exports = (server, app) => {
     const pug = require('pug');
 
     io.on('connection', (socket) => {
-        console.log('Client Connected');
+        console.log("Id:"+socket.id, app.locals.user ? app.locals.user.Name : "");
         socket.on('load-disks', (client)=>{
             console.log('loading disk',app.locals.user.Name);
-            //socket.emit('disk-loaded', "finish loading disk");
             drivelist.list((error, drives) => {
                 if (error) return next(createError(500));
         
@@ -21,7 +20,6 @@ module.exports = (server, app) => {
                 disks.sort();
                 let renderTree = pug.compileFile('./views/admin/configs/tree-view.pug');
                 socket.emit('disk-loaded', renderTree({disks}));
-                console.log("data send")
             });
         });
     }); 

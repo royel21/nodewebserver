@@ -46,7 +46,7 @@ mixin pagination(total, data)
                     li.page-item
                         a.page-link(href=data.action+totalPages+"/"+itemsPerPage)
                             i.fa.fa-angle-double-right
-    span#itemsPerPage(data-itemsperpage=itemsPerPage)
+    #itemsPerPage(data-itemsperpage=itemsPerPage)
         if total > 10
             form#items-form(action=data.action+"search" method="POST" onchange="submitItemAndSearchForm(this)")
                 input(type="hidden" name="_csrf" value=""+ data.csrfToken)

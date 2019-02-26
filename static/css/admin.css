@@ -4,7 +4,7 @@
 }
 
 #table-container{
-    min-width: 90%;
+    min-width: 720px;
     border: 2px solid white;
     padding: 15px;
     overflow-x: auto;
@@ -27,9 +27,9 @@
 .sidenav {
     min-height: 100%;
     position: fixed;
-    z-index: 1;
+    z-index: 5;
     left: 0;
-    top: 42px;
+    top: 43px;
     background-color: #111;
     overflow-x: hidden;
     width: 185px;
@@ -99,17 +99,13 @@
     transition: all 0.3s ease;
 }
 
-
 #table-controls{
     position: relative;
     display: flex;
-    align-items: center;
+    /* align-items: center; */
     justify-content: space-between;
     font-size: 2em;
-}
-
-#table-controls form{
-    height: 30px;
+    height: 50px;
 }
 
 #table-controls #btn-search{
@@ -120,15 +116,17 @@
     font-size: .9rem;
 }
 
-#table-controls form{
+#table-controls #items-form{
     display: inline-block;
+    align-self: center;
 }
 
 #table-controls #items{
     display: inline-flex;
     max-width: 129px;
-    top: -3px;
+    top: -5px;
     margin-right: 5px;
+    align-self: center;
 }
 #search-form .input-group-prepend,
 #search-form .form-control,
@@ -136,21 +134,21 @@
 #items select.form-control,
 #items .input-group-prepend{
     height: 32px;
+    max-width: 150px;
 }
 #table-controls .badge{
     position: relative;
-    top: 2px;
-    font-size: 24px;
+    top: -4px;
+    font-size: 18px;
+    display: initial;
+    padding: 6px;
 }
 
 #table-controls #items label{
     padding: 0rem 0.75rem;
 }
 
-#table-controls #itemsPerPage{
-   position: relative;
-   top: -3px;
-}
+#table-controls #itemsPerPage{align-self: center;align-items: center;align-content: center;justify-content: center;justify-self: center;justify-items: center;}
 
 #table-controls #pager a{
     font-weight: 100;
@@ -178,6 +176,29 @@
 
 #table-controls #search-input:valid + #clear-search .fa-times-circle{
     display: initial;
+}
+
+/******************************Movies CSS************************************************/
+#table-controls .fa-video{
+    position: relative;
+    top: 5px;
+    font-size: 1.2em;
+}
+
+#table-controls .fa-video .fa-plus-square{
+    position: absolute;
+    top: 8px;
+    left: 5px;
+    font-size: 22px;
+}
+
+#pagination span{
+    margin: 0 5px;
+    cursor: pointer;
+}
+#search-container,
+#pager{
+    align-self: center;
 }
 
 @media screen and (min-width: 980px) {
@@ -213,7 +234,6 @@
     .sidenav {
         font-size: 30px;
         width: 0;
-        top: 45px;
     }
 
     #content {
@@ -233,30 +253,8 @@
 @media screen and (max-width: 450px) {
     #table-controls .badge{
         position: relative;
-        top: -2px;
-        left: 8px;
+        top: 2px;
+        left: 0px;
         align-self: center;
     }
-    #itemsPerPage{
-        display: none;
-    }
-}
-
-/******************************Movies CSS************************************************/
-#table-controls .fa-video{
-    position: relative;
-    top: 5px;
-    font-size: 1.2em;
-}
-
-#table-controls .fa-video .fa-plus-square{
-    position: absolute;
-    top: 8px;
-    left: 5px;
-    font-size: 22px;
-}
-
-#pagination span{
-    margin: 0 5px;
-    cursor: pointer;
 }
