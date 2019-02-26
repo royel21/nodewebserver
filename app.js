@@ -50,7 +50,7 @@ app.use(function (req, res, next) {
 
   next();
 });
-app.use(csrf({ cookie: true }))
+app.use(csrf({ cookie: true }));
 app.use("/", home);
 app.use("/videoplayer", vplayer);
 app.use('/admin', admin);

@@ -15,6 +15,7 @@
 }
 
 #video-viewer:-webkit-full-screen .footer {
+    position: fixed;
     background-color: transparent;
     bottom: 5px;
 }

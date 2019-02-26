@@ -1,45 +1,50 @@
-#main,
-#content{
-    padding: 0;
-    overflow-y: hidden;
-    touch-action: none;
-}
-
-
 video{
     object-fit: fill;
 }
 
+#video-container{
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom; 0;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    padding-top: 50px;
+    background-color: rgba(0,0,0, 0.55);
+}
+
 #video-viewer {
+    position: relative;
     display: flex;
     flex-direction: column;
-    height: 100%;
-    width: 100%;
     background-color: black;
     padding: 0;
-}
-
-#video-container{
     height: 100%;
     width: 100%;
-    padding-bottom: 56px;
 }
 
-body .clock {
-    bottom: 69px;
+#video-container #video-viewer{
+    max-width: 600px;
+    max-height: 400px;
+}
+
+#video-player{
+    height: 100%;
+    width: 100%;
+}
+
+#video-viewer:-webkit-full-screen #video-player{
+       padding: 0;
 }
 
 body .content {
     overflow-y: hidden;
-}
-
-body:-webkit-full-screen .clock {
-    bottom: 5px;
-    right: 5px;
-}
-
-body:-webkit-full-screen .clock .time {
-    font-size: 20px;
 }
 
 #player {
@@ -50,7 +55,7 @@ body:-webkit-full-screen .clock .time {
 }
 
 .v-controls {
-    position: fixed;
+    position: relative;
     bottom: 0px;
     left: 0;
     right: 0;
@@ -64,9 +69,15 @@ body:-webkit-full-screen .clock .time {
     border-radius: 5px;
     z-index: 12;
     position: relative;
+    right: -50px;
 }
 
-#video-viewer:-webkit-full-screen #video-container{
+#video-viewer:-webkit-full-screen #v-control-2 #v-player-config
+{
+    display: none;
+}
+
+#video-viewer:-webkit-full-screen ##video-player{
     padding: 0;
 }
 
@@ -110,14 +121,13 @@ body:-webkit-full-screen .clock .time {
 }
 
 #v-total-time {
-    position: fixed;
+    position: absolute;
     left: 10px;
     bottom: 0px;
     font-size: 14px;
     color: white;
-    z-index: 10;
     font-weight: bold;
-    z-index: 10;
+    z-index: 11;
 }
 
 #video-viewer:-webkit-full-screen #v-total-time {
@@ -280,9 +290,8 @@ body:-webkit-full-screen .clock .time {
         height: initial;
     }
     #video-viewer{
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
+        min-width: 350px;
+        min-height: 320px;
     }
     
     .v-controls #v-control-2{
@@ -305,5 +314,32 @@ body:-webkit-full-screen .clock .time {
     .v-controls .v-vol{
         position: absolute;
         top: 34px;
+    }
+
+    #video-player{
+        height: 100%;
+        padding-bottom: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    #video-viewer:-webkit-full-screen #v-control-2{
+        display: initial;
+        right: 0;
+        padding: 0px 0 0 0;
+    }
+    #video-viewer:-webkit-full-screen #v-control-2 .v-vol{
+        right: -84px
+    }
+    
+    #video-viewer:-webkit-full-screen .hide-footer{
+        bottom: -120px;
+    }
+}
+
+@media all and(max-width: 640px){
+    #video-container #video-viewer{
+    max-width: 600px;
+    max-height: 400px;
     }
 }

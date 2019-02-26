@@ -15,14 +15,17 @@ var update = false;
 
 let currentFile = { id: 0, currentTime: 0 };
 
-document.getElementsByClassName('btn-fullscr')[0].onclick = (e) => setfullscreen(vcontainer);
+$('.btn-fullscr').click((e) => {setfullscreen(vcontainer)});
 
+$('#video-container').on('click mousedown mouseup',(e)=> {
+    e.stopPropagation();
+ });
 var config = {
     sortBy: "Name-D",
     volume: 0,
     isMuted: false,
     paused: true,
-    hidecontrolduration: 1,
+    hidecontrolduration: 2,
     playerkey: {
         nextfile: {
             name: "PageDown",
@@ -76,19 +79,6 @@ window.onbeforeunload = (e) => {
     if (config) {
         local.setObject('config', config);
     }
-    
-    fetch('/admin/array-test', {
-        method: 'post',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(config)
-    }).then(function (response) {
-        console.log(response)
-    }).catch(function (err) {
-        // Error :(
-    });
 }
 
 if (local.hasObject('config')) {
@@ -99,6 +89,28 @@ if (local.hasObject('config')) {
         }
     }
     config = oldConfig;
+}
+console.log(config);
+
+const configPlayer = () => {
+    vDuration = formatTime(player.duration);
+    $vTotalTime.text(formatTime(player.currentTime) + "/" + vDuration);
+
+    player.volume = config.volume;
+
+    player.muted = btnMuted.checked = config.isMuted;
+
+    if (!config.paused) pauseOrPlay();
+
+    update = true;
+}
+
+player.onloadedmetadata = function (e) {
+    Slider.min = 0;
+    Slider.max = player.duration;
+    Slider.value = 0;
+    configPlayer();
+    console.log("Duration", vDuration);
 }
 
 volcontrol.value = config.volume;
@@ -245,7 +257,7 @@ hideFooter = () => {
                     cursor: "default"
                 });
             } else {
-                // $('.v-vol').addClass('vol-show');
+
                 $('.footer').addClass("hide-footer");
                 $(document.body).css({
                     cursor: "none"
@@ -257,7 +269,7 @@ hideFooter = () => {
 }
 
 
-$(document).on('webkitfullscreenchange', (e) => {
+$(player).on('webkitfullscreenchange', (e) => {
     if (document.webkitIsFullScreen) {
         console.log("hide Cursor")
         $(document).on('mousemove', hideFooter);
@@ -268,8 +280,11 @@ $(document).on('webkitfullscreenchange', (e) => {
     }
 });
 
-$('#v-exit-to-fb').click((e) => {
-    window.history.back();
+$('#hide-player').click((e) => {
+    player.pause();
+    $('#video-viewer').slideUp('fast',(e)=>{
+         $('#video-container').css({display: 'none'});
+    });
 });
 
 player.ondblclick = (e) => setfullscreen(vcontainer);
@@ -295,7 +310,8 @@ player.onvolumechange = function (e) {
                 volTimer = null;
             }, 1500);
         }
-        volcontrol.value = player.volume
+        volcontrol.value = player.volume;
+        volcontrol.setAttribute('value', player.volume)
         console.log("onVolChange", player.volume)
     }
 }
@@ -361,24 +377,4 @@ player.onpointermove = (e) => {
 //         // returnToFb();
 //     }
 // }
-console.log(config);
-
-const configPlayer = () => {
-    vDuration = formatTime(player.duration);
-    $vTotalTime.text(formatTime(player.currentTime) + "/" + vDuration);
-
-    player.volume = config.volume;
-
-    player.muted = btnMuted.checked = config.isMuted;
-
-    if (!config.paused) pauseOrPlay();
-
-    update = true;
-}
-
-player.onloadedmetadata = function (e) {
-    Slider.min = 0;
-    Slider.max = player.duration;
-    Slider.value = 0;
-    configPlayer();
-}
+$(()=>{ player.src = "/videoplayer/movie.mp4" });

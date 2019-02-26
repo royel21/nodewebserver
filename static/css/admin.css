@@ -102,81 +102,11 @@
 #table-controls{
     position: relative;
     display: flex;
-    /* align-items: center; */
     justify-content: space-between;
     font-size: 2em;
     height: 50px;
 }
 
-#table-controls #btn-search{
-    cursor: pointer;
-}
-
-#table-controls #btn-search:active{
-    font-size: .9rem;
-}
-
-#table-controls #items-form{
-    display: inline-block;
-    align-self: center;
-}
-
-#table-controls #items{
-    display: inline-flex;
-    max-width: 129px;
-    top: -5px;
-    margin-right: 5px;
-    align-self: center;
-}
-#search-form .input-group-prepend,
-#search-form .form-control,
-#table-controls .badge,
-#items select.form-control,
-#items .input-group-prepend{
-    height: 32px;
-    max-width: 150px;
-}
-#table-controls .badge{
-    position: relative;
-    top: -4px;
-    font-size: 18px;
-    display: initial;
-    padding: 6px;
-}
-
-#table-controls #items label{
-    padding: 0rem 0.75rem;
-}
-
-#table-controls #itemsPerPage{align-self: center;align-items: center;align-content: center;justify-content: center;justify-self: center;justify-items: center;}
-
-#table-controls #pager a{
-    font-weight: 100;
-    font-size: 24px;
-}
-
-#table-controls #pager .fa{
-    font-weight: 600;
-    font-size: 22px;
-}
-#search-input{
-    position: relative;
-    border-radius: 0px 5px 5px 0px;
-}
-
-#table-controls #clear-search .fa-times-circle{
-    display: none;
-    position: absolute;
-    top: 6px;
-    right: 5px;
-    font-size: 20px;
-    color: firebrick;
-    z-index: 99;
-}
-
-#table-controls #search-input:valid + #clear-search .fa-times-circle{
-    display: initial;
-}
 
 /******************************Movies CSS************************************************/
 #table-controls .fa-video{

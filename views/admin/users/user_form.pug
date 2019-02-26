@@ -2,7 +2,7 @@
     #modal.card.bg-dark.text-light
         #modal-header.text-center
             h3= modalTitle
-        form#create-edit(method="post" action="/admin/create-edit-user")
+        form#create-edit(method="post" action="/admin/users/create-edit")
             input(type="hidden" name="id" value=""+ (user.Id || ""))
             input(type="hidden" name="_csrf" value=""+ csrfToken)
             #errors.text-danger.text-center
