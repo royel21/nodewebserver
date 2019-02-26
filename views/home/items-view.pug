@@ -1,0 +1,28 @@
+mixin items-view(videos, pagedatas)
+    #controls
+        #search-container
+            form#search-form.d-inline-block.ml-2(action=pagedatas.action+"search" method="POST") 
+                input(type="hidden" name="_csrf" value=""+ pagedatas.csrfToken)
+                input(type="hidden" name="page" value=""+ pagedatas.currentPage)
+                input(type="hidden" name="items" value=""+ pagedatas.itemsPerPage)
+                .input-group.mb-3
+                    .input-group-prepend
+                        button#btn-search.input-group-text(type="submit")
+                            i.fa.fa-search
+                    input#search-input.form-control(type="text" name="search" value=pagedatas.search placeholder="Enter Search" required)
+                    span#clear-search
+                        i.fas.fa-times-circle
+
+        include ../share/pagination
+        +pagination(videos.count, pagedatas)
+            
+    #video-list
+        each video in videos.rows
+            .items(tabindex="0" id=video.Id)
+                .item-video
+                    .item-btns
+                        span.item-del.fas.fa-trash
+                        span.item-fav.far.fa-star
+                    .item-cover
+                        img(draggable="false" src="" alt="Cover No Found")
+                    .item-name= video.Name

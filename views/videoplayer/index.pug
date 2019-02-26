@@ -7,39 +7,7 @@ block css
     link(rel="stylesheet" href="/css/footer.css" type="text/css")
 
 block content
-    div#video-viewer.text-center
-        #video-container
-            video#player(preload="auto" src="/videoplayer/movie.mp4" controls=false)
-        .text-center.v-controls.footer
-            #slider-container
-            #v-control-2
-                span#v-exit-to-fb
-                    i.fas.fa-arrow-circle-up.popup-msg(data-title="Regresar")
-                span.list-file-show
-                    i.fas.fa-clipboard-list.popup-msg(data-title="Lista")
-                span#v-prev
-                    i.far.fa-arrow-alt-circle-left.popup-msg(data-title="Anterior")
-                </span>
-                span#v-play-pause
-                    label(for="v-play")
-                        input#v-play(type="checkbox")
-                        i.far.fa-play-circle.popup-msg(data-title="Pausar")
-                span#v-next
-                    i.far.fa-arrow-alt-circle-right.popup-msg(data-title="Proximo")
-                span#v-player-config.tool-config
-                    i.fas.fa-cog.popup-msg(data-title="Configuracion")
-                span.btn-fullscr
-                    i.fas.fa-expand-arrows-alt.popup-msg(data-title="Pantalla Completa")
-                span.v-vol
-                    input#v-vol-control.range.popup-msg(data-title="Volumen" type="range"
-                        min="0" step="0.01" value="0.5" max="1")
-                    label(for="v-mute")
-                        input#v-mute.vol-ctrl(type="checkbox")
-                        span.mute-icon
-                        i.fas.fa-volume-up.popup-msg(data-title="Silenciar")
-            #mobile-control
-                span#v-total-time 00:00/00:00
+    include ./player
 block script
     script(src="/js/sliders.js")
     script(src="/js/player.js")
-        

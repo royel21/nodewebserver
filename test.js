@@ -41,28 +41,37 @@ ffmpeg.setFfprobePath(ffpstatic.path) //Argument path is a string with the full 
 // }
 const db = require('./models')
 const path = require('path')
-const crc16 = require('crc').crc16;
+
 var timer;
 var tempFiles = [];
 
 PopulateDB = async (folder, files, id) => {
     var filteredFile = files.filter((f) => {
-        return f.isDirectory || ['mp4','mkv','avi', 'ogg'].includes(f.extension.toLocaleLowerCase()) &&
+        return f.isDirectory || ['mp4', 'mkv', 'avi', 'ogg'].includes(f.extension.toLocaleLowerCase()) &&
             !f.isHidden
     });
-    
+
     for (let f of filteredFile) {
         try {
             if (!f.isDirectory) {
+                let Id = Math.random().toString(36).slice(-5);
                 let found = tempFiles.filter(v => v.Name === f.FileName);
-                if(found.length === 0){
+                let vfound = await db.video.findOne({
+                    where: {
+                        $or: [{
+                            Id: Id
+                        }, {
+                            Name: f.FileName
+                        }]
+                    }
+                });
+                if (found.length === 0 && !vfound) {
                     tempFiles.push({
+                        Id,
                         Name: f.FileName,
                         FilePath: path.join(folder, f.FileName)
                     });
-                }else{
-                    console.log(found);
-                }
+                } 
             } else {
                 await PopulateDB(f.FileName, f.Files);
             }
@@ -78,9 +87,38 @@ scanOneDir = async (dir) => {
     var fis = WinDrive.ListFilesRO(dir);
     await PopulateDB(dir, fis);
     if (tempFiles.length > 0) await db.video.bulkCreate(tempFiles);
-    timer = new Date()-timer;
-    console.log("End:",timer/1000);
+    timer = new Date() - timer;
+    console.log("End:", timer / 1000);
     console.log(tempFiles.length);
 }
+db.init().then(() => {
+    scanOneDir("D:\\Programming")
+});
 
-scanOneDir("D:\\Anime")
+// timer = new Date();
+// let arr = [];
+// let num = parseInt("7FFF", 16);
+// for (let i = 0; i < 100000; i++) {
+//     let id1 = Math.random().toString(36).slice(-5);
+//     arr.push(id1);
+// }
+// timer = new Date() - timer;
+// console.log("End:", timer / 1000);
+// console.log("id1:" + arr.length);
+
+// for(;arr.length > 0; ){
+//     let item = arr.splice(0,1);
+//     console.log(arr.length)
+//     if(arr.includes(item))
+//     {
+//         console.log(item, arr[arr.indexOf(item)])
+//     }
+// }
+
+
+// timer = new Date();
+// let id2 = (+new Date).toString(36).slice(-5);
+// timer = new Date() - timer;
+// console.log("End:", timer / 1000);
+// // Using new Date
+// console.log("id2:" + id2);
