@@ -22,7 +22,7 @@ exports.index = (req, res) => {
         }).then(movies => {
 
             var totalPages = Math.ceil(movies.count / itemsPerPage);
-            let view = req.query.partial ? "home/partial-movies-table" : "home/index.pug";
+            let view = req.query.partial ? "home/partial-items-view" : "home/index.pug";
             res.render(view, {
                 title: "Home",
                 movies,
@@ -35,7 +35,7 @@ exports.index = (req, res) => {
                     csrfToken: req.csrfToken()
                 }
             }, (err, html) => {
-                console.log(err)
+                console.log(req.url)
                 if (req.query.partial) {
                     res.send({ url: req.url, data: html });
 
@@ -50,6 +50,13 @@ exports.index = (req, res) => {
     } else {
         return res.redirect('/login');
     }
+}
+
+exports.postSearch = (req, res) =>{
+    let itemsPerPage = req.body.items || 10;
+    let currentPage = req.body.page || 1;
+    let val = req.body.search || "";
+    res.redirect(`/home/${currentPage}/${itemsPerPage}/${val}?partial=true`)
 }
 
 exports.login = (req, res) => {

@@ -66,7 +66,7 @@ class SliderRange {
     }
 
     getOffset() {
-        return this.$slider[0].offsetLeft + 13;
+        return this.$slider[0].getBoundingClientRect().x + 13;
     }
 
     offsetW() {

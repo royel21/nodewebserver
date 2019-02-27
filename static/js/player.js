@@ -2,8 +2,8 @@ var volcontrol = document.getElementById('v-vol-control');
 var btnPlay = document.getElementById('v-play');
 var btnMuted = document.getElementById('v-mute');
 var player = document.getElementById('player');
-const vcontainer = document.getElementById('video-viewer');
-
+const videoViewer = document.getElementById('video-viewer');
+const vContainer = document.getElementById('video-container');
 var $vTotalTime = $('#v-total-time');
 var totalTime;
 var fileN = 0;
@@ -11,15 +11,14 @@ var hour = false;
 var vDuration;
 var Slider = null;
 var update = false;
-
+var currentVideoId = "";
 
 let currentFile = { id: 0, currentTime: 0 };
 
-$('.btn-fullscr').click((e) => {setfullscreen(vcontainer)});
+$('.btn-fullscr').click((e) => { 
+    setfullscreen(videoViewer) 
+});
 
-$('#video-container').on('click mousedown mouseup',(e)=> {
-    e.stopPropagation();
- });
 var config = {
     sortBy: "Name-D",
     volume: 0,
@@ -90,7 +89,6 @@ if (local.hasObject('config')) {
     }
     config = oldConfig;
 }
-console.log(config);
 
 const configPlayer = () => {
     vDuration = formatTime(player.duration);
@@ -115,21 +113,25 @@ player.onloadedmetadata = function (e) {
 
 volcontrol.value = config.volume;
 $('.fa-volume-up').attr('data-title', config.isMuted ? "Unmute" : "Mute");
-console.log(volcontrol.value);
 
 Slider = new SliderRange('#slider-container');
 Slider.oninput = (value) => {
+    console.log("slider Val: " + value)
     player.currentTime = value;
 }
 
-document.onkeydown = (e) => {
+vContainer.addEventListener('keydown', function (e) {
+    console.log(e.keyCode);
+});
+
+vContainer.onkeydown = (e) => {
     var keys = config.playerkey;
     console.log(e.keyCode);
     switch (e.keyCode) {
         case keys.fullscreen.keycode:
             {
                 if (e.ctrlKey == keys.fullscreen.isctrl)
-                    setfullscreen(vcontainer)
+                    setfullscreen(videoViewer)
                 break;
             }
         case keys.playpause.keycode:
@@ -198,6 +200,9 @@ document.onkeydown = (e) => {
                 break;
             }
     }
+    e.stopPropagation();
+    e.preventDefault();
+    console.log(e.target)
 }
 
 const pauseOrPlay = () => {
@@ -224,7 +229,7 @@ btnMuted.onchange = () => {
     $('.fa-volume-up').attr('data-title', btnMuted.checked ? "No Silenciar" : "Silenciar");
 }
 
-document.onwheel = (event) => {
+vContainer.onwheel = (event) => {
     // deltaY obviously records vertical scroll, deltaX and deltaZ exist too
     if (event.deltaY < 0) {
         volcontrol.value = player.volume + 0.05;
@@ -280,12 +285,6 @@ $(player).on('webkitfullscreenchange', (e) => {
     }
 });
 
-$('#hide-player').click((e) => {
-    player.pause();
-    $('#video-viewer').slideUp('fast',(e)=>{
-         $('#video-container').css({display: 'none'});
-    });
-});
 
 player.ondblclick = (e) => setfullscreen(vcontainer);
 player.onplay = player.onpause = hideFooter;
@@ -365,16 +364,65 @@ player.onpointermove = (e) => {
     }
 }
 
+videoViewer.style.left = "34%";
+videoViewer.style.top = "29%";
+
 // Test
-// player.onended = function () {
-//     if (fileN < filesList.length - 1) {
-//         var waitEnd = setTimeout(() => {
-//             if (player.ended)
-//                 // processFile(filesList[++fileN].Name);
-//                 clearTimeout(waitEnd);
-//         }, 3000)
-//     } else {
-//         // returnToFb();
-//     }
-// }
-$(()=>{ player.src = "/videoplayer/movie.mp4" });
+player.onended = function () {
+
+    if (fileN < filesList.length - 1) {
+        var waitEnd = setTimeout(() => {
+            if (player.ended)
+                // processFile(filesList[++fileN].Name);
+                clearTimeout(waitEnd);
+        }, 3000)
+    }
+}
+
+$('#hide-player').click((e) => {
+    player.pause();
+    $('#video-viewer').fadeOut('fast', (e) => {
+        $('#video-container').css({ display: 'none' });
+    });
+});
+
+const playVideo = (el) => {
+    if(el){
+        let id = el.id;
+        currentVideoId = id;
+        vContainer.style.display = "block";
+        player.src = "/videoplayer/video/" + id;
+        $(videoViewer).fadeIn('fast');
+        vContainer.focus();
+    }
+    
+}
+
+$('body').on('click', '.fa-play-circle', (e)=>{ 
+    console.log(e.target)
+    playVideo(e.target.closest('.items')); 
+});
+
+$(".fa-arrow-alt-circle-right").click((e)=>{
+    let next = $('#'+currentVideoId).next()[0];
+    if(next){
+        playVideo(next)
+    }
+});
+
+$(".fa-arrow-alt-circle-left").click((e)=>{
+    let prev = $('#'+currentVideoId).prev()[0];
+    if(prev){
+        playVideo(prev);
+    }
+});
+
+window.addEventListener("orientationchange", function(e) {
+    console.log(screen.orientation.angle);
+    if($(videoViewer).is(":visible")){
+        if( screen.orientation.angle > 0 && !document.fullscreenElement)
+        {
+            setfullscreen(videoViewer);
+        }
+     }
+});

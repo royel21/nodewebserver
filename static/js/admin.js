@@ -1,11 +1,20 @@
-const socket = io();
-window.history.replaceState(document.title, document.title, document.location.href);
+
+$('.sidenav .nav-link').click((e) => {
+    e.preventDefault();
+    let a = e.target.closest('a');
+    let url = a.href;
+
+    window.history.pushState(a.textContent, a.textContent, url);
+    document.title = a.textContent;
+    $('.sidenav a').removeClass("active");
+    a.classList.add('active');
+    loadPartialPage(url);
+});
 
 $(document).on("click", ".show-form", (e) => {
     let tr = e.target.closest('tr');
     let uid = tr ? tr.id : "";
-    let action = $('#table-container').data('action');
-
+    let action = $('#container').data('action');
     $.get(action, { uid }, (resp) => {
         $('body').prepend(resp);
         $('#modal').fadeIn();
@@ -80,9 +89,6 @@ $('body').on('click', '#add-cat', (e) => {
         let cat = `<label class="cat badge badge-primary mx-1" data-val="${val}">${text}</label>`
         $('#cat-group').append($(cat))
     }
-    // $.post("/admin/array-test", {data:JSON.stringify(["one", "two", "three"])}, (resp)=>{
-    //     console.log(resp);
-    // })
 });
 
 $('body').on('click', '.tree-view .caret', (e) => {
@@ -113,7 +119,6 @@ $('body').on('click', '.tree-view .dir', (e) => {
         $("#paths").append(resp);
     });
 });
-
 $('body').on('click', '#paths .fa-trash-alt', (e) => {
 
     let li = e.target.closest('li');
@@ -129,81 +134,6 @@ $('body').on('click', '#paths .fa-trash-alt', (e) => {
     });
 });
 
-const loadPartialPage = (url) => {
-    if (!url) return;
-
-    $.get(url, { partial: true }, (resp) => {
-        $('#table-container').replaceWith(resp.data);
-        if (url.includes('config')) {
-            socket.emit('load-disks', "load now");
-        }
-    });
-}
-
-$('.sidenav .nav-link').click((e) => {
-    e.preventDefault();
-    let a = e.target.closest('a');
-    let url = a.href;
-
-    window.history.pushState(a.textContent, a.textContent, url);
-    document.title = a.textContent;
-    $('.sidenav a').removeClass("active");
-    a.classList.add('active');
-    loadPartialPage(url);
-});
-
-window.onpopstate = function (e) {
-    let url = document.location.href;
-    document.title = e.state;
-    $('.sidenav a').removeClass("active");
-    $(`.sidenav .nav-link:contains("${e.state}")`).addClass('active');
-    loadPartialPage(url);
-}
-
 socket.on("disk-loaded", (data) => {
     $('#disks').empty().append(data);
-});
-
-$('body').on('click', '.page-item', (e) => {
-    e.preventDefault();
-    let title = document.title;
-    let url = e.target.tagName == 'I' ? e.target.closest('a').href : e.target.href;
-    window.history.pushState(title, title, url);
-    loadPartialPage(url);
-});
-
-const submitItemAndSearchForm = (e) => {
-    let form;
-
-    if (e.tagName == "FORM") {
-        form = e;
-    } else {
-        e.preventDefault();
-        form = e.target.closest('form');
-    }
-
-    let url = $(form).attr('action');
-
-    $.post(url, $(form).serialize(), (resp) => {
-
-        $('#table-container').replaceWith(resp.data);
-        let title = document.title;
-        window.history.pushState(title, title, "/admin" + resp.url.replace('?partial=true', ''));
-        if (url.includes('config')) {
-            socket.emit('load-disks', "load now");
-        }
-    });
-}
-
-$('body').on('click', '#clear-search', (e) => {
-    $('#search-input').val('');
-    submitItemAndSearchForm(e.target.closest('form'));
-});
-
-$('body').on('submit', '#search-form', submitItemAndSearchForm);
-
-$(() => {
-    if (window.location.href.includes('config')) {
-        socket.emit('load-disks', "load now");
-    }
 });

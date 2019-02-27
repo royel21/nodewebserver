@@ -3,7 +3,7 @@
     transition: all 0.3s ease;
 }
 
-#table-container{
+#container{
     min-width: 720px;
     border: 2px solid white;
     padding: 15px;

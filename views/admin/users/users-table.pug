@@ -1,5 +1,5 @@
 mixin users_table(users, pagedatas)
-    #table-container.text-light.bg-dark.rounded.mx-2(data-action=pagedatas.action+"modal")
+    #container.text-light.bg-dark.rounded.mx-2(data-action=pagedatas.action+"modal")
         #table-controls
             span.show-form
                 i.fa.fa-user-plus.text-primary
@@ -38,4 +38,4 @@ mixin users_table(users, pagedatas)
                         td= user.Name
                         td= roles[user.Role]
                         td= user.State
-                        td= moment(user.CreatedAt).format("LLL")
+                        td= moment(user.CreatedAt).format("LLL") + user.CreatedAt

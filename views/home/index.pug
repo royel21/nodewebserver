@@ -10,7 +10,7 @@ block css
 block content
     include ../share/navbar2
     +navbar2(user)
-    #video-container
+    #video-container(tabindex="0")
         include ../videoplayer/player
     include ./items-view
     +items-view(movies, pagedatas)
@@ -19,3 +19,5 @@ block script
     script(src="/js/main.js")
     script(src="/js/sliders.js")
     script(src="/js/player.js")
+    script(src="/js/video-list.js")
+    script(src="/js/move-element.js")

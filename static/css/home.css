@@ -8,6 +8,7 @@
     border-radius: 5px;
     outline: none;
     background-color: transparent;
+    user-select: none;
 }
 
 .item-video{
@@ -31,7 +32,7 @@
 .item-del{
     top: 5px;
     left: 5px;
-    color: red;
+    color: brown;
     float: left;
 }
 
@@ -59,4 +60,41 @@
     position: relative;
     text-align: center;
     pointer-events: none;
+}
+
+.items:focus > .item-video {
+    background-color: rgba(0,123,255,0.4) !important;
+    box-shadow: 0 0 10px;
+}
+
+.item-video:hover{
+    outline: none;
+    background-color: rgba(0,123,255,0.1) !important;
+    box-shadow: 0 0 10px; 
+}
+
+@media all and (max-width: 650px)
+{
+    #video-list{
+        justify-content: center;
+    }
+    
+    .item-video{
+        width: 190px;
+        height: 225px;
+    }
+    .item-cover{
+        height: 130px
+    }
+}
+
+@media all and (max-width: 450px)
+{
+    #video-list{
+        justify-content: center;
+    }
+    .item-video{
+        width: 210px;
+        height: 225px;
+    }
 }

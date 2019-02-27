@@ -5,7 +5,6 @@
 .footer {
     background-color: rgba(67, 66, 75, 1);
     color: white;
-    z-index: 9;
     transition: all .3s;
     z-index: 1000;
 }

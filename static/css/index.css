@@ -15,7 +15,7 @@ body{
     top: 0;
     left: 0;
     right: 0;
-    z-index: 9999;
+    z-index: 1000;
 }
 
 #main{
@@ -178,7 +178,9 @@ body{
 }
 
 #itemsPerPage{
+    position: relative;
     align-self: center;
+    left: -12px;
 }
 
 #pager{
@@ -212,4 +214,37 @@ body{
 
 #search-input:valid + #clear-search .fa-times-circle{
     display: initial;
+}
+
+@media all and (max-width: 450px){
+    
+    #pager .page-item:last-child,
+    #pager .page-item:first-child,
+    #itemsPerPage{
+        display: none;
+    }
+    #pager{
+        position: relative;
+        top: -2px;
+    }
+}
+
+.resize:after{
+    content: " ";
+    position: absolute;
+    bottom: -3px;
+    right: 0px;
+    border-top: 6px solid transparent;
+    border-left: 6px solid transparent;
+    border-bottom: 6px solid;
+    border-right: 6px solid;
+    cursor: se-resize;
+    z-index: 10000;
+}
+
+.move{
+    cursor: grab;
+}
+.move:active{
+    cursor: grabbing;
 }

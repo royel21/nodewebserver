@@ -1,7 +1,7 @@
 
 
 const WinDrive = require('win-explorer');
-
+const fs = require('fs-extra')
 
 // console.log(files)
 // var test1 = {a: true};
@@ -45,6 +45,30 @@ const path = require('path')
 var timer;
 var tempFiles = [];
 
+takeScreenShot = async (vfile) => {
+
+    await new Promise((resolve, rejected) => {
+        try {
+            ffmpeg(vfile).on('end', (e) => {
+                resolve(true);
+            }).on('error', function (err) {
+                console.log(vfile);
+                console.log('An error occurred: ' + err.message);
+                resolve(false);
+            }).screenshots({
+                timestamps: ['23.7%'],
+                // count: 4,
+                filename: '%f',
+                folder: './static/covers',
+                size: '240x?'
+            })
+        } catch (error) {
+            console.log(error);
+            resolve(false);
+        }
+    });
+}
+
 PopulateDB = async (folder, files, id) => {
     var filteredFile = files.filter((f) => {
         return f.isDirectory || ['mp4', 'mkv', 'avi', 'ogg'].includes(f.extension.toLocaleLowerCase()) &&
@@ -65,13 +89,17 @@ PopulateDB = async (folder, files, id) => {
                         }]
                     }
                 });
+
+                if (!fs.existsSync("./static/covers/" + f.FileName + ".png")) {
+                    await takeScreenShot(path.join(folder, f.FileName));
+                }
                 if (found.length === 0 && !vfound) {
                     tempFiles.push({
                         Id,
                         Name: f.FileName,
                         FilePath: path.join(folder, f.FileName)
                     });
-                } 
+                }
             } else {
                 await PopulateDB(f.FileName, f.Files);
             }
@@ -79,20 +107,20 @@ PopulateDB = async (folder, files, id) => {
             console.log(error)
         }
     }
-    //
+    if (tempFiles.length > 0) await db.video.bulkCreate(tempFiles);
+    tempFiles = [];
 }
 
 scanOneDir = async (dir) => {
     timer = new Date();
     var fis = WinDrive.ListFilesRO(dir);
     await PopulateDB(dir, fis);
-    if (tempFiles.length > 0) await db.video.bulkCreate(tempFiles);
     timer = new Date() - timer;
     console.log("End:", timer / 1000);
     console.log(tempFiles.length);
 }
 db.init().then(() => {
-    scanOneDir("D:\\Programming")
+    scanOneDir("D:\\Anime");
 });
 
 // timer = new Date();

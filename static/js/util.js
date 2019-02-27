@@ -57,10 +57,14 @@ formatTime = (time) => {
 }
 
 setfullscreen = (element) => {
-    if (!document.webkitIsFullScreen) {
-        element.webkitRequestFullscreen();  
-    } else {
-        document.webkitCancelFullScreen();
+    try{
+        if (!document.fullscreenElement) {
+            element.requestFullscreen().catch(err=>{});
+        } else {
+            document.exitFullscreen().catch(err=>{});
+        }
+        $('.fa-expand-arrows-alt').attr('data-title', document.webkitIsFullScreen ? "Pantalla Completa" : "Salir Pantalla Completa");
+    }catch(err){
+        
     }
-    $('.fa-expand-arrows-alt').attr('data-title', document.webkitIsFullScreen ? "Pantalla Completa" : "Salir Pantalla Completa");
 }

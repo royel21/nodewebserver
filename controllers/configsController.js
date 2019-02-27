@@ -3,7 +3,7 @@ const windrive = require('win-explorer')
 const path = require('path')
 const fs = require('fs-extra')
 
-const configPath = './config/configs.json'
+const configPath = './config/server-config.json'
 
 const configs = fs.readJsonSync(configPath);
 

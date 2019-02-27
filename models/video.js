@@ -23,22 +23,23 @@ module.exports = (sequelize, DataTypes) => {
         FilePath: {
             type: DataTypes.STRING
         },
-        TotalTime: {
-            type: DataTypes.FLOAT(5, 4),
-            defaultValue: 0
-        }
+        CreatedAt: {
+            type: DataTypes.DATE
+          }
     }, {
             timestamps: false,
-            // hooks: {
-            //     beforeCreate: (video, options) => {
-            //         video.Id = crc16(video.Name).toString(16);
-            //     },
-            //     beforeBulkCreate: (videos, options) => {
-            //         videos.forEach((video) => {
-            //             video.Id = crc16(video.Name).toString(16);
-            //         });
-            //     }
-            // }
+            hooks: {
+                beforeCreate: (video, options) => {
+                    video.Id = crc16(video.Name).toString(16);
+                    video.CreatedAt = new Date();
+                },
+                beforeBulkCreate: (videos, options) => {
+                    videos.forEach((video) => {
+                        video.Id = crc16(video.Name).toString(16);
+                        video.CreatedAt = new Date();
+                    });
+                }
+            }
         });
 
     Video.findByName = (name) => {
