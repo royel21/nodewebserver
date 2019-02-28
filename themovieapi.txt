@@ -1,4 +1,0 @@
-87fdc44252ab566d40181410453ac699
-https://api.themoviedb.org/3/search/movie?api_key=87fdc44252ab566d40181410453ac699&query=Transformers&language=es
-
-https://api.themoviedb.org/334jQdK2XUJtWMcyo4XcIqbloUHC.jpg
