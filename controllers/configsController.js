@@ -45,6 +45,7 @@ exports.AddPath = (req, res) => {
     } else {
         dir = req.body.folder;
     }
+    console.log(req.body.socketId);
     if (fs.existsSync(dir) && !configs.paths.includes(dir)) {
         configs.paths.push(dir);
         fs.writeJSONSync(configPath, configs);

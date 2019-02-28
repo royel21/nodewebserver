@@ -2,15 +2,16 @@
 
 const WinDrive = require('win-explorer');
 const fs = require('fs-extra')
-var ffmpeg = require("fluent-ffmpeg");
-var ffpstatic = require('ffprobe-static');
-var ffmstatic = require('ffmpeg-static');
+const ffmpeg = require("fluent-ffmpeg");
+const ffpstatic = require('ffprobe-static');
+const ffmstatic = require('ffmpeg-static');
+const path = require('path');
+
+const db = require('../models');
 
 ffmpeg.setFfmpegPath(ffmstatic.path) //Argument path is a string with the full path to the ffmpeg binary.
 ffmpeg.setFfprobePath(ffpstatic.path) //Argument path is a string with the full path to the ffprobe binary.
 
-const db = require('./models')
-const path = require('path')
 
 var timer;
 var tempFiles = [];

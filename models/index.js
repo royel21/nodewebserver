@@ -37,14 +37,12 @@ db.video.belongsToMany(db.category, {
 db.favorite.hasMany(db.video);
 db.user.hasOne(db.favorite);
 
-db.init = async (isforce) => {
-    if (!fs.existsSync(dbPath) || isforce) {
-        await sequelize.sync({
-            logging: false,
-            force: isforce
-        });
+db.init = async () => {
+    await sequelize.sync();
+    
+    if (await db.user.findOne({ where: { Name: "Administrator" } }) == null) {
         let users = [{
-            Name: "Admin",
+            Name: "Administrator",
             Password: "Admin",
             Role: "admin"
         }, {
@@ -55,7 +53,9 @@ db.init = async (isforce) => {
             Password: "123456"
         }];
         await db.user.bulkCreate(users);
-
+    }
+    
+    if ( await db.category.findOne({ where: { Name: "Aventuras" } }) == null) {
         let categories = [{
             Name: "Aventuras"
         }, {

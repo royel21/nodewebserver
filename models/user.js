@@ -1,7 +1,8 @@
+'use strict';
 
-var bcrypt = require('bcrypt');
+const bcrypt  = require('bcrypt');
 
-module.exports = (sequelize, DataTypes, hashSync) => {
+module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
     Id: {
       type: DataTypes.UUID,
@@ -27,6 +28,11 @@ module.exports = (sequelize, DataTypes, hashSync) => {
       defaultValue: "Activo",
       allowNull: false
     },
+    AdultPass: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false
+    },
     CreatedAt: {
       type: DataTypes.DATE
     }
@@ -46,14 +52,13 @@ module.exports = (sequelize, DataTypes, hashSync) => {
       }
     });
 
-    User.prototype.validPassword = function (password) {
-      return new Promise((resolve, rejected) => {
-        bcrypt.compare(password, this.Password, (err, result) => {
-          if (err) rejected(err);
-          resolve(result);
-        });
+  User.prototype.validPassword = function (password) {
+    return new Promise((resolve, rejected) => {
+      bcrypt.compare(password, this.Password, (err, result) => {
+        if (err) rejected(err);
+        resolve(result);
       });
-    }
-
+    });
+  }
   return User;
-}
+};

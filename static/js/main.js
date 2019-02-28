@@ -1,15 +1,26 @@
-const socket = io();
+var socket;
 window.history.replaceState(document.title, document.title, document.location.href);
+
+loadDisk = (url) => {
+    if (url.includes('config')) {
+        if (!socket) {
+            socket = io();
+            socket.on("disk-loaded", (data) => {
+                $('#disks').empty().append(data);
+            });
+            console.log(socket);
+        }
+        socket.emit('load-disks', "load now");
+    }
+}
 
 const loadPartialPage = async (url, cb) => {
     if (!url) return;
 
     $.get(url, { partial: true }, (resp) => {
         $('#container').replaceWith(resp.data);
-        if (url.includes('config')) {
-            socket.emit('load-disks', "load now");
-        }
-        if(cb) cb();
+        loadDisk(url);
+        if (cb) cb();
     });
 }
 
@@ -46,9 +57,7 @@ const submitItemAndSearchForm = (e) => {
         $('#container').replaceWith(resp.data);
         let title = document.title;
         window.history.pushState(title, title, resp.url.replace('?partial=true', ''));
-        if (url.includes('config')) {
-            socket.emit('load-disks', "load now");
-        }
+
     });
 }
 
@@ -59,8 +68,8 @@ $('body').on('click', '#clear-search', (e) => {
 
 $('body').on('submit', '#search-form', submitItemAndSearchForm);
 
+
 $(() => {
-    if (window.location.href.includes('config')) {
-        socket.emit('load-disks', "load now");
-    }
+    loadDisk(window.location.href);
 });
+

@@ -79,3 +79,14 @@ db.init().then(() => {
   
   require('./socketio-server')(server, app);
 })
+
+
+const childProcess = require('child_process');
+
+const workerTest = childProcess.folk('../workers/worker-test.js');
+
+workerTest.send('')
+
+process.on("folder-scanned", (id, socketid)=>{
+        console.log(id, socketid);
+});

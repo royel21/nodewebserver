@@ -114,7 +114,8 @@ $('body').on('click', '.tree-view .dir', (e) => {
     let path = e.target.closest('ul').dataset.path;
     $.post('/admin/configs/add-path', {
         path,
-        folder: dir, _csrf: $("#paths").data('csrf')
+        folder: dir, _csrf: $("#paths").data('csrf'),
+        socketId: socket.id
     }, (resp) => {
         $("#paths").append(resp);
     });
@@ -132,8 +133,4 @@ $('body').on('click', '#paths .fa-trash-alt', (e) => {
             });
         }
     });
-});
-
-socket.on("disk-loaded", (data) => {
-    $('#disks').empty().append(data);
 });
