@@ -12,11 +12,9 @@ const db = require('../models');
 ffmpeg.setFfmpegPath(ffmstatic.path) //Argument path is a string with the full path to the ffmpeg binary.
 ffmpeg.setFfprobePath(ffpstatic.path) //Argument path is a string with the full path to the ffprobe binary.
 
-
-var timer;
 var tempFiles = [];
 
-takeScreenShot = async (vfile) => {
+takeScreenShot = async (vfile, fId) => {
 
     await new Promise((resolve, rejected) => {
         try {
@@ -29,7 +27,7 @@ takeScreenShot = async (vfile) => {
             }).screenshots({
                 timestamps: ['23.7%'],
                 filename: '%f',
-                folder: './static/covers',
+                folder: path.join('./static/covers', fId),
                 size: '240x?'
             })
         } catch (error) {
@@ -39,7 +37,7 @@ takeScreenShot = async (vfile) => {
     });
 }
 
-PopulateDB = async (folder, files, id) => {
+PopulateDB = async (folder, files, fId) => {
     var filteredFile = files.filter((f) => {
         return f.isDirectory || ['mp4', 'mkv', 'avi', 'ogg'].includes(f.extension.toLocaleLowerCase()) &&
             !f.isHidden
@@ -60,18 +58,21 @@ PopulateDB = async (folder, files, id) => {
                     }
                 });
 
-                if (!fs.existsSync("./static/covers/" + f.FileName + ".png")) {
-                    await takeScreenShot(path.join(folder, f.FileName));
-                }
                 if (found.length === 0 && !vfound) {
+                    let cover = path.join("./static/covers/", fId, f.FileName + ".png");
+                    if (!fs.existsSync(cover)) {
+                        await takeScreenShot(path.join(folder, f.FileName), fId);
+                    }
                     tempFiles.push({
                         Id,
                         Name: f.FileName,
-                        FilePath: path.join(folder, f.FileName)
+                        FilePath: path.join(folder, f.FileName),
+                        CoverPath: path.join("/covers/", fId, f.FileName + ".png"),
+                        FolderId: fId
                     });
                 }
             } else {
-                await PopulateDB(f.FileName, f.Files);
+                await PopulateDB(f.FileName, f.Files, fId);
             }
         } catch (error) {
             console.log(error)
@@ -81,16 +82,12 @@ PopulateDB = async (folder, files, id) => {
     tempFiles = [];
 }
 
-scanOneDir = async (dir) => {
-    timer = new Date();
-    var fis = WinDrive.ListFilesRO(dir);
-    await PopulateDB(dir, fis);
-    timer = new Date() - timer;
-    console.log("End:", timer / 1000);
-    console.log(tempFiles.length);
+scanOneDir = async (data) => {
+    var fis = WinDrive.ListFilesRO(data.dir);
+    await PopulateDB(data.dir, fis, data.id);
 }
-process.on("message",(data)=>{
-    scanOneDir(data.dir).then(()=>{
+process.on("message", (data) => {
+    scanOneDir(data).then(() => {
         process.send(data);
     });
 });

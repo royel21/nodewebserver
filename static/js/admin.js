@@ -1,4 +1,21 @@
 
+socket = io();
+socket.on("disk-loaded", (data) => {
+    $('#disks').empty().append(data);
+});
+
+socket.on('path-added', (newPath) => {
+    console.log(newPath);
+    if (newPath) {
+        $("#paths").append(newPath);
+    }
+});
+
+socket.on("scan-finish", (data) => {
+    console.log(data)
+    $('.fa-sync').removeClass('fa-spin');
+});
+
 $('.sidenav .nav-link').click((e) => {
     e.preventDefault();
     let a = e.target.closest('a');
@@ -109,23 +126,39 @@ $('body').on('click', '.tree-view .caret', (e) => {
     }
 });
 
+$('body').on('click', '.fa-sync', (e) => {
+    $(e.target).addClass('fa-spin');
+    let li = e.target.closest('li');
+    let dir = $(li).text();
+    console.log(li.id, dir);
+    socket.emit('re-scan', { id: li.id, dir });
+});
+
 $('body').on('click', '.tree-view .dir', (e) => {
     let dir = e.target.textContent;
     let path = e.target.closest('ul').dataset.path;
-    socket.emit('scan-dir',{path, folder: dir});
+    socket.emit('scan-dir', { path, folder: dir });
 });
 
-$('body').on('click', '#paths .fa-trash-alt', (e) => {
+$('body').on('click', '#paths .delete-path', (e) => {
 
     let li = e.target.closest('li');
+    console.log(li.id)
     $.post('/admin/configs/delete-path', {
-        path: li.textContent,
+        id: li.id,
         _csrf: $("#paths").data('csrf')
     }, (resp) => {
+        console.log("delete:"+resp);
         if (resp == "ok") {
             $(li).fadeOut((e) => {
                 li.remove();
             });
         }
     });
+});
+
+
+
+$(() => {
+    loadDisk(window.location.href);
 });

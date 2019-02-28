@@ -99,6 +99,7 @@ const configPlayer = () => {
     player.muted = btnMuted.checked = config.isMuted;
 
     if (!config.paused) pauseOrPlay();
+    $('.loading').css({display: 'none'});
 
     update = true;
 }
@@ -115,6 +116,12 @@ volcontrol.value = config.volume;
 $('.fa-volume-up').attr('data-title', config.isMuted ? "Unmute" : "Mute");
 
 Slider = new SliderRange('#slider-container');
+
+Slider.min = 0;
+Slider.value = 0;
+Slider.max = 1;
+
+
 Slider.oninput = (value) => {
     console.log("slider Val: " + value)
     player.currentTime = value;
@@ -365,7 +372,7 @@ player.onpointermove = (e) => {
 }
 
 videoViewer.style.left = "34%";
-videoViewer.style.top = "29%";
+videoViewer.style.top = "20%";
 
 // Test
 player.onended = function () {
@@ -381,8 +388,9 @@ player.onended = function () {
 
 $('#hide-player').click((e) => {
     player.pause();
+    player.src = "";
     $('#video-viewer').fadeOut('fast', (e) => {
-        $('#video-container').css({ display: 'none' });
+        $('#video-container').fadeOut(200);
     });
 });
 
@@ -390,10 +398,11 @@ const playVideo = (el) => {
     if(el){
         let id = el.id;
         currentVideoId = id;
-        vContainer.style.display = "block";
+        $(vContainer).fadeIn(300);
         player.src = "/videoplayer/video/" + id;
-        $(videoViewer).fadeIn('fast');
+        $(videoViewer).fadeIn(300);
         vContainer.focus();
+        $('.loading').css({display: 'flex'});
     }
     
 }

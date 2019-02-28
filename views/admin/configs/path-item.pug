@@ -1,5 +1,6 @@
-li.list-group-item.list-group-item-action
-    span.show-delete
+li.list-group-item(id=id)
+    span
+        i(class="text-primary fas fa-sync "+(isloading ? "fa-spin" : ""))
+    span.delete-path
         i.ml-2.text-danger.fas.fa-trash-alt
     span.ml-2= path
-        i.fa.fa-sync.fa-spin(id="path-"+id)

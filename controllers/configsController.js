@@ -1,24 +1,26 @@
 
-const windrive = require('win-explorer')
-const path = require('path')
+const windrive = require('win-explorer');
+const path = require('path');
 const fs = require('fs-extra');
+const db = require('../models');
+const { fork } = require('child_process');
 
 const configPath = './config/server-config.json';
 
 
 exports.configs = (req, res, next) => {
     const configs = fs.readJsonSync(configPath);
-    let view = req.query.partial ? "admin/configs/partial-configs" : "admin/index.pug"; 
+    let view = req.query.partial ? "admin/configs/partial-configs" : "admin/index.pug";
     res.render(view, {
         title: "Configuraciones", configs, pagedatas: {
             action: "/admin/configs/",
             csrfToken: req.csrfToken()
         }
-    },(err, html) => {
-        if(req.query.partial){
+    }, (err, html) => {
+        if (req.query.partial) {
             res.send({ url: req.url, data: html });
 
-        }else{
+        } else {
             res.send(html);
         }
     });
@@ -44,7 +46,7 @@ exports.AddPath = (req, res) => {
     } else {
         dir = req.body.folder;
     }
-    console.log(req.body.socketId);
+
     if (fs.existsSync(dir) && !configs.paths.includes(dir)) {
         configs.paths.push(dir);
         fs.writeJSONSync(configPath, configs);
@@ -55,13 +57,37 @@ exports.AddPath = (req, res) => {
 }
 
 exports.deletePath = (req, res) => {
-    let dir = req.body.path;
+    let id = req.body.id;
     const configs = fs.readJsonSync(configPath);
-    if (configs.paths.includes(dir)) {
-        let index = configs.paths.indexOf(dir);
-        configs.paths.splice(index, 1);
-        fs.writeJSONSync(configPath, configs);
-        res.send("ok");
+    let pathToDelete = configs.paths.find(o => o.id === id);
+    if (pathToDelete) {
+        db.video.destroy({
+            where: {
+                FolderId: id
+            }
+        }).then((v) => {
+            console.log("delete: ", v);
+            let index = configs.paths.indexOf(pathToDelete);
+            configs.paths.splice(index, 1);
+            fs.writeJSONSync(configPath, configs);
+            res.send("ok");
+            let coverPath = path.join(__dirname,'static', 'covers', id);
+            console.log(coverPath);
+            if(fs.existsSync(coverPath)){
+                const worker = fork('../workers/delete-worker.js');
+                worker.send(coverPath);
+                worker.on('finish',(result)=>{
+                    console.log('result:',result);
+                });
+                worker.on('close', function(code) {
+                    console.log('closing code: ' + code);
+                });
+                
+            }
+
+        }).catch(err => {
+            res.send("error");
+        });
     } else {
         res.send("error");
     }

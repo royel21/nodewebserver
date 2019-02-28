@@ -68,7 +68,9 @@ app.use(function (err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   console.log(req.url)
-  console.log("some errors:", err);
+  if (!req.url.includes('covers')) {
+    console.log("some errors:", err);
+  }
   return res.render('error');
 });
 
@@ -76,6 +78,6 @@ db.init().then(() => {
   let server = app.listen(5080, function () {
     console.log('Node server is running.. at http://localhost:5080');
   });
-  
+
   require('./socketio-server')(server, app);
 });

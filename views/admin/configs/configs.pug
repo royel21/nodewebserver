@@ -2,14 +2,17 @@ mixin configs(configs, pagedatas)
     #container.text-light.bg-dark.rounded.mx-
         .text-center.text-light
             h2 Directorios Agregados
-
+            //- label.float-right(for="auto-scan") Auto Escanear Directorios
+            //-     input#auto-scan(type="checkbox" name="autoScan")
         ul#paths.list-group.text-dark.font-weight-bold(data-csrf=pagedatas.csrfToken)
-            li.list-group-item.list-group-item-action No hay Directorios Agregados
-            each path in configs.paths
-                li.list-group-item.list-group-item-action
-                    span.show-delete
+            li.list-group-item No hay Directorios Agregados
+            each p in configs.paths
+                li.list-group-item(id=p.id)
+                    span
+                        i(class="text-primary fas fa-sync "+(p.isloading ? "fa-spin" : ""))
+                    span.delete-path
                         i.ml-2.text-danger.fas.fa-trash-alt
-                    span.ml-2= path
+                    span.ml-2= p.path
 
         .card.text-dark
             .text-center.text-light

@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    
+
     const Video = sequelize.define('Video', {
         Id: {
             type: DataTypes.STRING,
@@ -23,9 +23,18 @@ module.exports = (sequelize, DataTypes) => {
         FilePath: {
             type: DataTypes.STRING
         },
+        CoverPath:
+        {
+          type: DataTypes.STRING,
+          allowNull: true
+        },
+        FolderId: {
+            type: DataTypes.STRING(20),
+            allowNull: true
+        },
         CreatedAt: {
             type: DataTypes.DATE
-          }
+        }
     }, {
             timestamps: false,
             hooks: {

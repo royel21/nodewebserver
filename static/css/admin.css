@@ -180,12 +180,6 @@
     }
 }
 
-#paths .fa-sync{
-    position: relative;
-    left: 10px;
-    color: darkolivegreen;
-}
-
 @media screen and (max-width: 450px) {
     #table-controls .badge{
         position: relative;

@@ -9,7 +9,7 @@ exports.index = (req, res) => {
         let currentPage = req.params.page || 1;
         let begin = ((currentPage - 1) * itemsPerPage);
         let val = req.params.search || "";
-        console.log(req.params, itemsPerPage, begin)
+        
         db.video.findAndCountAll({
             order: ['Name'],
             offset: begin,
@@ -35,7 +35,7 @@ exports.index = (req, res) => {
                     csrfToken: req.csrfToken()
                 }
             }, (err, html) => {
-                console.log(req.url)
+                
                 if (req.query.partial) {
                     res.send({ url: req.url, data: html });
 
@@ -54,9 +54,8 @@ exports.index = (req, res) => {
 
 exports.postSearch = (req, res) =>{
     let itemsPerPage = req.body.items || 10;
-    let currentPage = req.body.page || 1;
     let val = req.body.search || "";
-    res.redirect(`/home/${currentPage}/${itemsPerPage}/${val}?partial=true`)
+    res.redirect(`/home/1/${itemsPerPage}/${val}?partial=true`)
 }
 
 exports.login = (req, res) => {

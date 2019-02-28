@@ -1,9 +1,6 @@
 mixin movies_table(movies, pagedatas) 
     #container.text-light.bg-dark.rounded.mx-2(data-action=pagedatas.action+"modal")
         #table-controls
-            span.show-form
-                i.fas.fa-video.text-primary
-                    i.far.fa-plus-square.text-light
             #search-container
                 form#search-form.d-inline-block.ml-2(action=pagedatas.action+"search" method="POST") 
                     input(type="hidden" name="_csrf" value=""+ pagedatas.csrfToken)

@@ -1,3 +1,4 @@
+
 module.exports = (server, app) => {
 
     const io = require('socket.io')(server)
@@ -7,11 +8,42 @@ module.exports = (server, app) => {
     const path = require('path');
     const pug = require('pug');
 
+    const db = require('./models');
+
     const configPath = './config/server-config.json';
 
-    var clients = {}
+    const getNewId = async () => {
+        let id = Math.random().toString(36).slice(-5);
+        db.directory.findOne({ where: { Id: id } }).then(dir => {
+            if (!dir) {
+                return id;
+            } else {
+                return getNewId();
+            }
+        });
+    }
+
+    const startWork = (directory) => {
+
+        const worker = fork('./workers/folder-scan.js');
+
+        worker.send({id:directory.Id, dir: directory.FullPath});
+
+        worker.on("message", (data) => {
+            io.sockets.emit("scan-finish", data);
+            directory.update({IsLoading: false});
+            console.log(data)
+            console.log("finish");
+        });
+        worker.on('close', function (code) {
+            console.log('closing code: ' + code);
+        });
+    }
+
+    var clients = {};
+
     io.on('connection', (socket) => {
-        console.log("Id:" + socket.id, app.locals.user ? app.locals.user.Name : "");
+        console.log("connected:" + socket.id, app.locals.user ? app.locals.user.Name : "");
         clients[socket.id] = socket;
 
         socket.on('load-disks', (client) => {
@@ -31,32 +63,44 @@ module.exports = (server, app) => {
         });
 
         socket.on("scan-dir", (data) => {
-            const configs = fs.readJsonSync(configPath);
+            //If is it root of disk return;
+            if (["c:\\", "C:\\", "/"].includes(data.folder))
+                return socket.emit("path-added", false);
+
             let dir = path.join(data.path || "", data.folder);
-            let id;
-            if (fs.existsSync(dir) && !configs.paths.includes(dir)) {
-                configs.paths.push(dir);
-                fs.writeJSONSync(configPath, configs);
-                id = configs.paths.length - 1;
-                let renderTree = pug.compileFile('./views/admin/configs/path-item.pug', { path: dir, id });
-                socket.emit("path-added", renderTree({ path: dir, id: configs.paths.length - 1 }));
+
+            if (fs.existsSync(dir)) {
+                getNewId(configs.paths).then(id => {
+                    let id = getNewId(configs.paths);
+                    db.directory.create({ Id: id, FullPath: dir, IsLoading: true }).then(newDir => {
+                        if (newDir) {
+                            let renderTree = pug.compileFile('./views/admin/configs/path-item.pug');
+                            socket.emit("path-added", renderTree(newDir));
+                            startWork(newDir);
+                        }
+                    }).catch(err => {
+                        socket.emit("path-added", false);
+                    });
+                });
             } else {
                 socket.emit("path-added", false);
             }
+        });
 
-            const worker = fork('./workers/folder-scan.js');
-            
-            worker.send({dir, id});
-            worker.on("message",(data)=>{
-                socket.emit("scan-finish", data);
-                console.log("finish");
+        socket.on('re-scan', (data) => {
+            db.directory.findOne({ where: { Id: id } }).then(dir=>{
+                if(dir)
+                {
+                    startWork(dir);
+                }else{
+                    io.sockets.emit("scan-finish", data);
+                }
             });
         });
 
         socket.on('disconnect', (client) => {
             delete clients[socket.id];
-            console.log("disconect:" + socket.id);
+            console.log("disconected:" + socket.id);
         });
     });
-
 }

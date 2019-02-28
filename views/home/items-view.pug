@@ -25,5 +25,5 @@ mixin items-view(videos, pagedatas)
                             span.item-del.far.fa-play-circle
                             span.item-fav.far.fa-star
                         .item-cover
-                            img(draggable="false" src="/covers/"+video.Name+".png" alt="Cover No Found")
+                            img(draggable="false" src=video.CoverPath alt="Cover No Found")
                         .item-name= video.Name

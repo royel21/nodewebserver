@@ -26,6 +26,8 @@ db.user = require('./user')(sequelize, DataTypes);
 db.video = require('./video')(sequelize, DataTypes);
 db.category = require('./category')(sequelize, DataTypes);
 db.favorite = require('./favorites')(sequelize, DataTypes);
+db.directory = require('./directories')(sequelize, DataTypes);
+
 db.sequelize = sequelize;
 
 db.video.belongsToMany(db.category, {
@@ -46,8 +48,8 @@ db.init = async () => {
             Password: "Admin",
             Role: "admin"
         }, {
-            Name: "Rconsoro",
-            Password: "123456"
+            Name: "Admin",
+            Password: "Admin"
         }, {
             Name: "Rmarero",
             Password: "123456"

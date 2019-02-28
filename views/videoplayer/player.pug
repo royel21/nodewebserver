@@ -1,5 +1,9 @@
 
+-let n = 0
 #video-viewer.text-center.move-modal.resize
+    .loading
+        span.loading-title Cargando....
+        .loader
     #video-player
         video#player(preload="metadata" src="" controls=false)
     .text-center.v-controls.footer
@@ -7,8 +11,6 @@
         #v-control-2
             span#hide-player
                 i.far.fa-times-circle.popup-msg(data-title="Cerrar")
-            span.list-file-show
-                i.fas.fa-clipboard-list.popup-msg(data-title="Lista")
             span#v-prev
                 i.far.fa-arrow-alt-circle-left.popup-msg(data-title="Anterior")
             </span>
@@ -18,8 +20,8 @@
                     i.far.fa-play-circle.popup-msg(data-title="Pausar")
             span#v-next
                 i.far.fa-arrow-alt-circle-right.popup-msg(data-title="Proximo")
-            span#v-player-config.tool-config
-                i.fas.fa-cog.popup-msg(data-title="Configuracion")
+            //- span#v-player-config.tool-config
+            //-     i.fas.fa-cog.popup-msg(data-title="Configuracion")
             span.btn-fullscr
                 i.fas.fa-expand-arrows-alt.popup-msg(data-title="Pantalla Completa")
             span.v-vol
