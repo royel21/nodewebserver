@@ -1,0 +1,70 @@
+#modal-container
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, .55);
+    z-index: 9999;
+}
+
+#modal{
+    display: none;
+    height: fit-content;
+    width: 400px;
+}
+
+#modal label{
+    width: 100px;
+}
+
+#modal .text-area-head{
+    height: 35px;
+    justify-content: center;
+    border-radius: 5px 5px 0 0;
+}
+#modal .text-area-head label{
+    margin: 0;
+}
+
+#modal textarea{
+    border-radius: 0 0 5px 5px;
+    padding: 0.2rem .3rem;
+    height: 66px;
+}
+
+#modal #cat{
+    width: 125px;
+}
+
+#modal #cat span{
+    margin-left: 10px; 
+    font-size: 15px;
+    cursor: pointer;   
+}
+
+#modal .cat:active,
+#modal #cat span:active{
+    transform: scale(1.2);
+}
+
+#modal .cat{
+    position: relative;
+    cursor: pointer;
+}
+
+#modal .cat:after{
+    content: "X";
+    position: absolute;
+    left: 10px; 
+    display: none;
+    color: black;
+}
+
+#modal .cat:hover:after{
+    display: inline-block;
+}

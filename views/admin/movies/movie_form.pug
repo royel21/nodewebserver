@@ -1,0 +1,36 @@
+#modal-container
+    #modal.card.bg-dark.text-light
+        #modal-header.text-center
+            h3= modalTitle
+        form#create-edit(method="post" action="/admin/create-edit-movie")
+            input(type="hidden" name="id" value=""+ (movie.Id ? movie.Id :  ""))
+            input(type="hidden" name="_csrf" value=""+ csrfToken)
+            #errors.text-danger.text-center
+            .input-group.my-3
+                .input-group-prepend
+                    label.input-group-text(for="name") Nombre
+                input#name.form-control(required="" type="text" name="name" value=""+ (movie.Name ? movie.Name : ""))
+            .input-group.my-3
+                .input-group-prepend
+                    label.input-group-text(for="year" value="") Año 
+                input#year.form-control(type="number" name="year" value=""+ (movie.Name ? movie.Name : "2000"))
+            .input-group.my-3
+                .input-group-prepend
+                    label#cat.input-group-text(for="movie-categories") Categorias
+                        span#add-cat.badge.badge-primary +
+                select#movie-categories.form-control
+                    for ca in categories
+                        option(value=ca.Id)= ca.Name
+            .my-2#cat-group
+                label.badge.badge-primary.mx-1.cat(data-val="1") Accion
+                label.badge.badge-primary.mx-1.cat(data-val="2") Horror
+                label.badge.badge-primary.mx-1.cat(data-val="3") Suspenso
+                label.badge.badge-primary.mx-1.cat(data-val="4") Guerra
+            .my-3
+                .text-area-head.text-center.input-group-text
+                    label(for="description") Descripcion
+                textarea#description.form-control(type="textarea" name="description" value=""+ (movie.Descreption ? movie.Descreption : ""))
+            .text-center.mt-3
+                button.btn.btn-secondary.close-modal(type="button") Cancelar
+                button.btn.btn-primary.ml-2(type="submit") Guardar
+        

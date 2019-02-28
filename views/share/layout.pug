@@ -1,0 +1,27 @@
+doctype html
+html(lang="en")
+    head
+        title= title
+        meta(charset="utf-8")
+        meta(http-equiv="X-UA-Compatible" content="IE=edge")
+        meta(name="viewport" content="initial-scale=1")
+        link(rel="shortcut icon" href="/images/home.ico" type="image/ico")
+        link(rel="stylesheet" href="/lib/css/bootstrap.min.css" type="text/css")
+        link(rel="stylesheet" href="/lib/css/all.min.css" type="text/css")
+        link(rel="stylesheet" href="/css/nav-menu.css" type="text/css")
+        link(rel="stylesheet" href="/css/index.css" type="text/css")
+        block css
+    body
+        block navbar
+        
+        div#main
+            div#content
+                #popup
+                block content
+
+    script(src="/lib/js/jquery.js")
+    script(src="/js/util.js")
+    script(src="/socket.io/socket.io.js")
+    block script
+
+    

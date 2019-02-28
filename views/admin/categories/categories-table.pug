@@ -1,0 +1,22 @@
+mixin categories_table(categories, pagedatas) 
+    #container.text-light.bg-dark.rounded.mx-2(data-action=pagedatas.action+"modal")
+        #table-controls
+            span.show-form
+                i.far.fa-plus-square.text-primary
+            include ../../share/pagination
+            +pagination(categories.count, pagedatas)
+            
+        table.table.table-dark.user-table.table-hover
+            thead
+                tr
+                    th Acciones
+                    th Nombre
+            tbody
+                each category in categories.rows
+                    tr(id=""+ category.Id)
+                        td
+                            span.show-form
+                                i.fas.fa-edit.fa-2x
+                            span.show-delete(data-action=pagedatas.action+"delete")
+                                i.ml-2.text-danger.fas.fa-trash-alt.fa-2x
+                        td= category.Name
