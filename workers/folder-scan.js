@@ -89,8 +89,8 @@ scanOneDir = async (dir) => {
     console.log("End:", timer / 1000);
     console.log(tempFiles.length);
 }
-process.on("New Folder", (id, folder)=>{
-    scanOneDir(folder).then(()=>{
-        process.send("Folder Loaded", id);
+process.on("message",(data)=>{
+    scanOneDir(data.dir).then(()=>{
+        process.send(data);
     });
 });

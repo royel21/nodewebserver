@@ -30,12 +30,10 @@ module.exports = (sequelize, DataTypes) => {
             timestamps: false,
             hooks: {
                 beforeCreate: (video, options) => {
-                    video.Id = crc16(video.Name).toString(16);
                     video.CreatedAt = new Date();
                 },
                 beforeBulkCreate: (videos, options) => {
                     videos.forEach((video) => {
-                        video.Id = crc16(video.Name).toString(16);
                         video.CreatedAt = new Date();
                     });
                 }

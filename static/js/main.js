@@ -3,12 +3,24 @@ window.history.replaceState(document.title, document.title, document.location.hr
 
 loadDisk = (url) => {
     if (url.includes('config')) {
+        
         if (!socket) {
             socket = io();
             socket.on("disk-loaded", (data) => {
                 $('#disks').empty().append(data);
             });
-            console.log(socket);
+
+            socket.on('path-added', (newPath) => {
+                console.log(newPath);
+                if (newPath) {
+                    $("#paths").append(newPath);
+                }
+            });
+
+            socket.on("scan-finish", (data) => {
+                console.log(data)
+                $('#path-'+data.id).remove();
+            });
         }
         socket.emit('load-disks', "load now");
     }

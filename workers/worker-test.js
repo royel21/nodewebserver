@@ -1,4 +1,8 @@
 
-process.on("test-message",(path, id, socketId)=>{
-    process.send("folder-scanned", {id, socketid});
+process.on("message",(data)=>{
+    console.log("from test");
+    process.send(data);
 });
+
+
+console.log("from test 2");

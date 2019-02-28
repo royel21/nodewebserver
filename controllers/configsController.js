@@ -1,14 +1,13 @@
 
 const windrive = require('win-explorer')
 const path = require('path')
-const fs = require('fs-extra')
+const fs = require('fs-extra');
 
-const configPath = './config/server-config.json'
+const configPath = './config/server-config.json';
 
-const configs = fs.readJsonSync(configPath);
 
 exports.configs = (req, res, next) => {
-        
+    const configs = fs.readJsonSync(configPath);
     let view = req.query.partial ? "admin/configs/partial-configs" : "admin/index.pug"; 
     res.render(view, {
         title: "Configuraciones", configs, pagedatas: {
@@ -57,6 +56,7 @@ exports.AddPath = (req, res) => {
 
 exports.deletePath = (req, res) => {
     let dir = req.body.path;
+    const configs = fs.readJsonSync(configPath);
     if (configs.paths.includes(dir)) {
         let index = configs.paths.indexOf(dir);
         configs.paths.splice(index, 1);

@@ -112,14 +112,9 @@ $('body').on('click', '.tree-view .caret', (e) => {
 $('body').on('click', '.tree-view .dir', (e) => {
     let dir = e.target.textContent;
     let path = e.target.closest('ul').dataset.path;
-    $.post('/admin/configs/add-path', {
-        path,
-        folder: dir, _csrf: $("#paths").data('csrf'),
-        socketId: socket.id
-    }, (resp) => {
-        $("#paths").append(resp);
-    });
+    socket.emit('scan-dir',{path, folder: dir});
 });
+
 $('body').on('click', '#paths .fa-trash-alt', (e) => {
 
     let li = e.target.closest('li');
