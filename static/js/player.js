@@ -15,8 +15,8 @@ var currentVideoId = "";
 
 let currentFile = { id: 0, currentTime: 0 };
 
-$('.btn-fullscr').click((e) => { 
-    setfullscreen(videoViewer) 
+$('.btn-fullscr').click((e) => {
+    setfullscreen(videoViewer)
 });
 
 var config = {
@@ -24,7 +24,7 @@ var config = {
     volume: 0,
     isMuted: false,
     paused: true,
-    hidecontrolduration: 2,
+    hidecontrolduration: 3,
     playerkey: {
         nextfile: {
             name: "PageDown",
@@ -70,6 +70,11 @@ var config = {
             name: "m",
             keycode: 77,
             isctrl: false
+        },
+        closeplayer:{
+          name: "x",
+          keycode: 88,
+          isctrl: true  
         }
     }
 }
@@ -90,6 +95,12 @@ if (local.hasObject('config')) {
     config = oldConfig;
 }
 
+Slider = new SliderRange('#slider-container');
+
+Slider.min = 0;
+Slider.value = 0;
+Slider.max = 1;
+
 const configPlayer = () => {
     vDuration = formatTime(player.duration);
     $vTotalTime.text(formatTime(player.currentTime) + "/" + vDuration);
@@ -99,7 +110,7 @@ const configPlayer = () => {
     player.muted = btnMuted.checked = config.isMuted;
 
     if (!config.paused) pauseOrPlay();
-    $('.loading').css({display: 'none'});
+    $('.loading').css({ display: 'none' });
 
     update = true;
 }
@@ -109,108 +120,25 @@ player.onloadedmetadata = function (e) {
     Slider.max = player.duration;
     Slider.value = 0;
     configPlayer();
-    console.log("Duration", vDuration);
 }
 
 volcontrol.value = config.volume;
 $('.fa-volume-up').attr('data-title', config.isMuted ? "Unmute" : "Mute");
 
-Slider = new SliderRange('#slider-container');
-
-Slider.min = 0;
-Slider.value = 0;
-Slider.max = 1;
-
-
 Slider.oninput = (value) => {
-    console.log("slider Val: " + value)
     player.currentTime = value;
 }
-
-vContainer.addEventListener('keydown', function (e) {
-    console.log(e.keyCode);
-});
-
-vContainer.onkeydown = (e) => {
-    var keys = config.playerkey;
-    console.log(e.keyCode);
-    switch (e.keyCode) {
-        case keys.fullscreen.keycode:
-            {
-                if (e.ctrlKey == keys.fullscreen.isctrl)
-                    setfullscreen(videoViewer)
-                break;
-            }
-        case keys.playpause.keycode:
-            {
-                if (e.ctrlKey == keys.playpause.isctrl)
-                    pauseOrPlay();
-                break;
-            }
-        case keys.rewind.keycode:
-            {
-                if (e.ctrlKey == keys.rewind.isctrl)
-                    player.currentTime -= 6;
-                break;
-            }
-        case keys.volumeup.keycode:
-            {
-                if (e.ctrlKey == keys.volumeup.isctrl) {
-                    volcontrol.value = player.volume + 0.05;
-                    player.volume = volcontrol.value;
-                }
-                break;
-            }
-        case keys.forward.keycode:
-            {
-                if (e.ctrlKey == keys.forward.isctrl)
-                    player.currentTime += 6;
-                break;
-            }
-        case keys.volumedown.keycode:
-            {
-                if (e.ctrlKey == keys.volumedown.isctrl) {
-                    volcontrol.value -= Number(0.05);
-                    player.volume = volcontrol.value;
-                }
-                break;
-            }
-        case keys.volumemute.keycode:
-            {
-                if (e.ctrlKey == keys.volumemute.isctrl) {
-                    player.muted = btnMuted.checked;
-                    config.isMuted = btnMuted.checked;
-                    $('.fa-volume-up').attr('data-title', btnMuted.checked ? "Unmute" : "Mute");
-                }
-                break;
-            }
-        case keys.nextfile.keycode:
-            {
-                if (e.ctrlKey == keys.nextfile.isctrl) {
-                    if (fileN < filesList.length - 1) {
-                        // processFile(filesList[++fileN].Name);
-                    } else {
-                        // returnToFb();
-                    }
-                }
-                break;
-            }
-        case keys.previousfile.keycode:
-            {
-                if (e.ctrlKey == keys.previousfile.isctrl) {
-                    if (fileN > 0) {
-                        //processFile(filesList[--fileN].Name);
-                    } else {
-                        // returnToFb();
-                    }
-                }
-                break;
-            }
-    }
-    e.stopPropagation();
-    e.preventDefault();
-    console.log(e.target)
+const closePlayer = (e)=>{
+    player.pause();
+    player.src = "";
+    $('#video-viewer').fadeOut('fast', (e) => {
+        $('#video-container').fadeOut(200,(e)=>{
+           selectItem(selectedIndex);
+        });
+    });
 }
+
+$('#hide-player').click(closePlayer);
 
 const pauseOrPlay = () => {
     var playPause = "Pausar";
@@ -260,7 +188,7 @@ showCursor = () => {
 
 hideFooter = () => {
     showCursor();
-    if (document.webkitIsFullScreen) {
+    if (document.fullscreenElement) {
         mouseTimer = window.setTimeout(() => {
 
             if (player.paused) {
@@ -280,20 +208,18 @@ hideFooter = () => {
     }
 }
 
-
-$(player).on('webkitfullscreenchange', (e) => {
-    if (document.webkitIsFullScreen) {
-        console.log("hide Cursor")
+document.onfullscreenchange = (e) => {
+    if (document.fullscreenElement) {
         $(document).on('mousemove', hideFooter);
         hideFooter();
     } else {
         $(document).off('mousemove', hideFooter);
         showCursor();
     }
-});
+}
 
 
-player.ondblclick = (e) => setfullscreen(vcontainer);
+player.ondblclick = (e) => setfullscreen(videoViewer);
 player.onplay = player.onpause = hideFooter;
 
 player.ontimeupdate = (e) => {
@@ -307,9 +233,9 @@ var volTimer = null;
 player.onvolumechange = function (e) {
     if (update) {
         config.volume = player.volume;
-        if ($('.footer').hasClass('hide-footer') && document.webkitIsFullScreen) {
+        if ($('.footer').hasClass('hide-footer') && document.fullscreenElement) {
             $('.v-vol').addClass('vol-show');
-
+            clearTimeout(volTimer);
             volTimer = setTimeout(() => {
                 $('.v-vol').removeClass('vol-show');
                 clearTimeout(volTimer);
@@ -317,8 +243,7 @@ player.onvolumechange = function (e) {
             }, 1500);
         }
         volcontrol.value = player.volume;
-        volcontrol.setAttribute('value', player.volume)
-        console.log("onVolChange", player.volume)
+        volcontrol.setAttribute('value', player.volume);
     }
 }
 
@@ -386,52 +311,134 @@ player.onended = function () {
     }
 }
 
-$('#hide-player').click((e) => {
-    player.pause();
-    player.src = "";
-    $('#video-viewer').fadeOut('fast', (e) => {
-        $('#video-container').fadeOut(200);
-    });
-});
 
 const playVideo = (el) => {
-    if(el){
+    if (el) {
         let id = el.id;
         currentVideoId = id;
         $(vContainer).fadeIn(300);
         player.src = "/videoplayer/video/" + id;
         $(videoViewer).fadeIn(300);
         vContainer.focus();
-        $('.loading').css({display: 'flex'});
+        $('.loading').css({ display: 'flex' });
     }
-    
+
 }
 
-$('body').on('click', '.fa-play-circle', (e)=>{ 
+$('body').on('click', '.fa-play-circle', (e) => {
     console.log(e.target)
-    playVideo(e.target.closest('.items')); 
+    playVideo(e.target.closest('.items'));
 });
 
-$(".fa-arrow-alt-circle-right").click((e)=>{
-    let next = $('#'+currentVideoId).next()[0];
-    if(next){
+$(".fa-arrow-alt-circle-right").click((e) => {
+    let next = $('#' + currentVideoId).next()[0];
+    if (next) {
         playVideo(next)
     }
 });
 
-$(".fa-arrow-alt-circle-left").click((e)=>{
-    let prev = $('#'+currentVideoId).prev()[0];
-    if(prev){
+$(".fa-arrow-alt-circle-left").click((e) => {
+    let prev = $('#' + currentVideoId).prev()[0];
+    if (prev) {
         playVideo(prev);
     }
 });
 
-window.addEventListener("orientationchange", function(e) {
+window.addEventListener("orientationchange", function (e) {
     console.log(screen.orientation.angle);
-    if($(videoViewer).is(":visible")){
-        if( screen.orientation.angle > 0 && !document.fullscreenElement)
-        {
+    if ($(videoViewer).is(":visible")) {
+        if (screen.orientation.angle > 0 && !document.fullscreenElement) {
             setfullscreen(videoViewer);
         }
-     }
+    }
 });
+
+
+document.onkeydown = (e) => {
+    if (vContainer.style.display === "block") {
+        var keys = config.playerkey;
+        console.log(e.keyCode);
+        switch (e.keyCode) {
+            case keys.fullscreen.keycode:
+                {
+                    if (e.ctrlKey == keys.fullscreen.isctrl)
+                        setfullscreen(videoViewer)
+                    break;
+                }
+            case keys.playpause.keycode:
+                {
+                    if (e.ctrlKey == keys.playpause.isctrl)
+                        pauseOrPlay();
+                    break;
+                }
+            case keys.rewind.keycode:
+                {
+                    if (e.ctrlKey == keys.rewind.isctrl)
+                        player.currentTime -= 6;
+                    break;
+                }
+            case keys.volumeup.keycode:
+                {
+                    if (e.ctrlKey == keys.volumeup.isctrl) {
+                        volcontrol.value = player.volume + 0.05;
+                        player.volume = volcontrol.value;
+                    }
+                    break;
+                }
+            case keys.forward.keycode:
+                {
+                    if (e.ctrlKey == keys.forward.isctrl)
+                        player.currentTime += 6;
+                    break;
+                }
+            case keys.volumedown.keycode:
+                {
+                    if (e.ctrlKey == keys.volumedown.isctrl) {
+                        volcontrol.value -= Number(0.05);
+                        player.volume = volcontrol.value;
+                    }
+                    break;
+                }
+            case keys.volumemute.keycode:
+                {
+                    if (e.ctrlKey == keys.volumemute.isctrl) {
+                        player.muted = btnMuted.checked;
+                        config.isMuted = btnMuted.checked;
+                        $('.fa-volume-up').attr('data-title', btnMuted.checked ? "Unmute" : "Mute");
+                    }
+                    break;
+                }
+            case keys.nextfile.keycode:
+                {
+                    if (e.ctrlKey == keys.nextfile.isctrl) {
+                        if (fileN < filesList.length - 1) {
+                            // processFile(filesList[++fileN].Name);
+                        } else {
+                            // returnToFb();
+                        }
+                    }
+                    break;
+                }
+            case keys.previousfile.keycode:
+                {
+                    if (e.ctrlKey == keys.previousfile.isctrl) {
+                        if (fileN > 0) {
+                            //processFile(filesList[--fileN].Name);
+                        } else {
+                            // returnToFb();
+                        }
+                    }
+                    break;
+                }
+               case keys.closeplayer.keycode:
+                {
+                    if (e.ctrlKey == keys.closeplayer.isctrl) {
+                        closePlayer(e);
+                    }
+                    break;
+                }
+        }
+        e.stopPropagation();
+        e.preventDefault();
+    }
+}

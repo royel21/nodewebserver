@@ -16,7 +16,7 @@ exports.configs = (req, res, next) => {
                 csrfToken: req.csrfToken()
             }
         }, (err, html) => {
-            console.log(err);
+            
             if (req.query.partial) {
                 res.send({ url: req.url, data: html });
     
@@ -40,23 +40,6 @@ exports.folderContent = (req, res) => {
     return folders.length == 0 ? res.send("") : res.render('admin/configs/tree-node', { fpath: dir, folders });
 }
 
-exports.AddPath = (req, res) => {
-    let dir = "";
-    if (req.body.path) {
-        dir = path.join(req.body.path, req.body.folder);
-    } else {
-        dir = req.body.folder;
-    }
-
-    if (fs.existsSync(dir) && !configs.paths.includes(dir)) {
-        configs.paths.push(dir);
-        fs.writeJSONSync(configPath, configs);
-        res.render('admin/configs/path-item', { path: dir, id: configs.paths.length - 1 });
-    } else {
-        res.send("");
-    }
-}
-
 exports.deletePath = (req, res) => {
     let id = req.body.id;
     db.directory.destroy({ where: { Id: id } }).then(deletePath => {
@@ -66,17 +49,12 @@ exports.deletePath = (req, res) => {
                     FolderId: id
                 }
             }).then((v) => {
-                console.log("delete: ", v);
-                let coverPath = path.join(__dirname, 'static', 'covers', id);
-                console.log(coverPath);
+                let coverPath = path.resolve('./static', 'covers', id);
                 if (fs.existsSync(coverPath)) {
-                    const worker = fork('../workers/delete-worker.js');
+                    const worker = fork('./workers/delete-worker.js');
                     worker.send(coverPath);
                     worker.on('finish', (result) => {
-                        console.log('result:', result);
-                    });
-                    worker.on('close', function (code) {
-                        console.log('closing code: ' + code);
+                        //console.log('result:', result);
                     });
                 }
                 res.send("ok");

@@ -118,3 +118,17 @@ $('body').on('keydown', '#video-list', (e) => {
         e.preventDefault();
     }
 });
+
+$('body').on('click', '.items',(e)=>{
+    let item = e.target.classList[0] === "items" ? e.target : e.target.closest('.items');
+    selectItem($('.items').index(item));
+});
+
+$('body').on('dblclick', '#video-list .items', (e)=>{
+    let item = e.target.classList[0] === "items" ? e.target : e.target.closest('.items');
+    playVideo(item);
+});
+
+$(()=>{
+    selectItem(0);
+})

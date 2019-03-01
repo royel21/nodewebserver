@@ -29,6 +29,5 @@ router.post("/categories/create-edit", categoriesController.categoryModalPost);
 
 router.get("/configs", configsController.configs);
 router.post("/configs/folder-content", configsController.folderContent);
-router.post("/configs/add-path", configsController.AddPath);
 router.post("/configs/delete-path", configsController.deletePath);
 module.exports = router;

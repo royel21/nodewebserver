@@ -29,11 +29,6 @@ module.exports = (server, app) => {
         worker.on("message", (data) => {
             io.sockets.emit("scan-finish", data);
             directory.update({ IsLoading: false });
-            console.log(data)
-            console.log("finish");
-        });
-        worker.on('close', function (code) {
-            console.log('closing code: ' + code);
         });
     }
 
@@ -68,7 +63,6 @@ module.exports = (server, app) => {
 
             if (fs.existsSync(dir)) {
                 getNewId().then(id => {
-                    console.log("newId:" + id);
                     db.directory.create({ Id: id, FullPath: dir, IsLoading: true }).then(newDir => {
                         if (newDir) {
                             let renderTree = pug.compileFile('./views/admin/configs/path-item.pug');

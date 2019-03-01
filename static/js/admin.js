@@ -13,7 +13,7 @@ socket.on('path-added', (newPath) => {
 
 socket.on("scan-finish", (data) => {
     console.log(data)
-    $('.fa-sync').removeClass('fa-spin');
+    $('#'+data.id+' .fa-sync').removeClass('fa-spin');
 });
 
 $('.sidenav .nav-link').click((e) => {
