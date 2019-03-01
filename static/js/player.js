@@ -128,6 +128,7 @@ $('.fa-volume-up').attr('data-title', config.isMuted ? "Unmute" : "Mute");
 Slider.oninput = (value) => {
     player.currentTime = value;
 }
+
 const closePlayer = (e)=>{
     player.pause();
     player.src = "";
@@ -163,9 +164,8 @@ btnMuted.onchange = () => {
     config.isMuted = btnMuted.checked;
     $('.fa-volume-up').attr('data-title', btnMuted.checked ? "No Silenciar" : "Silenciar");
 }
-
+// deltaY obviously records vertical scroll, deltaX and deltaZ exist too
 vContainer.onwheel = (event) => {
-    // deltaY obviously records vertical scroll, deltaX and deltaZ exist too
     if (event.deltaY < 0) {
         volcontrol.value = player.volume + 0.05;
         player.volume = volcontrol.value;
