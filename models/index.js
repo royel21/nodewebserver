@@ -30,31 +30,41 @@ db.directory = require('./directories')(sequelize, DataTypes);
 
 db.sequelize = sequelize;
 
+db.user.afterCreate((user, options)=>{
+    console.log(user.Id);
+    if(!['manager','admin'].includes(user.Role))
+    {
+        db.favorite.create({
+            Name: user.Name,
+            UserId: user.Id
+        });
+    }
+});
+
 db.video.belongsToMany(db.category, {
     through: 'videocategory',
     as: 'Category',
     foreignKey: 'VideoId'
 });
 
+db.directory.hasMany(db.video, { onDelete: 'cascade' });
+db.video.belongsTo(db.directory);
+
 db.favorite.hasMany(db.video);
 db.user.hasOne(db.favorite);
+
+
 
 db.init = async () => {
     await sequelize.sync();
     
     if (await db.user.findOne({ where: { Name: "Administrator" } }) == null) {
-        let users = [{
+        
+        await db.user.create({
             Name: "Administrator",
             Password: "Admin",
             Role: "admin"
-        }, {
-            Name: "Admin",
-            Password: "Admin"
-        }, {
-            Name: "Rmarero",
-            Password: "123456"
-        }];
-        await db.user.bulkCreate(users);
+        });
     }
     
     if ( await db.category.findOne({ where: { Name: "Aventuras" } }) == null) {

@@ -20,17 +20,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: true
         },
-        FilePath: {
-            type: DataTypes.STRING
-        },
         CoverPath:
         {
           type: DataTypes.STRING,
           allowNull: true
-        },
-        FolderId: {
-            type: DataTypes.STRING(20),
-            allowNull: true
         },
         CreatedAt: {
             type: DataTypes.DATE

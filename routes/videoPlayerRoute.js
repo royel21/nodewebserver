@@ -8,9 +8,13 @@ router.get('/', function (req, res) {
 });
 //hello
 router.get("/video/:videoid", (req, res) => {
-  db.video.findOne({ where: { Id: req.params.videoid } }).then(video => {
+  db.video.findOne({ where: { Id: req.params.videoid },
+    include: [{ 
+    model: db.directory,
+    attributes: ['FullPath']
+}] }).then(video => {
     if (video) {
-      var file = video.FilePath;
+      var file = path.join(video.Directory.FullPath, video.Name);
       // var file = "D:\\Download\\Jav\\ADN-189.mp4"
       fs.stat(file, function (err, stats) {
         if (err) {

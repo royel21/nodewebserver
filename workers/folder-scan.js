@@ -19,6 +19,7 @@ takeScreenShot = async (vfile, fId) => {
     await new Promise((resolve, rejected) => {
         try {
             ffmpeg(vfile).on('end', (e) => {
+                console.log(e)
                 resolve(true);
             }).on('error', function (err) {
                 console.log(vfile);
@@ -66,9 +67,8 @@ PopulateDB = async (folder, files, fId) => {
                     tempFiles.push({
                         Id,
                         Name: f.FileName,
-                        FilePath: path.join(folder, f.FileName),
-                        CoverPath: path.join("/covers/", fId, f.FileName + ".png"),
-                        FolderId: fId
+                        CoverPath: path.join("/covers/", fId, f.FileName.replace(/#/ig,'%23') + ".png"),
+                        DirectoryId: fId
                     });
                 }
             } else {

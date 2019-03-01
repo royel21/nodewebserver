@@ -38,4 +38,4 @@ mixin users_table(users, pagedatas)
                         td= user.Name
                         td= roles[user.Role]
                         td= user.State
-                        td= moment(user.CreatedAt).format("LLL") + user.CreatedAt
+                        td= moment(user.CreatedAt).locale("es").format("LL")

@@ -9,7 +9,7 @@ exports.index = (req, res) => {
         let currentPage = req.params.page || 1;
         let begin = ((currentPage - 1) * itemsPerPage);
         let val = req.params.search || "";
-        
+
         db.video.findAndCountAll({
             order: ['Name'],
             offset: begin,
@@ -20,7 +20,7 @@ exports.index = (req, res) => {
                 }
             }
         }).then(movies => {
-
+            
             var totalPages = Math.ceil(movies.count / itemsPerPage);
             let view = req.query.partial ? "home/partial-items-view" : "home/index.pug";
             res.render(view, {
@@ -35,7 +35,7 @@ exports.index = (req, res) => {
                     csrfToken: req.csrfToken()
                 }
             }, (err, html) => {
-                
+
                 if (req.query.partial) {
                     res.send({ url: req.url, data: html });
 
@@ -52,7 +52,7 @@ exports.index = (req, res) => {
     }
 }
 
-exports.postSearch = (req, res) =>{
+exports.postSearch = (req, res) => {
     let itemsPerPage = req.body.items || 10;
     let val = req.body.search || "";
     res.redirect(`/home/1/${itemsPerPage}/${val}?partial=true`)

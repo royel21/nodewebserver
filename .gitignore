@@ -7,3 +7,4 @@ local_modules/win-explorer/build
 local_modules/win-explorer/test
 static/covers
 *.db
+testing

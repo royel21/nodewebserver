@@ -39,11 +39,11 @@ module.exports = (sequelize, DataTypes) => {
   }, {
       timestamps: false,
       hooks: {
-        beforeCreate: (user, options, cb) => {
+        beforeCreate: (user, options) => {
           user.Password = bcrypt.hashSync(user.Password, bcrypt.genSaltSync(8), null);
           user.CreatedAt = new Date();
         },
-        beforeBulkCreate: (users, options, cb) => {
+        beforeBulkCreate: (users, options) => {
           for (var user of users) {
             user.Password = bcrypt.hashSync(user.Password, bcrypt.genSaltSync(8), null);
             user.CreatedAt = new Date();
