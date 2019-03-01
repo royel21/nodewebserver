@@ -71,10 +71,10 @@ var config = {
             keycode: 77,
             isctrl: false
         },
-        closeplayer:{
-          name: "x",
-          keycode: 88,
-          isctrl: true  
+        closeplayer: {
+            name: "x",
+            keycode: 88,
+            isctrl: true
         }
     }
 }
@@ -100,6 +100,10 @@ Slider = new SliderRange('#slider-container');
 Slider.min = 0;
 Slider.value = 0;
 Slider.max = 1;
+Slider.setPreviewContent($('<span id="v-current-time">'))
+Slider.onPreview = (value) => {
+    $('#v-current-time').text(formatTime(Math.floor(value)));
+}
 
 const configPlayer = () => {
     vDuration = formatTime(player.duration);
@@ -129,12 +133,15 @@ Slider.oninput = (value) => {
     player.currentTime = value;
 }
 
-const closePlayer = (e)=>{
+const closePlayer = (e) => {
     player.pause();
     player.src = "";
+    if (document.fullscreenElement) {
+        setfullscreen(videoViewer);
+    }
     $('#video-viewer').fadeOut('fast', (e) => {
-        $('#video-container').fadeOut(200,(e)=>{
-           selectItem(selectedIndex);
+        $('#video-container').fadeOut(200, (e) => {
+            selectItem(selectedIndex);
         });
     });
 }
@@ -321,6 +328,7 @@ const playVideo = (el) => {
         $(videoViewer).fadeIn(300);
         vContainer.focus();
         $('.loading').css({ display: 'flex' });
+        player.focus();
     }
 
 }
@@ -329,6 +337,17 @@ $('body').on('click', '.fa-play-circle', (e) => {
     console.log(e.target)
     playVideo(e.target.closest('.items'));
 });
+
+
+window.addEventListener("orientationchange", function (e) {
+    console.log(screen.orientation.angle);
+    if ($(videoViewer).is(":visible")) {
+        if (screen.orientation.angle > 0 && !document.fullscreenElement) {
+            setfullscreen(videoViewer);
+        }
+    }
+});
+
 
 $(".fa-arrow-alt-circle-right").click((e) => {
     let next = $('#' + currentVideoId).next()[0];
@@ -344,16 +363,6 @@ $(".fa-arrow-alt-circle-left").click((e) => {
     }
 });
 
-window.addEventListener("orientationchange", function (e) {
-    console.log(screen.orientation.angle);
-    if ($(videoViewer).is(":visible")) {
-        if (screen.orientation.angle > 0 && !document.fullscreenElement) {
-            setfullscreen(videoViewer);
-        }
-    }
-});
-
-
 document.onkeydown = (e) => {
     if (vContainer.style.display === "block") {
         var keys = config.playerkey;
@@ -362,7 +371,7 @@ document.onkeydown = (e) => {
             case keys.fullscreen.keycode:
                 {
                     if (e.ctrlKey == keys.fullscreen.isctrl)
-                        setfullscreen(videoViewer)
+                        setfullscreen(videoViewer);
                     break;
                 }
             case keys.playpause.keycode:
@@ -411,10 +420,9 @@ document.onkeydown = (e) => {
             case keys.nextfile.keycode:
                 {
                     if (e.ctrlKey == keys.nextfile.isctrl) {
-                        if (fileN < filesList.length - 1) {
-                            // processFile(filesList[++fileN].Name);
-                        } else {
-                            // returnToFb();
+                        let next = $('#' + currentVideoId).next()[0];
+                        if (next) {
+                            playVideo(next)
                         }
                     }
                     break;
@@ -422,15 +430,14 @@ document.onkeydown = (e) => {
             case keys.previousfile.keycode:
                 {
                     if (e.ctrlKey == keys.previousfile.isctrl) {
-                        if (fileN > 0) {
-                            //processFile(filesList[--fileN].Name);
-                        } else {
-                            // returnToFb();
+                        let prev = $('#' + currentVideoId).prev()[0];
+                        if (prev) {
+                            playVideo(prev);
                         }
+                        break;
                     }
-                    break;
                 }
-               case keys.closeplayer.keycode:
+            case keys.closeplayer.keycode:
                 {
                     if (e.ctrlKey == keys.closeplayer.isctrl) {
                         closePlayer(e);

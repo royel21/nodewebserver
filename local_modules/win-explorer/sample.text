@@ -1,0 +1,12 @@
+,
+      "conditions":[
+      	["OS=='linux'", {
+      	  "sources": [ "native-rt_linux.cc" ]
+      	  }],
+      	["OS=='mac'", {
+      	  "sources": [ "native-rt_mac.cc" ]
+      	}],
+        ["OS=='win'", {
+      	  "sources": [ "native-rt_win.cc" ]
+      	}]
+      ]

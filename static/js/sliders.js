@@ -49,12 +49,10 @@ class SliderRange {
                 var pos = newPos.map(0, this.$slider.width(), 0, 100).toFixed(0);
                 
                 this.$slider.find('.rc-preview').css({
-                    left: `calc(${pos < 0 ? 0 : pos > 100 ? 100 : pos}% - 80px)`
-                , display: "block"});
+                    left: `calc(${pos < 0 ? 0 : pos > 100 ? 100 : pos}% - 40px)`});
                
                 this.onPreview(this.validateValue(current));
-            }
-            else{
+            } else{
                 this.$slider.find('.rc-preview').css({display: "none"})
             }
         });

@@ -116,6 +116,18 @@ body .content {
     padding: 0 5px;
 }
 
+#video-viewer .rc-slider .rc-preview{
+    color: black;
+    width: min-content;
+    height: 30px;
+}
+
+#video-viewer #v-current-time{
+    color: black;
+    padding: 0;
+    margin: 0;
+}
+
 #video-viewer:-webkit-full-screen .footer > span i {
     background-color: black;
     padding: 2px 4px;
