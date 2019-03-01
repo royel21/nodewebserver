@@ -8,3 +8,4 @@ local_modules/win-explorer/test
 static/covers
 *.db
 testing
+ffmpeg-bin
