@@ -35,6 +35,7 @@ exports.index = (req, res) => {
                     csrfToken: req.csrfToken()
                 }
             }, (err, html) => {
+                if(err) console.log(err);
 
                 if (req.query.partial) {
                     res.send({ url: req.url, data: html });

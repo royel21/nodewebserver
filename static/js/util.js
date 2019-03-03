@@ -30,19 +30,10 @@ Number.prototype.map = function (in_min, in_max, out_min, out_max) {
     return (this - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-Array.prototype.removeById = function (obj) {
-    var i = this.length;
-    while (i--) {
-        if (this[i] instanceof Object && this[i].Id == obj.Id) {
-            return this.splice(i, 1)[0];
-        }
-    }
-}
-
 Array.prototype.removeBy = function (obj, by) {
     var i = this.length;
     while (i--) {
-        if (this[i] instanceof Object && this[i][by] == obj[by]) {
+        if (this[i] instanceof Object && this[i][by] === obj[by]) {
             return this.splice(i, 1)[0];
         }
     }

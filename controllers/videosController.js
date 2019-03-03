@@ -1,8 +1,10 @@
 
 let db = require('../models');
+const { fork } = require('child_process');
+const path = require('path');
 
 exports.movies = (req, res) => {
-    let itemsPerPage = req.params.items || req.query.items || 10;
+    let itemsPerPage = req.params.items || req.query.items || 12;
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
     let val = req.params.search || "";
@@ -17,7 +19,7 @@ exports.movies = (req, res) => {
             }
         }
     }).then(movies => {
-        
+
         var totalPages = Math.ceil(movies.count / itemsPerPage);
         let view = req.query.partial ? "admin/movies/partial-movies-table" : "admin/index.pug";
         res.render(view, {
@@ -28,23 +30,25 @@ exports.movies = (req, res) => {
                 itemsPerPage,
                 totalPages,
                 search: val,
-                action:"/admin/movies/",
+                action: "/admin/movies/",
                 csrfToken: req.csrfToken()
             }
-        },(err, html) => {
-            if(req.query.partial){
-                res.send({ url: req.url, data: html });
+        }, (err, html) => {
+            if (err) console.log(err);
+            if (req.query.partial) {
+                res.send({ url: "/admin"+req.url, data: html });
 
-            }else{
+            } else {
                 res.send(html);
             }
         });
     }).catch(err => {
+        if (err) console.log(err);
         res.status(500).send('Internal Server Error');
     });
 }
 
-exports.postSearch = (req, res) =>{
+exports.postSearch = (req, res) => {
     let itemsPerPage = req.body.items || 10;
     let currentPage = req.body.page || 1;
     let val = req.body.search || "";
@@ -69,6 +73,7 @@ exports.movie_modal = (req, res) => {
                 });
         });
     }).catch(err => {
+        if (err) console.log(err);
         res.status(500).send('Internal Server Error');
     });
 }
@@ -87,9 +92,11 @@ const createMovie = (req, res) => {
             id: newMovie.Id,
             name: newMovie.Name
         }, (err, html) => {
+            if (err) console.log(err);
             res.send({ state: "create", name: newMovie.Name, data: html });
         });
     }).catch(err => {
+        if (err) console.log(err);
         res.send({ state: "error", data: "Nombre de usuario en uso" });
     });
 }
@@ -107,6 +114,7 @@ const updateMovie = (req, res) => {
                     id: category_found.Id,
                     name: updatedMovie.Name
                 }, (err, html) => {
+                    if (err) console.log(err);
                     res.send({ state: "update", name: updatedMovie.Name, data: html });
                 });
             });
@@ -127,6 +135,22 @@ exports.movieModalPost = (req, res) => {
     }
 }
 
-exports.testPost = (req, res) => {
-    res.send("ok");
+exports.deleteVideo = (req, res) => {
+    let id = req.body.id;
+    let fid = req.body.fid;
+    let name = req.body.name;
+    if (id) {
+        db.video.destroy({ where: { Id: id } })
+            .then(wasDestroy => {
+                if (wasDestroy > 0) {
+                    const worker = fork('./workers/delete-worker.js');
+                    worker.send(path.resolve('./static/covers', fid, name + ".jpg"));
+                    res.send(true);
+                } else {
+                    res.send(false);
+                }
+            });
+    } else {
+        res.send(false);
+    }
 }

@@ -10,7 +10,7 @@ mixin items-view(videos, pagedatas)
                         .input-group-prepend
                             button#btn-search.input-group-text(type="submit")
                                 i.fa.fa-search
-                        input#search-input.form-control(type="text" name="search" value=pagedatas.search placeholder="Enter Search" required)
+                        input#search-input.form-control(type="text" name="search" value=pagedatas.search placeholder="Enter Search")
                         span#clear-search
                             i.fas.fa-times-circle
 
@@ -25,5 +25,5 @@ mixin items-view(videos, pagedatas)
                             span.item-del.far.fa-play-circle
                             span.item-fav.far.fa-star
                         .item-cover
-                            img(draggable="false" src=video.CoverPath alt="Cover No Found")
+                            img.fa(draggable="false" src=video.CoverPath alt="La imagen se esta cargando actulalize")
                         .item-name= video.Name

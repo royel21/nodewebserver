@@ -25,6 +25,8 @@ var config = {
     isMuted: false,
     paused: true,
     hidecontrolduration: 3,
+    recentMax: 100,
+    recents: [],
     playerkey: {
         nextfile: {
             name: "PageDown",
@@ -79,9 +81,23 @@ var config = {
     }
 }
 
+updateRecents = () => {
+    let tempM = config.recents.removeBy(currentFile, "id");
+    console.log("temp: ", tempM, currentFile);
+    if (tempM != undefined) currentFile.current = tempM.current;
+
+    console.log(currentFile);
+    config.recents.unshift(currentFile);
+    console.log(config.recents);
+    if (config.recents.length > config.recentMax) {
+        config.recents.pop();
+    }
+}
+
 window.onbeforeunload = (e) => {
     if (config) {
         local.setObject('config', config);
+        updateRecents();
     }
 }
 
@@ -112,7 +128,7 @@ const configPlayer = () => {
     player.volume = config.volume;
 
     player.muted = btnMuted.checked = config.isMuted;
-
+    player.currentTime = currentFile.current;
     if (!config.paused) pauseOrPlay();
     $('.loading').css({ display: 'none' });
 
@@ -134,14 +150,16 @@ Slider.oninput = (value) => {
 }
 
 const closePlayer = (e) => {
-    player.pause();
-    player.src = "";
+    updateRecents();
     if (document.fullscreenElement) {
         setfullscreen(videoViewer);
     }
     $('#video-viewer').fadeOut('fast', (e) => {
         $('#video-container').fadeOut(200, (e) => {
             selectItem(selectedIndex);
+            currentFile = {};
+            player.pause();
+            player.src = "";
         });
     });
 }
@@ -233,6 +251,8 @@ player.ontimeupdate = (e) => {
     if (update && Slider) {
         Slider.value = Math.floor(player.currentTime);
         $vTotalTime.text(formatTime(player.currentTime) + "/" + vDuration);
+        currentFile.current = player.currentTime;
+        console.log("update:", currentFile);
     }
 }
 
@@ -321,7 +341,10 @@ player.onended = function () {
 
 const playVideo = (el) => {
     if (el) {
+        update = false;
         let id = el.id;
+        currentFile = {id, current: 0}
+        updateRecents();
         currentVideoId = id;
         $(vContainer).fadeIn(300);
         player.src = "/videoplayer/video/" + id;

@@ -362,24 +362,10 @@ body .content {
     }
 }
 
-/* #loading{
-    display: none;
+#video-viewer:-webkit-full-screen #mobile-control{
+    position: fixed;
+    left: 0px;
 }
-.loading{
-    position:absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 100%;
-}
-
-.loading #loding-msg{
-    font-size: 55px;
-    background: rgba(0,0,0,.7);
-    padding: 0 10px;
-    border-radius: 5px;
-} */
 
 @media all and (max-width: 580px) {
     #player{

@@ -1,20 +1,24 @@
 const http = require('http');
 const { fork } = require('child_process');
 
-const server = http.createServer();
-
-server.on('request', (req, res) => {
-    console.log(req.url)
-  if (req.url === '/compute') {
-    const compute = fork('child.js');
-    compute.send({msg: 'start calculation', other: "jaja"});
-    compute.on('message', sum => {
-      res.end(`Sum is ${sum}`);
-      console.log("sum")
-    });
-  } else {
-    res.end('Ok')
-  }
+const compute = fork('child.js');
+compute.send({msg: 'start calculation', other: "jaja"});
+compute.on('message', result => { 
+  console.log(result);
 });
 
-server.listen(3000);
+compute.on('close',()=>{
+  console.log("child close");
+});
+
+var count = 0;
+const inter = setInterval(()=>{
+    count++;
+    if(count > 10){
+      
+      compute.send("close");
+      clearInterval(inter);
+    }
+    console.log(count);
+    compute.send("more work");
+},1000);

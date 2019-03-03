@@ -32,7 +32,7 @@ $(document).on("click", ".show-form", (e) => {
     let tr = e.target.closest('tr');
     let uid = tr ? tr.id : "";
     let action = $('#container').data('action');
-    $.get(action, { uid }, (resp) => {
+    $.get(action+"modal", { uid }, (resp) => {
         $('body').prepend(resp);
         $('#modal').fadeIn();
     });
@@ -55,6 +55,20 @@ var confirm = (message) => {
     });
     $('#modal button').focus();
 }
+
+
+$('body').on('click', 'tbody .fa-trash-alt',(e)=>{
+    let tr = e.target.closest('tr');
+    let $tr = $(tr);
+    $.post($('#container').data('action')+'delete', {id: tr.id, _csrf:$('#container').data('csrf'), name: $tr.text(), fid: $(tr).data('fid') }, (resp)=>{
+       if(resp){
+           console.log("deleting", $tr.text());
+           $tr.fadeOut("fast", ()=>{
+               $tr.remove();
+           });
+       } 
+    });
+});
 
 $(document).on('submit', '#create-edit', (e) => {
     e.preventDefault();

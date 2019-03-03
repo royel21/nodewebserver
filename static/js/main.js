@@ -33,6 +33,16 @@ $('body').on('click', '.page-item', (e) => {
     loadPartialPage(url);
 });
 
+const choosePage = (el) =>{
+    let title = document.title;
+    if (el.tagName == "FORM") {
+        let path = location.pathname.split(/\d/ig)[0];
+        let url = (path === "/" ? "/home/" : path )+el.elements["page"].value+"/"+el.elements["items"].value+"/"+el.elements["search"].value;
+        window.history.pushState(title, title, url);
+        loadPartialPage(url);
+    }
+}
+
 const submitItemAndSearchForm = (e) => {
     let form;
 
@@ -44,7 +54,6 @@ const submitItemAndSearchForm = (e) => {
     }
 
     let url = $(form).attr('action');
-
     $.post(url, $(form).serialize(), (resp) => {
 
         $('#container').replaceWith(resp.data);

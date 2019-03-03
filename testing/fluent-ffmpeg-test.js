@@ -12,7 +12,7 @@ ffmpeg.setFfprobePath(ffpstatic.path);
 module.exports.screenShots = (video, pathToSave) => {
     var start = new Date();
     return new Promise((resolve, reject) => {
-        const cmd = ffmpeg(video).seek(20 / 1000);
+        const cmd = ffmpeg(video).seek(0.1);
         const outputOptions = ['-vframes', 1, '-q:v', 2,'-vf','scale=240:-1']
 
         cmd.outputOptions(outputOptions)

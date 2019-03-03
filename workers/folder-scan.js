@@ -1,42 +1,15 @@
 
 
 const WinDrive = require('win-explorer');
-const fs = require('fs-extra')
-const ffmpeg = require("fluent-ffmpeg");
-const ffpstatic = require('ffprobe-static');
-const ffmstatic = require('ffmpeg-static');
+const { fork } = require('child_process');
+const fs = require('fs-extra');
 const path = require('path');
 
 const db = require('../models');
 
-ffmpeg.setFfmpegPath(ffmstatic.path) //Argument path is a string with the full path to the ffmpeg binary.
-ffmpeg.setFfprobePath(ffpstatic.path) //Argument path is a string with the full path to the ffprobe binary.
-
 var tempFiles = [];
 
-takeScreenShot = async (vfile, fId) => {
-
-    await new Promise((resolve, rejected) => {
-        try {
-            ffmpeg(vfile).on('end', (e) => {
-                console.log(e)
-                resolve(true);
-            }).on('error', function (err) {
-                console.log(vfile);
-                console.log('An error occurred: ' + err.message);
-                resolve(false);
-            }).screenshots({
-                timestamps: ['23.7%'],
-                filename: '%f',
-                folder: path.join('./static/covers', fId),
-                size: '240x?'
-            })
-        } catch (error) {
-            console.log(error);
-            resolve(false);
-        }
-    });
-}
+const worker = fork('./workers/screenshot-worker.js');
 
 PopulateDB = async (folder, files, fId) => {
     var filteredFile = files.filter((f) => {
@@ -58,16 +31,18 @@ PopulateDB = async (folder, files, fId) => {
                         }]
                     }
                 });
-
+                let cover = path.resolve("./static/covers/", fId, f.FileName + ".jpg");
+                let fullpath = path.join(folder, f.FileName)
+                if (!fs.existsSync(cover)) {
+                    worker.send({ file: fullpath, cover });
+                }
                 if (found.length === 0 && !vfound) {
-                    let cover = path.join("./static/covers/", fId, f.FileName + ".png");
-                    if (!fs.existsSync(cover)) {
-                        await takeScreenShot(path.join(folder, f.FileName), fId);
-                    }
+
                     tempFiles.push({
                         Id,
                         Name: f.FileName,
-                        CoverPath: path.join("/covers/", fId, f.FileName.replace(/#/ig,'%23') + ".png"),
+                        CoverPath: path.join("/covers/", fId, f.FileName + ".jpg").replace(/#/ig, '%23'),
+                        FullPath: fullpath,
                         DirectoryId: fId
                     });
                 }
@@ -84,11 +59,19 @@ PopulateDB = async (folder, files, fId) => {
 
 scanOneDir = async (data) => {
     var fis = WinDrive.ListFilesRO(data.dir);
+    fs.mkdirsSync('./static/covers/' + data.id);
     await PopulateDB(data.dir, fis, data.id);
 }
 
 process.on("message", (data) => {
-    scanOneDir(data).then(() => {
+    console.log(data);
+
+    worker.on('close', () => {
         process.send(data);
+        process.exit();
+    });
+    
+    scanOneDir(data).then(() => {
+        worker.send("finish");
     });
 });

@@ -25,13 +25,13 @@ db.Op = Op;
 db.user = require('./user')(sequelize, DataTypes);
 db.video = require('./video')(sequelize, DataTypes);
 db.category = require('./category')(sequelize, DataTypes);
+db.serie = require('./serie')(sequelize, DataTypes);
 db.favorite = require('./favorites')(sequelize, DataTypes);
 db.directory = require('./directories')(sequelize, DataTypes);
 
 db.sequelize = sequelize;
 
 db.user.afterCreate((user, options)=>{
-    console.log(user.Id);
     if(!['manager','admin'].includes(user.Role))
     {
         db.favorite.create({
@@ -47,12 +47,12 @@ db.video.belongsToMany(db.category, {
     foreignKey: 'VideoId'
 });
 
-db.directory.hasMany(db.video, { onDelete: 'cascade' });
+db.directory.hasMany(db.video, { onDelete: 'cascade'});
 db.video.belongsTo(db.directory);
+db.video.belongsTo(db.serie);
 
 db.favorite.hasMany(db.video);
 db.user.hasOne(db.favorite);
-
 
 
 db.init = async () => {

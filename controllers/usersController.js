@@ -6,7 +6,7 @@ exports.index = (req, res) => {
 }
 
 exports.users = (req, res) => {
-    let itemsPerPage = req.params.items || req.query.items || 10;
+    let itemsPerPage = req.params.items || req.query.items || 12;
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
     let val = req.params.search || "";
@@ -35,6 +35,7 @@ exports.users = (req, res) => {
                 csrfToken: req.csrfToken()
             }
         },(err, html) => {
+            if(err) console.log(err);
             if(req.query.partial){
                 res.send({ url: req.url, data: html });
 
@@ -44,6 +45,7 @@ exports.users = (req, res) => {
         });
         
     }).catch(err => {
+        console.log(err);
         res.status(500).send('Internal Server Error');
     });
 }
@@ -70,14 +72,14 @@ exports.user_modal = (req, res) => {
                 modalTitle: uid ? "Editar usuario" : "Crear Usuario"
             });
     }).catch(err => {
-        
+        console.log(err);
         res.status(500).send('Internal Server Error');
     });
 }
 
 const sendPostResponse = (res, action, state, user) => {
     return res.render("admin/users/user-row", { user }, (err, html) => {
-        
+        if(err) console.log(err);
         res.send({ action, state, name: user.Name, data: html });
     });
 }
@@ -127,6 +129,7 @@ const updateUser = (req, res) => {
             res.send({ state: "error", data: "Usuario no encontrado" });
         }
     }).catch(err => {
+        if(err) console.log(err);
         res.send({ state: "error", data: "Error Interno del servidor" });
     });
 }

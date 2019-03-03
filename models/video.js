@@ -20,10 +20,20 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: true
         },
+        Duration: {
+            type: DataTypes.FLOAT(5, 2),
+            defaultValue: 0,
+            allowNull: false
+        },
         CoverPath:
         {
-          type: DataTypes.STRING,
-          allowNull: true
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        FullPath: {
+            type: DataTypes.STRING,
+            defaultValue: "",
+            allowNull: false
         },
         CreatedAt: {
             type: DataTypes.DATE

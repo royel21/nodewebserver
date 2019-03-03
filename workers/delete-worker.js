@@ -8,4 +8,5 @@ process.on("message",(pathToDelete)=>{
     }else{
         process.send(false);
     }
+    process.exit();
 });

@@ -1,5 +1,5 @@
 mixin movies_table(movies, pagedatas) 
-    #container.text-light.bg-dark.rounded.mx-2(data-action=pagedatas.action+"modal")
+    #container.text-light.bg-dark.rounded.mx-2(data-action=pagedatas.action, data-csrf=pagedatas.csrfToken)
         #table-controls
             #search-container
                 form#search-form.d-inline-block.ml-2(action=pagedatas.action+"search" method="POST") 
@@ -22,12 +22,14 @@ mixin movies_table(movies, pagedatas)
                 tr
                     th.text-center Acciones	
                     th Nombre
+                    th Ruta En Disco
             tbody
                 each video in movies.rows
-                    tr(id=""+ video.Id)
+                    tr(id=""+ video.Id, data-fid=video.DirectoryId)
                         td
                             span.show-form
                                 i.fas.fa-edit.fa-2x
-                            span.show-delete(data-action=pagedatas.action+"delete")
+                            span.show-delete
                                 i.ml-2.text-danger.fas.fa-trash-alt.fa-2x
                         td= video.Name
+                        td= video.FullPath

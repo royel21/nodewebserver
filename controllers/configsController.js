@@ -16,6 +16,7 @@ exports.configs = (req, res, next) => {
                 csrfToken: req.csrfToken()
             }
         }, (err, html) => {
+            if(err) console.log(err);
 
             if (req.query.partial) {
                 res.send({ url: req.url, data: html });
@@ -44,36 +45,17 @@ exports.deletePath = (req, res) => {
     let id = req.body.id;
     db.directory.destroy({ where: { Id: id } }).then(deletePath => {
         if (deletePath > 0) {
-            // db.video.destroy({
-            //     where: {
-            //         FolderId: id
-            //     }
-            // }).then((v) => {
-            //     let coverPath = path.resolve('./static', 'covers', id);
-            //     if (fs.existsSync(coverPath)) {
-            //         const worker = fork('./workers/delete-worker.js');
-            //         worker.send(coverPath);
-            //         worker.on('finish', (result) => {
-            //             //console.log('result:', result);
-            //         });
-            //     }
-            //     res.send("ok");
-            // }).catch(err => {
-            //     res.send("error");
-            // })
             let coverPath = path.resolve('./static', 'covers', id);
             if (fs.existsSync(coverPath)) {
                 const worker = fork('./workers/delete-worker.js');
                 worker.send(coverPath);
-                worker.on('finish', (result) => {
-                    //console.log('result:', result);
-                });
             }
             res.send("ok");;
         } else {
             res.send("error");
         }
     }).catch(err => {
+        if(err) console.log(err);
         res.send("error");
     });
 }

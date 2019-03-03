@@ -1,7 +1,7 @@
 
 let db = require('../models');
 
-exports.categories = (req, res) => {
+exports.series = (req, res) => {
     let itemsPerPage = req.params.items || req.query.items || 12;
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
@@ -46,14 +46,14 @@ exports.categories = (req, res) => {
 }
 
 
-exports.postSearch = (req, res) =>{
+exports.postSerie = (req, res) =>{
     let itemsPerPage = req.body.items || 10;
     let currentPage = req.body.page || 1;
     let val = req.body.search || "";
     res.redirect(`/admin/categories/${currentPage}/${itemsPerPage}/${val}?partial=true`)
 }
 
-exports.category_modal = (req, res) => {
+exports.serie_modal = (req, res) => {
     var uid = req.query.uid;
     db.category.findOne({
         where: {
@@ -80,7 +80,7 @@ const sendPostResponse = (res, action, state, category) =>{
     });
 }
 
-const createCategory = (req, res) => {
+const createSerie = (req, res) => {
     if (req.body.name === "" || req.body.name === undefined) {
         return res.send({ err: "Nombre no puede estar vacio" });
     }
@@ -95,7 +95,7 @@ const createCategory = (req, res) => {
     });
 }
 
-const updateCategory = (req, res) => {
+const updateSerie = (req, res) => {
 
     db.category.findOne({
         where: { Id: req.body.id }
@@ -115,10 +115,10 @@ const updateCategory = (req, res) => {
     });
 }
 
-exports.categoryModalPost = (req, res) => {
+exports.serieModalPost = (req, res) => {
     if (req.body.id === '') {
-        createCategory(req, res);
+        createSerie(req, res);
     } else {
-        updateCategory(req, res);
+        updateSerie(req, res);
     }
 }

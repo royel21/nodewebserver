@@ -82,7 +82,7 @@ module.exports = (server, app) => {
         });
 
         socket.on('re-scan', (data) => {
-            db.directory.findOne({ where: { Id: id } }).then(dir => {
+            db.directory.findOne({ where: { Id: data.id } }).then(dir => {
                 if (dir) {
                     startWork(dir);
                 } else {

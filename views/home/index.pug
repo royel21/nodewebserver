@@ -6,10 +6,11 @@ block css
     link(rel="stylesheet" href="/css/sliders.css" type="text/css")
     link(rel="stylesheet" href="/css/home.css" type="text/css")
     link(rel="stylesheet" href="/css/footer.css" type="text/css")
-
-block content
+block navbar
     include ../share/navbar2
     +navbar2(user)
+
+block content
     #video-container(tabindex="0")
         include ../videoplayer/player
     include ./items-view
