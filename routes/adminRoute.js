@@ -6,9 +6,6 @@ const categoriesController = require('../controllers/categoriesController')
 const configsController = require('../controllers/configsController')
 const seriesController = require('../controllers/seriesController')
 
-// const csrfProtection = csrf({ cookie: true });
-//const parseForm = bodyParser.urlencoded({ extended: false });
-
 router.get("/", usersController.index);
 router.get("/users", usersController.users);
 router.get("/users/modal", usersController.user_modal);
@@ -17,6 +14,12 @@ router.post("/users/create-edit", usersController.userModalPost);
 router.post("/users/search", usersController.postSearch);
 
 router.get("/series", seriesController.series);
+router.get("/series/modal", seriesController.modal);
+router.get("/series/:page?/:items?", seriesController.series);
+router.post("/series/modal-post", seriesController.modalPost);
+router.post("/series/list-videos", seriesController.listVideos);
+router.post("/series/all-videos", seriesController.allVideos);
+router.post("/series/delete-serie", seriesController.deleteSerie);
 
 router.get("/movies", videosController.movies);
 router.get("/movies/modal", videosController.movie_modal);
@@ -33,4 +36,5 @@ router.post("/categories/create-edit", categoriesController.categoryModalPost);
 router.get("/configs", configsController.configs);
 router.post("/configs/folder-content", configsController.folderContent);
 router.post("/configs/delete-path", configsController.deletePath);
+
 module.exports = router;

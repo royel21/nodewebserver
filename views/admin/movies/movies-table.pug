@@ -31,5 +31,6 @@ mixin movies_table(movies, pagedatas)
                                     i.fas.fa-edit.fa-2x
                                 span.show-delete
                                     i.ml-2.text-danger.fas.fa-trash-alt.fa-2x
-                            td= video.Name
+                            td
+                                span= video.Name
                             td= video.FullPath

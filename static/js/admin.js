@@ -13,7 +13,7 @@ socket.on('path-added', (newPath) => {
 
 socket.on("scan-finish", (data) => {
     console.log(data)
-    $('#'+data.id+' .fa-sync').removeClass('fa-spin');
+    $('#' + data.id + ' .fa-sync').removeClass('fa-spin');
 });
 
 $('.sidenav .nav-link').click((e) => {
@@ -30,9 +30,11 @@ $('.sidenav .nav-link').click((e) => {
 
 $(document).on("click", ".show-form", (e) => {
     let tr = e.target.closest('tr');
-    let uid = tr ? tr.id : "";
+    let li = e.target.closest('li');
+    let uid = tr ? tr.id : li ? li.id : "";
     let action = $('#container').data('action');
-    $.get(action+"modal", { uid }, (resp) => {
+    console.log(uid, action)
+    $.get(action + "modal", { uid }, (resp) => {
         $('body').prepend(resp);
         $('#modal').fadeIn();
     });
@@ -57,20 +59,21 @@ var confirm = (message) => {
 }
 
 
-$('body').on('click', 'tbody .fa-trash-alt',(e)=>{
+$('body').on('click', 'tbody .fa-trash-alt', (e) => {
     let tr = e.target.closest('tr');
     let $tr = $(tr);
-    $.post($('#container').data('action')+'delete', {id: tr.id, _csrf:$('#container').data('csrf'), name: $tr.text(), fid: $(tr).data('fid') }, (resp)=>{
-       if(resp){
-           console.log("deleting", $tr.text());
-           $tr.fadeOut("fast", ()=>{
-               $tr.remove();
-           });
-       } 
+    $.post($('#container').data('action') + 'delete', { id: tr.id, _csrf: $('#container').data('csrf'), name: $tr.text(), fid: $(tr).data('fid') }, (resp) => {
+        if (resp) {
+            console.log("deleting", $tr.text());
+            $tr.fadeOut("fast", () => {
+                $tr.remove();
+            });
+        }
     });
 });
 
 $(document).on('submit', '#create-edit', (e) => {
+    console.log("testing")
     e.preventDefault();
     var $form = $('#create-edit');
     let formData = $(e.target).serializeArray();
@@ -108,6 +111,7 @@ $(document).on('submit', '#create-edit', (e) => {
         }
     });
 });
+
 
 $('body').on('click', '.cat', (e) => {
     e.target.remove();
@@ -162,7 +166,7 @@ $('body').on('click', '#paths .delete-path', (e) => {
         id: li.id,
         _csrf: $("#paths").data('csrf')
     }, (resp) => {
-        console.log("delete:"+resp);
+        console.log("delete:" + resp);
         if (resp == "ok") {
             $(li).fadeOut((e) => {
                 li.remove();
@@ -171,7 +175,53 @@ $('body').on('click', '#paths .delete-path', (e) => {
     });
 });
 
+// Replace name on modal for serie
+$('body').on('change', '#cover', (e) => {
+    $('#f-name').text(e.target.files[0].name)
+});
+//Submit Serie Entry for edit or create
+$(document).on('submit', '#series-create-edit', (e) => {
+        e.preventDefault();
+        console.log("Uploading", e.target)
+        var formData = new FormData(e.target);
+        $.ajax({
+            url: '/admin/series/modal-post',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (resp) {
+               console.log(resp);
+            }
+        });
+});
 
+//Remove Serie Entry list
+$('body').on('click', '#remove-serie', (e)=>{
+    
+        let li = e.target.closest('li');
+        console.log(li.id)
+        $.post($('#container').data('action')+'delete-serie', {id: li.id, _csrf: $('#container').data('csrf')}, (resp) =>{
+            console.log(resp);
+                if(resp.state !== "err"){
+                    $(li).fadeOut('fast',(e)=>{
+                           li.remove();
+                    });
+                } 
+        }); 
+});
+
+$('body').on('change', '#series-content input[type="radio"]', (e)=>{
+    console.log(e.target);
+    let id = e.target.id.replace('tab-', '');
+    let selectedSerie = $('#series-list .active')[0];
+    let serieId = selectedSerie ? selectedSerie.Id : "";
+    console.log(id, selectedSerie, serieId);
+   $.post($('#container').data('action')+id, {serieId, _csrf: $('#container').data('csrf')}, (resp) =>{
+        console.log(resp);
+        $('#video-list').replaceWith(resp)
+   });
+});
 
 $(() => {
     loadDisk(window.location.href);

@@ -1,10 +1,9 @@
-mixin series_table(series, seriesMovies, pagedatas)
+mixin series_table(series, videos, videopages, seriepages)
     -let noItems = true
-    -pagedatas = {currentPage: 1, itemsPerPage: 10, totalPages: 8, search: "", action: "", csrfToken:""}
-    #container.text-light.bg-dark.rounded.mx-2(data-action=pagedatas.action, data-csrf=pagedatas.csrfToken)
+    #container.text-light.bg-dark.rounded.mx-2(data-action=seriepages.action, data-csrf=seriepages.csrfToken)
         h2.text-center Series - Manager
         #series-container.card.text-dark.row
-            #series.col-3
+            #series.col-4
                 #series-controls
                     #title
                         span Series
@@ -12,62 +11,24 @@ mixin series_table(series, seriesMovies, pagedatas)
                     span.btn.btn-primary.show-form Add 
                             i.fas.fa-plus-circle
                     include ../../share/pagination
-                    +pagination(100, pagedatas, noItems)
+                    +pagination(series.count, seriepages, noItems)
                 #series-list
                     ul.list-group
-                        li.list-group-item.active One Pieces 1
-                        li.list-group-item No Nay Serie Agregada 2
-                        li.list-group-item No Nay Serie Agregada 3
-                        li.list-group-item No Nay Serie Agregada 4
-                        li.list-group-item No Nay Serie Agregada 5
-                        li.list-group-item No Nay Serie Agregada 5
-                        li.list-group-item No Nay Serie Agregada 7
-                        li.list-group-item No Nay Serie Agregada 8
-                        li.list-group-item No Nay Serie Agregada 9
-                        li.list-group-item No Nay Serie Agregada 10
-                        li.list-group-item No Nay Serie Agregada 11
-                        li.list-group-item No Nay Serie Agregada 12
-                        li.list-group-item No Nay Serie Agregada 13
-                        li.list-group-item No Nay Serie Agregada 14
-            #series-content.col-9
+                        each serie, index in series.rows
+                            li.list-group-item(id=serie.Id class=""+ (index === 0 ? "active" : "") )
+                                span.show-form                   
+                                    i.ml-1.fas.fa-edit
+                                span#remove-serie
+                                    i.mx-1.text-danger.fas.fa-trash-alt
+                                span#name= serie.Name
+            #series-content.col-8
                 .nav.nav-tabs
                     .nav-item
-                        input#tab-added-videos(type="radio" name="tabs" checked)
-                        label.nav-link(for="tab-added-videos") Videos From Series
+                        input#tab-list-videos(type="radio" name="tabs" checked)
+                        label.nav-link(for="tab-list-videos") Videos From Series
                     .nav-item
-                        input#tab-search-videos(type="radio" name="tabs")
-                        label.nav-link(for="tab-search-videos") Search Videos
-                .bottom-controls
-                    span.btn.btn-primary.add-all-video Add All 
-                        i.fas.fa-plus-circle
-                    #search-container
-                        form#search-form.d-inline-block.ml-2(action=pagedatas.action+"search" method="POST") 
-                            input(type="hidden" name="_csrf" value=""+ pagedatas.csrfToken)
-                            input(type="hidden" name="page" value=""+ pagedatas.currentPage)
-                            input(type="hidden" name="items" value=""+ pagedatas.itemsPerPage)
-                            .input-group.mb-3
-                                .input-group-prepend
-                                    button#btn-search.input-group-text(type="submit")
-                                        i.fa.fa-search
-                                input#search-input.form-control(type="text" name="search" value=pagedatas.search placeholder="Enter Search" required)
-                                span#clear-search
-                                    i.fas.fa-times-circle
-                    include ../../share/pagination
-                    +pagination(0, pagedatas, noItems)
-                #video-list
-                    ul.list-group
-                        li.list-group-item One Pieces 701
-                        li.list-group-item One Pieces 702
-                        li.list-group-item One Pieces 703
-                        li.list-group-item One Pieces 704
-                        li.list-group-item One Pieces 705
-                        li.list-group-item One Pieces 706
-                        li.list-group-item One Pieces 707
-                        li.list-group-item One Pieces 708
-                        li.list-group-item One Pieces 709
-                        li.list-group-item One Pieces 710
-                        li.list-group-item One Pieces 711
-                        li.list-group-item One Pieces 712
-                        li.list-group-item One Pieces 713
-                        li.list-group-item One Pieces 714
+                        input#tab-all-videos(type="radio" name="tabs")
+                        label.nav-link(for="tab-all-videos") Search Videos
+                include ./serie-videos
+                +serieVideos(videos, videopages)
                 

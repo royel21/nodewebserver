@@ -9,7 +9,7 @@ var ffmstatic = require('ffmpeg-static');
 ffmpeg.setFfmpegPath(ffmstatic.path) //Argument path is a string with the full path to the ffmpeg binary.
 ffmpeg.setFfprobePath(ffpstatic.path) //Argument path is a string with the full path to the ffprobe binary.
 
-const db = require('./models')
+const db = require('../models')
 const path = require('path')
 
 var timer;

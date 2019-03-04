@@ -25,7 +25,7 @@ window.onpopstate = function (e) {
     loadPartialPage(url);
 }
 
-$('body').on('click', '.page-item', (e) => {
+$('body').on('click', '#table-controls .page-item, #controls .page-item', (e) => {
     e.preventDefault();
     let title = document.title;
     let url = e.target.tagName == 'I' ? e.target.closest('a').href : e.target.href;

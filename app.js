@@ -1,22 +1,24 @@
-var createError = require('http-errors');
-var express = require('express');
-var cors = require('cors');
-var cookieParser = require('cookie-parser')
-var passport = require('passport');
-var session = require('express-session');
-var db = require('./models');
-var flash = require('connect-flash');
+const createError = require('http-errors');
+const express = require('express');
+const cors = require('cors');
+const cookieParser = require('cookie-parser')
+const passport = require('passport');
+const session = require('express-session');
+const flash = require('connect-flash');
 const bodyParser = require('body-parser');
 const csrf = require('csurf');
+const fileUpload = require('express-fileupload');
+
+const db = require('./models');
 
 //Routes
-var home = require("./routes/homeRoute");
-var vplayer = require("./routes/videoPlayerRoute");
-var admin = require('./routes/adminRoute');
+const home = require("./routes/homeRoute");
+const vplayer = require("./routes/videoPlayerRoute");
+const admin = require('./routes/adminRoute');
 
 require('./passport_config')(passport);
 
-var app = express();
+const app = express();
 
 app.set('view engine', 'pug');
 app.set('views', './views');
@@ -26,6 +28,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(__dirname + '/static'));
+app.use(fileUpload());
 
 app.use(session({
   secret: "my secrets",
@@ -47,9 +50,9 @@ app.use(function (req, res, next) {
   } else if (req.url !== "/login") {
     return res.redirect('/login');
   }
-  console.log(app.locals)
   next();
 });
+
 app.use(csrf({ cookie: true }));
 app.use("/", home);
 app.use("/videoplayer", vplayer);
@@ -67,7 +70,7 @@ app.use(function (err, req, res, next) {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
   // render the error page
   res.status(err.status || 500);
-  if (!req.url.includes('covers') && !req.url.includes('.map') ) {
+  if (!req.url.includes('covers') && !req.url.includes('.map')) {
     console.log("some errors:", req.url, err);
   }
   return res.render('error');
