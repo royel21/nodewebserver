@@ -12,6 +12,16 @@
     margin-top: 5px;
 }
 
+#table-container{
+    height: calc(100% - 50px);
+    overflow-x: auto;
+}
+
+#tree-container{
+    height: calc(100% - 121px);
+    overflow-x: auto;
+}
+
 .nav-tabs .nav-link {
     border-radius: 0;
 }

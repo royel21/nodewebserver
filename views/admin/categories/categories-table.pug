@@ -5,18 +5,18 @@ mixin categories_table(categories, pagedatas)
                 i.fas.fa-plus-circle.text-primary
             include ../../share/pagination
             +pagination(categories.count, pagedatas)
-            
-        table.table.table-dark.user-table.table-hover
-            thead
-                tr
-                    th Acciones
-                    th Nombre
-            tbody
-                each category in categories.rows
-                    tr(id=""+ category.Id)
-                        td
-                            span.show-form
-                                i.fas.fa-edit.fa-2x
-                            span.show-delete
-                                i.ml-2.text-danger.fas.fa-trash-alt.fa-2x
-                        td= category.Name
+        #table-container    
+            table.table.table-dark.user-table.table-hover
+                thead
+                    tr
+                        th Acciones
+                        th Nombre
+                tbody
+                    each category in categories.rows
+                        tr(id=""+ category.Id)
+                            td
+                                span.show-form
+                                    i.fas.fa-edit.fa-2x
+                                span.show-delete
+                                    i.ml-2.text-danger.fas.fa-trash-alt.fa-2x
+                            td= category.Name

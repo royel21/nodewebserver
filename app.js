@@ -47,7 +47,7 @@ app.use(function (req, res, next) {
   } else if (req.url !== "/login") {
     return res.redirect('/login');
   }
-
+  console.log(app.locals)
   next();
 });
 app.use(csrf({ cookie: true }));

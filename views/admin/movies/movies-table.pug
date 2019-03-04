@@ -16,20 +16,20 @@ mixin movies_table(movies, pagedatas)
             
             include ../../share/pagination
             +pagination(movies.count, pagedatas)
-        
-        table.table.table-dark.user-table.table-hover
-            thead
-                tr
-                    th.text-center Acciones	
-                    th Nombre
-                    th Ruta En Disco
-            tbody
-                each video in movies.rows
-                    tr(id=""+ video.Id, data-fid=video.DirectoryId)
-                        td
-                            span.show-form
-                                i.fas.fa-edit.fa-2x
-                            span.show-delete
-                                i.ml-2.text-danger.fas.fa-trash-alt.fa-2x
-                        td= video.Name
-                        td= video.FullPath
+        #table-container
+            table.table.table-dark.user-table.table-hover
+                thead
+                    tr
+                        th.text-center Acciones	
+                        th Nombre
+                        th Ruta En Disco
+                tbody
+                    each video in movies.rows
+                        tr(id=""+ video.Id, data-fid=video.DirectoryId)
+                            td
+                                span.show-form
+                                    i.fas.fa-edit.fa-2x
+                                span.show-delete
+                                    i.ml-2.text-danger.fas.fa-trash-alt.fa-2x
+                            td= video.Name
+                            td= video.FullPath

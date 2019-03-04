@@ -71,3 +71,9 @@ $('body').on('click', '#clear-search', (e) => {
 $('body').on('submit', '#search-form', submitItemAndSearchForm);
 
 
+$(()=>{
+    
+//     $('#menu a').removeClass("active");
+//     $('#menu a[href=""]').addClass('active'); 
+
+});

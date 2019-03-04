@@ -9,7 +9,7 @@ exports.series = (req, res) => {
     let val = "";
 
     db.serie.findAll().then((allSeries) => {
-        series = allSeries;
+        let series = allSeries;
 
         let SerieId = sId || allSeries.length > 0 ? allSeries[0].Id : "";
 
