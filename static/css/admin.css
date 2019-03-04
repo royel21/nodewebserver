@@ -1,6 +1,7 @@
 #content {
     margin-left: 190px;
     transition: all 0.3s ease;
+    overflow-y: hidden;
 }
 
 #container{
@@ -8,6 +9,7 @@
     border: 2px solid white;
     padding: 15px;
     overflow-x: auto;
+    margin-top: 5px;
 }
 
 .nav-tabs .nav-link {

@@ -2,51 +2,57 @@
 let db = require('../models');
 
 exports.series = (req, res) => {
+    let sId = req.params.serieId
     let itemsPerPage = req.params.items || req.query.items || 12;
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
     let val = "";
-    db.category.findAndCountAll({
-        order: ['Name'],
-        offset: begin,
-        limit: itemsPerPage,
-        where: {
-            Name: {
-                [db.Op.like]: "%" + val + "%"
-            }
-        }
-    }).then(categories => {
-        
-        let totalPages = Math.ceil(categories.count / itemsPerPage);
-        let view = req.query.partial ? "admin/categories/partial-categories-table" : "admin/index.pug"; 
-        res.render(view, { 
-            title: "Categorias", 
-            categories, 
-            pagedatas: {
-                currentPage,
-                itemsPerPage,
-                totalPages,
-                search: val,
-                action:"/admin/categories/",
-                csrfToken: req.csrfToken()
-            }
-        },(err, html) => {
-            if(err) console.log(err);
-            if(req.query.partial){
-                res.send({ url: "/admin"+req.url, data: html });
 
-            }else{
-                res.send(html);
+    db.serie.findAll().then((allSeries) => {
+        series = allSeries;
+
+        let SerieId = sId || allSeries.length > 0 ? allSeries[0].Id : "";
+
+        db.video.findAndCountAll({
+            order: ['Name'],
+            offset: begin,
+            limit: itemsPerPage,
+            where: {
+                SerieId
             }
+        }).then(seriesMovies => {
+            let totalPages = Math.ceil(seriesMovies.count / itemsPerPage);
+            let view = req.query.partial ? "admin/series/partial-series-table" : "admin/index.pug";
+            res.render(view, {
+                title: "Series - Manager",
+                series,
+                seriesMovies,
+                pagedatas: {
+                    currentPage,
+                    itemsPerPage,
+                    totalPages,
+                    search: val,
+                    action: "/admin/series/",
+                    csrfToken: req.csrfToken()
+                }
+            }, (err, html) => {
+                if (err) console.log(err);
+
+                if (req.query.partial) {
+                    res.send({ url: "/admin" + req.url, data: html });
+                } else {
+                    res.send(html);
+                }
+            });
         });
     }).catch(err => {
-        if(err) console.log(err);
+        if (err) console.log(err);
         res.status(500).send('Internal Server Error');
     });
 }
 
 
-exports.postSerie = (req, res) =>{
+exports.postSerie = (req, res) => {
     let itemsPerPage = req.body.items || 10;
     let currentPage = req.body.page || 1;
     let val = req.body.search || "";
@@ -68,14 +74,14 @@ exports.serie_modal = (req, res) => {
                 modalTitle: uid ? "Editar Categoria" : "Agregar Categoria"
             });
     }).catch(err => {
-        if(err) console.log(err);
+        if (err) console.log(err);
         res.status(500).send('Internal Server Error');
     });
 }
 
-const sendPostResponse = (res, action, state, category) =>{
-    return res.render("admin/categories/category-row", {category}, (err, html) => {
-        if(err) console.log(err);
+const sendPostResponse = (res, action, state, category) => {
+    return res.render("admin/categories/category-row", { category }, (err, html) => {
+        if (err) console.log(err);
         res.send({ action, state, name: category.Name, data: html });
     });
 }
@@ -90,7 +96,7 @@ const createSerie = (req, res) => {
     }).then(category => {
         sendPostResponse(res, "Categoria", "create", category);
     }).catch(err => {
-        if(err) console.log(err);
+        if (err) console.log(err);
         res.send({ state: "error", data: "Nombre de Categoria en uso" });
     });
 }
@@ -110,7 +116,7 @@ const updateSerie = (req, res) => {
             res.send({ state: "error", data: "Categoria no encontrado" });
         }
     }).catch(err => {
-        if(err) console.log(err);
+        if (err) console.log(err);
         res.send({ state: "error", data: "Error Interno del servidor" });
     });
 }

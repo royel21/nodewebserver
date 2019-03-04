@@ -2,7 +2,7 @@ mixin categories_table(categories, pagedatas)
     #container.text-light.bg-dark.rounded.mx-2(data-action=pagedatas.action, data-csrf=pagedatas.csrfToken)
         #table-controls
             span.show-form
-                i.far.fa-plus-square.text-primary
+                i.fas.fa-plus-circle.text-primary
             include ../../share/pagination
             +pagination(categories.count, pagedatas)
             

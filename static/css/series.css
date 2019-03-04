@@ -1,0 +1,130 @@
+#container{
+    padding: 5px 5px;
+    user-select: none;
+    min-height: 98%;
+    height: 98%;
+    overflow-y: hidden;
+}
+
+#container > h2{
+    margin: 0;
+}
+
+#series-container{
+    border: 2px solid;
+    margin: 0;
+    flex-direction: row;
+    height: 95.5%;
+    min-height: 95.5%;
+} 
+
+
+#series-controls{
+    display: flex;
+    height: 54px;
+    flex-grow: 1;
+    text-align: center;
+    align-self: center;
+    font-size: 24px;
+    height: 56px;
+    border-bottom: 2px solid #dee2e6;
+}
+
+#series-list{
+    height: calc(100% - 109px);
+    overflow-y: auto;
+}
+#video-list::-webkit-scrollbar-thumb,
+#series-list::-webkit-scrollbar-thumb{
+    border-radius: 0;
+}
+
+#video-list{
+    height: calc(100% - 109px);
+    overflow-y: auto;
+}
+
+#series-controls #title{
+    flex-grow: 1;
+    text-align: center;
+    align-self: center;
+    font-size: 30px;
+}
+
+#series-controls .show-form{
+    font-size: 2rem;
+}
+
+#series{
+    border-right: 2px solid;
+    height: 100%;
+    padding: 0;
+}
+
+#series h3{
+    display: block;
+    margin: 0;
+    height: 50px;
+    padding-top: 10px;
+}
+#list-series .list-group-item{
+    cursor: pointer;
+}
+
+#list-series .list-group-item:hover:not(.active){
+    background-color: rgba(250,250,250, 0.8);
+}
+.nav-tabs{
+    padding-left: 10px;
+    border-bottom: 2px solid #dee2e6;
+}
+.nav input[type="radio"]{
+    display: none;
+}
+
+.nav input[type="radio"]:checked + label{
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.nav .nav-item label{
+    display: inline-block;
+    margin: 0;
+    margin-top: 5px;
+    height: 50px;
+    padding: 15px;
+    font-weight: bold;
+    border-radius: 5px 5px 0 0;
+    cursor: pointer;
+
+}
+
+#series-content{
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    min-height: 100%;
+}
+
+#series-container .list-group-item:first-child{
+    border-radius: 0;
+}
+.bottom-controls{
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    font-size: 2em;
+    height: 50px;
+    padding: 0 4px;
+    border-bottom: 1px solid #dee2e6;
+}
+.bottom-controls:empty{
+    display: none;
+}
+.bottom-controls #itemsPerPage{
+    display: inline-block;
+}
+
+#series-container .btn{
+    align-self: center;
+}

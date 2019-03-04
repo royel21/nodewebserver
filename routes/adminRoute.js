@@ -4,6 +4,7 @@ const usersController = require('../controllers/usersController')
 const videosController = require('../controllers/videosController')
 const categoriesController = require('../controllers/categoriesController')
 const configsController = require('../controllers/configsController')
+const seriesController = require('../controllers/seriesController')
 
 // const csrfProtection = csrf({ cookie: true });
 //const parseForm = bodyParser.urlencoded({ extended: false });
@@ -14,6 +15,8 @@ router.get("/users/modal", usersController.user_modal);
 router.get("/users/:page?/:items?/:search?", usersController.users);
 router.post("/users/create-edit", usersController.userModalPost);
 router.post("/users/search", usersController.postSearch);
+
+router.get("/series", seriesController.series);
 
 router.get("/movies", videosController.movies);
 router.get("/movies/modal", videosController.movie_modal);

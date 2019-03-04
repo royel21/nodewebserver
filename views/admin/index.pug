@@ -4,6 +4,7 @@ block css
     link(rel="stylesheet" href="/css/admin.css" type="text/css")
     link(rel="stylesheet" href="/css/modal.css" type="text/css")
     link(rel="stylesheet" href="/css/tree-view.css" type="text/css")
+    link(rel="stylesheet" href="/css/series.css" type="text/css")
 
 block navbar
     include ../share/navbar2
@@ -17,6 +18,10 @@ block navbar
                 a.nav-link(href="/admin/users" class=""+(users ? "active" : ""))
                     i.fa.fa-users.text-primary
                         span Usuarios
+            li.nav-item
+                a.nav-link(href="/admin/series" class=""+(series ? "active" : ""))
+                    i.fas.fa-film.text-primary
+                        span Series
             li.nav-item
                 a.nav-link(href="/admin/movies" class=""+(movies ? "active" : ""))
                     i.fas.fa-film.text-primary
@@ -34,6 +39,9 @@ block content
     if users
         include ./users/users-table
         +users_table(users, pagedatas)
+    else if series
+        include ./series/series-config
+        +series_table(series, seriesMovies, pagedatas)
     else if movies
         include ./movies/movies-table
         +movies_table(movies, pagedatas)
@@ -43,7 +51,6 @@ block content
     else if directories
         include ./configs/configs
         +configs(directories, pagedatas)
-
 block script
     script(src="/js/main.js")
     script(src="/js/admin.js")
