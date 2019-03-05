@@ -7,7 +7,7 @@ mixin pagination(total, data)
         div#pager
             ul.pagination(data-action=data.action)
                 li.page-item
-                    form#select-page(action=data.action+"search" method="POST" onchange="choosePage(this)")
+                    form#select-page(action=data.action+"search" method="POST" onchange="" + (!noItems ? "choosePage(this)" : ""))
                         input(type="hidden" name="_csrf" value=""+ data.csrfToken)
                         input(type="hidden" name="search" value=""+ search)
                         input(type="hidden" name="items" value=itemsPerPage)

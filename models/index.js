@@ -53,7 +53,7 @@ db.video.belongsTo(db.serie);
 
 db.favorite.hasMany(db.video);
 db.user.hasOne(db.favorite);
-
+db.serie.hasMany(db.video);
 
 db.init = async () => {
     await sequelize.sync();

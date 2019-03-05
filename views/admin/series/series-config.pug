@@ -18,17 +18,17 @@ mixin series_table(series, videos, videopages, seriepages)
                             li.list-group-item(id=serie.Id class=""+ (index === 0 ? "active" : "") )
                                 span.show-form                   
                                     i.ml-1.fas.fa-edit
-                                span#remove-serie
+                                span.remove-serie
                                     i.mx-1.text-danger.fas.fa-trash-alt
-                                span#name= serie.Name
+                                span.name-serie= serie.Name
             #series-content.col-8
                 .nav.nav-tabs
                     .nav-item
                         input#tab-list-videos(type="radio" name="tabs" checked)
-                        label.nav-link(for="tab-list-videos") Videos From Series
+                        label.nav-link(for="tab-list-videos") Lista de videos
                     .nav-item
                         input#tab-all-videos(type="radio" name="tabs")
-                        label.nav-link(for="tab-all-videos") Search Videos
+                        label.nav-link(for="tab-all-videos") Todos los Videos
                 include ./serie-videos
-                +serieVideos(videos, videopages)
+                +serieVideos(videos, videopages, noItems)
                 

@@ -144,7 +144,8 @@ body{
     height: 50px;
 }
 
-#search-container{
+#search-container,
+#pager{
     align-self: center;
 }
 
@@ -183,6 +184,7 @@ body{
     font-size: 18px;
     display: initial;
     padding: 6px;
+    margin-left: 5px;
 }
 
 #items label{
@@ -213,17 +215,17 @@ body{
     position: relative;
     border-radius: 0px 5px 5px 0px;
 }
-
+#clear-search-video .fa-times-circle,
 #clear-search .fa-times-circle{
     display: none;
     position: absolute;
-    top: 6px;
+    top: 9px;
     right: 5px;
     font-size: 20px;
     color: firebrick;
     z-index: 99;
 }
-
+#search-input:not(:placeholder-shown) + #clear-search-video .fa-times-circle,
 #search-input:not(:placeholder-shown) + #clear-search .fa-times-circle{
     display: initial;
 }
@@ -259,4 +261,32 @@ body{
 }
 .move:active{
     cursor: grabbing;
+}
+
+
+#error-container{
+    position: fixed;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    z-index: 9;
+    text-align: center;
+}
+
+#error-modal{display: flex;flex-direction: column;height: 200px;width: 300px;border: 1px solid black;font-weight: bold;}
+#error-title{
+     padding: 5px 0;
+      border-bottom: 1px solid black;
+}
+#error-body{
+    flex-grow: 1;
+    font-weight: bold;
+    padding: 5px;   
+}
+
+#error-bottom{
+    border-top: 1px solid black;
+    padding: 4px 0;
 }

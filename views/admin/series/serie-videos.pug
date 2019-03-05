@@ -1,11 +1,12 @@
 mixin serieVideos(videos, videopages)
+    -let noItems = true
     #video-list
         .bottom-controls
-            if(videopages.isAdd)
-                span.btn.btn-primary.add-all-video Add All 
+            if videopages.isList
+                span#add-filtered-videos.btn.btn-primary Add All 
                     i.fas.fa-plus-circle
             #search-container
-                form#search-form.d-inline-block.ml-2(action=videopages.action+"search" method="POST") 
+                form#search-video.d-inline-block.ml-2(action=videopages.action+"search" method="POST") 
                     input(type="hidden" name="_csrf" value=""+ videopages.csrfToken)
                     input(type="hidden" name="page" value=""+ videopages.currentPage)
                     input(type="hidden" name="items" value=""+ videopages.itemsPerPage)
@@ -14,10 +15,14 @@ mixin serieVideos(videos, videopages)
                             button#btn-search.input-group-text(type="submit")
                                 i.fa.fa-search
                         input#search-input.form-control(type="text" name="search" value=videopages.search placeholder="Enter Search" required)
-                        span#clear-search
+                        span#clear-search-video
                             i.fas.fa-times-circle
             include ../../share/pagination
             +pagination(videos.count, videopages, noItems)
         ul#content-list.list-group
             each video in videos.rows
-                li.list-group-item(id=video.Id)= video.Name
+                li.list-group-item(id=video.Id)
+                    if videopages.isList
+                        span.v-add
+                            i.fas.fa-plus-circle
+                    span#v-name= video.Name

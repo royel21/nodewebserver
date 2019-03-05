@@ -48,9 +48,9 @@ hideForm = () => {
 
 $(document).on("click", ".close-modal", hideForm);
 
-var confirm = (message) => {
+var confirm = (message, className) => {
     $('#create-edit').remove();
-    $('#modal-header').addClass('text-success').text(message)
+    $('#modal-header').addClass(className).text(message)
     $('#modal').append($('<div class="text-center mt-3"><button class="btn btn-primary">Close<div>'));
     $('#modal').on('click', 'button', (e) => {
         hideForm();
@@ -97,7 +97,7 @@ $(document).on('submit', '#create-edit', (e) => {
             }
             case "update": {
                 $('#' + $('input[name="id"]').val()).replaceWith($(resp.data));
-                confirm(resp.action + " " + resp.name + " Actualizado Con Exito");
+                confirm(resp.action + " " + resp.name + " Actualizado Con Exito", 'text-success');
                 break;
             }
             case "create": {
@@ -105,7 +105,7 @@ $(document).on('submit', '#create-edit', (e) => {
                 if ($('tbody tr').length < (items || 10)) {
                     $('tbody').append(resp.data);
                 }
-                confirm(resp.action + " " + resp.name + " Agregado Con Exito");
+                confirm(resp.action + " " + resp.name + " Agregado Con Exito", 'text-success');
                 break;
             }
         }
@@ -181,47 +181,116 @@ $('body').on('change', '#cover', (e) => {
 });
 //Submit Serie Entry for edit or create
 $(document).on('submit', '#series-create-edit', (e) => {
-        e.preventDefault();
-        console.log("Uploading", e.target)
-        var formData = new FormData(e.target);
-        $.ajax({
-            url: '/admin/series/modal-post',
-            type: 'POST',
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function (resp) {
-               console.log(resp);
+    e.preventDefault();
+    var formData = new FormData(e.target);
+    $.ajax({
+        url: '/admin/series/modal-post',
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (resp) {
+            if (resp.err) {
+                console.log(resp.message);
+            } else {
+                $('#series-list ul').append(resp);
+                hideForm();
             }
-        });
+        }
+    });
 });
 
 //Remove Serie Entry list
-$('body').on('click', '#remove-serie', (e)=>{
-    
-        let li = e.target.closest('li');
-        console.log(li.id)
-        $.post($('#container').data('action')+'delete-serie', {id: li.id, _csrf: $('#container').data('csrf')}, (resp) =>{
-            console.log(resp);
-                if(resp.state !== "err"){
-                    $(li).fadeOut('fast',(e)=>{
-                           li.remove();
-                    });
-                } 
-        }); 
+$('body').on('click', '#remove-serie', (e) => {
+
+    let li = e.target.closest('li');
+    console.log(li.id)
+    $.post($('#container').data('action') + 'delete-serie', { id: li.id, _csrf: $('#container').data('csrf') }, (resp) => {
+        console.log(resp);
+        if (resp.state !== "err") {
+            $(li).fadeOut('fast', (e) => {
+                li.remove();
+            });
+        }
+    });
 });
 
-$('body').on('change', '#series-content input[type="radio"]', (e)=>{
-    console.log(e.target);
-    let id = e.target.id.replace('tab-', '');
+const loadVideoSeries = (data) => {
+
     let selectedSerie = $('#series-list .active')[0];
-    let serieId = selectedSerie ? selectedSerie.Id : "";
-    console.log(id, selectedSerie, serieId);
-   $.post($('#container').data('action')+id, {serieId, _csrf: $('#container').data('csrf')}, (resp) =>{
-        console.log(resp);
+    let id = $("#series-content input[name='tabs']:checked")[0].id;
+
+    data.serieId = selectedSerie ? selectedSerie.id : "";
+    data.isAllVideo = id.includes('all-videos') ? true : false;
+
+    $.get($('#container').data('action') + 'videos-list', data, (resp) => {
         $('#video-list').replaceWith(resp)
-   });
+    });
+}
+
+$('body').on('click', '#series-content #pager a', (e) => {
+    e.preventDefault();
+    let link = e.target.closest('a');
+    let pageD = (link ? link : e.target).href.split('/');
+    if (pageD) {
+        let data = {};
+        data.page = pageD[4];
+        data.search = $('#search-input').val();
+        loadVideoSeries(data);
+    }
 });
+
+$('body').on('submit', '#series-content #search-video', (e) => {
+    e.preventDefault();
+    loadVideoSeries({ search: $('#search-input').val() });
+});
+
+$('body').on('change', '#series-content input[type="radio"]', (e) => {
+    loadVideoSeries({});
+});
+
+$('body').on('click', '#clear-search-video', (e) => {
+    $('#search-video #search-input').val('');
+    loadVideoSeries({});
+});
+
+$('body').on('change', '#series-content #select-page', (e) => {
+
+    let data = { page: $('#page-select').val(), search: $('#search-input').val() };
+    loadVideoSeries(data);
+});
+
+$('body').on('click', '#series-content .v-add, #add-filtered-videos', (e) => {
+    let li = e.target.closest('li')
+    let videoId = li ? li.id : null;
+
+    let serieId = $('#series li.active')[0].id;
+    let search = $('#search-input').val();
+    let _csrf = $('#container').data('csrf');
+    console.log(videoId, serieId, search);
+    if (serieId) {
+        if (videoId || search) {
+            $.post('/admin/series/add-videos-to-serie', {serieId, search, videoId,_csrf}, (resp) => {
+                    showError('Videos Agregados: '+resp.count, 'text-success');
+                    console.log(resp)
+            });
+        }else{
+            console.log("vId & search null")
+            showError('Filtre primero no se puede agregar todos los videos juntos', 'text-danger');
+        }
+
+    }else{
+        showError('No Hay Serie Para Agregar Video', 'text-danger');
+    }
+});
+
+
+$('body').on('click', '#series li', (e) => {
+    let li = e.target.tagName.includes('LI') ? e.target : e.target.closest('li');
+
+    $('#series li').removeClass("active");
+    $(li).addClass('active');
+})
 
 $(() => {
     loadDisk(window.location.href);

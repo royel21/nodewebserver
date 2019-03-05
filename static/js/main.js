@@ -70,10 +70,9 @@ $('body').on('click', '#clear-search', (e) => {
 
 $('body').on('submit', '#search-form', submitItemAndSearchForm);
 
+$('#error-bottom .btn').click((e)=> $('#error-container').fadeOut('fast'));
 
-$(()=>{
-    
-//     $('#menu a').removeClass("active");
-//     $('#menu a[href=""]').addClass('active'); 
-
-});
+const showError = (msg, className) =>{
+    $('#error-body').removeClass().addClass(className).empty().append("<span>"+msg);
+    $('#error-container').css({display: "flex"}).hide().fadeIn('fast');
+}

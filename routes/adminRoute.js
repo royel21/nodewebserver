@@ -15,10 +15,9 @@ router.post("/users/search", usersController.postSearch);
 
 router.get("/series", seriesController.series);
 router.get("/series/modal", seriesController.modal);
-router.get("/series/:page?/:items?", seriesController.series);
+router.get("/series/videos-list", seriesController.videosList);
+router.post("/series/add-videos-to-serie", seriesController.addVideosToSerie);
 router.post("/series/modal-post", seriesController.modalPost);
-router.post("/series/list-videos", seriesController.listVideos);
-router.post("/series/all-videos", seriesController.allVideos);
 router.post("/series/delete-serie", seriesController.deleteSerie);
 
 router.get("/movies", videosController.movies);

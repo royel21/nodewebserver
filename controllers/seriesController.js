@@ -66,37 +66,6 @@ exports.series = (req, res) => {
     });
 }
 
-exports.videoList = (req, res) => {
-    let sId = req.params.serieId;
-    let itemsPerPage = 12;
-    let currentPage = req.params.page || 1;
-    let begin = ((currentPage - 1) * itemsPerPage);
-    let val = "";
-    db.video.findAndCountAll({
-        order: ['Name'],
-        offset: begin,
-        limit: itemsPerPage,
-        where: { Id: sId }
-    }).then(videos => {
-
-        res.render('admin/series/partial-series-table', {
-            title: "Series - Manager",
-            sId,
-            series,
-            videos,
-            videopages: {
-                currentPage: 1,
-                itemsPerPage,
-                totalPages: Math.ceil(videos.count / itemsPerPage),
-                search: val,
-                action: "/admin/series/",
-                csrfToken: req.csrfToken(),
-                isAdd: sId || true
-            }
-        });
-    });
-}
-
 exports.modal = (req, res) => {
     let id = req.query.uid;
     console.log(req.query)
@@ -116,27 +85,27 @@ createSerie = (req, res) => {
     const name = req.body.name;
     const file = req.files.cover;
 
-    if (file) {
-        db.serie.create({ Name: name }).then(serie => {
-            if (serie) {
+    db.serie.create({ Name: name }).then(serie => {
+        if (serie) {
+            if (file) {
                 file.mv(coverPath + `${serie.id}.jpg`, (err) => {
                     if (err) {
                         console.log(err);
-                        return res.status(500).send('Internal Server Error');
+                        return res.send({ err: "500", message: err });
                     }
                     res.render('admin/series/row', { serie });
                 });
             } else {
-                if (err) console.log(err);
-                res.status(500).send('File no create');
+                res.render('admin/series/row', { serie });
             }
-        }).catch(err => {
+        } else {
             if (err) console.log(err);
-            res.status(500).send('Internal Server Error');
-        });
-    } else {
-        res.status(500).send('Elija Un Archivo');
-    }
+            res.send({ err: "500", message: err });
+        }
+    }).catch(err => {
+        if (err) console.log(err);
+        res.send({ err: "500", message: err });
+    });
 }
 
 exports.modalPost = (req, res) => {
@@ -164,26 +133,30 @@ exports.deleteSerie = (req, res) => {
         res.status(500).send('Internal Server Error');
     });
 }
-exports.listVideos = (req, res) => {
-    res.send("from List");
-}
 
-exports.allVideos = (req, res) => {
-    let itemsPerPage = 12;
-    let currentPage = req.params.page || 1;
+exports.videosList = (req, res) => {
+    console.log("params:", db.Op.like);
+    let itemsPerPage = 10;
+    let currentPage = req.query.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
-    let val = req.params.search || "";
+    let val = req.query.search || "";
 
-    db.video.findAndCountAll({
+    let serieId = req.query.serieId;
+    let view = req.query.isAllVideo === "true";
+    let condition = {
         order: ['Name'],
         offset: begin,
-        limit: itemsPerPage,
-        where: {
-            Name: {
-                [db.Op.like]: "%" + val + "%"
-            }
-        }
-    }).then(videos => {
+        limit: itemsPerPage
+    };
+
+    if (view) {
+        condition.where = {
+            Name: { [db.Op.like]: "%" + val + "%" }
+        };
+    } else {
+        condition.where = { SerieId: serieId };
+    }
+    db.video.findAndCountAll(condition).then(videos => {
 
         var totalPages = Math.ceil(videos.count / itemsPerPage);
 
@@ -194,10 +167,41 @@ exports.allVideos = (req, res) => {
                 itemsPerPage,
                 totalPages,
                 search: val,
-                action: "/admin/series/",
-                csrfToken: req.csrfToken()
+                action: "",
+                csrfToken: req.csrfToken(),
+                isList: view
             }
         });
+    }).catch(err => {
+        if (err) console.log(err);
+        res.status(500).send('Internal Server Error');
+    });
+}
+
+
+exports.addVideosToSerie = (req, res) => {
+    let serieId = req.body.serieId;
+    let videoId = req.body.videoId || null;
+    let search = req.body.search || "";
+    
+    db.serie.findOne({ where: { Id: serieId } }).then(serie => {
+        if (serie) {
+            db.video.findAll({
+                where: {
+                    [db.Op.or]:
+                        [{ Name: { [db.Op.like]: "%" + search + "%" } },
+                        { Id: videoId }]
+                }
+            }).then(videos => {
+                console.log(videos);
+                serie.addVideos(videos);
+                res.send({count: videos.length });
+
+            }).catch(err => {
+                if (err) console.log(err);
+                res.status(500).send('Internal Server Error');
+            });
+        }
     }).catch(err => {
         if (err) console.log(err);
         res.status(500).send('Internal Server Error');
