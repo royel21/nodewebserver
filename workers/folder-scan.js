@@ -11,6 +11,19 @@ var tempFiles = [];
 
 const worker = fork('./workers/screenshot-worker.js');
 
+function nameFormat(name, padding = 3) {
+    var res1 = name.split(/\d+/g);
+    var res2 = name.match(/\d+/g);
+    var temp = "";
+    if (res1 !== null && res2 !== null){
+        for (let [i, s] of res2.entries()) {
+            temp += res1[i] + String(Number(s)).padStart(padding, 0);
+        }
+        temp = temp + res1[res1.length - 1];
+    }
+    return temp;
+}
+
 PopulateDB = async (folder, files, fId) => {
     var filteredFile = files.filter((f) => {
         return f.isDirectory || ['mp4', 'mkv', 'avi', 'ogg'].includes(f.extension.toLocaleLowerCase()) &&
@@ -41,8 +54,9 @@ PopulateDB = async (folder, files, fId) => {
                     tempFiles.push({
                         Id,
                         Name: f.FileName,
+                        NameNormalize: nameFormat(f.FileName),
                         CoverPath: path.join("/covers/", fId, f.FileName + ".jpg").replace(/#/ig, '%23'),
-                        FullPath: fullpath,
+                        FullPath: folder,
                         DirectoryId: fId
                     });
                 }

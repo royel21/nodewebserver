@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
             unique: true,
             allowNull: false
         },
+        NameNormalize:
+        {
+            type: DataTypes.STRING(100)
+        },
         Year: {
             type: DataTypes.DATE,
             allowNull: true

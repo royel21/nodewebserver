@@ -29,8 +29,7 @@ db.serie = require('./serie')(sequelize, DataTypes);
 db.favorite = require('./favorites')(sequelize, DataTypes);
 db.directory = require('./directories')(sequelize, DataTypes);
 
-db.sequelize = sequelize;
-
+db.sqlze = sequelize;
 db.user.afterCreate((user, options)=>{
     if(!['manager','admin'].includes(user.Role))
     {

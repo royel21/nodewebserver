@@ -1,8 +1,10 @@
 #container{
+    /* display: flex; */
+    flex-direction: column;
     padding: 5px 5px;
     user-select: none;
-    min-height: 98%;
-    height: 98%;
+    /* min-height: 98%; */
+    height: calc(100% - 8px);
     overflow-y: hidden;
 }
 
@@ -107,12 +109,12 @@
 }
 
 #series-container .list-group-item{
-    font-size: 1.2rem;
     padding: 0.4rem 0.2rem;
 }
 
-#series-container .list-group-item span{
-    font-size: 1.5rem;
+#series-container .list-group-item span i{
+    margin: 0 6px;
+    font-size: 1.4rem;
 }
 
 #series-container .list-group-item:first-child{
@@ -148,6 +150,4 @@
 }
 
 #series-container li .v-add{
-    font-size: 20px;
-    margin: 0 5px;
 }

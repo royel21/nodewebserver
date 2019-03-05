@@ -11,7 +11,7 @@ router.get("/video/:videoid", (req, res) => {
   db.video.findOne({ where: { Id: req.params.videoid } })
     .then(video => {
       if (video) {
-        var file = video.FullPath;
+        var file = path.join(video.FullPath, video.Name);
         // var file = "D:\\Download\\Jav\\ADN-189.mp4"
         fs.stat(file, function (err, stats) {
           if (err) {

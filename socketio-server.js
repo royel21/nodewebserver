@@ -32,68 +32,63 @@ module.exports = (server, app) => {
         });
     }
 
-    var clients = {};
 
     io.on('connection', (socket) => {
-        console.log("connected:" + socket.id, app.locals.user ? app.locals.user.Name : "");
-        clients[socket.id] = socket;
+        if (app.locals.user && app.locals.user.Role.includes('admin')) {
+            socket.on('load-disks', (client) => {
+                drivelist.list((error, drives) => {
+                    if (error) return next(createError(500));
 
-        socket.on('load-disks', (client) => {
-            drivelist.list((error, drives) => {
-                if (error) return next(createError(500));
-
-                let disks = [];
-                if (drives) {
-                    for (let disk of drives) {
-                        disks.push(disk.mountpoints[0].path);
-                    }
-                }
-                disks.sort();
-                let renderTree = pug.compileFile('./views/admin/configs/tree-view.pug');
-                socket.emit('disk-loaded', renderTree({ disks }));
-            });
-        });
-
-        socket.on("scan-dir", (data) => {
-            //If is it root of disk return;
-            if (["c:\\", "C:\\", "/"].includes(data.folder))
-                return socket.emit("path-added", false);
-
-            let dir = path.join(data.path || "", data.folder);
-
-            if (fs.existsSync(dir)) {
-                getNewId().then(id => {
-                    db.directory.create({ Id: id, FullPath: dir, IsLoading: true }).then(newDir => {
-                        if (newDir) {
-                            let renderTree = pug.compileFile('./views/admin/configs/path-item.pug');
-                            socket.emit("path-added", renderTree(newDir));
-                            startWork(newDir);
-                        }else{
-                            socket.emit("path-added", false);
+                    let disks = [];
+                    if (drives) {
+                        for (let disk of drives) {
+                            disks.push(disk.mountpoints[0].path);
                         }
-                    }).catch(err => {
-                        console.log(err);
-                        socket.emit("path-added", false);
-                    });
+                    }
+                    disks.sort();
+                    let renderTree = pug.compileFile('./views/admin/configs/tree-view.pug');
+                    socket.emit('disk-loaded', renderTree({ disks }));
                 });
-            } else {
-                socket.emit("path-added", false);
-            }
-        });
+            });
 
-        socket.on('re-scan', (data) => {
-            db.directory.findOne({ where: { Id: data.id } }).then(dir => {
-                if (dir) {
-                    startWork(dir);
+            socket.on("scan-dir", (data) => {
+                //If is it root of disk return;
+                if (["c:\\", "C:\\", "/"].includes(data.folder))
+                    return socket.emit("path-added", false);
+
+                let dir = path.join(data.path || "", data.folder);
+
+                if (fs.existsSync(dir)) {
+                    getNewId().then(id => {
+                        db.directory.create({ Id: id, FullPath: dir, IsLoading: true }).then(newDir => {
+                            if (newDir) {
+                                let renderTree = pug.compileFile('./views/admin/configs/path-item.pug');
+                                socket.emit("path-added", renderTree(newDir));
+                                startWork(newDir);
+                            } else {
+                                socket.emit("path-added", false);
+                            }
+                        }).catch(err => {
+                            console.log(err);
+                            socket.emit("path-added", false);
+                        });
+                    });
                 } else {
-                    io.sockets.emit("scan-finish", data);
+                    socket.emit("path-added", false);
                 }
             });
-        });
 
-        socket.on('disconnect', (client) => {
-            delete clients[socket.id];
-            console.log("disconected:" + socket.id);
-        });
+            socket.on('re-scan', (data) => {
+                db.directory.findOne({ where: { Id: data.id } }).then(dir => {
+                    if (dir) {
+                        startWork(dir);
+                    } else {
+                        io.sockets.emit("scan-finish", data);
+                    }
+                });
+            });
+        }
+        // socket.on('disconnect', (client) => {
+        // });
     });
 }

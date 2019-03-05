@@ -17,11 +17,6 @@
     overflow-x: auto;
 }
 
-#tree-container{
-    height: calc(100% - 240px);
-    overflow-x: auto;
-}
-
 .nav-tabs .nav-link {
     border-radius: 0;
 }

@@ -1,13 +1,9 @@
 mixin configs(directories, pagedatas)
     #container.text-light.bg-dark.rounded.mx-
-        .nav.nav-tabs#tab-config
-            .nav-item
-                input#tab-config-dirs(type="radio" name="tabs" checked)
-                label.nav-link(for="tab-config-dirs") Directorios Agregados
-            .nav-item
-                input#tab-config-disk(type="radio" name="tabs")
-                label.nav-link(for="tab-config-disk") Discos
-
+        .text-center.text-light
+            h2 Directorios Agregados
+            //- label.float-right(for="auto-scan") Auto Escanear Directorios
+            //-     input#auto-scan(type="checkbox" name="autoScan")
         ul#paths.list-group.text-dark.font-weight-bold(data-csrf=pagedatas.csrfToken)
             li.list-group-item No hay Directorios Agregados
             each d in directories
@@ -17,9 +13,9 @@ mixin configs(directories, pagedatas)
                     span.delete-path
                         i.ml-2.text-danger.fas.fa-trash-alt
                     span.ml-2= d.FullPath
-
-        #tree-container.d-none
+        #tree-container
             .card.text-dark
                 .text-center.text-light
                 #disks
-                    h2 Espere Por favor.               
+                    h2 Espere Por favor.
+                        

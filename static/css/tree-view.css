@@ -1,3 +1,18 @@
+#paths{
+    height: calc(100% - 58px);
+    margin-bottom: 0;
+}
+
+#tree-container{
+     height: calc(100% - 58px);
+}
+
+#tree-container .card{
+    border-radius: 0 0 .25rem .25rem;
+    overflow-x: auto;
+    padding: 10px;
+}
+
 ul,
 .tree-view{
     list-style-type: none;
@@ -40,10 +55,6 @@ ul,
     position: absolute;
     right: -54px;
     color: #007bff;
-}
-
-#paths .list-group-item:nth-child(2){
-    border-radius: .25rem;
 }
 
 @media screen and (max-width: 600px) {

@@ -4,26 +4,30 @@ const fs = require('fs-extra');
 const coverPath = './static/covers/series/';
 
 if (!fs.existsSync('./static/covers/series')) fs.mkdirs('./static/covers/series');
-
+const itemsPerPage = 15;
 loadSeries = async (req, res) => {
-    let sId = req.params.serieId
-    let itemsPerPage = 12;
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
     let val = "";
-    let videos = await db.video.findAndCountAll({
-        order: ['Name'],
-        offset: 1,
-        limit: itemsPerPage,
-        where: { Id: sId }
-    });
-
+    let videos = { rows: [], count: 0 };
+    let sId = "";
     let series = await db.serie.findAndCountAll({
-        order: ['Name'],
+        order:  ['Name'],
         offset: begin,
         limit: itemsPerPage
     });
-
+    
+    if (series.rows.length > 0) {
+        sId = series.rows[0].Id
+        videos = await db.video.findAndCountAll({
+            order: ['NameNormalize'],
+            offset: 1,
+            limit: itemsPerPage,
+            where: { SerieId: sId },
+            attributes: [ 'Id', 'Name' ]
+        });
+        
+    }
     let totalPages = Math.ceil(series.count / itemsPerPage);
     let view = req.query.partial ? "admin/series/partial-series-table" : "admin/index.pug";
 
@@ -135,8 +139,6 @@ exports.deleteSerie = (req, res) => {
 }
 
 exports.videosList = (req, res) => {
-    console.log("params:", db.Op.like);
-    let itemsPerPage = 10;
     let currentPage = req.query.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
     let val = req.query.search || "";
@@ -144,14 +146,15 @@ exports.videosList = (req, res) => {
     let serieId = req.query.serieId;
     let view = req.query.isAllVideo === "true";
     let condition = {
-        order: ['Name'],
+        order: ['NameNormalize'],
         offset: begin,
-        limit: itemsPerPage
+        limit: itemsPerPage,
+        attributes: [ 'Id', 'Name' ]
     };
 
     if (view) {
         condition.where = {
-            Name: { [db.Op.like]: "%" + val + "%" }
+            [db.Op.and]: [{Name: { [db.Op.like]: "%" + val + "%" }}, {SerieId: null}]
         };
     } else {
         condition.where = { SerieId: serieId };
@@ -159,7 +162,7 @@ exports.videosList = (req, res) => {
     db.video.findAndCountAll(condition).then(videos => {
 
         var totalPages = Math.ceil(videos.count / itemsPerPage);
-
+        console.log(videos.rows.map(a=> a.Name))
         res.render('admin/series/partial-serie-videos', {
             videos,
             videopages: {
@@ -167,7 +170,7 @@ exports.videosList = (req, res) => {
                 itemsPerPage,
                 totalPages,
                 search: val,
-                action: "",
+                action: "/admin/series/",
                 csrfToken: req.csrfToken(),
                 isList: view
             }
@@ -183,20 +186,21 @@ exports.addVideosToSerie = (req, res) => {
     let serieId = req.body.serieId;
     let videoId = req.body.videoId || null;
     let search = req.body.search || "";
-    
+    let condition = {
+        order: ['NameNormalize'],
+        attributes: [ 'Id', 'Name' ],
+        where:
+            videoId ? { [db.Op.and]:[{Id: videoId}, {SerieId: null}] } :
+                {
+                    [db.Op.and]: [{Name: { [db.Op.like]: "%" + search + "%" }}, {SerieId: null}]
+                }
+    };
+
     db.serie.findOne({ where: { Id: serieId } }).then(serie => {
         if (serie) {
-            db.video.findAll({
-                where: {
-                    [db.Op.or]:
-                        [{ Name: { [db.Op.like]: "%" + search + "%" } },
-                        { Id: videoId }]
-                }
-            }).then(videos => {
-                console.log(videos);
+            db.video.findAll(condition).then(videos => {
                 serie.addVideos(videos);
-                res.send({count: videos.length });
-
+                res.send({ count: videos.length });
             }).catch(err => {
                 if (err) console.log(err);
                 res.status(500).send('Internal Server Error');

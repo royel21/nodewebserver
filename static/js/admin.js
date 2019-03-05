@@ -179,6 +179,15 @@ $('body').on('click', '#paths .delete-path', (e) => {
 $('body').on('change', '#cover', (e) => {
     $('#f-name').text(e.target.files[0].name)
 });
+
+//select list
+$('body').on('click', '#series li', (e) => {
+    let li = e.target.tagName.includes('LI') ? e.target : e.target.closest('li');
+    $('#series li').removeClass("active");
+    $(li).addClass('active');
+    loadVideoSeries({});
+});
+
 //Submit Serie Entry for edit or create
 $(document).on('submit', '#series-create-edit', (e) => {
     e.preventDefault();
@@ -194,6 +203,10 @@ $(document).on('submit', '#series-create-edit', (e) => {
                 console.log(resp.message);
             } else {
                 $('#series-list ul').append(resp);
+                if($('#series-list li').length === 1){
+                    $('#series-list li:first').addClass('active');
+                    loadVideoSeries({});
+                }
                 hideForm();
             }
         }
@@ -201,7 +214,7 @@ $(document).on('submit', '#series-create-edit', (e) => {
 });
 
 //Remove Serie Entry list
-$('body').on('click', '#remove-serie', (e) => {
+$('body').on('click', '.remove-serie', (e) => {
 
     let li = e.target.closest('li');
     console.log(li.id)
@@ -210,6 +223,11 @@ $('body').on('click', '#remove-serie', (e) => {
         if (resp.state !== "err") {
             $(li).fadeOut('fast', (e) => {
                 li.remove();
+                let $li = $('#series li:first');
+                if ($li[0]) {
+                    $('#series li:first').addClass('active');
+                    loadVideoSeries({});
+                }
             });
         }
     });
@@ -223,23 +241,24 @@ const loadVideoSeries = (data) => {
     data.serieId = selectedSerie ? selectedSerie.id : "";
     data.isAllVideo = id.includes('all-videos') ? true : false;
 
-    $.get($('#container').data('action') + 'videos-list', data, (resp) => {
-        $('#video-list').replaceWith(resp)
+    $.get($('#container').data('action') + 'videos-list', data, (resp, status) => {
+        $('#video-list').replaceWith(resp);
+        console.log(status);
     });
 }
-
+//Load pagination page
 $('body').on('click', '#series-content #pager a', (e) => {
     e.preventDefault();
     let link = e.target.closest('a');
     let pageD = (link ? link : e.target).href.split('/');
-    if (pageD) {
+    if (parseInt(pageD[5])) {
         let data = {};
-        data.page = pageD[4];
+        data.page = pageD[5];
         data.search = $('#search-input').val();
         loadVideoSeries(data);
     }
 });
-
+//load filtered videos
 $('body').on('submit', '#series-content #search-video', (e) => {
     e.preventDefault();
     loadVideoSeries({ search: $('#search-input').val() });
@@ -267,31 +286,35 @@ $('body').on('click', '#series-content .v-add, #add-filtered-videos', (e) => {
     let serieId = $('#series li.active')[0].id;
     let search = $('#search-input').val();
     let _csrf = $('#container').data('csrf');
-    console.log(videoId, serieId, search);
     if (serieId) {
         if (videoId || search) {
-            $.post('/admin/series/add-videos-to-serie', {serieId, search, videoId,_csrf}, (resp) => {
-                    showError('Videos Agregados: '+resp.count, 'text-success');
-                    console.log(resp)
+            $.post('/admin/series/add-videos-to-serie', { serieId, search, videoId, _csrf }, (resp) => {
+                if (resp.err) {
+                    showError('Filtre primero no se puede agregar todos los videos juntos', 'text-danger');
+                } else {
+                    if(search){
+                          showError('Videos Agregados: ' + resp.count, 'text-success');
+                    }
+                     loadVideoSeries({search});
+                }
             });
-        }else{
+        } else {
             console.log("vId & search null")
             showError('Filtre primero no se puede agregar todos los videos juntos', 'text-danger');
         }
 
-    }else{
+    } else {
         showError('No Hay Serie Para Agregar Video', 'text-danger');
     }
 });
 
 
-$('body').on('click', '#series li', (e) => {
-    let li = e.target.tagName.includes('LI') ? e.target : e.target.closest('li');
-
-    $('#series li').removeClass("active");
-    $(li).addClass('active');
-})
-
-$(() => {
-    loadDisk(window.location.href);
+$('body').on('change', '#tab-config input[type="radio"]',(e)=>{
+        console.log(e.target);
+        $('#paths').toggleClass('d-none');
+        $('#tree-container').toggleClass('d-none');
+        if(e.target.id.includes('disk')){
+            loadDisk(window.location.href);   
+        }
 });
+
