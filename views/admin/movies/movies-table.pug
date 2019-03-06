@@ -1,19 +1,8 @@
 mixin movies_table(movies, pagedatas) 
     #container.text-light.bg-dark.rounded.mx-2(data-action=pagedatas.action, data-csrf=pagedatas.csrfToken)
         #table-controls
-            #search-container
-                form#search-form.d-inline-block.ml-2(action=pagedatas.action+"search" method="POST") 
-                    input(type="hidden" name="_csrf" value=""+ pagedatas.csrfToken)
-                    input(type="hidden" name="page" value="1")
-                    input(type="hidden" name="items" value=""+ pagedatas.itemsPerPage)
-                    .input-group.mb-3
-                        .input-group-prepend
-                            button#btn-search.input-group-text(type="submit")
-                                i.fa.fa-search
-                        input#search-input.form-control(type="text" name="search" value=pagedatas.search placeholder="Enter Search" required)
-                        span#clear-search
-                            i.fas.fa-times-circle
-            
+            include ../../share/search
+            +search(pagedatas, pagedatas.action+"search", "search-form")
             include ../../share/pagination
             +pagination(movies.count, pagedatas)
         #table-container

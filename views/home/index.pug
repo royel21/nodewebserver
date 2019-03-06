@@ -2,23 +2,29 @@ extends ../share/layout
 
 block css
     link(rel="stylesheet" href="/css/fullscreen.css" type="text/css")
-    link(rel="stylesheet" href="/css/videoplayer.css" type="text/css")
-    link(rel="stylesheet" href="/css/sliders.css" type="text/css")
     link(rel="stylesheet" href="/css/home.css" type="text/css")
-    link(rel="stylesheet" href="/css/footer.css" type="text/css")
+    if videos
+        link(rel="stylesheet" href="/css/videoplayer.css" type="text/css")
+        link(rel="stylesheet" href="/css/sliders.css" type="text/css")
+        link(rel="stylesheet" href="/css/footer.css" type="text/css")
 block navbar
     include ../share/navbar2
     +navbar2(user)
 
 block content
-    #video-container(tabindex="0")
-        include ../videoplayer/player
-    include ./items-view
-    +items-view(movies, pagedatas)
+    if series
+        include ./series-view
+        +series-view(series, pagedatas)
+    else if movies
+        #video-container(tabindex="0")
+            include ../videoplayer/player
+        include ./videos-view
+        +videos-view(videos, pagedatas)
         
 block script
     script(src="/js/main.js")
-    script(src="/js/sliders.js")
     script(src="/js/video-list.js")
-    script(src="/js/player.js")
-    script(src="/js/move-element.js")
+    if videos
+        script(src="/js/sliders.js")
+        script(src="/js/player.js")
+        script(src="/js/move-element.js")

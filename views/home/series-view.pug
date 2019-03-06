@@ -1,0 +1,18 @@
+mixin series-view(series, pagedatas)
+    #container    
+        #controls
+            include ../share/search
+            +search(pagedatas, pagedatas.action+"search", "search-form")
+
+            include ../share/pagination
+            +pagination(series.count, pagedatas)
+                
+        #series-list.items-list
+            each item in series.rows
+                .items(tabindex="0" id=item.Id)
+                    .item-video
+                        .item-btns
+                            span.item-fav.far.fa-star
+                        .item-cover
+                            img.fa(draggable="false" src=item.CoverPath alt="La imagen se esta cargando actulalize")
+                        .item-name= item.Name

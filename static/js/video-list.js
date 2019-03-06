@@ -42,7 +42,7 @@ const calPages = () => {
 
 calPages();
 
-$('body').on('keydown', '#video-list', (e) => {
+$('body').on('keydown', '.items-list', (e) => {
     calCol();
     calPages();
     let totalitem = $('.items').length;
@@ -51,7 +51,15 @@ $('body').on('keydown', '#video-list', (e) => {
     switch (e.keyCode) {
         case 13:
             {
-                playVideo(e.target.closest('.items'));
+                let item = e.target.closest('.items')
+                if($('#videos-list')[0]){
+                    playVideo(item);
+                }else{
+                    let url = "/videos/"+item.id;
+                    window.history.pushState(title, title, url);
+                    console .log(url);
+                    loadPartialPage(url)
+                }
                 console.log("enter");
                 wasProcesed = true;
                 break;
@@ -124,9 +132,20 @@ $('body').on('click', '.items',(e)=>{
     selectItem($('.items').index(item));
 });
 
-$('body').on('dblclick', '#video-list .items', (e)=>{
+$('body').on('dblclick', '.items-list .items', (e)=>{
     let item = e.target.classList[0] === "items" ? e.target : e.target.closest('.items');
-    playVideo(item);
+    let title = document.title;
+    
+    if($('#videos-list')[0]){
+        playVideo(item);
+    }else{
+        let url = "/videos/"+item.id;
+        window.history.pushState(title, title, url);
+        console .log(url);
+        loadPartialPage(url)
+    }
+    console.log("blclick");
+
 });
 
 $(()=>{

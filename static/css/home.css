@@ -1,4 +1,4 @@
-#video-list{
+.items-list{
     display: flex;
     flex-wrap: wrap;
     min-height: 100%;
@@ -98,7 +98,7 @@
 
 @media all and (max-width: 650px)
 {
-    #video-list{
+    .items-list{
         justify-content: center;
     }
     
@@ -113,7 +113,7 @@
 
 @media all and (max-width: 450px)
 {
-    #video-list{
+    .items-list{
         justify-content: center;
     }
     .item-video{

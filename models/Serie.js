@@ -2,13 +2,18 @@ module.exports = (sequelize, DataTypes) =>{
 
     const Serie = sequelize.define('Serie', {
         Id: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             primaryKey: true,
-            autoIncrement: true
+            unique: true,
+            allowNull: false
         },
         Name: {
             type: DataTypes.STRING(100),
             unique: true
+        },
+        CoverPath:{
+            type: DataTypes.STRING,
+            allowNull: true
         }
     }, {
             timestamps: false

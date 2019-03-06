@@ -6,11 +6,12 @@ const mypassport = require('../passport_config')(passport);
 exports.index = (req, res) => {
     if (req.user) {
         let itemsPerPage = req.params.items || req.query.items || (req.screenW < 1900 ? 12 : 24);
+        console.log(req.screenW, itemsPerPage)
         let currentPage = req.params.page || 1;
         let begin = ((currentPage - 1) * itemsPerPage);
         let val = req.params.search || "";
 
-        db.video.findAndCountAll({
+        db.serie.findAndCountAll({
             order: ['Name'],
             offset: begin,
             limit: itemsPerPage,
@@ -19,13 +20,12 @@ exports.index = (req, res) => {
                     [db.Op.like]: "%" + val + "%"
                 }
             }
-        }).then(movies => {
-            
-            var totalPages = Math.ceil(movies.count / itemsPerPage);
-            let view = req.query.partial ? "home/partial-items-view" : "home/index.pug";
+        }).then(series => {
+            var totalPages = Math.ceil(series.count / itemsPerPage);
+            let view = req.query.partial ? "home/partial-series-view" : "home/index.pug";
             res.render(view, {
                 title: "Home",
-                movies,
+                series,
                 pagedatas: {
                     currentPage,
                     itemsPerPage,
@@ -51,6 +51,51 @@ exports.index = (req, res) => {
     } else {
         return res.redirect('/login');
     }
+}
+
+exports.videos = (req, res) => {
+    
+        let itemsPerPage = req.params.items || req.query.items || (req.screenW < 1900 ? 12 : 24);
+        let seriesId = req.params.serie
+        let currentPage = req.params.page || 1;
+        let begin = ((currentPage - 1) * itemsPerPage);
+        let val = req.params.search || "";
+
+        db.video.findAndCountAll({
+            order: ['Name'],
+            offset: begin,
+            limit: itemsPerPage,
+            where: {
+                [db.Op.and]:[{Name: { [db.Op.like]: "%" + val + "%" }}, {SerieId: seriesId}]
+            }
+        }).then(videos => {
+            var totalPages = Math.ceil(videos.count / itemsPerPage);
+            let view = req.query.partial ? "home/partial-videos-view" : "home/index.pug";
+            res.render(view, {
+                title: "Home",
+                videos,
+                pagedatas: {
+                    currentPage,
+                    itemsPerPage,
+                    totalPages,
+                    search: val,
+                    action: "/videos",
+                    csrfToken: req.csrfToken()
+                }
+            }, (err, html) => {
+                if(err) console.log(err);
+
+                if (req.query.partial) {
+                    res.send({ url: req.url, data: html });
+
+                } else {
+                    res.send(html);
+                }
+            });
+        }).catch(err => {
+            console.log(err)
+            res.status(500).send('Internal Server Error');
+        });
 }
 
 exports.postSearch = (req, res) => {

@@ -144,16 +144,15 @@ body{
     height: 50px;
 }
 
-#search-container,
 #pager{
     align-self: center;
 }
 
-#btn-search{
+.btn-search{
     cursor: pointer;
 }
 
-#btn-search:active{
+.btn-search:active{
     font-size: .9rem;
 }
 
@@ -164,7 +163,7 @@ body{
 
 #items{
     display: inline-flex;
-    max-width: 129px;
+    max-width: 140px;
     top: -5px;
     margin-right: 5px;
     align-self: center;
@@ -198,8 +197,8 @@ body{
 }
 
 #pager{
-    display: inline-block;
-    align-self: center;
+    display: inline-block; 
+    align-self: center; 
 }
 
 #pager a{
@@ -211,12 +210,19 @@ body{
     font-weight: 600;
     font-size: 22px;
 }
-#search-input{
+
+.search-container{
+    display: flex;
+    align-items: center;
+    width: 200px;
+}
+
+.search-container .input-group .search-input{
     position: relative;
     border-radius: 0px 5px 5px 0px;
 }
-#clear-search-video .fa-times-circle,
-#clear-search .fa-times-circle{
+
+.search-container span .fa-times-circle{
     display: none;
     position: absolute;
     top: 9px;
@@ -225,8 +231,8 @@ body{
     color: firebrick;
     z-index: 99;
 }
-#search-input:not(:placeholder-shown) + #clear-search-video .fa-times-circle,
-#search-input:not(:placeholder-shown) + #clear-search .fa-times-circle{
+
+.search-input:not(:placeholder-shown) + span .fa-times-circle{
     display: initial;
 }
 

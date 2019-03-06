@@ -31,26 +31,33 @@ block navbar
                     i.fas.fa-tags.text-primary
                         span Categorias
             li.nav-item
-                a.nav-link(href="/admin/configs" class=""+(configs ? "active" : ""))
+                a.nav-link(href="/admin/configs" class=""+(directories ? "active" : ""))
                     i.fas.fa-cogs.text-primary
-                        span Configuraciones
+                        span Directorios
 
 block content
+    -let pageScript = ""
     if users
         include ./users/users-table
         +users_table(users, pagedatas)
     else if series
         include ./series/series-config
         +series_table(series, videos, videopages, seriepages)
+        -pageScript = "/js/series.js"
     else if movies
         include ./movies/movies-table
         +movies_table(movies, pagedatas)
+        -pageScript = "/js/movies.js"
     else if categories
         include ./categories/categories-table
         +categories_table(categories, pagedatas)
+        -pageScript = "/js/categories.js"
     else if directories
         include ./configs/configs
         +configs(directories, pagedatas)
+        -pageScript = "/js/directories.js"
+
 block script
     script(src="/js/main.js")
     script(src="/js/admin.js")
+    script(id="pagescript" src=""+pageScript)

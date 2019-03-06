@@ -57,6 +57,10 @@ ul,
     color: #007bff;
 }
 
+#tab-config .nav-link .fas{
+    font-size: 30px;
+}
+
 @media screen and (max-width: 600px) {
     .tree-view .tree-item{
        

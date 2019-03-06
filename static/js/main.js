@@ -1,19 +1,11 @@
 window.history.replaceState(document.title, document.title, document.location.href);
 var socket;
 
-loadDisk = (url) => {
-    if (url.includes('config')) {
-        socket.emit('load-disks', "load now");
-    }
-}
-
 const loadPartialPage = async (url, cb) => {
     if (!url) return;
     
     $.get(url, { partial: true, screen:  window.screen.width}, (resp) => {
         $('#container').replaceWith(resp.data);
-        if (cb) cb();
-        loadDisk(url);
     });
 }
 
@@ -63,8 +55,8 @@ const submitItemAndSearchForm = (e) => {
     });
 }
 
-$('body').on('click', '#clear-search', (e) => {
-    $('#search-input').val('');
+$('body').on('click', '#search-form .clear-search', (e) => {
+    $('#search-form .search-input').val('');
     submitItemAndSearchForm(e.target.closest('form'));
 });
 

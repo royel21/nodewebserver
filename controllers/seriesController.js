@@ -1,10 +1,13 @@
 
 const db = require('../models');
 const fs = require('fs-extra');
+const path = require('path');
+
 const coverPath = './static/covers/series/';
 
 if (!fs.existsSync('./static/covers/series')) fs.mkdirs('./static/covers/series');
 loadSeries = async (req, res) => {
+    console.log(req.screenW)
     let itemsPerPage = req.screenW < 1900 ? 15 : 18;
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
@@ -123,10 +126,12 @@ exports.modalPost = (req, res) => {
 
 exports.deleteSerie = (req, res) => {
     let id = req.body.id;
+    let name = req.body.name;
     db.serie.destroy({ where: { Id: id } }).then(result => {
         if (result > 0) {
-            if (fs.existsSync(coverPath + id + ".jpg")) {
-                fs.removeSync(coverPath + id + ".jpg");
+            let cover = path.join(coverPath, name + ".jpg");
+            if (fs.existsSync(cover)) {
+                fs.removeSync(cover);
             }
             res.send({ state: "ok", id });
         } else {
@@ -150,20 +155,15 @@ exports.videosList = (req, res) => {
         order: ['NameNormalize'],
         offset: begin,
         limit: itemsPerPage,
-        attributes: [ 'Id', 'Name' ]
+        attributes: [ 'Id', 'Name' ],
+        where:{
+            [db.Op.and]: [{Name: { [db.Op.like]: "%" + val + "%" }}, {SerieId: serieId}]
+        }
     };
 
-    if (view) {
-        condition.where = {
-            [db.Op.and]: [{Name: { [db.Op.like]: "%" + val + "%" }}, {SerieId: null}]
-        };
-    } else {
-        condition.where = { SerieId: serieId };
-    }
     db.video.findAndCountAll(condition).then(videos => {
 
         var totalPages = Math.ceil(videos.count / itemsPerPage);
-        console.log(videos.rows.map(a=> a.Name))
         res.render('admin/series/partial-serie-videos', {
             videos,
             videopages: {

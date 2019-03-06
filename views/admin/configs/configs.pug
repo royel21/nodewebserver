@@ -3,10 +3,12 @@ mixin configs(directories, pagedatas)
         .nav.nav-tabs#tab-config
             .nav-item
                 input#tab-config-dirs(type="radio" name="tabs" checked)
-                label.nav-link(for="tab-config-dirs") Directorios Agregados
+                label.nav-link(for="tab-config-dirs")
+                    .fas.fa-folder-plus
             .nav-item
                 input#tab-config-disk(type="radio" name="tabs")
-                label.nav-link(for="tab-config-disk") Discos
+                label.nav-link(for="tab-config-disk")
+                    .fas.fa-hdd
 
         ul#paths.list-group.text-dark.font-weight-bold(data-csrf=pagedatas.csrfToken)
             li.list-group-item No hay Directorios Agregados

@@ -8,14 +8,16 @@ const path = require('path');
 const db = require('../models');
 
 var tempFiles = [];
+const coverPath = path.join('./static', 'covers', 'series');
 
 const worker = fork('./workers/screenshot-worker.js');
+fs.mkdirsSync(coverPath);
 
 function nameFormat(name, padding = 3) {
     var res1 = name.split(/\d+/g);
     var res2 = name.match(/\d+/g);
     var temp = "";
-    if (res1 !== null && res2 !== null){
+    if (res1 !== null && res2 !== null) {
         for (let [i, s] of res2.entries()) {
             temp += res1[i] + String(Number(s)).padStart(padding, 0);
         }
@@ -24,8 +26,8 @@ function nameFormat(name, padding = 3) {
     return temp;
 }
 
-PopulateDB = async (folder, files, fId) => {
-    var filteredFile = files.filter((f) => {
+PopulateDB = async (folder, files, fId, sId) => {
+    let filteredFile = files.filter((f) => {
         return f.isDirectory || ['mp4', 'mkv', 'avi', 'ogg'].includes(f.extension.toLocaleLowerCase()) &&
             !f.isHidden
     });
@@ -44,24 +46,38 @@ PopulateDB = async (folder, files, fId) => {
                         }]
                     }
                 });
+
                 let cover = path.resolve("./static/covers/", fId, f.FileName + ".jpg");
                 let fullpath = path.join(folder, f.FileName)
                 if (!fs.existsSync(cover)) {
                     worker.send({ file: fullpath, cover });
                 }
                 if (found.length === 0 && !vfound) {
-
                     tempFiles.push({
                         Id,
                         Name: f.FileName,
                         NameNormalize: nameFormat(f.FileName),
                         CoverPath: path.join("/covers/", fId, f.FileName + ".jpg").replace(/#/ig, '%23'),
                         FullPath: folder,
-                        DirectoryId: fId
+                        DirectoryId: fId,
+                        SerieId: sId
                     });
                 }
             } else {
-                await PopulateDB(f.FileName, f.Files, fId);
+                let serie = { Id: null }
+                if (f.Files.find(a => ['mp4', 'mkv', 'avi', 'ogg'].includes(a.extension.toLocaleLowerCase()))) {
+                    let name = path.basename(f.FileName);
+                    let originalPath = path.join(f.FileName, name + ".jpg");
+                    serie = await db.serie.create({
+                        Id: Math.random().toString(36).slice(-5),
+                        Name: name,
+                        CoverPath: '/covers/series/'+name + ".jpg"
+                    });
+                    if (fs.existsSync(coverPath)) {
+                        fs.copy(originalPath, path.join(coverPath, name + ".jpg"));
+                    }
+                }
+                await PopulateDB(f.FileName, f.Files, fId, serie);
             }
         } catch (error) {
             console.log(error)
@@ -84,7 +100,7 @@ process.on("message", (data) => {
         process.send(data);
         process.exit();
     });
-    
+
     scanOneDir(data).then(() => {
         worker.send("finish");
     });

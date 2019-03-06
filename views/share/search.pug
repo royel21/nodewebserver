@@ -1,0 +1,13 @@
+mixin search(data, action, formId)
+    .search-container
+        form.d-inline-block.ml-2(id=formId action=action method="POST") 
+            input(type="hidden" name="_csrf" value=""+ data.csrfToken)
+            input(type="hidden" name="page" value=""+ data.currentPage)
+            input(type="hidden" name="items" value=""+ data.itemsPerPage)
+            .input-group
+                .input-group-prepend
+                    button.btn-search.input-group-text(type="submit")
+                        i.fa.fa-search
+                input.search-input.form-control(type="text" name="search" value=data.search placeholder="Enter Search" required)
+                span.clear-search
+                    i.fas.fa-times-circle

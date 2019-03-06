@@ -53,7 +53,7 @@ router.get("/video/:videoid", (req, res) => {
             });
         });
       } else {
-        res.end(err);
+        res.send('error');
       }
     });
 });
