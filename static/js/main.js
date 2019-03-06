@@ -9,8 +9,8 @@ loadDisk = (url) => {
 
 const loadPartialPage = async (url, cb) => {
     if (!url) return;
-
-    $.get(url, { partial: true }, (resp) => {
+    
+    $.get(url, { partial: true, screen:  window.screen.width}, (resp) => {
         $('#container').replaceWith(resp.data);
         if (cb) cb();
         loadDisk(url);

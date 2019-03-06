@@ -5,7 +5,7 @@ const mypassport = require('../passport_config')(passport);
 
 exports.index = (req, res) => {
     if (req.user) {
-        let itemsPerPage = req.params.items || req.query.items || 24;
+        let itemsPerPage = req.params.items || req.query.items || (req.screenW < 1900 ? 12 : 24);
         let currentPage = req.params.page || 1;
         let begin = ((currentPage - 1) * itemsPerPage);
         let val = req.params.search || "";

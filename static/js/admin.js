@@ -280,13 +280,13 @@ $('body').on('change', '#series-content #select-page', (e) => {
 });
 
 $('body').on('click', '#series-content .v-add, #add-filtered-videos', (e) => {
-    let li = e.target.closest('li')
-    let videoId = li ? li.id : null;
+    if ($('#series li.active')[0]) {
+        let li = e.target.closest('li')
+        let videoId = li ? li.id : null;
 
-    let serieId = $('#series li.active')[0].id;
-    let search = $('#search-input').val();
-    let _csrf = $('#container').data('csrf');
-    if (serieId) {
+        let serieId = $('#series li.active')[0].id;
+        let search = $('#search-input').val();
+        let _csrf = $('#container').data('csrf');
         if (videoId || search) {
             $.post('/admin/series/add-videos-to-serie', { serieId, search, videoId, _csrf }, (resp) => {
                 if (resp.err) {

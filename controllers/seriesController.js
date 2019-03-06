@@ -4,8 +4,8 @@ const fs = require('fs-extra');
 const coverPath = './static/covers/series/';
 
 if (!fs.existsSync('./static/covers/series')) fs.mkdirs('./static/covers/series');
-const itemsPerPage = 15;
 loadSeries = async (req, res) => {
+    let itemsPerPage = req.screenW < 1900 ? 15 : 18;
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
     let val = "";
@@ -139,6 +139,7 @@ exports.deleteSerie = (req, res) => {
 }
 
 exports.videosList = (req, res) => {
+    let itemsPerPage = req.screenW < 1900 ? 15 : 18;
     let currentPage = req.query.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
     let val = req.query.search || "";
