@@ -23,6 +23,7 @@ exports.index = (req, res) => {
         }).then(series => {
             var totalPages = Math.ceil(series.count / itemsPerPage);
             let view = req.query.partial ? "home/partial-series-view" : "home/index.pug";
+            console.log(series)
             res.render(view, {
                 title: "Home",
                 series,
@@ -79,7 +80,7 @@ exports.videos = (req, res) => {
                     itemsPerPage,
                     totalPages,
                     search: val,
-                    action: "/videos",
+                    action: "/videos/"+seriesId+"/",
                     csrfToken: req.csrfToken()
                 }
             }, (err, html) => {

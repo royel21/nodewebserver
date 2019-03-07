@@ -48,14 +48,14 @@ formatTime = (time) => {
 }
 
 setfullscreen = (element) => {
-    try{
+    try {
         if (!document.fullscreenElement) {
-            element.requestFullscreen().catch(err=>{});
+            element.requestFullscreen().catch(err => { });
         } else {
-            document.exitFullscreen().catch(err=>{});
+            document.exitFullscreen().catch(err => { });
         }
         $('.fa-expand-arrows-alt').attr('data-title', document.webkitIsFullScreen ? "Pantalla Completa" : "Salir Pantalla Completa");
-    }catch(err){
-        
+    } catch (err) {
+
     }
 }

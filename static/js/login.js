@@ -1,3 +1,3 @@
 $(() => {
-    $.get('/screen-width?screenw='+ window.screen.width, (resp) => { });
+    $.get('/screen-width?screenw=' + window.screen.width, (resp) => { });
 });

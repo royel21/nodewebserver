@@ -1,11 +1,26 @@
 
+var loadVideoSeries;
+if(!loadVideoSeries){
+    loadVideoSeries = (data) => {
+        let selectedSerie = $('#series-list .active')[0];
+
+        data.serieId = selectedSerie ? selectedSerie.id : "";
+        data.isAllVideo = false;
+        console.log(data)
+        $.get($('#container').data('action') + 'videos-list', data, (resp, status) => {
+            $('#video-list').replaceWith(resp);
+            console.log(status, resp);
+        });
+    }
+}
+
 // Replace name on modal for serie
-$('body').on('change', '#cover', (e) => {
+$('#cover').change((e) => {
     $('#f-name').text(e.target.files[0].name)
 });
 
 //select list
-$('body').on('click', '#series li', (e) => {
+$('#series li').click((e) => {
     let li = e.target.tagName.includes('LI') ? e.target : e.target.closest('li');
     $('#series li').removeClass("active");
     $(li).addClass('active');
@@ -13,7 +28,7 @@ $('body').on('click', '#series li', (e) => {
 });
 
 //Submit Serie Entry for edit or create
-$(document).on('submit', '#series-create-edit', (e) => {
+$('#series-create-edit').submit((e) => {
     e.preventDefault();
     var formData = new FormData(e.target);
     $.ajax({
@@ -27,7 +42,7 @@ $(document).on('submit', '#series-create-edit', (e) => {
                 console.log(resp.message);
             } else {
                 $('#series-list ul').append(resp);
-                if($('#series-list li').length === 12){
+                if ($('#series-list li').length === 12) {
                     $('#series-list li:first').addClass('active');
                     loadVideoSeries({});
                 }
@@ -38,7 +53,7 @@ $(document).on('submit', '#series-create-edit', (e) => {
 });
 
 //Remove Serie Entry list
-$('body').on('click', '.remove-serie', (e) => {
+$('.remove-serie').click((e) => {
 
     let li = e.target.closest('li');
     console.log(li.id)
@@ -57,20 +72,8 @@ $('body').on('click', '.remove-serie', (e) => {
     });
 });
 
-const loadVideoSeries = (data) => {
-
-    let selectedSerie = $('#series-list .active')[0];
-
-    data.serieId = selectedSerie ? selectedSerie.id : "";
-    data.isAllVideo = false;
-    console.log(data)
-    $.get($('#container').data('action') + 'videos-list', data, (resp, status) => {
-        $('#video-list').replaceWith(resp);
-        console.log(status);
-    });
-}
 //Load pagination page
-$('body').on('click', '#series-content #pager a', (e) => {
+$('#series-content #pager a').click((e) => {
     e.preventDefault();
     let link = e.target.closest('a');
     let pageD = (link ? link : e.target).href.split('/');
@@ -82,28 +85,28 @@ $('body').on('click', '#series-content #pager a', (e) => {
     }
 });
 //load filtered videos
-$('body').on('submit', '#search-videos', (e) => {
+$('#search-videos').submit((e) => {
     e.preventDefault();
     loadVideoSeries({ search: $('#search-videos .search-input').val() });
     console.log('s-videos')
 });
 
-$('body').on('change', '#series-content input[type="radio"]', (e) => {
+$('#series-content input[type="radio"]').change((e) => {
     loadVideoSeries({});
 });
 
-$('body').on('click', '#search-videos .clear-search', (e) => {
+$('#search-videos .clear-search').click((e) => {
     $('#search-videos .search-input').val('');
     loadVideoSeries({});
 });
 
-$('body').on('change', '#series-content #select-page', (e) => {
+$('#series-content #select-page').change((e) => {
 
     let data = { page: $('#page-select').val(), search: $('#search-input').val() };
     loadVideoSeries(data);
 });
 
-$('body').on('click', '#series-content .v-add, #add-filtered-videos', (e) => {
+$('#series-content').on('click', '.v-add, #add-filtered-videos', (e) => {
     if ($('#series li.active')[0]) {
         let li = e.target.closest('li')
         let videoId = li ? li.id : null;
@@ -116,10 +119,10 @@ $('body').on('click', '#series-content .v-add, #add-filtered-videos', (e) => {
                 if (resp.err) {
                     showError('Filtre primero no se puede agregar todos los videos juntos', 'text-danger');
                 } else {
-                    if(search){
-                          showError('Videos Agregados: ' + resp.count, 'text-success');
+                    if (search) {
+                        showError('Videos Agregados: ' + resp.count, 'text-success');
                     }
-                     loadVideoSeries({search});
+                    loadVideoSeries({ search });
                 }
             });
         } else {

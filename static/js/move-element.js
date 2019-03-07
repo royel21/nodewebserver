@@ -55,15 +55,15 @@ $(document).mouseup((e) => {
     isPressed = false;
 });
 
-$(()=>{
+$(() => {
 
     $(window).on('resize webkitfullscreenchange', (e) => {
         $('.move').each((index, el) => {
             if ($(el).closest('.move-modal').css('visibility') == "visible") {
                 modal = $(el).closest('.modal')[0];
-                if(modal){
+                if (modal) {
                     moveEl(modal, modal.offsetLeft, modal.offsetTop, $(modal).width(), $(modal).height());
-                    modal = null; 
+                    modal = null;
                 }
             }
         });
@@ -86,8 +86,8 @@ $(document).mousemove((e) => {
         if (x < $(window).width() - resizeEl.offsetLeft) {
             resizeEl.style.width = x + "px";
         }
-        
-        if (y < $(window).height() - resizeEl.offsetTop-5) {
+
+        if (y < $(window).height() - resizeEl.offsetTop - 5) {
             resizeEl.style.height = y + "px";
         }
     }

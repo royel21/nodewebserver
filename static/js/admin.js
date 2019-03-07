@@ -5,45 +5,53 @@ $('.sidenav .nav-link').click((e) => {
     e.preventDefault();
     let a = e.target.closest('a');
     let url = a.href;
-    
+
     if (!url) return;
 
     window.history.pushState(a.textContent, a.textContent, url);
     document.title = a.textContent;
     $('.sidenav a').removeClass("active");
     a.classList.add('active');
-    
+
     let script = "/js/";
     console.log($(e.target.closest('li')).text())
-    switch($(e.target.closest('li')).text()){
-        case "Series":{
+    switch ($(e.target.closest('li')).text()) {
+        case "Series": {
             script += "series.js"
+            console.log("script:", script)
             break;
         }
-        case "Peliculas":{
+        case "Peliculas": {
             script += "movies.js"
             break;
         }
-        case "Categorias":{
+        case "Categorias": {
             script += "categories.js"
             break;
         }
-        case "Directorios":{
+        case "Directorios": {
             script += "directories.js"
             break;
         }
-        default:{
+        default: {
             script = "";
         }
     }
-    var loadedScript = document.createElement("script");
-    loadedScript.id = '#pagescript;'
-    loadedScript.src = script;
-    $('#pagescript').replaceWith(loadedScript);
-    
-    $.get(url, { partial: true, screen:  window.screen.width}, (resp) => {
-        $('#container').replaceWith(resp.data);
+    $.get(url, { partial: true, screen: window.screen.width }, (resp) => {
+        $('#container').remove();
+        $('#content').append(resp.data)
+        if(script){
+            var loadedScript = document.createElement("script");
+            loadedScript.id = 'pagescript';
+            loadedScript.onLoad = (e) =>{
+                console.log("loaded")
+            }
+            loadedScript.src = script;
+
+            $('#pagescript').replaceWith(loadedScript);
+        }
     });
+    
 });
 
 $(document).on("click", ".show-form", (e) => {

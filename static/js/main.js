@@ -3,9 +3,10 @@ var socket;
 
 const loadPartialPage = async (url, cb) => {
     if (!url) return;
-    
-    $.get(url, { partial: true, screen:  window.screen.width}, (resp) => {
+
+    $.get(url, { partial: true, screen: window.screen.width }, (resp) => {
         $('#container').replaceWith(resp.data);
+        if (cb) cb();
     });
 }
 
@@ -14,7 +15,9 @@ window.onpopstate = function (e) {
     document.title = e.state;
     $('.sidenav a').removeClass("active");
     $(`.sidenav .nav-link:contains("${e.state}")`).addClass('active');
-    loadPartialPage(url);
+    loadPartialPage(url, () => {
+        if ($('#series-list')[0]) selectItem(lastIndex);
+    });
 }
 
 $('body').on('click', '#table-controls .page-item, #controls .page-item', (e) => {
@@ -25,11 +28,11 @@ $('body').on('click', '#table-controls .page-item, #controls .page-item', (e) =>
     loadPartialPage(url);
 });
 
-const choosePage = (el) =>{
+const choosePage = (el) => {
     let title = document.title;
     if (el.tagName == "FORM") {
         let path = location.pathname.split(/\d/ig)[0];
-        let url = (path === "/" ? "/home/" : path )+el.elements["page"].value+"/"+el.elements["items"].value+"/"+el.elements["search"].value;
+        let url = (path === "/" ? "/home/" : path) + el.elements["page"].value + "/" + el.elements["items"].value + "/" + el.elements["search"].value;
         window.history.pushState(title, title, url);
         loadPartialPage(url);
     }
@@ -62,9 +65,9 @@ $('body').on('click', '#search-form .clear-search', (e) => {
 
 $('body').on('submit', '#search-form', submitItemAndSearchForm);
 
-$('#error-bottom .btn').click((e)=> $('#error-container').fadeOut('fast'));
+$('#error-bottom .btn').click((e) => $('#error-container').fadeOut('fast'));
 
-const showError = (msg, className) =>{
-    $('#error-body').removeClass().addClass(className).empty().append("<span>"+msg);
-    $('#error-container').css({display: "flex"}).hide().fadeIn('fast');
+const showError = (msg, className) => {
+    $('#error-body').removeClass().addClass(className).empty().append("<span>" + msg);
+    $('#error-container').css({ display: "flex" }).hide().fadeIn('fast');
 }

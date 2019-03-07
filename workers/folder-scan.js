@@ -77,7 +77,7 @@ PopulateDB = async (folder, files, fId, sId) => {
                         fs.copy(originalPath, path.join(coverPath, name + ".jpg"));
                     }
                 }
-                await PopulateDB(f.FileName, f.Files, fId, serie);
+                await PopulateDB(f.FileName, f.Files, fId, serie.Id);
             }
         } catch (error) {
             console.log(error)

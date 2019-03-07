@@ -143,7 +143,7 @@ player.onloadedmetadata = function (e) {
 }
 
 volcontrol.value = config.volume;
-$('.fa-volume-up').attr('data-title', config.isMuted ? "Unmute" : "Mute");
+$('#video-viewer .fa-volume-up').attr('data-title', config.isMuted ? "Unmute" : "Mute");
 
 Slider.oninput = (value) => {
     player.currentTime = value;
@@ -174,7 +174,7 @@ const pauseOrPlay = () => {
         player.pause();
         playPause = "Reproducir";
     }
-    $('.fa-play-circle').attr('data-title', playPause);
+    $('#video-viewer .fa-play-circle').attr('data-title', playPause);
     btnPlay.checked = config.paused = player.paused;
 }
 
@@ -187,7 +187,7 @@ btnPlay.onchange = pauseOrPlay;
 btnMuted.onchange = () => {
     player.muted = btnMuted.checked;
     config.isMuted = btnMuted.checked;
-    $('.fa-volume-up').attr('data-title', btnMuted.checked ? "No Silenciar" : "Silenciar");
+    $('#video-viewer .fa-volume-up').attr('data-title', btnMuted.checked ? "No Silenciar" : "Silenciar");
 }
 // deltaY obviously records vertical scroll, deltaX and deltaZ exist too
 vContainer.onwheel = (event) => {
@@ -343,7 +343,7 @@ const playVideo = (el) => {
     if (el) {
         update = false;
         let id = el.id;
-        currentFile = {id, current: 0}
+        currentFile = { id, current: 0 }
         updateRecents();
         currentVideoId = id;
         $(vContainer).fadeIn(300);
@@ -372,14 +372,14 @@ window.addEventListener("orientationchange", function (e) {
 });
 
 
-$(".fa-arrow-alt-circle-right").click((e) => {
+$("#video-viewer .fa-arrow-alt-circle-right").click((e) => {
     let next = $('#' + currentVideoId).next()[0];
     if (next) {
         playVideo(next)
     }
 });
 
-$(".fa-arrow-alt-circle-left").click((e) => {
+$("#video-viewer .fa-arrow-alt-circle-left").click((e) => {
     let prev = $('#' + currentVideoId).prev()[0];
     if (prev) {
         playVideo(prev);

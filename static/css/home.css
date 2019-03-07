@@ -58,8 +58,7 @@
     pointer-events: none;
     position: relative;
 }
-.item-cover img[alt]{
-}
+
 .item-cover img[alt]:after{
   display: block;
   position: absolute;
@@ -79,6 +78,7 @@
     text-align: center;
     pointer-events: none;
 }
+
 .item-video:hover > .item-name{
    position: relative;
    z-index: 5;
@@ -94,6 +94,11 @@
     background-color: rgba(0,123,255,0.1) !important;
     box-shadow: 0 0 10px;
     overflow: initial;
+}
+
+#back{
+    align-self: center;
+    margin-left: 5px;
 }
 
 @media all and (max-width: 650px)

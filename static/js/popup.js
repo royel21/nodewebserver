@@ -14,7 +14,7 @@ popupShow = async (event) => {
         event.target : $(event.target).closest(".popup-msg")[0];
 
     if (element != undefined) {
-        
+
         var rect = element.getBoundingClientRect();
         var msg = element.dataset.title;
         $popup.css({

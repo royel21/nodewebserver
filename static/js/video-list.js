@@ -5,7 +5,8 @@ const calCol = () => colNum = Math.floor((window.innerWidth - 15) / ($('.items')
 var page = 1;
 var selectedIndex = 0;
 var totalPage = 0;
-var currentPage = 0;
+var currentPage = 1;
+var lastIndex = 0;
 
 const selectItem = async (index) => {
     selectedIndex = index;
@@ -36,15 +37,14 @@ const selectItem = async (index) => {
 }
 
 const calPages = () => {
-    currentPage = parseInt($('#pager .active').text()) || 0;
-    totalPage = Math.ceil(parseInt($('.badge').text()) / parseInt($('#item').val())) || 0;
+    currentPage = parseInt($('#pager .active').text()) || 1;
+    totalPage = Math.ceil(parseInt($('.badge').text()) / parseInt($('#item').val())) || 1;
 }
-
-calPages();
 
 $('body').on('keydown', '.items-list', (e) => {
     calCol();
     calPages();
+    console.log(currentPage, totalPage)
     let totalitem = $('.items').length;
     let title = document.title;
     var wasProcesed = false;
@@ -52,13 +52,16 @@ $('body').on('keydown', '.items-list', (e) => {
         case 13:
             {
                 let item = e.target.closest('.items')
-                if($('#videos-list')[0]){
+                if ($('#videos-list')[0]) {
                     playVideo(item);
-                }else{
-                    let url = "/videos/"+item.id;
+                } else {
+                    let url = "/videos/" + item.id;
                     window.history.pushState(title, title, url);
-                    console .log(url);
-                    loadPartialPage(url)
+                    console.log(url);
+                    lastIndex = selectedIndex;
+                    loadPartialPage(url, () => {
+                        selectItem(0);
+                    });
                 }
                 console.log("enter");
                 wasProcesed = true;
@@ -69,12 +72,12 @@ $('body').on('keydown', '.items-list', (e) => {
                 if (selectedIndex > 0) {
                     selectItem(selectedIndex - 1);
                 } else {
-
                     if (currentPage > 1) {
+                        console.log("Prev Page");
                         let url = $('#pager .active').prev().find('a').attr('href');
                         window.history.pushState(title, title, url);
                         loadPartialPage(url, () => {
-                            selectItem(totalitem - 1);
+                            selectItem($('.items').length - 1);
                         });
                     }
                 }
@@ -94,8 +97,9 @@ $('body').on('keydown', '.items-list', (e) => {
                 if (selectedIndex < totalitem - 1) {
                     selectItem(selectedIndex + 1);
                 } else {
-                    console.log("Next Page");
+
                     if (currentPage < totalPage) {
+                        console.log("Next Page");
                         let url = $('#pager .active').next().find('a').attr('href');
                         window.history.pushState(title, title, url);
                         loadPartialPage(url, () => {
@@ -127,27 +131,40 @@ $('body').on('keydown', '.items-list', (e) => {
     }
 });
 
-$('body').on('click', '.items',(e)=>{
+$('body').on('click', '.items', (e) => {
     let item = e.target.classList[0] === "items" ? e.target : e.target.closest('.items');
     selectItem($('.items').index(item));
 });
 
-$('body').on('dblclick', '.items-list .items', (e)=>{
+$('body').on('dblclick', '.items-list .items', (e) => {
     let item = e.target.classList[0] === "items" ? e.target : e.target.closest('.items');
     let title = document.title;
-    
-    if($('#videos-list')[0]){
+
+    if ($('#videos-list')[0]) {
         playVideo(item);
-    }else{
-        let url = "/videos/"+item.id;
+    } else {
+        let url = "/videos/" + item.id;
         window.history.pushState(title, title, url);
-        console .log(url);
-        loadPartialPage(url)
+        console.log(url);
+        lastIndex = selectedIndex;
+        loadPartialPage(url, () => {
+            selectItem(0);
+        });
     }
     console.log("blclick");
 
 });
 
-$(()=>{
+
+$(window).bind('popstate', (event) => {
+    console.log('pop: ' + event.originalEvent.state);
+    selectItem(0);
+});
+
+$('body').on('click', '#back', ()=>{
+    window.history.back();
+});
+
+$(() => {
     selectItem(0);
 })
