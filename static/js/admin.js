@@ -14,11 +14,10 @@ $('.sidenav .nav-link').click((e) => {
     a.classList.add('active');
 
     let script = "/js/";
-    console.log($(e.target.closest('li')).text())
+    
     switch ($(e.target.closest('li')).text()) {
         case "Series": {
             script += "series.js"
-            console.log("script:", script)
             break;
         }
         case "Peliculas": {
@@ -40,14 +39,10 @@ $('.sidenav .nav-link').click((e) => {
     $.get(url, { partial: true, screen: window.screen.width }, (resp) => {
         $('#container').remove();
         $('#content').append(resp.data)
-        if(script){
+         if(script){
             var loadedScript = document.createElement("script");
             loadedScript.id = 'pagescript';
-            loadedScript.onLoad = (e) =>{
-                console.log("loaded")
-            }
             loadedScript.src = script;
-
             $('#pagescript').replaceWith(loadedScript);
         }
     });

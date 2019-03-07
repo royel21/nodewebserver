@@ -6,7 +6,6 @@ const mypassport = require('../passport_config')(passport);
 exports.index = (req, res) => {
     if (req.user) {
         let itemsPerPage = req.params.items || req.query.items || (req.screenW < 1900 ? 12 : 24);
-        console.log(req.screenW, itemsPerPage)
         let currentPage = req.params.page || 1;
         let begin = ((currentPage - 1) * itemsPerPage);
         let val = req.params.search || "";
@@ -23,7 +22,6 @@ exports.index = (req, res) => {
         }).then(series => {
             var totalPages = Math.ceil(series.count / itemsPerPage);
             let view = req.query.partial ? "home/partial-series-view" : "home/index.pug";
-            console.log(series)
             res.render(view, {
                 title: "Home",
                 series,
@@ -32,7 +30,7 @@ exports.index = (req, res) => {
                     itemsPerPage,
                     totalPages,
                     search: val,
-                    action: "/home/",
+                    action: "/series/",
                     csrfToken: req.csrfToken()
                 }
             }, (err, html) => {
@@ -54,8 +52,15 @@ exports.index = (req, res) => {
     }
 }
 
+exports.postSerieSearch = (req, res) => {
+    console.log(req.body)
+    let itemsPerPage = req.body.items || 10;
+    let val = req.body.search || "";
+    res.redirect(`/series/1/${itemsPerPage}/${val}?partial=true`)
+}
+
 exports.videos = (req, res) => {
-    
+
         let itemsPerPage = req.params.items || req.query.items || (req.screenW < 1900 ? 12 : 24);
         let seriesId = req.params.serie
         let currentPage = req.params.page || 1;
@@ -99,10 +104,12 @@ exports.videos = (req, res) => {
         });
 }
 
-exports.postSearch = (req, res) => {
+exports.postVideoSearch = (req, res) => {
+    console.log(req.body)
     let itemsPerPage = req.body.items || 10;
+    let serieId = req.params.serie;
     let val = req.body.search || "";
-    res.redirect(`/home/1/${itemsPerPage}/${val}?partial=true`)
+    res.redirect(`/videos/${serieId}/1/${itemsPerPage}/${val}?partial=true`)
 }
 
 exports.login = (req, res) => {

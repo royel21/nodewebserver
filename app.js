@@ -78,7 +78,7 @@ app.use(function (err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   if (!req.url.includes('covers') && !req.url.includes('.map')) {
-    console.log("some errors:", req.url, err);
+    console.log("some errors:", req.url, err.message);
   }
   return res.render('error');
 });

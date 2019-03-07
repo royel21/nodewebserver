@@ -5,11 +5,9 @@ if(!loadVideoSeries){
         let selectedSerie = $('#series-list .active')[0];
 
         data.serieId = selectedSerie ? selectedSerie.id : "";
-        data.isAllVideo = false;
-        console.log(data)
+        data.isAllVideo = false
         $.get($('#container').data('action') + 'videos-list', data, (resp, status) => {
             $('#video-list').replaceWith(resp);
-            console.log(status, resp);
         });
     }
 }
@@ -53,7 +51,7 @@ $('#series-create-edit').submit((e) => {
 });
 
 //Remove Serie Entry list
-$('.remove-serie').click((e) => {
+$('#series-content').on('click','.remove-serie', (e) => {
 
     let li = e.target.closest('li');
     console.log(li.id)
@@ -73,7 +71,7 @@ $('.remove-serie').click((e) => {
 });
 
 //Load pagination page
-$('#series-content #pager a').click((e) => {
+$('#series-content').on('click', '.page-link', (e) => {
     e.preventDefault();
     let link = e.target.closest('a');
     let pageD = (link ? link : e.target).href.split('/');
@@ -85,22 +83,21 @@ $('#series-content #pager a').click((e) => {
     }
 });
 //load filtered videos
-$('#search-videos').submit((e) => {
+$('#series-content').on('submit', '#search-videos', (e) => {
     e.preventDefault();
     loadVideoSeries({ search: $('#search-videos .search-input').val() });
-    console.log('s-videos')
 });
 
-$('#series-content input[type="radio"]').change((e) => {
+$('#series-content').on('change','input[type="radio"]', (e) => {
     loadVideoSeries({});
 });
 
-$('#search-videos .clear-search').click((e) => {
+$('#series-content').on('click','#search-videos .clear-search', (e) => {
     $('#search-videos .search-input').val('');
     loadVideoSeries({});
 });
 
-$('#series-content #select-page').change((e) => {
+$('#series-content').on('change', '#select-page', (e) => {
 
     let data = { page: $('#page-select').val(), search: $('#search-input').val() };
     loadVideoSeries(data);

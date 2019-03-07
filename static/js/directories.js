@@ -16,7 +16,6 @@ $('#tree-container').on('click', '.caret', (e) => {
     }
 });
 
-console.log('loaded')
 
 $('#tree-container').on('click', '.dir', (e) => {
     let dir = e.target.textContent;
@@ -28,7 +27,6 @@ $('#tree-container').on('click', '.fa-sync', (e) => {
     $(e.target).addClass('fa-spin');
     let li = e.target.closest('li');
     let dir = $(li).text();
-    console.log(li.id, dir);
     socket.emit('re-scan', { id: li.id, dir });
 });
 
@@ -40,7 +38,6 @@ $('#paths .delete-path').click((e) => {
         id: li.id,
         _csrf: $("#paths").data('csrf')
     }, (resp) => {
-        console.log("delete:" + resp);
         if (resp == "ok") {
             $(li).fadeOut((e) => {
                 li.remove();
@@ -64,7 +61,6 @@ if(!socket._callbacks['$disk-loaded']){
 });
 }
 $('#tab-config input[type="radio"]').click((e) => {
-    console.log(e.target);
     $('#paths').toggleClass('d-none');
     $('#tree-container').toggleClass('d-none');
 

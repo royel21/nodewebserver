@@ -151,7 +151,6 @@ $('body').on('dblclick', '.items-list .items', (e) => {
             selectItem(0);
         });
     }
-    console.log("blclick");
 
 });
 

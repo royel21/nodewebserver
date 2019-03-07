@@ -83,12 +83,8 @@ var config = {
 
 updateRecents = () => {
     let tempM = config.recents.removeBy(currentFile, "id");
-    console.log("temp: ", tempM, currentFile);
     if (tempM != undefined) currentFile.current = tempM.current;
-
-    console.log(currentFile);
     config.recents.unshift(currentFile);
-    console.log(config.recents);
     if (config.recents.length > config.recentMax) {
         config.recents.pop();
     }
@@ -252,7 +248,6 @@ player.ontimeupdate = (e) => {
         Slider.value = Math.floor(player.currentTime);
         $vTotalTime.text(formatTime(player.currentTime) + "/" + vDuration);
         currentFile.current = player.currentTime;
-        console.log("update:", currentFile);
     }
 }
 

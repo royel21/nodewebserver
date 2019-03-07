@@ -31,9 +31,10 @@ $('body').on('click', '#table-controls .page-item, #controls .page-item', (e) =>
 const choosePage = (el) => {
     let title = document.title;
     if (el.tagName == "FORM") {
-        let path = location.pathname.split(/\d/ig)[0];
-        let url = (path === "/" ? "/home/" : path) + el.elements["page"].value + "/" + el.elements["items"].value + "/" + el.elements["search"].value;
-        window.history.pushState(title, title, url);
+        let path = location.pathname.split(/\/\d*\//)[0]+"/";
+        console.log(path)
+        let url = path + el.elements["page"].value + "/" + el.elements["items"].value + "/" + el.elements["search"].value;
+        window.history.pushState(title, title, url.replace('//', '/'));
         loadPartialPage(url);
     }
 }
