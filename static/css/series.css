@@ -12,19 +12,15 @@
     margin: 0;
 }
 
-#series-container{
+#items-container{
     border: 2px solid;
     margin: 0;
     flex-direction: row;
-    height: calc(100% - 40px);
+    height: 100%;
 } 
 
-#series-content-title{
-    border-bottom: 2px solid #dee2e6;
-}
 
-
-.series-titles{
+.list-titles{
     display: flex;
     flex-grow: 1;
     text-align: center;
@@ -34,11 +30,11 @@
     border-bottom: 2px solid #dee2e6;
 }
 
-#series-list{
+.items-list{
     height: calc(100% - 56px);
 }
-#video-list::-webkit-scrollbar-thumb,
-#series-list::-webkit-scrollbar-thumb{
+
+.items-list::-webkit-scrollbar-thumb{
     border-radius: 0;
 }
 
@@ -46,40 +42,32 @@
     height: calc(100% - 56px);
 }
 
-.content-list{
+#items-container .list-group{
     height: calc(100% - 56px);
     overflow-y: auto;
+    margin-bottom: 0;
 }
 
-#series-container .title{
+#items-container .title{
     flex-grow: 1;
     align-self: center;
     font-size: 30px;
 }
 
-#series-controls .show-form{
-    font-size: 2rem;
-}
 
-#series{
+#items-container .col-6{
     border-right: 2px solid;
     height: 100%;
     padding: 0;
 }
 
-#series h3{
-    display: block;
-    margin: 0;
-    height: 50px;
-    padding-top: 10px;
-}
-#series .list-group-item{
+.content-list .list-group-item{
     cursor: pointer;
 }
 
 .nav-tabs{
     padding-left: 10px;
-    border-bottom: 2px solid #dee2e6;
+    border-bottom: 0;
 }
 .nav input[type="radio"]{
     display: none;
@@ -88,6 +76,7 @@
 .nav input[type="radio"]:checked + label{
     background-color: #007bff;
     border-color: #007bff;
+    color: white;
 }
 
 .nav .nav-item label{
@@ -102,26 +91,17 @@
 
 }
 
-#series-content{
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    min-height: 100%;
-}
+#items-container .list-group-item{padding: 0.39rem 0.2rem;}
 
-#series-container .list-group-item{
-    padding: 0.4rem 0.2rem;
-}
-
-#series-container .list-group-item span i{
+#items-container .list-group-item span i{
     margin: 0 6px;
     font-size: 1.4rem;
 }
 
-#series-container .list-group-item:first-child{
+#items-container .list-group-item:first-child{
     border-radius: 0;
 }
-.bottom-controls{
+.controls{
     position: relative;
     display: flex;
     justify-content: space-between;
@@ -130,14 +110,9 @@
     padding: 0 4px;
     border-bottom: 1px solid #dee2e6;
 }
-.bottom-controls:empty{
-    display: none;
-}
-.bottom-controls #itemsPerPage{
-    display: inline-block;
-}
 
-#series-container .btn{
+
+#items-container .btn{
     align-self: center;
 }
 
@@ -149,5 +124,5 @@
     display: none;
 }
 
-#series-container li .v-add{
+#items-container li .v-add{
 }

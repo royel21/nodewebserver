@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
 
-    const FavoriteVideo = sequelize.define('Favorite', {
+    const Favorite = sequelize.define('Favorite', {
         Id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -15,5 +15,5 @@ module.exports = (sequelize, DataTypes) => {
             timestamps: false
         });
 
-    return FavoriteVideo;
+    return Favorite;
 }

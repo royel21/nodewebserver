@@ -1,14 +1,13 @@
 mixin series_table(series, videos, videopages, seriepages)
     -let noItems = true
     #container.text-light.bg-dark.rounded.mx-2(data-action=seriepages.action, data-csrf=seriepages.csrfToken)
-        h2.text-center Series - Manager
-        #series-container.card.text-dark.row
-            #series.col-6
-                .series-titles
+        #items-container.card.text-dark.row
+            .col-6
+                .list-titles
                     .title
                         span Series
-                #series-list
-                    .bottom-controls
+                #series-list.items-list
+                    .controls
                         include ../../share/search
                         +search(seriepages, seriepages.action+"search-series", 'search-series')
                         include ../../share/pagination
@@ -22,8 +21,8 @@ mixin series_table(series, videos, videopages, seriepages)
                                 span.remove-serie
                                     i.mx-1.text-danger.fas.fa-trash-alt
                                 span.name-serie= serie.Name
-            #series-content.col-6
-                .series-titles
+            .col-6
+                .list-titles
                     span.title.text-center Lista de videos
                 include ./serie-videos
                 +serieVideos(videos, videopages, noItems)

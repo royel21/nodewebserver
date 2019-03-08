@@ -3,6 +3,7 @@ const router = express.Router();
 const usersController = require('../controllers/usersController')
 const videosController = require('../controllers/videosController')
 const categoriesController = require('../controllers/categoriesController')
+const categoriesController2 = require('../controllers/categoriesController2')
 const configsController = require('../controllers/configsController')
 const seriesController = require('../controllers/seriesController')
 
@@ -28,7 +29,7 @@ router.post("/movies/search", videosController.postSearch);
 router.post("/movies/delete", videosController.deleteVideo);
 
 router.get("/categories/modal", categoriesController.category_modal);
-router.get("/categories/:page?/:items?/:search?", categoriesController.categories);
+router.get("/categories/:page?/:items?/:search?", categoriesController2.categories);
 router.post("/categories/search", categoriesController.postSearch);
 router.post("/categories/create-edit", categoriesController.categoryModalPost);
 

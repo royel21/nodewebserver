@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) => {
 
     const Video = sequelize.define('Video', {
         Id: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(10),
             primaryKey: true,
             unique: true,
             allowNull: false

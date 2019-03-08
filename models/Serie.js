@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) =>{
 
     const Serie = sequelize.define('Serie', {
         Id: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(10),
             primaryKey: true,
             unique: true,
             allowNull: false

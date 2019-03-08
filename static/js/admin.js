@@ -25,7 +25,7 @@ $('.sidenav .nav-link').click((e) => {
             break;
         }
         case "Categorias": {
-            script += "categories.js"
+            script += "series.js"
             break;
         }
         case "Directorios": {

@@ -1,23 +1,37 @@
-mixin categories_table(categories, pagedatas) 
-    #container.text-light.bg-dark.rounded.mx-2(data-action=pagedatas.action, data-csrf=pagedatas.csrfToken)
-        #table-controls
-            span.show-form
-                i.fas.fa-plus-circle.text-primary
-            include ../../share/pagination
-            +pagination(categories.count, pagedatas)
-        #table-container    
-            table.table.table-dark.user-table.table-hover
-                thead
-                    tr
-                        th Acciones
-                        th Nombre
-                tbody
-                    each category in categories.rows
-                        tr(id=""+ category.Id)
-                            td
-                                span.show-form
-                                    i.fas.fa-edit.fa-2x
-                                span.show-delete
-                                    i.ml-2.text-danger.fas.fa-trash-alt.fa-2x
-                            td
-                                span= category.Name
+mixin categories_table(categories, videos, videopages, categorypages)
+    -let noItems = true
+    #container.text-light.bg-dark.rounded.mx-2(data-action=categorypages.action, data-csrf=categorypages.csrfToken)
+        #items-container.card.text-dark.row
+            .col-6(data-action=categories.action)
+                .list-titles
+                    .title
+                        span Categorias
+                #category-list.items-list
+                    .controls
+                        span.btn.btn-primary.show-form Crear 
+                                i.fas.fa-plus-circle
+                        include ../../share/search
+                        +search(categories, categories.action+"search-videos",'search-videos')
+                        include ../../share/pagination
+                        +pagination(categories.count, categorypages, noItems)
+                
+                    ul.list-group.content-list
+                        each ca, index in categories.rows
+                            li.list-group-item(id=ca.Id class=""+ (index === 0 ? "active" : "") )
+                                span.show-form                   
+                                    i.ml-1.fas.fa-edit
+                                span.remove-serie
+                                    i.mx-1.text-danger.fas.fa-trash-alt
+                                span.name-serie= ca.Name
+            .col-6(data-action=videos.action)
+                .list-titles
+                    .nav.nav-tabs
+                        .nav-item
+                            input#tab-list-videos(type="radio" name="tabs" checked)
+                            label.nav-link(for="tab-list-videos") Lista de videos
+                        .nav-item
+                            input#tab-all-videos(type="radio" name="tabs")
+                            label.nav-link(for="tab-all-videos") Todos los Videos
+                include ./category-videos
+                +categoryVideos(videos, videopages, noItems)
+                

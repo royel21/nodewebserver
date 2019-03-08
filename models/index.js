@@ -28,11 +28,11 @@ db.category = require('./category')(sequelize, DataTypes);
 db.serie = require('./serie')(sequelize, DataTypes);
 db.favorite = require('./favorites')(sequelize, DataTypes);
 db.directory = require('./directories')(sequelize, DataTypes);
+db.favoriteVideo = require('./favorite-video')(sequelize, DataTypes);
 
 db.sqlze = sequelize;
-db.user.afterCreate((user, options)=>{
-    if(!['manager','admin'].includes(user.Role))
-    {
+db.user.afterCreate((user, options) => {
+    if (!['manager', 'admin'].includes(user.Role)) {
         db.favorite.create({
             Name: user.Name,
             UserId: user.Id
@@ -40,19 +40,13 @@ db.user.afterCreate((user, options)=>{
     }
 });
 
-db.video.belongsToMany(db.category, {
-    through: 'videocategory',
-    as: 'Category',
-    foreignKey: 'VideoId'
-});
+db.category.belongsToMany(db.video, { as: "videos", through: "Video_Category", foreignKey: "CategoryId" });
+db.video.belongsToMany(db.category, {  as: "categories", through: "Video_Category", foreignKey: "VideoId" });
 
-db.video.belongsToMany(db.favorite, {
-    through: 'favoritevideo',
-    as: 'Favorite',
-    foreignKey: 'VideoId'
-});
+db.favorite.belongsToMany(db.video, { through: db.favoriteVideo, foreignKey: "FavoriteId" });
+db.video.belongsToMany(db.favorite, { through: db.favoriteVideo, foreignKey: "VideoId" });
 
-db.directory.hasMany(db.video, { onDelete: 'cascade'});
+db.directory.hasMany(db.video, { onDelete: 'cascade' });
 db.video.belongsTo(db.directory);
 db.video.belongsTo(db.serie);
 
@@ -61,17 +55,17 @@ db.serie.hasMany(db.video);
 
 db.init = async () => {
     await sequelize.sync();
-    
+
     if (await db.user.findOne({ where: { Name: "Administrator" } }) == null) {
-        
+
         await db.user.create({
             Name: "Administrator",
             Password: "Admin",
             Role: "admin"
         });
     }
-    
-    if ( await db.category.findOne({ where: { Name: "Aventuras" } }) == null) {
+
+    if (await db.category.findOne({ where: { Name: "Aventuras" } }) == null) {
         let categories = [{
             Name: "Aventuras"
         }, {
