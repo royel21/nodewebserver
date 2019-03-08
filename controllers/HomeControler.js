@@ -66,15 +66,23 @@ exports.videos = (req, res) => {
         let currentPage = req.params.page || 1;
         let begin = ((currentPage - 1) * itemsPerPage);
         let val = req.params.search || "";
-
-        db.video.findAndCountAll({
+        let condition = {
             order: ['Name'],
             offset: begin,
-            limit: itemsPerPage,
-            where: {
+            limit: itemsPerPage
+        }
+        console.log(seriesId);
+        if(seriesId){
+            console.log("cont A")
+            condition.where = {
                 [db.Op.and]:[{Name: { [db.Op.like]: "%" + val + "%" }}, {SerieId: seriesId}]
             }
-        }).then(videos => {
+        }else{
+            console.log("cont B")
+            condition.where = {Name: { [db.Op.like]: "%" + val + "%" }}
+        }
+        let action = seriesId ? "/serie-content/"+seriesId+"/" : "/videos/"
+        db.video.findAndCountAll(condition).then(videos => {
             var totalPages = Math.ceil(videos.count / itemsPerPage);
             let view = req.query.partial ? "home/partial-videos-view" : "home/index.pug";
             res.render(view, {
@@ -85,7 +93,7 @@ exports.videos = (req, res) => {
                     itemsPerPage,
                     totalPages,
                     search: val,
-                    action: "/videos/"+seriesId+"/",
+                    action,
                     csrfToken: req.csrfToken()
                 }
             }, (err, html) => {
@@ -109,7 +117,9 @@ exports.postVideoSearch = (req, res) => {
     let itemsPerPage = req.body.items || 10;
     let serieId = req.params.serie;
     let val = req.body.search || "";
-    res.redirect(`/videos/${serieId}/1/${itemsPerPage}/${val}?partial=true`)
+    let url = (serieId ? `/serie-content/${serieId}` :'/videos')+`/1/${itemsPerPage}/${val}?partial=true`;
+    console.log("post:"+url)
+    res.redirect(url);
 }
 
 exports.login = (req, res) => {

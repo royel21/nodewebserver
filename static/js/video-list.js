@@ -143,7 +143,7 @@ $('body').on('dblclick', '.items-list .items', (e) => {
     if ($('#videos-list')[0]) {
         playVideo(item);
     } else {
-        let url = "/videos/" + item.id;
+        let url = "/serie-content/" + item.id;
         window.history.pushState(title, title, url);
         console.log(url);
         lastIndex = selectedIndex;

@@ -46,11 +46,16 @@ db.video.belongsToMany(db.category, {
     foreignKey: 'VideoId'
 });
 
+db.video.belongsToMany(db.favorite, {
+    through: 'favoritevideo',
+    as: 'Favorite',
+    foreignKey: 'VideoId'
+});
+
 db.directory.hasMany(db.video, { onDelete: 'cascade'});
 db.video.belongsTo(db.directory);
 db.video.belongsTo(db.serie);
 
-db.favorite.hasMany(db.video);
 db.user.hasOne(db.favorite);
 db.serie.hasMany(db.video);
 
