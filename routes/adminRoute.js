@@ -3,7 +3,7 @@ const router = express.Router();
 const usersController = require('../controllers/usersController');
 const videosController = require('../controllers/videosController');
 const helperController = require('../controllers/helperController');
-const categoriesController2 = require('../controllers/categoriesController2');
+const categoriesController = require('../controllers/categoriesController');
 const configsController = require('../controllers/configsController');
 const seriesController = require('../controllers/seriesController');
 
@@ -20,16 +20,16 @@ router.get("/series/videos-list", seriesController.videosList);
 router.get("/series/items-list", seriesController.itemsList);
 router.post("/series/add-videos", seriesController.addVideos);
 router.post("/series/modal-post", helperController.modalPost);
-router.post("/series/delete-video", helperController.removeVideo);
+router.post("/series/delete-video", seriesController.removeVideo);
 router.post('/series/delete-item', helperController.delete);
 
-
-router.get("/categories/", categoriesController2.categories);
+router.get("/categories/", categoriesController.categories);
 router.get("/categories/modal", helperController.modal);
-router.get("/categories/videos-list", categoriesController2.videosList);
-router.get("/categories/items-list", categoriesController2.itemsList);
+router.get("/categories/videos-list", categoriesController.videosList);
+router.get("/categories/items-list", categoriesController.itemsList);
+router.post("/categories/add-videos", categoriesController.addVideos);
 router.post("/categories/modal-post", helperController.modalPost);
-router.post("/categories/delete-video", helperController.removeVideo);
+router.post("/categories/delete-video", categoriesController.removeVideo);
 router.post('/categories/delete-item', helperController.delete);
 
 router.get("/movies", videosController.movies);

@@ -36,9 +36,10 @@ $('.sidenav .nav-link').click((e) => {
             script = "";
         }
     }
+    $('#container').fadeOut('fast');
     $.get(url, { partial: true, screen: window.screen.width }, (resp) => {
-        $('#container').remove();
-        $('#content').append(resp.data)
+         $('#container').remove();
+         $('#content').append(resp.data);
          if(script){
             var loadedScript = document.createElement("script");
             loadedScript.id = 'pagescript';

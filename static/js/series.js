@@ -7,23 +7,23 @@ var _csrf;
 var getCurPage;
 var isAllVideo;
 //load videos for current admin page
-if(!loadVideos){
-    
+if (!loadVideos) {
+
     _csrf = $('#container').data('csrf');
-    isAllVideo = () =>{
+    isAllVideo = () => {
         let tab = $('.list-titles input[type="radio"]:checked')[0];
         return tab ? tab.id.includes('all-videos') : false;
     }
     getAction = (e) => $('#container').data('action');
     //load videos list
     loadVideos = (data) => {
-        
+
         data.isAllVideo = isAllVideo();
 
         let selecteditem = $('.list .content-list .active')[0];
         data.id = selecteditem ? selecteditem.id : "";
 
-        let url = getAction()+'videos-list';
+        let url = getAction() + 'videos-list';
         //console.log(url, data, selecteditem)
 
         $.get(url, data, (resp, status) => {
@@ -32,48 +32,48 @@ if(!loadVideos){
     }
     //load items list
     loadItemList = (data, cb) => {
-        let url = getAction()+'items-list';
-        
+        let url = getAction() + 'items-list';
+
         data.search = $('#items-list .search-input').val();
         $.get(url, data, (resp, status) => {
             $('#items-list').replaceWith(resp);
-            if(cb) cb();
+            if (cb) cb();
         });
     }
     // load page base on target pager
-    loadFromPager = (element, data) =>{
-        if(element.closest('.list').id.includes('videos-list')){
+    loadFromPager = (element, data) => {
+        if (element.closest('.list').id.includes('videos-list')) {
             data.search = $('#videos-list .search-input').val();
             loadVideos(data);
-        }else{
+        } else {
             loadItemList(data);
         }
     }
 
-    getCurPage = (from) => $('#'+from+'-list #pager .active').text() || 1;
+    getCurPage = (from) => $('#' + from + '-list #pager .active').text() || 1;
 
-    
-$('body').on('submit', '#modal ', (e) => {
-    e.preventDefault();
-    var formData = new FormData(e.target);
-    $.ajax({
-        url: getAction()+'modal-post',
-        type: 'POST',
-        data: formData,
-        contentType: false,
-        processData: false,
-        success: function (resp) {
-            if (resp.err) {
-                console.log(resp.message);
-            } else {
-                loadItemList({page: getCurPage('items')}, ()=>{
-                    loadVideos({page: getCurPage('videos')});
-                });
-                hideForm();
+
+    $('body').on('submit', '#modal ', (e) => {
+        e.preventDefault();
+        var formData = new FormData(e.target);
+        $.ajax({
+            url: getAction() + 'modal-post',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (resp) {
+                if (resp.err) {
+                    console.log(resp.message);
+                } else {
+                    loadItemList({ page: getCurPage('items') }, () => {
+                        loadVideos({ page: getCurPage('videos') });
+                    });
+                    hideForm();
+                }
             }
-        }
+        });
     });
-});
 }
 
 $('body').on('change', '#modal #cover', (e) => {
@@ -81,15 +81,15 @@ $('body').on('change', '#modal #cover', (e) => {
 });
 
 //select a item from the list and load his video
-$('#items-container').on('click','.content-list li', (e) => {
-    if(e.target.classList.contains('fas')) return;
-    
+$('#items-container').on('click', '.content-list li', (e) => {
+    if (e.target.classList.contains('fas')) return;
+
     let li = e.target.tagName.includes('LI') ? e.target : e.target.closest('li');
-    if(!li.classList.contains('active')){
+    if (!li.classList.contains('active')) {
         $('.content-list li').removeClass("active");
         $(li).addClass('active');
-
-        loadVideos({page: getCurPage('videos')}, 'videos-list');
+        if (!isAllVideo())
+            loadVideos({ page: getCurPage('videos') }, 'videos-list');
     }
 });
 
@@ -117,19 +117,19 @@ $('#items-container').on('change', '#select-page', (e) => {
     loadFromPager(e.target, data)
 });
 // filter content
- $('#items-container').on('submit','form', (e) => {
+$('#items-container').on('submit', 'form', (e) => {
     e.preventDefault();
     loadFromPager(e.target, {});
 });
 //clear filters from any side
-$('#items-container').on('click','form .clear-search', (e) => {
+$('#items-container').on('click', 'form .clear-search', (e) => {
     e.target.parentNode.previousSibling.value = "";
     loadFromPager(e.target, {});
 });
 
 //add videos to selected item
 $('#items-container').on('click', '.v-add, #add-filtered-videos', (e) => {
-    let liItem = $('#items-list li.active')[0]; 
+    let liItem = $('#items-list li.active')[0];
     if (liItem) {
         let li = e.target.closest('li')
         let videoId = li ? li.id : null;
@@ -138,7 +138,7 @@ $('#items-container').on('click', '.v-add, #add-filtered-videos', (e) => {
         let search = $('#search-videos .search-input').val();
 
         if (videoId || search) {
-            $.post(getAction()+'add-videos', { itemId, search, videoId, _csrf }, (resp) => {
+            $.post(getAction() + 'add-videos', { itemId, search, videoId, _csrf }, (resp) => {
                 if (resp.err) {
                     showError('Filtre primero no se puede agregar todos los videos juntos', 'text-danger');
                 } else {
@@ -158,23 +158,28 @@ $('#items-container').on('click', '.v-add, #add-filtered-videos', (e) => {
     }
 });
 
-$('#items-container').on('click', '.fa-trash-alt', (e)=>{
+$('#items-container').on('click', '.fa-trash-alt', (e) => {
     let action = getAction();
     let isItem = e.target.closest('.list').id.includes('items-list');
 
     let postUrl = action + 'delete-' + (isItem ? 'item' : 'video');
 
     let id = e.target.closest('li').id;
+    let liItem = $('#items-list li.active')[0];
+    
+    $.post(postUrl, { itemId: liItem.id, videoId: id,_csrf }, (resp) => {
+        console.log(resp);
+        if (resp.state.includes('Ok')) {
+            $(e.target.closest('li')).fadeOut('fast', (e) => {
+                if (isItem) {
+                    loadItemList({ page: getCurPage('items') }, () => {
+                        loadVideos({ page: getCurPage('videos') });
+                    });
+                } else {
 
-    console.log(postUrl, id, isItem);
-
-    $.post(postUrl, {id, _csrf}, (resp) =>{
-        if(resp.state.includes('ok')){
-            $(e.target.closest('li')).fadeOut('fast', (e)=>{
-                loadItemList({page: getCurPage('items')}, ()=>{
-                    loadVideos({page: getCurPage('videos')});
-                });
+                    loadVideos({ page: getCurPage('videos') });
+                }
             });
-        } 
+        }
     });
 });

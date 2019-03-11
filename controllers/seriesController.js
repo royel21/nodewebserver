@@ -146,7 +146,6 @@ exports.videosList = (req, res) => {
     });
 }
 
-
 exports.addVideos = (req, res) => {
     let serieId = req.body.itemId;
     let videoId = req.body.videoId || null;
@@ -171,6 +170,23 @@ exports.addVideos = (req, res) => {
                 res.status(500).send('Internal Server Error');
             });
         }
+    }).catch(err => {
+        if (err) console.log(err);
+        res.status(500).send('Internal Server Error');
+    });
+}
+
+
+exports.removeVideo = (req, res) => {
+    let Id = req.body.VideoId;
+
+    db.video.update(
+        { SerieId: null },
+        { where: { Id } }
+    ).then(result => {
+        console.log('result:', result)
+        res.send({ state: "Ok", Id });
+
     }).catch(err => {
         if (err) console.log(err);
         res.status(500).send('Internal Server Error');
