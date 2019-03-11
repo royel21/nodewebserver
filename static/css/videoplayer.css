@@ -365,6 +365,7 @@ body .content {
 #video-viewer:-webkit-full-screen #mobile-control{
     position: fixed;
     left: 0px;
+    bottom: 0px;
 }
 
 @media all and (max-width: 580px) {
@@ -426,5 +427,16 @@ body .content {
     }
     #video-viewer .v-controls{
     bottom: -32px;
+    }
+}
+
+@media all and (max-height: 380px) { 
+    #video-viewer:-webkit-full-screen #mobile-control{
+        position: fixed;
+        left: 0px;
+        bottom: 0px;
+        position: fixed;
+        right: -540px;
+        bottom: 30px;
     }
 }

@@ -14,11 +14,11 @@ block content
     #video-container(tabindex="0")
         include ../videoplayer/player
     if series
-        include ./series-view
-        +series-view(series, pagedatas)
+        include ./items-view
+        +items-view(series, pagedatas)
     else if videos
-        include ./videos-view
-        +videos-view(videos, pagedatas)
+        include ./items-view
+        +items-view(videos, pagedatas, true)
         
 block script
     script(src="/js/main.js")

@@ -13,7 +13,7 @@ loadCategories = async (req, res) => {
     });
 
     let videos = { count: 0, rows: [] };
-    
+
     if (categories.rows.length > 0) {
         cat = categories.rows[0];
         let vis = await cat.getVideos({
@@ -26,7 +26,7 @@ loadCategories = async (req, res) => {
 
     let totalPages = Math.ceil(categories.count / itemsPerPage);
     let view = req.query.partial ? "admin/categories/partial-categories-table" : "admin/index.pug";
-
+    
     res.render(view, {
         title: "Category - Manager",
         cId,
@@ -37,7 +37,7 @@ loadCategories = async (req, res) => {
             itemsPerPage,
             totalPages: Math.ceil(videos.count / itemsPerPage),
             search: "",
-            action: "/admin/categories/videos/",
+            action: "/admin/categories/",
             csrfToken: req.csrfToken(),
             isList: false
         },
@@ -63,6 +63,101 @@ loadCategories = async (req, res) => {
 
 exports.categories = (req, res) => {
     loadCategories(req, res).catch(err => {
+        if (err) console.log(err);
+        res.status(500).send('Internal Server Error');
+    });
+}
+
+exports.itemsList = (req, res) => {
+    let itemsPerPage = req.screenW < 1900 ? 16 : 18;
+    let currentPage = req.query.page || 1;
+    let begin = ((currentPage - 1) * itemsPerPage);
+    let val = req.query.search || "";
+    
+    db.category.findAndCountAll({
+        order: ['Name'],
+        offset: begin,
+        limit: itemsPerPage,
+        where: {
+            Name: {
+                [db.Op.like]: "%" + val + "%"
+            }
+        }
+    }).then(items => {
+
+        res.render('admin/partial-items-list', {
+            items,
+            itemspages: {
+                currentPage,
+                itemsPerPage,
+                totalPages: Math.ceil(items.count / itemsPerPage),
+                search: val,
+                action: "/admin/categories/",
+                csrfToken: req.csrfToken(),
+                isList: true,
+                id: 'category'
+            }
+        })
+    }).catch(err => {
+        if (err) console.log(err);
+        res.status(500).send('Internal Server Error');
+    });
+}
+
+const loadVideos = async (req, res) => {
+    let itemsPerPage = req.screenW < 1900 ? 16 : 18;
+    let currentPage = req.query.page || 1;
+    let begin = ((currentPage - 1) * itemsPerPage);
+    let val = req.query.search || "";
+
+    let caId = req.query.id;
+    let videos = { count: 0, rows: 0 };
+    let allVideos = req.query.isAllVideo == "true";
+    
+    if (allVideos) {
+        videos = await db.video.findAndCountAll({
+            order: ['NameNormalize'],
+            offset: begin,
+            limit: itemsPerPage,
+            attributes: ['Id', 'Name'],
+            where: {
+                Name: {
+                    [db.Op.like]: "%" + val + "%"
+                }
+            }
+        });
+    } else {
+
+        let cat = await db.category.find({ where: { Id: caId } });
+        let vis = await cat.getVideos({
+            order: ['NameNormalize'],
+            attributes: ['Id', 'Name'],
+            where: {
+                Name: {
+                    [db.Op.like]: "%" + val + "%"
+                }
+            }
+        });
+        videos.rows = vis.slice(begin, itemsPerPage)
+        videos.count = vis.length;
+    }
+
+    res.render('admin/partial-video-list', {
+        videos,
+        videopages: {
+            currentPage,
+            itemsPerPage,
+            totalPages: Math.ceil(videos.count / itemsPerPage),
+            search: val,
+            action: "/admin/categories/",
+            csrfToken: req.csrfToken(),
+            isList: allVideos,
+        }
+    });
+}
+
+exports.videosList = (req, res) => {
+    loadVideos(req, res).catch(err => {
         if (err) console.log(err);
         res.status(500).send('Internal Server Error');
     });

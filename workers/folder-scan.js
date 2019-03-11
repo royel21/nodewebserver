@@ -4,6 +4,7 @@ const WinDrive = require('win-explorer');
 const { fork } = require('child_process');
 const fs = require('fs-extra');
 const path = require('path');
+const sharp = require('sharp')
 
 const db = require('../models');
 
@@ -14,7 +15,8 @@ const worker = fork('./workers/screenshot-worker.js');
 fs.mkdirsSync(coverPath);
 
 function nameFormat(name, padding = 3) {
-    var res1 = name.split(/\d+/g);
+    name = name.split('.')[0];
+    var res1 = name.split('.')[0].split(/\d+/g);
     var res2 = name.match(/\d+/g);
     var temp = "";
     if (res1 !== null && res2 !== null) {
@@ -26,7 +28,7 @@ function nameFormat(name, padding = 3) {
     return temp;
 }
 
-PopulateDB = async (folder, files, fId, sId) => {
+PopulateDB = async (folder, files, fId, se) => {
     let filteredFile = files.filter((f) => {
         return f.isDirectory || ['mp4', 'mkv', 'avi', 'ogg'].includes(f.extension.toLocaleLowerCase()) &&
             !f.isHidden
@@ -47,11 +49,6 @@ PopulateDB = async (folder, files, fId, sId) => {
                     }
                 });
 
-                let cover = path.resolve("./static/covers/", fId, f.FileName + ".jpg");
-                let fullpath = path.join(folder, f.FileName)
-                if (!fs.existsSync(cover)) {
-                    worker.send({ file: fullpath, cover });
-                }
                 if (found.length === 0 && !vfound) {
                     tempFiles.push({
                         Id,
@@ -60,24 +57,30 @@ PopulateDB = async (folder, files, fId, sId) => {
                         CoverPath: path.join("/covers/", fId, f.FileName + ".jpg").replace(/#/ig, '%23'),
                         FullPath: folder,
                         DirectoryId: fId,
-                        SerieId: sId
+                        SerieId: se ? se.Id : null
                     });
+                }else{
+                    if(se) se.addVideo(vfound)
                 }
+
             } else {
-                let serie = { Id: null }
+                let serie;
                 if (f.Files.find(a => ['mp4', 'mkv', 'avi', 'ogg'].includes(a.extension.toLocaleLowerCase()))) {
                     let name = path.basename(f.FileName);
-                    let originalPath = path.join(f.FileName, name + ".jpg");
-                    serie = await db.serie.create({
-                        Id: Math.random().toString(36).slice(-5),
-                        Name: name,
-                        CoverPath: '/covers/series/'+name + ".jpg"
-                    });
-                    if (fs.existsSync(coverPath)) {
-                        fs.copy(originalPath, path.join(coverPath, name + ".jpg"));
+                    if (!await db.serie.findOne({where:{Name: name}})) {
+                        serie = await db.serie.create({
+                            Name: name,
+                        });
+                        let SerieCover = path.join(coverPath, serie.Id + ".jpg");
+                        if (!fs.existsSync(SerieCover)) {
+                            let img = f.Files.find(a => ['jpg', 'jpeg', 'png', 'gif'].includes(a.extension.toLocaleLowerCase()));
+                            if (img) {
+                                await sharp(path.join(f.FileName, img.FileName)).resize({ height: 200 }).toFile(SerieCover);
+                            }
+                        }
                     }
                 }
-                await PopulateDB(f.FileName, f.Files, fId, serie.Id);
+                await PopulateDB(f.FileName, f.Files, fId, serie);
             }
         } catch (error) {
             console.log(error)
@@ -89,8 +92,8 @@ PopulateDB = async (folder, files, fId, sId) => {
 
 scanOneDir = async (data) => {
     var fis = WinDrive.ListFilesRO(data.dir);
-    fs.mkdirsSync('./static/covers/' + data.id);
     await PopulateDB(data.dir, fis, data.id);
+    worker.send(data.id);
 }
 
 process.on("message", (data) => {
@@ -101,7 +104,5 @@ process.on("message", (data) => {
         process.exit();
     });
 
-    scanOneDir(data).then(() => {
-        worker.send("finish");
-    });
+    scanOneDir(data);
 });

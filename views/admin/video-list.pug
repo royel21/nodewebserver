@@ -1,13 +1,13 @@
-mixin serieVideos(videos, videopages)
+mixin videoList(videos, videopages)
     -let noItems = true
-    #videos-list.items-list
+    #videos-list.list
         .controls
             if videopages.isList
                 span#add-filtered-videos.btn.btn-primary Add All 
                     i.fas.fa-plus-circle
-            include ../../share/search
+            include ../share/search
             +search(videopages, videopages.action+"search-videos",'search-videos')
-            include ../../share/pagination
+            include ../share/pagination
             +pagination(videos.count, videopages, noItems)
         ul.list-group
             each video in videos.rows

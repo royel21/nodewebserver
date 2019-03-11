@@ -1,4 +1,4 @@
-module.exports = (sequelize, DataTypes) =>{
+module.exports = (sequelize, DataTypes) => {
 
     const Serie = sequelize.define('Serie', {
         Id: {
@@ -11,12 +11,22 @@ module.exports = (sequelize, DataTypes) =>{
             type: DataTypes.STRING(100),
             unique: true
         },
-        CoverPath:{
+        CoverPath: {
             type: DataTypes.STRING,
             allowNull: true
         }
     }, {
-            timestamps: false
+            timestamps: false,
+            hooks: {
+                beforeValidate: function (item, options){
+                    item.Id = Math.random().toString(36).slice(-5);
+                },
+                beforeBulkCreate: (instances, options) => {
+                    for (var item of instances) {
+                        item.Id = Math.random().toString(36).slice(-5)
+                    }
+                }
+            }
         });
     return Serie;
 }

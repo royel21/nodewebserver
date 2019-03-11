@@ -1,6 +1,6 @@
 'use strict';
 
-const bcrypt  = require('bcrypt');
+const bcrypt = require('bcrypt');
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
@@ -42,6 +42,11 @@ module.exports = (sequelize, DataTypes) => {
         beforeCreate: (user, options) => {
           user.Password = bcrypt.hashSync(user.Password, bcrypt.genSaltSync(8), null);
           user.CreatedAt = new Date();
+        },
+        beforeUpdate: (user, options) => {
+          if (user.password) {
+            user.password =  bcrypt.hashSync(user.Password, bcrypt.genSaltSync(8), null);
+          }
         },
         beforeBulkCreate: (users, options) => {
           for (var user of users) {

@@ -6,23 +6,9 @@ mixin categories_table(categories, videos, videopages, categorypages)
                 .list-titles
                     .title
                         span Categorias
-                #category-list.items-list
-                    .controls
-                        span.btn.btn-primary.show-form Crear 
-                                i.fas.fa-plus-circle
-                        include ../../share/search
-                        +search(categories, categories.action+"search-videos",'search-videos')
-                        include ../../share/pagination
-                        +pagination(categories.count, categorypages, noItems)
-                
-                    ul.list-group.content-list
-                        each ca, index in categories.rows
-                            li.list-group-item(id=ca.Id class=""+ (index === 0 ? "active" : "") )
-                                span.show-form                   
-                                    i.ml-1.fas.fa-edit
-                                span.remove-serie
-                                    i.mx-1.text-danger.fas.fa-trash-alt
-                                span.name-serie= ca.Name
+                include ../items-list
+                +items_list(categories, categorypages, "category")
+
             .col-6(data-action=videos.action)
                 .list-titles
                     .nav.nav-tabs
@@ -32,6 +18,6 @@ mixin categories_table(categories, videos, videopages, categorypages)
                         .nav-item
                             input#tab-all-videos(type="radio" name="tabs")
                             label.nav-link(for="tab-all-videos") Todos los Videos
-                include ./category-videos
-                +categoryVideos(videos, videopages, noItems)
+                include ../video-list
+                +videoList(videos, videopages, noItems)
                 

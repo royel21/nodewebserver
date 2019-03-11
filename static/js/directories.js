@@ -23,11 +23,12 @@ $('#tree-container').on('click', '.dir', (e) => {
     socket.emit('scan-dir', { path, folder: dir });
 });
 
-$('#tree-container').on('click', '.fa-sync', (e) => {
+$('#paths').on('click', '.fa-sync', (e) => {
     $(e.target).addClass('fa-spin');
     let li = e.target.closest('li');
     let dir = $(li).text();
     socket.emit('re-scan', { id: li.id, dir });
+    console.log("updating")
 });
 
 

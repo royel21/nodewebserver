@@ -1,29 +1,21 @@
 mixin series_table(series, videos, videopages, seriepages)
-    -let noItems = true
     #container.text-light.bg-dark.rounded.mx-2(data-action=seriepages.action, data-csrf=seriepages.csrfToken)
         #items-container.card.text-dark.row
             .col-6
                 .list-titles
                     .title
                         span Series
-                #series-list.items-list
-                    .controls
-                        include ../../share/search
-                        +search(seriepages, seriepages.action+"search-series", 'search-series')
-                        include ../../share/pagination
-                        +pagination(series.count, seriepages, noItems)
-                    
-                    ul.list-group.content-list
-                        each serie, index in series.rows
-                            li.list-group-item(id=serie.Id class=""+ (index === 0 ? "active" : "") )
-                                span.show-form                   
-                                    i.ml-1.fas.fa-edit
-                                span.remove-serie
-                                    i.mx-1.text-danger.fas.fa-trash-alt
-                                span.name-serie= serie.Name
+                include ../items-list
+                +items_list(series, seriepages, "serie")
             .col-6
                 .list-titles
-                    span.title.text-center Lista de videos
-                include ./serie-videos
-                +serieVideos(videos, videopages, noItems)
+                    .nav.nav-tabs
+                        .nav-item
+                            input#tab-list-videos(type="radio" name="tabs" checked)
+                            label.nav-link(for="tab-list-videos") Lista de videos
+                        .nav-item
+                            input#tab-all-videos(type="radio" name="tabs")
+                            label.nav-link(for="tab-all-videos") Todos los Videos
+                include ../video-list
+                +videoList(videos, videopages)
                 

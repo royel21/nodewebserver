@@ -31,6 +31,7 @@ db.directory = require('./directories')(sequelize, DataTypes);
 db.favoriteVideo = require('./favorite-video')(sequelize, DataTypes);
 
 db.sqlze = sequelize;
+
 db.user.afterCreate((user, options) => {
     if (!['manager', 'admin'].includes(user.Role)) {
         db.favorite.create({
@@ -89,9 +90,9 @@ db.init = async () => {
         }, {
             Name: "Dramas"
         }, {
-            Name: "Fantacias"
+            Name: "Fantasia"
         }];
-        await db.category.bulkCreate(categories);
+        await db.category.bulkCreate(categories)
     }
 }
 

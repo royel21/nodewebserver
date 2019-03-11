@@ -45,7 +45,7 @@ exports.deletePath = (req, res) => {
     let id = req.body.id;
     db.directory.destroy({ where: { Id: id } }).then(deletePath => {
         if (deletePath > 0) {
-            let coverPath = path.resolve('./static', 'covers', id);
+            let coverPath = path.resolve('./static', 'covers', 'videos', 'folder-'+id);
             if (fs.existsSync(coverPath)) {
                 const worker = fork('./workers/delete-worker.js');
                 worker.send(coverPath);

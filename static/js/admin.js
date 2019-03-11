@@ -125,5 +125,3 @@ $(document).on('submit', '#create-edit', (e) => {
 $('body').on('click', '.cat', (e) => {
     e.target.remove();
 });
-
-
