@@ -105,6 +105,7 @@ exports.itemsList = (req, res) => {
 }
 
 const loadVideos = async (req, res) => {
+    console.time('s')
     let itemsPerPage = req.screenW < 1900 ? 16 : 18;
     let currentPage = req.query.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
@@ -114,21 +115,28 @@ const loadVideos = async (req, res) => {
     let videos = { count: 0, rows: 0 };
     let allVideos = req.query.isAllVideo == "true";
 
+    let cat = await db.category.findOne({ where: { Id: caId } });
+
     if (allVideos) {
+        let vis = await cat.getVideos({attributes: ['Id']});
+        let visId = vis.map(c => c.Id);
+        if (visId.length === 0) visId.push('')
+        console.timeEnd('s');
         videos = await db.video.findAndCountAll({
             order: ['NameNormalize'],
-            offset: begin,
-            limit: itemsPerPage,
             attributes: ['Id', 'Name'],
             where: {
-                Name: {
-                    [db.Op.like]: "%" + val + "%"
-                }
-            }
+                [db.Op.and]: [{
+                    [db.Op.not]: { Id: visId },
+                    Name: {
+                        [db.Op.like]: "%" + val + "%"
+                    }
+                }]
+            },
+            offset: begin,
+            limit: itemsPerPage,
         });
     } else {
-
-        let cat = await db.category.find({ where: { Id: caId } });
         let vis = await cat.getVideos({
             order: ['NameNormalize'],
             attributes: ['Id', 'Name'],
@@ -138,6 +146,7 @@ const loadVideos = async (req, res) => {
                 }
             }
         });
+        console.timeEnd('s');
         videos.rows = vis.slice(begin, itemsPerPage)
         videos.count = vis.length;
     }
@@ -154,9 +163,11 @@ const loadVideos = async (req, res) => {
             isList: allVideos,
         }
     });
+    
 }
 
 exports.videosList = (req, res) => {
+
     loadVideos(req, res).catch(err => {
         if (err) console.log(err);
         res.status(500).send('Internal Server Error');
@@ -174,11 +185,11 @@ exports.addVideos = (req, res) => {
         where:
             videoId ? { Id: videoId } : { Name: { [db.Op.like]: "%" + search + "%" } }
     };
-    console.log(condition)
+
     db.category.findOne({ where: { Id } }).then(category => {
         if (category) {
             db.video.findAll(condition).then(videos => {
-                console.log("videos found:"+videos.length)
+
                 category.addVideos(videos);
                 res.send({ count: videos.length });
             }).catch(err => {
@@ -193,23 +204,16 @@ exports.addVideos = (req, res) => {
 }
 
 exports.removeVideo = (req, res) => {
-    let Id = req.body.itemId;
-    let videoId = req.body.videoId || null;
-    console.log(req.body)
-    // if (Id) {
-        db.category.findById(Id).then(cat => {
-            console.log(cat)
-    //         if (cat) {
-                console.log(cat.Video_Category)
-    //             res.send({ state: "ok" });
-    //         }else
-    //         res.send({ state: "error", msg: "Not Found:"+Id })
-        }).catch(err => {
-            console.log(err);
-            res.send({ state: "error", msg: err });
+    let catId = req.body.itemId;
+    let vId = req.body.videoId || null;
+    db.video.findOne({ where: { Id: vId } }).then(video => {
+        db.category.findOne({ where: { Id: catId } }).then(cat => {
+            cat.removeVideo(video).then(result => {
+                res.send({state:"Ok"});
+            })
         });
-    // } else {
-    //     res.send({ state: "error", msg: "Id can be null" });
-    // }
-    res.send({ state: "error", msg: "Id can be null" });
+    }).catch(err => {
+        console.log(err);
+        res.send({ state: "error", msg: err });
+    });
 }

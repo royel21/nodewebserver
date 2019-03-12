@@ -5,7 +5,7 @@ mixin categories_table(categories, videos, videopages, categorypages)
             .col-6(data-action=categories.action)
                 .list-titles
                     .title
-                        span Categorias
+                        span= categories.count+' - Categorias'
                 include ../items-list
                 +items_list(categories, categorypages, "category")
 

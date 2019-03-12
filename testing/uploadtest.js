@@ -1,41 +1,32 @@
-const express = require('express');
-const fileUpload = require('');
-const app = express();
 
-const PORT = 8000;
-app.use('/form', express.static(__dirname + '/index.html'));
+const db = require('../models');
 
-// default options
-app.use(fileUpload());
-
-app.get('/ping', function(req, res) {
-  res.send('pong');
-});
-
-app.post('/upload', function(req, res) {
-  let sampleFile;
-  let uploadPath;
-
-  if (Object.keys(req.files).length == 0) {
-    res.status(400).send('No files were uploaded.');
-    return;
-  }
-
-  console.log('req.files >>>', req.files); // eslint-disable-line
-
-  sampleFile = req.files.sampleFile;
-
-  uploadPath = __dirname + '/uploads/' + sampleFile.name;
-
-  sampleFile.mv(uploadPath, function(err) {
-    if (err) {
-      return res.status(500).send(err);
+function NormalizeName(name, padding = 3) {
+  name = name.replace(/.mp4|.mkv|.avi/ig, '');
+  var res1 = name.split(/\d+/g);
+  if (res1.length === 1) return name;
+  var res2 = name.match(/\d+/g);
+  var temp = "";
+  if (res1 !== null && res2 !== null) {
+    for (let [i, s] of res2.entries()) {
+      temp += res1[i] + String(Number(s)).padStart(padding, 0);
     }
+    temp = temp + res1[res1.length - 1];
+  }
+  return temp;
+}
 
-    res.send('File uploaded to ' + uploadPath);
-  });
-});
 
-app.listen(PORT, function() {
-  console.log('Express server listening on port ', PORT); // eslint-disable-line
+db.init().then(() => {
+  console.log("\n\n\n");
+  console.time('s')
+  let vId = "2dpdl";
+  let catId = '6z1sg';
+
+  let name = 'One PIece - Ova 5.mp4';
+  let newName = 'One Piece - Ova 5.mp4';
+  db.video.update(
+    { Name: newName, NameNormalize: NormalizeName(newName) },
+    { where: { Name: name } }
+  )
 });

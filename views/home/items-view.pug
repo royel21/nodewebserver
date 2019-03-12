@@ -15,8 +15,9 @@ mixin items-view(items, pagedatas, isVideoView)
                 .items(tabindex="0" id=item.Id)
                     .item-video
                         .item-btns
-                            span.item-del.far.fa-play-circle
-                            span.item-fav.far.fa-star
+                            if item.DirectoryId
+                                span.item-del.far.fa-play-circle
+                                span.item-fav.far.fa-star
                         .item-cover
                             img.fa(draggable="false" src="/covers/"+ (isVideoView ? 'videos/folder-'+item.DirectoryId+'/' : 'series/')+item.Id+'.jpg' alt="La imagen se esta cargando actulalize")
                         .item-name= item.Name.split('.')[0]

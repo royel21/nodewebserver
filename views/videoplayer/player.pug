@@ -1,10 +1,12 @@
 
 -let n = 0
 #video-viewer.text-center.move-modal.resize
+    #v-name
+        span#video-name
     .loading
         span.loading-title Cargando....
         .loader
-    #video-player
+    #video-player(tabindex="0")
         video#player(preload="metadata" src="" controls=false tabIndex="0")
     .text-center.v-controls.footer
         #slider-container

@@ -46,7 +46,11 @@ if (!loadVideos) {
             data.search = $('#videos-list .search-input').val();
             loadVideos(data);
         } else {
-            loadItemList(data);
+            loadItemList(data, ()=>{
+                if (!isAllVideo() || getAction().includes('categories'))
+                loadVideos({ page: getCurPage('videos') }, 'videos-list');
+            });
+
         }
     }
 
@@ -88,7 +92,8 @@ $('#items-container').on('click', '.content-list li', (e) => {
     if (!li.classList.contains('active')) {
         $('.content-list li').removeClass("active");
         $(li).addClass('active');
-        if (!isAllVideo())
+
+        if (!isAllVideo() || getAction().includes('categories'))
             loadVideos({ page: getCurPage('videos') }, 'videos-list');
     }
 });

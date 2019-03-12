@@ -31,6 +31,7 @@ var work = [];
 const myworker = async () => {
     let videos = await db.video.findAll({ where: { Name: { [db.Op.like]: "%%" } } });
     for (let v of videos) {
+        console.time('s')
         if(fs.existsSync(path.join(vCover, v.Id+".jpg"))) continue;
         
         let fullPath = path.join(v.FullPath, v.Name);
@@ -43,6 +44,7 @@ const myworker = async () => {
         }
         
         await getScreenShot(fullPath, path.join(vCover, v.Id+".jpg"), duration);
+        console.timeEnd('s')
     }
 }
 

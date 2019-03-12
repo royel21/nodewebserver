@@ -205,6 +205,11 @@ showCursor = () => {
     });
     window.clearTimeout(mouseTimer);
     mouseTimer = null;
+    $('#video-name').fadeIn('slow');
+    let toutVName = setTimeout(()=>{
+       $('#video-name').fadeOut('slow');
+       clearTimeout( toutVName);
+   }, 5000);
 }
 
 hideFooter = () => {
@@ -224,7 +229,6 @@ hideFooter = () => {
                     cursor: "none"
                 });
             }
-
         }, config.hidecontrolduration * 1000);
     }
 }
@@ -346,7 +350,12 @@ const playVideo = (el) => {
         $(videoViewer).fadeIn(300);
         vContainer.focus();
         $('.loading').css({ display: 'flex' });
-        player.focus();
+       vContainer.focus();
+       $('#video-name').text($(el).text());
+       let toutVName = setTimeout(()=>{
+           $('#video-name').fadeOut('slow');
+           clearTimeout( toutVName);
+       }, 5000);
     }
 
 }

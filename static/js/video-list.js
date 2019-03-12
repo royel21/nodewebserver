@@ -166,4 +166,4 @@ $('body').on('click', '#back', ()=>{
 
 $(() => {
     selectItem(0);
-})
+});

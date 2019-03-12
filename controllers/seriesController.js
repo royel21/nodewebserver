@@ -25,7 +25,6 @@ loadSeries = async (req, res) => {
             where: { SerieId: sId },
             attributes: ['Id', 'Name', 'SerieId']
         });
-
     }
 
     let totalPages = Math.ceil(series.count / itemsPerPage);

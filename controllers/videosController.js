@@ -10,7 +10,7 @@ exports.movies = (req, res) => {
     let val = req.params.search || "";
 
     db.video.findAndCountAll({
-        order: ['Name'],
+        order: ['NameNormalize'],
         offset: begin,
         limit: itemsPerPage,
         where: {
@@ -36,7 +36,7 @@ exports.movies = (req, res) => {
         }, (err, html) => {
             if (err) console.log(err);
             if (req.query.partial) {
-                res.send({ url: "/admin"+req.url, data: html });
+                res.send({ url: "/admin" + req.url, data: html });
 
             } else {
                 res.send(html);
@@ -63,7 +63,9 @@ exports.movie_modal = (req, res) => {
         }
     }).then(data => {
         let movie = data ? data : {};
-        db.category.findAll({ order: ['Name'] }).then(ca => {
+        db.category.findAll({
+            order: ['NameNormalize']
+        }).then(ca => {
             var categories = ca ? ca : [];
             res.render("admin/movies/movie_form",
                 {

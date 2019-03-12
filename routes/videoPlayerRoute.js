@@ -8,11 +8,12 @@ router.get('/', function (req, res) {
 });
 //hello
 router.get("/video/:videoid", (req, res) => {
-  db.video.findOne({ where: { Id: req.params.videoid } })
+  db.video.findOne({  attributes: ['FullPath', 'Name'], where: { Id: req.params.videoid } })
     .then(video => {
       if (video) {
         var file = path.join(video.FullPath, video.Name);
         // var file = "D:\\Download\\Jav\\ADN-189.mp4"
+        console.log("video:"+req.params.videoid)
         fs.stat(file, function (err, stats) {
           if (err) {
             if (err.code === 'ENOENT') {

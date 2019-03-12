@@ -8,7 +8,8 @@ const db = {};
 const Op = Sequelize.Op
 const DataTypes = Sequelize.DataTypes
 const sequelize = new Sequelize('sqlite:./' + dbPath, {
-    logging: console.log,
+    // logging: console.log,
+    logging: false,
     operatorsAliases: {
         $and: Op.and,
         $or: Op.or,

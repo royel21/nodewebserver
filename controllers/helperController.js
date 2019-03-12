@@ -97,22 +97,3 @@ exports.delete = (req, res) => {
         res.status(500).send('Internal Server Error');
     });
 }
-
-exports.removeVideo = (req, res) => {
-    let Id = req.body.id;
-    let condition = {
-        where: { Id }
-    };
-    if (req.url.includes('categories')) {
-        condition.CategoryId = null;
-    } else {
-        condition.SerieId = null;
-    }
-
-    db.video.update(condition).then(result => {
-        res.send({ state: "Ok", id });
-    }).catch(err => {
-        if (err) console.log(err);
-        res.status(500).send('Internal Server Error');
-    });
-}
