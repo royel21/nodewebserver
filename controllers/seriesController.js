@@ -4,7 +4,7 @@ const fs = require('fs-extra');
 
 if (!fs.existsSync('./static/covers/series')) fs.mkdirs('./static/covers/series');
 loadSeries = async (req, res) => {
-    let itemsPerPage = req.screenW < 1900 ? 16 : 18;
+    let itemsPerPage = req.screenW < 1900 ? 19 : 24;
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
     let val = "";
@@ -70,7 +70,7 @@ exports.series = (req, res) => {
 }
 
 exports.itemsList = (req, res) => {
-    let itemsPerPage = req.screenW < 1900 ? 16 : 18;
+    let itemsPerPage = req.screenW < 1900 ? 19 : 24;
     let currentPage = req.query.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
     let val = req.query.search || "";
@@ -105,7 +105,7 @@ exports.itemsList = (req, res) => {
 }
 
 exports.videosList = (req, res) => {
-    let itemsPerPage = req.screenW < 1900 ? 16 : 18;
+    let itemsPerPage = req.screenW < 1900 ? 19 : 24;
     let currentPage = req.query.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
     let val = req.query.search || "";

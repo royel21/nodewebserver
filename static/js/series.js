@@ -54,7 +54,7 @@ if (!loadVideos) {
         }
     }
 
-    getCurPage = (from) => $('#' + from + '-list #pager .active').text() || 1;
+    getCurPage = (from) => $('#' + from + '-list #pager .active').text();
 
 
     $('body').on('submit', '#modal ', (e) => {
@@ -141,7 +141,7 @@ $('#items-container').on('click', '.v-add, #add-filtered-videos', (e) => {
 
         let itemId = liItem.id;
         let search = $('#search-videos .search-input').val();
-
+        
         if (videoId || search) {
             $.post(getAction() + 'add-videos', { itemId, search, videoId, _csrf }, (resp) => {
                 if (resp.err) {
@@ -150,7 +150,7 @@ $('#items-container').on('click', '.v-add, #add-filtered-videos', (e) => {
                     if (search) {
                         showError('Videos Agregados: ' + resp.count, 'text-success');
                     }
-                    loadVideos({ search });
+                    loadVideos({ search, page: getCurPage('videos') });
                 }
             });
         } else {
@@ -168,21 +168,28 @@ $('#items-container').on('click', '.fa-trash-alt', (e) => {
     let isItem = e.target.closest('.list').id.includes('items-list');
 
     let postUrl = action + 'delete-' + (isItem ? 'item' : 'video');
-
-    let id = e.target.closest('li').id;
+    let li = e.target.closest('li');
+    let id = li.id;
     let liItem = $('#items-list li.active')[0];
     
     $.post(postUrl, { itemId: liItem.id, videoId: id,_csrf }, (resp) => {
         console.log(resp);
         if (resp.state.includes('Ok')) {
-            $(e.target.closest('li')).fadeOut('fast', (e) => {
+            $(li).fadeOut('fast', (e) => {
+                let vPage = getCurPage('videos');
+                
                 if (isItem) {
                     loadItemList({ page: getCurPage('items') }, () => {
-                        loadVideos({ page: getCurPage('videos') });
+                        loadVideos({ page: vPage });
                     });
                 } else {
-
-                    loadVideos({ page: getCurPage('videos') });
+                    if(vPage.length > 0){
+                        loadVideos({ page: vPage });
+                    }else{
+                        $(li).fadeOut('fast',()=>{
+                            li.remove();
+                        })
+                    }
                 }
             });
         }

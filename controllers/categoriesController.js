@@ -1,9 +1,30 @@
 
 const db = require('../models');
 
+getCategoryVideos = async (data) => {
+    let videos = { count: 0, rows: [] };
+    let count = await db.sqlze.query(`Select count(*) as count 
+    from Videos where Name LIKE ? and Id ${data.not} in(Select VideoId from VideoCategories where CategoryId = ?)`,
+        {
+            replacements: [data.val, data.caId],
+            type: db.sqlze.QueryTypes.SELECT
+        });
+    videos.count = count[0].count;
+    videos.rows = await db.sqlze.query(`Select Id, Name, NameNormalize 
+        from Videos where Name LIKE ? and Id ${data.not} in(Select VideoId 
+        from VideoCategories where CategoryId = ?) 
+        ORDER BY NameNormalize limit ?, ?;`,
+        {
+            model: db.video,
+            mapToModel: true,
+            replacements: [data.val, data.caId, data.begin, data.itemsPerPage],
+            type: db.sqlze.QueryTypes.SELECT
+        });
+    return videos;
+}
 loadCategories = async (req, res) => {
     console.log(req.screenW)
-    let itemsPerPage = req.screenW < 1900 ? 16 : 18;
+    let itemsPerPage = req.screenW < 1900 ? 19 : 24;
     let cat;
     let cId = "";
     let categories = await db.category.findAndCountAll({
@@ -16,12 +37,7 @@ loadCategories = async (req, res) => {
 
     if (categories.rows.length > 0) {
         cat = categories.rows[0];
-        let vis = await cat.getVideos({
-            order: ['NameNormalize'],
-            attributes: ['Id', 'Name']
-        });
-        videos.rows = vis.slice(0, itemsPerPage)
-        videos.count = vis.length;
+        videos.rows = getCategoryVideos({ val: '', caId: cat.Id, not: '', begin: 0, itemsPerPage });
     }
 
     let totalPages = Math.ceil(categories.count / itemsPerPage);
@@ -69,7 +85,7 @@ exports.categories = (req, res) => {
 }
 
 exports.itemsList = (req, res) => {
-    let itemsPerPage = req.screenW < 1900 ? 16 : 18;
+    let itemsPerPage = req.screenW < 1900 ? 19 : 24;
     let currentPage = req.query.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
     let val = req.query.search || "";
@@ -106,51 +122,20 @@ exports.itemsList = (req, res) => {
 
 const loadVideos = async (req, res) => {
     console.time('s')
-    let itemsPerPage = req.screenW < 1900 ? 16 : 18;
+    let itemsPerPage = req.screenW < 1900 ? 19 : 24;
     let currentPage = req.query.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
-    let val = req.query.search || "";
+    let val = req.query.search ? `%${req.query.search}%` : "%%";
 
     let caId = req.query.id;
-    let videos = { count: 0, rows: 0 };
+    
     let allVideos = req.query.isAllVideo == "true";
 
-    let cat = await db.category.findOne({ where: { Id: caId } });
+    let not = allVideos ? "not" : "";
+    
+    let videos = await getCategoryVideos({ val, caId, not, begin, itemsPerPage });
 
-    if (allVideos) {
-        let vis = await cat.getVideos({attributes: ['Id']});
-        let visId = vis.map(c => c.Id);
-        if (visId.length === 0) visId.push('')
-        console.timeEnd('s');
-        videos = await db.video.findAndCountAll({
-            order: ['NameNormalize'],
-            attributes: ['Id', 'Name'],
-            where: {
-                [db.Op.and]: [{
-                    [db.Op.not]: { Id: visId },
-                    Name: {
-                        [db.Op.like]: "%" + val + "%"
-                    }
-                }]
-            },
-            offset: begin,
-            limit: itemsPerPage,
-        });
-    } else {
-        let vis = await cat.getVideos({
-            order: ['NameNormalize'],
-            attributes: ['Id', 'Name'],
-            where: {
-                Name: {
-                    [db.Op.like]: "%" + val + "%"
-                }
-            }
-        });
-        console.timeEnd('s');
-        videos.rows = vis.slice(begin, itemsPerPage)
-        videos.count = vis.length;
-    }
-
+    val = req.query.search || "";
     res.render('admin/partial-video-list', {
         videos,
         videopages: {
@@ -163,7 +148,7 @@ const loadVideos = async (req, res) => {
             isList: allVideos,
         }
     });
-    
+    console.timeEnd('s');
 }
 
 exports.videosList = (req, res) => {
@@ -209,7 +194,7 @@ exports.removeVideo = (req, res) => {
     db.video.findOne({ where: { Id: vId } }).then(video => {
         db.category.findOne({ where: { Id: catId } }).then(cat => {
             cat.removeVideo(video).then(result => {
-                res.send({state:"Ok"});
+                res.send({ state: "Ok" });
             })
         });
     }).catch(err => {
