@@ -57,7 +57,7 @@ if (!loadVideos) {
     getCurPage = (from) => $('#' + from + '-list #pager .active').text();
 
 
-    $('body').on('submit', '#modal ', (e) => {
+    $('body').on('submit', '#item-create-edit', (e) => {
         e.preventDefault();
         var formData = new FormData(e.target);
         $.ajax({
@@ -78,11 +78,11 @@ if (!loadVideos) {
             }
         });
     });
-}
 
-$('body').on('change', '#modal #cover', (e) => {
-    $('#f-name').text(e.target.files[0].name)
-});
+    $('body').on('change', '#modal #cover', (e) => {
+        $('#f-name').text(e.target.files[0].name)
+    });
+}
 
 //select a item from the list and load his video
 $('#items-container').on('click', '.content-list li', (e) => {
@@ -172,7 +172,7 @@ $('#items-container').on('click', '.fa-trash-alt', (e) => {
     let id = li.id;
     let liItem = $('#items-list li.active')[0];
     
-    $.post(postUrl, { itemId: liItem.id, videoId: id,_csrf }, (resp) => {
+    $.post(postUrl, { itemId: li.id, videoId: id,_csrf }, (resp) => {
         console.log(resp);
         if (resp.state.includes('Ok')) {
             $(li).fadeOut('fast', (e) => {

@@ -80,12 +80,14 @@ exports.modalPost = (req, res) => {
 }
 
 exports.delete = (req, res) => {
-    let id = req.body.id;
+    let id = req.body.itemId;
     let isSerie = req.url.includes('series');
     let tempDB = isSerie ? db.serie : db.category;
+    console.log("Id:"+id, isSerie)
     tempDB.destroy({ where: { Id: id } }).then(result => {
+        console.log(result)
         if (result > 0) {
-            res.send({ state: "ok", id });
+            res.send({ state: "Ok", id });
             if (isSerie) {
                 fs.remove(coverPath + id + '.jpg')
             }

@@ -34,8 +34,8 @@ router.post('/categories/delete-item', helperController.delete);
 
 router.get("/movies", videosController.movies);
 router.get("/movies/modal", videosController.movie_modal);
-router.get("/movies/create-edit", videosController.movieModalPost);
 router.get("/movies/:page?/:items?/:search?", videosController.movies);
+router.post("/movies/update", videosController.movieModalPost);
 router.post("/movies/search", videosController.postSearch);
 router.post("/movies/delete", videosController.deleteVideo);
 

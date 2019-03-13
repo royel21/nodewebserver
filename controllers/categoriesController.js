@@ -24,7 +24,7 @@ getCategoryVideos = async (data) => {
 }
 loadCategories = async (req, res) => {
     console.log(req.screenW)
-    let itemsPerPage = req.screenW < 1900 ? 19 : 24;
+    let itemsPerPage = req.screenW < 1900 ? 16 : 19;
     let cat;
     let cId = "";
     let categories = await db.category.findAndCountAll({
@@ -37,7 +37,7 @@ loadCategories = async (req, res) => {
 
     if (categories.rows.length > 0) {
         cat = categories.rows[0];
-        videos.rows = getCategoryVideos({ val: '', caId: cat.Id, not: '', begin: 0, itemsPerPage });
+        videos = await getCategoryVideos({ val: '%%', caId: cat.Id, not: '', begin: 0, itemsPerPage });
     }
 
     let totalPages = Math.ceil(categories.count / itemsPerPage);
@@ -85,7 +85,7 @@ exports.categories = (req, res) => {
 }
 
 exports.itemsList = (req, res) => {
-    let itemsPerPage = req.screenW < 1900 ? 19 : 24;
+    let itemsPerPage = req.screenW < 1900 ? 16 : 19;
     let currentPage = req.query.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
     let val = req.query.search || "";
@@ -122,7 +122,7 @@ exports.itemsList = (req, res) => {
 
 const loadVideos = async (req, res) => {
     console.time('s')
-    let itemsPerPage = req.screenW < 1900 ? 19 : 24;
+    let itemsPerPage = req.screenW < 1900 ? 16 : 19;
     let currentPage = req.query.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
     let val = req.query.search ? `%${req.query.search}%` : "%%";
@@ -135,6 +135,7 @@ const loadVideos = async (req, res) => {
     
     let videos = await getCategoryVideos({ val, caId, not, begin, itemsPerPage });
 
+    console.timeEnd('s');
     val = req.query.search || "";
     res.render('admin/partial-video-list', {
         videos,
@@ -148,7 +149,6 @@ const loadVideos = async (req, res) => {
             isList: allVideos,
         }
     });
-    console.timeEnd('s');
 }
 
 exports.videosList = (req, res) => {

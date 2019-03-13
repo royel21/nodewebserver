@@ -10,7 +10,7 @@
         video#player(preload="metadata" src="" controls=false tabIndex="0")
     .text-center.v-controls.footer
         #slider-container
-        #v-control-2
+        #v-control-2.move
             span#hide-player
                 i.far.fa-times-circle.popup-msg(data-title="Cerrar")
             span#v-prev
@@ -33,5 +33,5 @@
                     input#v-mute.vol-ctrl(type="checkbox")
                     span.mute-icon
                     i.fas.fa-volume-up.popup-msg(data-title="Silenciar")
-        #mobile-control.move
+        #mobile-control
             span#v-total-time 00:00/00:00
