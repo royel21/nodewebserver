@@ -1,4 +1,4 @@
-mixin navbar(user)
+mixin navbar(user, url)
     nav#menu.navbar.navbar-expand-sm.navbar-dark.bg-dark
         a.navbar-brand(href="/")
             i.fas.fa-home
@@ -8,13 +8,15 @@ mixin navbar(user)
         .collapse.navbar-collapse#navbarSupportedContent
             ul.navbar-nav.mr-auto
                 li.nav-item
-                    a.nav-link(href="/") Home
+                    a.nav-link(href="/" class=""+(url === '/' ? "active" : "")) Home
                 li.nav-item
-                    a.nav-link(href="/videos") Todos los videos
+                    a.nav-link(href="/videos" class=""+(url.includes('videos') ? "active" : "")) Todos los videos
             ul.ml-auto.nav.navbar-nav
                 li.nav-item
                     if user
-                        a.nav-link(href="/admin") Hello - #{user.Name}
+                        a.nav-link(href="/admin" class=""+(url.includes('admin') ? "active" : ""))
+                            i.fas.fa-user.f-2x
+                            span= user.Name
                     if(user)
                         li.nav-item
                             a.nav-link(href="/logout") Logout

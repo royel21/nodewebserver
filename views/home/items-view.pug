@@ -20,4 +20,4 @@ mixin items-view(items, pagedatas, isVideoView)
                                 span.item-fav.far.fa-star
                         .item-cover
                             img.fa(draggable="false" src="/covers/"+ (isVideoView ? 'videos/folder-'+item.DirectoryId+'/' : 'series/')+item.Id+'.jpg' alt="La imagen se esta cargando actulalize")
-                        .item-name= item.Name.split('.')[0]
+                        .item-name= item.Name.replace(/.mp4|.mkv|.avi|webm|ogg/ig, '')

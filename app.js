@@ -46,15 +46,12 @@ app.locals.moment = require('moment');
 app.locals.roles = { user: "Usurario", manager: "Manager", admin: "Administrador" };
 var screenInfo;
 
-app.use("/screen-width", (req, res, next)=>{
-    screenInfo = req.query.screenw;
-    res.send("ok");
-});
 
 app.use(function (req, res, next) {
   if (req.user) {
     app.locals.user = req.user;
     req.screenW = screenInfo;
+    app.locals.url = req.url
   } else if (req.url !== "/login") {
     return res.redirect('/login');
   }

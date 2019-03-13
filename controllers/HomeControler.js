@@ -20,6 +20,7 @@ exports.index = (req, res) => {
                 }
             }
         }).then(series => {
+            console.log(series.rows.map(s=>s.Name));
             var totalPages = Math.ceil(series.count / itemsPerPage);
             let view = req.query.partial ? "home/partial-items-view" : "home/index.pug";
             res.render(view, {

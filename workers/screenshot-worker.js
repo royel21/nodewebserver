@@ -1,15 +1,10 @@
-const { exec, execSync } = require('child_process');
+const { exec, execFile, execFileSync } = require('child_process');
 const db = require('../models');
 const path = require('path');
 const fs = require('fs-extra')
 const ffmpeg = path.resolve('./ffpmeg-bin/ffmpeg.exe');
 const ffprobe = path.resolve('./ffpmeg-bin/ffprobe.exe');
 
-
-const getVideoDuration = (video) => {
-    let cmd = ffprobe + ` -i "${video}" -show_entries format=duration -v quiet -of csv="p=0"`
-    return execSync(cmd);
-}
 var vCover;
 
 const getScreenShot = async (video, toPath, duration) => {
@@ -26,14 +21,19 @@ const getScreenShot = async (video, toPath, duration) => {
         });
     });
 }
-var work = [];
+
+const getVideoDuration = (video) => {
+    return execFileSync(ffprobe, ['-i', video, '-show_entries', 'format=duration', '-v', 'quiet', '-of', 'csv=p=0']);
+}
 
 const myworker = async () => {
     let videos = await db.video.findAll({ where: { Name: { [db.Op.like]: "%%" } } });
+    let i = 1;
     for (let v of videos) {
+        console.log((i++) + "/" + videos.length);
         console.time('s')
-        if(fs.existsSync(path.join(vCover, v.Id+".jpg"))) continue;
-        
+        if (fs.existsSync(path.join(vCover, v.Id + ".jpg"))) continue;
+
         let fullPath = path.join(v.FullPath, v.Name);
         let duration = 0;
         try {
@@ -42,22 +42,31 @@ const myworker = async () => {
             console.log(err);
             continue;
         }
-        
-        await getScreenShot(fullPath, path.join(vCover, v.Id+".jpg"), duration);
-        console.timeEnd('s')
+
+        await getScreenShot(fullPath, path.join(vCover, v.Id + ".jpg"), duration);
+        console.timeEnd('s');
     }
 }
 
 process.on("message", (fId) => {
-    vCover = path.resolve('./static','covers', 'videos', 'folder-'+fId);
 
-    if(!fs.existsSync(vCover)){
-        fs.mkdirsSync(vCover);
+    if (fId.serie) {
+        let duration = getVideoDuration(fId.vPath);
+        getScreenShot(fId.vPath, fId.sPath, duration);
+    } else {
+        vCover = path.resolve('./static', 'covers', 'videos', 'folder-' + fId);
+
+        if (!fs.existsSync(vCover)) {
+            fs.mkdirsSync(vCover);
+        }
+        folId = fId;
+        myworker().then(() => {
+            console.log("finish");
+            process.exit();
+        }).catch(err => {
+            console.log(error);
+            process.exit();
+        });
     }
-
-    myworker().then(()=>{
-        console.log("finish");
-        process.exit();
-    })
 });
 

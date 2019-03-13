@@ -18,6 +18,11 @@ body{
     z-index: 1000;
 }
 
+#menu  i.fa-user{
+    margin-right: 8px;
+    color: #007bff;
+}
+
 #main{
     color: white;
     position: relative;

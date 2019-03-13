@@ -74,7 +74,7 @@ exports.movie_modal = (req, res) => {
             if (err) console.log(err);
             res.status(500).send('Internal Server Error');
         });
-    }else{
+    } else {
         res.send({ state: "error", msg: "Id Nulo" });
     }
 }
@@ -85,11 +85,16 @@ exports.movieModalPost = (req, res) => {
     let Description = req.body.description;
     let Id = req.body.id;
     if (Id && Name && Name.length > 0) {
-        db.video.update(
-            { Name, Description },
-            { where: { Id } }
-        ).then((result) => {
-            res.send({ state: "ok", Id, Name });
+        db.video.findOne({ where: { Id } }).then(video => {
+            let originalFile = path.join(video.FullPath, video.Name);
+            video.update(
+                { Name, Description }
+            ).then((result) => {
+                let toFile = path.join(video.FullPath, Name);
+                console.log(originalFile, toFile);
+                fs.move(originalFile, toFile);
+                res.send({ state: "ok", Id, Name });
+            });
         }).catch(err => {
             console.log(err)
             res.send({ state: "error", data: "Error Interno del servidor" });
@@ -104,16 +109,16 @@ exports.deleteVideo = (req, res) => {
     let fid = req.body.fid;
     let name = req.body.name;
     if (id) {
-        db.video.findOne({where:{Id: id}}).then(video=>{
-            video.destroy().then(()=>{
-                fs.removeSync(path.join('./static/covers', 'folder-'+video.DirectoryId, video.Id + ".jpg"));
-                res.send({state:"ok", msg: "Video Borrado"});
+        db.video.findOne({ where: { Id: id } }).then(video => {
+            video.destroy().then(() => {
+                fs.removeSync(path.join('./static/covers', 'folder-' + video.DirectoryId, video.Id + ".jpg"));
+                res.send({ state: "ok", msg: "Video Borrado" });
             });
-        }).catch(err=>{
+        }).catch(err => {
             console.log(err)
-            res.send({state:"err", msg: "Error interno"});
+            res.send({ state: "err", msg: "Error interno" });
         });
     } else {
-        res.send({state:"error", msg: "Id nulo"});
+        res.send({ state: "error", msg: "Id nulo" });
     }
 }
