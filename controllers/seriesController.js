@@ -10,14 +10,14 @@ loadSeries = async (req, res) => {
     let val = "";
     let videos = { rows: [], count: 0 };
     let sId = "";
-    let series = await db.serie.findAndCountAll({
+    let items = await db.serie.findAndCountAll({
         order: ['Name'],
         offset: begin,
         limit: itemsPerPage
     });
 
-    if (series.rows.length > 0) {
-        sId = series.rows[0].Id;
+    if (items.rows.length > 0) {
+        sId = items.rows[0].Id;
         videos = await db.video.findAndCountAll({
             order: ['NameNormalize'],
             offset: 0,
@@ -27,26 +27,27 @@ loadSeries = async (req, res) => {
         });
     }
 
-    let totalPages = Math.ceil(series.count / itemsPerPage);
-    let view = req.query.partial ? "admin/series/partial-series-table" : "admin/index.pug";
+    let totalPages = Math.ceil(items.count / itemsPerPage);
+    let view = req.query.partial ? "admin/partial-items-home" : "admin/index.pug";
 
     res.render(view, {
-        title: "Series - Manager",
+        title: "Series",
+        id: "serie",
         sId,
-        series,
+        items,
+        itemspages: {
+            currentPage,
+            itemsPerPage,
+            totalPages,
+            search: val,
+            action: "/admin/series/",
+            csrfToken: req.csrfToken()
+        },
         videos,
         videopages: {
             currentPage: 1,
             itemsPerPage,
             totalPages: Math.ceil(videos.count / itemsPerPage),
-            search: val,
-            action: "/admin/series/",
-            csrfToken: req.csrfToken()
-        },
-        seriepages: {
-            currentPage,
-            itemsPerPage,
-            totalPages,
             search: val,
             action: "/admin/series/",
             csrfToken: req.csrfToken()

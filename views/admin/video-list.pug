@@ -1,6 +1,6 @@
 mixin videoList(videos, videopages)
     -let noItems = true
-    #videos-list.list
+    #videos-list.list(data-total=videos.count)
         .controls
             if videopages.isList
                 span#add-filtered-videos.btn.btn-primary Add All 

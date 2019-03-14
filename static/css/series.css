@@ -19,6 +19,7 @@
 
 
 .list-titles{
+    position: relative;
     display: flex;
     flex-grow: 1;
     text-align: center;
@@ -26,6 +27,12 @@
     font-size: 20px;
     height: 50px;
     border-bottom: 2px solid #dee2e6;
+}
+
+.list-titles #total-videos{
+    position: absolute;
+    top: 14px;
+    right: 5px;
 }
 
 .list{

@@ -345,17 +345,17 @@ const playVideo = (el) => {
         currentFile = { id, current: 0 }
         updateRecents();
         currentVideoId = id;
-        $(vContainer).fadeIn(300);
+        $(vContainer).fadeIn(300,()=>{ vContainer.focus(); } );
         player.src = "/videoplayer/video/" + id;
         $(videoViewer).fadeIn(300);
         vContainer.focus();
         $('.loading').css({ display: 'flex' });
-       vContainer.focus();
        $('#video-name').text($(el).text());
        let toutVName = setTimeout(()=>{
            $('#video-name').fadeOut('slow');
            clearTimeout( toutVName);
        }, 5000);
+       selectedIndex = $('.items').index(el);
     }
 
 }

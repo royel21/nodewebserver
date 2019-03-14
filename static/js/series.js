@@ -28,6 +28,7 @@ if (!loadVideos) {
 
         $.get(url, data, (resp, status) => {
             $('#videos-list').replaceWith(resp);
+            $('#total-videos').text("Total - "+$('#videos-list').data('total'));
         });
     }
     //load items list

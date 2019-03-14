@@ -1,15 +1,13 @@
-mixin categories_table(categories, videos, videopages, categorypages)
-    -let noItems = true
-    #container.text-light.bg-dark.rounded.mx-2(data-action=categorypages.action, data-csrf=categorypages.csrfToken)
+mixin items_home(items, videos, videopages, itemspages, title, id)
+    #container.text-light.bg-dark.rounded.mx-2(data-action=itemspages.action, data-csrf=itemspages.csrfToken)
         #items-container.card.text-dark.row
-            .col-6(data-action=categories.action)
+            .col-6
                 .list-titles
                     .title
-                        span= categories.count+' - Categorias'
-                include ../items-list
-                +items_list(categories, categorypages, "category")
-
-            .col-6(data-action=videos.action)
+                        span= items.count+" - "+title
+                include ./items-list
+                +items_list(items, itemspages, id)
+            .col-6
                 .list-titles
                     .nav.nav-tabs
                         .nav-item
@@ -18,6 +16,7 @@ mixin categories_table(categories, videos, videopages, categorypages)
                         .nav-item
                             input#tab-all-videos(type="radio" name="tabs")
                             label.nav-link(for="tab-all-videos") Todos los Videos
-                include ../video-list
-                +videoList(videos, videopages, noItems)
+                    span#total-videos.badge.badge-primary= videos.count
+                include ./video-list
+                +videoList(videos, videopages)
                 

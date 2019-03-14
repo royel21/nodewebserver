@@ -19,7 +19,7 @@ block navbar
                     i.fa.fa-users.text-primary
                         span Usuarios
             li.nav-item
-                a.nav-link(href="/admin/series" class=""+(series ? "active" : ""))
+                a.nav-link(href="/admin/series" class=""+(id && id.includes('serie') ? "active" : ""))
                     i.fas.fa-film.text-primary
                         span Series
             li.nav-item
@@ -27,7 +27,7 @@ block navbar
                     i.fas.fa-film.text-primary
                         span Peliculas
             li.nav-item
-                a.nav-link(href="/admin/categories" class=""+(categories ? "active" : ""))
+                a.nav-link(href="/admin/categories" class=""+(id && id.includes('category') ? "active" : ""))
                     i.fas.fa-tags.text-primary
                         span Categorias
             li.nav-item
@@ -40,17 +40,13 @@ block content
     if users
         include ./users/users-table
         +users_table(users, pagedatas)
-    else if series
-        include ./series/series-config
-        +series_table(series, videos, videopages, seriepages)
-        -pageScript = "/js/series.js"
     else if movies
         include ./movies/movies-table
         +movies_table(movies, pagedatas)
         -pageScript = "/js/movies.js"
-    else if categories
-        include ./categories/categories-table
-        +categories_table(categories, videos, videopages, categorypages)
+    else if items
+        include ./items_home
+        +items_home(items, videos, videopages, itemspages, title, id)
         -pageScript = "/js/series.js"
     else if directories
         include ./configs/configs

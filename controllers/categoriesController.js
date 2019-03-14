@@ -27,7 +27,7 @@ loadCategories = async (req, res) => {
     let itemsPerPage = req.screenW < 1900 ? 16 : 19;
     let cat;
     let cId = "";
-    let categories = await db.category.findAndCountAll({
+    let items = await db.category.findAndCountAll({
         order: ['Name'],
         offset: 0,
         limit: itemsPerPage
@@ -35,18 +35,28 @@ loadCategories = async (req, res) => {
 
     let videos = { count: 0, rows: [] };
 
-    if (categories.rows.length > 0) {
-        cat = categories.rows[0];
+    if (items.rows.length > 0) {
+        cat = items.rows[0];
         videos = await getCategoryVideos({ val: '%%', caId: cat.Id, not: '', begin: 0, itemsPerPage });
     }
 
-    let totalPages = Math.ceil(categories.count / itemsPerPage);
-    let view = req.query.partial ? "admin/categories/partial-categories-table" : "admin/index.pug";
+    let totalPages = Math.ceil(items.count / itemsPerPage);
+    let view = req.query.partial ? "admin/partial-items-home" : "admin/index.pug";
 
     res.render(view, {
-        title: "Category - Manager",
+        title: "Categorias",
+        id: "category",
         cId,
-        categories,
+        items,
+        itemspages: {
+            currentPage: 1,
+            itemsPerPage,
+            totalPages,
+            search: "",
+            action: "/admin/categories/",
+            csrfToken: req.csrfToken(),
+            isList: true
+        },
         videos,
         videopages: {
             currentPage: 1,
@@ -56,15 +66,6 @@ loadCategories = async (req, res) => {
             action: "/admin/categories/",
             csrfToken: req.csrfToken(),
             isList: false
-        },
-        categorypages: {
-            currentPage: 1,
-            itemsPerPage,
-            totalPages,
-            search: "",
-            action: "/admin/categories/",
-            csrfToken: req.csrfToken(),
-            isList: true
         }
     }, (err, html) => {
         if (err) console.log(err);
