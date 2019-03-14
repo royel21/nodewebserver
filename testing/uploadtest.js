@@ -51,24 +51,54 @@ const { exec, execFile, execFileSync, spawn } = require('child_process');
 // screenShot().catch(err => {
 //   console.log(err);
 // });
-let video = 'D:\\Programming\\C#\\ASP NET Core\\ASP.NET Core Web App Tutorial - Part 1.mp4'
+let video = 'D:\\Download\\Mega\\Green Green Capitulo 1.avi'
 let child = spawn('cmd');
 
 child.stdin.setEncoding('utf-8');
 let pos = (2908.74 * 0.237).toFixed(2);
 let cmd = ffmpeg + ` -ss ${pos} -i "${video}" -y -vframes 1 -q:v 0 -vf scale=240:-1 `
-console.time('s')
-let result = child.stdin.write(cmd+' "1.jpg"\n');
-let result2 = child.stdin.write(cmd+' "2.jpg"\n');
-let result3 = child.stdin.write(cmd+' "3.jpg"\n');
-let result4 = child.stdin.write(cmd+' "4.jpg"\n');
-let result5 = child.stdin.write(cmd+' "5.jpg"\n');
-// child.stdin.write(ffmpeg+' -i "'+video+'"');'-v', 'quiet', '-of', 'csv=p=0'
+// console.time('s')
+// let result = child.stdin.write(cmd+' "1.jpg"\n');
+// let result2 = child.stdin.write(cmd+' "2.jpg"\n');
+// let result3 = child.stdin.write(cmd+' "3.jpg"\n');
+// let result4 = child.stdin.write(cmd+' "4.jpg"\n');
+// let result5 = child.stdin.write(cmd+' "5.jpg"\n');
+// // child.stdin.write(ffmpeg+' -i "'+video+'"');'-v', 'quiet', '-of', 'csv=p=0'
 
-child.stdin.end();
-console.log(result)
-console.log(result2)
-console.log(result3)
-console.log(result4)
-console.log(result5)
-console.timeEnd('s')
+// child.stdin.end();
+// console.log(result)
+// console.log(result2)
+// console.log(result3)
+// console.log(result4)
+// console.log(result5)
+// console.timeEnd('s')
+// const cmd=require('../cmd.js');
+const cmd2=require('node-cmd');
+const processRef=cmd2.get('cmd');
+let data_line = '';
+ 
+//listen to the python terminal output
+ 
+var pythonTerminalInput= cmd+' "1.jpg"\n';
+
+ 
+//show what we are doing
+console.log(`>>>${pythonTerminalInput}`);
+ 
+processRef.stdin.write(pythonTerminalInput);
+//send it to the open python terminal
+pythonTerminalInput= cmd+' "3.jpg"\n';
+processRef.stdin.write(pythonTerminalInput);
+
+processRef.stdout.on(
+  'data',
+  function(data) {
+    data_line += data;
+    if (data_line[data_line.length-1] == '\n') {
+      console.log(data_line);
+      pythonTerminalInput= cmd+' "2.jpg"\n';
+      
+      processRef.stdin.write(pythonTerminalInput);
+    }
+  }
+);
