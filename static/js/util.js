@@ -46,16 +46,32 @@ formatTime = (time) => {
     return (h == 0 ? "" : String(h).padStart(2, "0") + ':') +
         String(min).padStart(2, "0") + ':' + String(sec).padStart(2, "0");
 }
+var lastEl;
 
 setfullscreen = (element) => {
     try {
-        if (!document.fullscreenElement) {
-            element.requestFullscreen().catch(err => { });
+        if (lastEl && element.tagName !== 'BODY') {
+            if (document.fullscreenElement.tagName === 'BODY') {
+                document.exitFullscreen().then(() => {
+                    element.requestFullscreen().catch(err => { });
+                }).catch(err => { });
+            } else {
+                document.exitFullscreen().then(() => {
+                    lastEl.requestFullscreen().catch(err => { });
+                }).catch(err => { });
+            }
         } else {
-            document.exitFullscreen().catch(err => { });
+            if (!document.fullscreenElement) {
+                element.requestFullscreen().catch(err => { });
+                if (element.tagName === 'BODY') lastEl = element;
+            } else {
+                document.exitFullscreen().catch(err => { });
+                lastEl = null;
+            }
         }
+
         $('.fa-expand-arrows-alt').attr('data-title', document.webkitIsFullScreen ? "Pantalla Completa" : "Salir Pantalla Completa");
     } catch (err) {
-
+        console.log(err)
     }
 }

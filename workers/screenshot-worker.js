@@ -26,25 +26,24 @@ const getVideoDuration = (video) => {
     return execFileSync(ffprobe, ['-i', video, '-show_entries', 'format=duration', '-v', 'quiet', '-of', 'csv=p=0']);
 }
 
-const myworker = async () => {
-    let videos = await db.video.findAll({ where: { Name: { [db.Op.like]: "%%" } } });
-    let i = 1;
+const myworker = async (id) => {
+    let videos = await db.video.findAll({ where: { DirectoryId: id } });
     for (let v of videos) {
-        console.log((i++) + "/" + videos.length);
-        console.time('s')
+
         if (fs.existsSync(path.join(vCover, v.Id + ".jpg"))) continue;
 
         let fullPath = path.join(v.FullPath, v.Name);
         let duration = 0;
         try {
-            duration = getVideoDuration(fullPath);
+            duration = parseFloat(getVideoDuration(fullPath));
+            if (v.Duration < 1) {
+                await v.update({ Duration: duration });
+            }
         } catch (err) {
             console.log(err);
             continue;
         }
-
         await getScreenShot(fullPath, path.join(vCover, v.Id + ".jpg"), duration);
-        console.timeEnd('s');
     }
 }
 
@@ -60,7 +59,7 @@ process.on("message", (fId) => {
             fs.mkdirsSync(vCover);
         }
         folId = fId;
-        myworker().then(() => {
+        myworker(fId).then(() => {
             console.log("finish");
             process.exit();
         }).catch(err => {

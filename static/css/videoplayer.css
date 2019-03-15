@@ -396,7 +396,7 @@ body .content {
         height: 330px !important;
         width: 320px !important;
         left: 5px !important;
-        top: 25% !important;
+        top: 20% !important;
     }
     #video-viewer:after{
         display:none;

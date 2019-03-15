@@ -8,51 +8,42 @@ router.get('/', function (req, res) {
 });
 //hello
 router.get("/video/:videoid", (req, res) => {
-  db.video.findOne({  attributes: ['FullPath', 'Name'], where: { Id: req.params.videoid } })
+  db.video.findOne({ attributes: ['FullPath', 'Name', 'Size'], where: { Id: req.params.videoid } })
     .then(video => {
       if (video) {
         var file = path.join(video.FullPath, video.Name);
         // var file = "D:\\Download\\Jav\\ADN-189.mp4"
-        console.log("video:"+req.params.videoid)
-        fs.stat(file, function (err, stats) {
-          if (err) {
-            if (err.code === 'ENOENT') {
-              // 404 Error if file not found
-              return res.sendStatus(404);
-            }
-            res.end(err);
-          }
-          var range = req.headers.range;
-          if (!range) {
-            // 416 Wrong range
-            return res.sendStatus(416);
-          }
-          var positions = range.replace(/bytes=/, "").split("-");
-          var start = parseInt(positions[0], 10);
-          var total = stats.size;
-          // same code as accepted answer
-          var end = positions[1] ? parseInt(positions[1], 10) : total - 1;
-          var chunksize = (end - start) + 1;
-          // poor hack to send smaller chunks to the browser
-          var maxChunk = 1024 * 1024; // 1MB at a time
-          if (chunksize > maxChunk) {
-            end = start + maxChunk - 1;
-            chunksize = (end - start) + 1;
-          }
-          res.writeHead(206, {
-            "Content-Range": "bytes " + start + "-" + end + "/" + total,
-            "Accept-Ranges": "bytes",
-            "Content-Length": chunksize,
-            "Content-Type": "video/mp4"
-          });
+        var total = video.Size;
+        var range = req.headers.range;
+        if (!range) {
+          // 416 Wrong range
+          return res.sendStatus(416);
+        }
+        var positions = range.replace(/bytes=/, "").split("-");
+        var start = parseInt(positions[0], 10);
 
-          var stream = fs.createReadStream(file, { start: start, end: end })
-            .on("open", function () {
-              stream.pipe(res);
-            }).on("error", function (err) {
-              res.end(err);
-            });
+        // same code as accepted answer
+        var end = positions[1] ? parseInt(positions[1], 10) : total - 1;
+        var chunksize = (end - start) + 1;
+        // poor hack to send smaller chunks to the browser
+        var maxChunk = 1024 * 1024; // 1MB at a time
+        if (chunksize > maxChunk) {
+          end = start + maxChunk - 1;
+          chunksize = (end - start) + 1;
+        }
+        res.writeHead(206, {
+          "Content-Range": "bytes " + start + "-" + end + "/" + total,
+          "Accept-Ranges": "bytes",
+          "Content-Length": chunksize,
+          "Content-Type": "video/mp4"
         });
+
+        var stream = fs.createReadStream(file, { start: start, end: end })
+          .on("open", function () {
+            stream.pipe(res);
+          }).on("error", function (err) {
+            res.end(err);
+          });
       } else {
         res.send('error');
       }

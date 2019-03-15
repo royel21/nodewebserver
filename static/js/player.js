@@ -147,9 +147,10 @@ Slider.oninput = (value) => {
 
 const closePlayer = (e) => {
     updateRecents();
-    if (document.fullscreenElement) {
+    if (document.fullscreenElement && !document.fullscreenElement.tagName.includes('BODY')) {
         setfullscreen(videoViewer);
     }
+    
     $('#video-viewer').fadeOut('fast', (e) => {
         $('#video-container').fadeOut(200, (e) => {
             selectItem(selectedIndex);
@@ -361,7 +362,6 @@ const playVideo = (el) => {
 }
 
 $('body').on('click', '.fa-play-circle', (e) => {
-    console.log(e.target)
     playVideo(e.target.closest('.items'));
 });
 

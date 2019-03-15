@@ -46,6 +46,7 @@ $('#paths .delete-path').click((e) => {
         }
     });
 });
+
 if(!socket._callbacks['$disk-loaded']){
     socket.on("disk-loaded", (data) => {
         $('#disks').empty().append(data);
@@ -61,7 +62,8 @@ if(!socket._callbacks['$disk-loaded']){
         $('#' + data.id + ' .fa-sync').removeClass('fa-spin');
 });
 }
-$('#tab-config input[type="radio"]').click((e) => {
+
+$('#tab-config input[type="radio"]').change((e) => {
     $('#paths').toggleClass('d-none');
     $('#tree-container').toggleClass('d-none');
 

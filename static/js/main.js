@@ -72,3 +72,7 @@ const showError = (msg, className) => {
     $('#error-body').removeClass().addClass(className).empty().append("<span>" + msg);
     $('#error-container').css({ display: "flex" }).hide().fadeIn('fast');
 }
+
+$('#full-screen').on('click', (e)=>{
+    setfullscreen($('body')[0]);
+})

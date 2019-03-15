@@ -239,19 +239,6 @@ body{
     display: initial;
 }
 
-@media all and (max-width: 450px){
-    
-    #pager .page-item:last-child,
-    #pager .page-item:first-child,
-    #itemsPerPage{
-        display: none;
-    }
-    #pager{
-        position: relative;
-        top: -2px;
-    }
-}
-
 .resize:after{
     content: " ";
     position: absolute;
@@ -298,4 +285,45 @@ body{
 #error-bottom{
     border-top: 1px solid black;
     padding: 4px 0;
+}
+
+#full-screen{
+    display: none;
+}
+
+
+@media all and (max-width: 650px){
+    #full-screen{
+        display: inline-block;
+        position: fixed;
+        z-index: 99;
+        bottom: -5px;
+        right: 15px;
+        font-size: 40px;
+    }
+    #pager{
+        position: relative;
+        right: 6px;
+    }
+    
+    #pager .page-item:nth-child(2) .page-link{
+        border-radius: 0.25em 0 0 .25rem;
+    }
+    
+    #pager .page-item:first-child,
+    #pager .page-item:nth-child(3),
+    #pager .page-item:nth-last-child(2),
+    #itemsPerPage{
+        display: none;
+    }
+}
+
+@media all and (max-width: 450px){
+    
+    #search-form .form-control{
+        max-width: 108px;
+    }
+    #search-form .btn-search{
+        max-width: 40px;
+    }
 }

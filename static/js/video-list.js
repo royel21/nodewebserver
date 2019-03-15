@@ -7,6 +7,8 @@ var selectedIndex = 0;
 var totalPage = 0;
 var currentPage = 1;
 var lastIndex = 0;
+var lastSerie;
+var SerieIndex = 0;
 
 const selectItem = async (index) => {
     selectedIndex = index;
@@ -55,7 +57,7 @@ $('body').on('keydown', '.items-list', (e) => {
                 if ($('#videos-list')[0]) {
                     playVideo(item);
                 } else {
-                    let url = "/videos/" + item.id;
+                    let url = "/serie-content/" + item.id;
                     window.history.pushState(title, title, url);
                     console.log(url);
                     lastIndex = selectedIndex;
@@ -143,10 +145,14 @@ $('body').on('dblclick', '.items-list .items', (e) => {
     if ($('#videos-list')[0]) {
         playVideo(item);
     } else {
+        lastSerie = window.location.pathname;
+        SerieIndex = selectedIndex;
+        
         let url = "/serie-content/" + item.id;
         window.history.pushState(title, title, url);
-        console.log(url);
+
         lastIndex = selectedIndex;
+
         loadPartialPage(url, () => {
             selectItem(0);
         });
@@ -161,7 +167,15 @@ $(window).bind('popstate', (event) => {
 });
 
 $('body').on('click', '#back', ()=>{
-    window.history.back();
+    // window.history.back();
+    console.log(lastSerie, selectedIndex);
+    let title = "Home";
+    window.history.pushState(title, title, lastSerie);
+    loadPartialPage(lastSerie, () => {
+        selectItem(SerieIndex);
+        SerieIndex = 0;
+        lastSerie = undefined;
+    });
 });
 
 $(() => {

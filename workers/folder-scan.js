@@ -34,7 +34,7 @@ PopulateDB = async (folder, files, fId, se) => {
         return f.isDirectory || ['mp4', 'mkv', 'avi', 'ogg'].includes(f.extension.toLocaleLowerCase()) &&
             !f.isHidden
     });
-
+    let videosFound = [];
     for (let f of filteredFile) {
         try {
             if (!f.isDirectory) {
@@ -55,13 +55,11 @@ PopulateDB = async (folder, files, fId, se) => {
                         Id,
                         Name: f.FileName,
                         NameNormalize: NormalizeName(f.FileName),
-                        CoverPath: path.join("/covers/", fId, f.FileName + ".jpg").replace(/#/ig, '%23'),
                         FullPath: folder,
                         DirectoryId: fId,
-                        SerieId: se ? se.Id : null
+                        SerieId: se ? se.Id : null,
+                        Size: f.Size
                     });
-                } else {
-                    if (se) se.addVideo(vfound)
                 }
 
             } else {
@@ -83,8 +81,8 @@ PopulateDB = async (folder, files, fId, se) => {
                                     .includes(a.extension.toLocaleLowerCase()))[0];
                                 if (v) {
                                     worker.send({
-                                        serie: true, 
-                                        vPath: path.join(f.FileName,v.FileName),
+                                        serie: true,
+                                        vPath: path.join(f.FileName, v.FileName),
                                         sPath: SerieCover
                                     })
                                 }

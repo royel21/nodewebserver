@@ -29,15 +29,14 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: 0,
             allowNull: false
         },
-        CoverPath:
-        {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
         FullPath: {
             type: DataTypes.STRING,
             defaultValue: "",
             allowNull: false
+        },
+        Size:{
+            type: DataTypes.INTEGER,
+            allowNull: true
         },
         CreatedAt: {
             type: DataTypes.DATE

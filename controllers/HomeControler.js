@@ -5,6 +5,7 @@ const mypassport = require('../passport_config')(passport);
 
 exports.index = (req, res) => {
     if (req.user) {
+        console.log(req.params)
         let itemsPerPage = req.params.items || req.query.items || (req.screenW < 1900 ? 12 : 24);
         let currentPage = req.params.page || 1;
         let begin = ((currentPage - 1) * itemsPerPage);
@@ -20,7 +21,6 @@ exports.index = (req, res) => {
                 }
             }
         }).then(series => {
-            console.log(series.rows.map(s=>s.Name));
             var totalPages = Math.ceil(series.count / itemsPerPage);
             let view = req.query.partial ? "home/partial-items-view" : "home/index.pug";
             res.render(view, {
@@ -61,6 +61,8 @@ exports.postSerieSearch = (req, res) => {
 }
 
 exports.videos = (req, res) => {
+    console.log(req.params)
+
 
         let itemsPerPage = req.params.items || req.query.items || (req.screenW < 1900 ? 12 : 24);
         let seriesId = req.params.serie

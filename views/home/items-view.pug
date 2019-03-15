@@ -12,7 +12,7 @@ mixin items-view(items, pagedatas, isVideoView)
                 
         .items-list(id=(isVideoView ? "videos-list" : "series-list"))
             each item in items.rows
-                .items(tabindex="0" id=item.Id)
+                .items(tabindex="0" id=item.Id, data-duration=item.Duration)
                     .item-video
                         .item-btns
                             if item.DirectoryId

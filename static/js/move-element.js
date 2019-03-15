@@ -9,7 +9,6 @@ var isPressed = false;
 var zindex = 100;
 
 $('body').on('mousedown', '.move', (e) => {
-    console.log(e.target);
     if ($(e.target).hasClass('move')) {
         modal = $(e.target).closest('.move-modal')[0];
         offset.x = e.clientX - modal.offsetLeft;

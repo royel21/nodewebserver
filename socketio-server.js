@@ -9,7 +9,9 @@ module.exports = (server, app) => {
     const pug = require('pug');
 
     const db = require('./models');
+    const connections = {};
 
+    var scanning = false;
     const getNewId = async () => {
         let id = Math.random().toString(36).slice(-5);
         let dir = await db.directory.findOne({ where: { Id: id } })
@@ -29,12 +31,14 @@ module.exports = (server, app) => {
         worker.on("message", (data) => {
             io.sockets.emit("scan-finish", data);
             directory.update({ IsLoading: false });
+            scanning = false;
         });
     }
 
 
     io.on('connection', (socket) => {
         if (app.locals.user && app.locals.user.Role.includes('admin')) {
+            connections[socket.id];
             socket.on('load-disks', (client) => {
                 drivelist.list((error, drives) => {
                     if (error) return next(createError(500));
@@ -53,6 +57,8 @@ module.exports = (server, app) => {
 
             socket.on("scan-dir", (data) => {
                 //If is it root of disk return;
+                if(scanning) return;
+                scanning = true;
                 if (["c:\\", "C:\\", "/"].includes(data.folder))
                     return socket.emit("path-added", false);
 
@@ -79,16 +85,27 @@ module.exports = (server, app) => {
             });
 
             socket.on('re-scan', (data) => {
+                console.log(data)
+                if(scanning) return;
+
                 db.directory.findOne({ where: { Id: data.id } }).then(dir => {
                     if (dir) {
+                        dir.update({ IsLoading: true });
+                            scanning = true;
                         startWork(dir);
+                        console.log("start scan")
                     } else {
                         io.sockets.emit("scan-finish", data);
                     }
+                }).catch(err=>{
+                    console.log(err)
                 });
             });
         }
-        // socket.on('disconnect', (client) => {
-        // });
+        socket.on('disconnect', (client) => {
+            console.log(socket.id)
+            connections[socket.id] = null;
+            delete connections[socket.Id]
+        });
     });
 }

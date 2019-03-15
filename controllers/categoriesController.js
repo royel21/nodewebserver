@@ -23,7 +23,6 @@ getCategoryVideos = async (data) => {
     return videos;
 }
 loadCategories = async (req, res) => {
-    console.log(req.screenW)
     let itemsPerPage = req.screenW < 1900 ? 16 : 19;
     let cat;
     let cId = "";
