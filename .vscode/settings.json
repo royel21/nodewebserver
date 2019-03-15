@@ -1,0 +1,10 @@
+{
+    "sqltools.connections": [
+        {
+            "database": "C:\\vscode-workspace\\nodewebserver\\video.db",
+            "dialect": "SQLite",
+            "name": "Sqlite"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}
