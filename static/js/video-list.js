@@ -1,4 +1,3 @@
-
 const contentScroll = document.getElementById('content')
 const calCol = () => colNum = Math.floor((window.innerWidth - 15) / ($('.items').eq(0).width()));
 
@@ -57,8 +56,8 @@ $('body').on('keydown', '.items-list', (e) => {
                 } else {
                     let url = "/serie-content/" + item.id;
                     window.history.pushState(title, title, url);
-                    console.log(url);
                     lastIndex = selectedIndex;
+                    local.setItem('serie', item.id);
                     loadPartialPage(url, () => {
                         selectItem(0);
                     });
@@ -150,7 +149,7 @@ $('body').on('dblclick', '.items-list .items', (e) => {
         window.history.pushState(title, title, url);
 
         lastIndex = selectedIndex;
-
+        local.setItem('serie', item.id);
         loadPartialPage(url, () => {
             selectItem(0);
         });
@@ -186,6 +185,6 @@ $('#content').scroll((e)=> {
     console.log('test')
  });
 
-$(() => {
+$(()=>{
     selectItem(selectedIndex);
-});
+})

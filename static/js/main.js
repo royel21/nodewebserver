@@ -3,8 +3,8 @@ var socket;
 
 const loadPartialPage = async (url, cb) => {
     if (!url) return;
-
-    $.get(url, { partial: true, screen: window.screen.widthW }, (resp) => {
+    
+    $.get(url, { partial: true}, (resp) => {
         $('#container').replaceWith(resp.data);
         if (cb) cb();
     });
@@ -75,4 +75,4 @@ const showError = (msg, className) => {
 
 $('#full-screen').on('click', (e)=>{
     setfullscreen($('body')[0]);
-})
+});

@@ -17,6 +17,7 @@ mixin items-view(items, pagedatas, isVideoView)
                         .item-btns
                             if item.DirectoryId
                                 span.item-del.far.fa-play-circle
+                            if !item.DirectoryId
                                 span.item-fav.far.fa-star
                         .item-cover
                             img.fa(draggable="false" src="/covers/"+ (isVideoView ? 'videos/folder-'+item.DirectoryId+'/' : 'series/')+item.Id+'.jpg' alt="La imagen se esta cargando actulalize")

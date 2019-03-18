@@ -1,5 +1,5 @@
 .items-list{
-    display: flex;
+    display: inline-flex;
     flex-wrap: wrap;
     min-height: 100%;
 }
@@ -49,6 +49,7 @@
     justify-content: center;
     align-items: center;
     height: 150px;
+    clear: both;
 }
 
 .item-cover img{

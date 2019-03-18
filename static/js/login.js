@@ -1,6 +1,8 @@
-$(() => {
-    console.log('Test')
-    $.get('/screen-width?screenw=' + window.screen.width, (resp) => { 
-        console.log(resp)
-    });
+$(()=>{
+    let serieid = localStorage.getItem('serie');
+    if(serieid){
+        $('#serieid').val(serieid)
+    }
+    
+    $('#screenw').val(window.screen.width);
 });

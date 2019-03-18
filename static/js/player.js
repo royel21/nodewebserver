@@ -251,7 +251,6 @@ document.onfullscreenchange = (e) => {
     }
 }
 
-
 player.ondblclick = (e) => setfullscreen(videoViewer);
 player.onplay = player.onpause = hideFooter;
 

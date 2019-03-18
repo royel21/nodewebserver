@@ -4,8 +4,9 @@ const db = require('../models')
 const mypassport = require('../passport_config')(passport);
 
 exports.index = (req, res) => {
+    let screenw = parseInt(req.cookies['screen-w']);
     if (req.user) {
-        let itemsPerPage = req.params.items || req.query.items || (req.query.screenW < 1900 ? 21 : 27);
+        let itemsPerPage = req.params.items || req.query.items || (screenw < 1900 ? 21 : 27);
         let currentPage = req.params.page || 1;
         let begin = ((currentPage - 1) * itemsPerPage);
         let val = req.params.search || "";
@@ -33,8 +34,8 @@ exports.index = (req, res) => {
                     search: val,
                     action: "/series/",
                     csrfToken: req.csrfToken(),
-                    step: (req.screenW < 1900 ? 7 : 9),
-                    screenw: req.screenW
+                    step: (screenw < 1900 ? 7 : 9),
+                    screenw
                 }
             }, (err, html) => {
                 if(err) console.log(err);
@@ -62,7 +63,8 @@ exports.postSerieSearch = (req, res) => {
 }
 
 exports.videos = (req, res) => {
-        let itemsPerPage = req.params.items || req.query.items || (req.screenW < 1900 ? 21 : 27);
+        let screenw = parseInt(req.cookies['screen-w']);
+        let itemsPerPage = req.params.items || req.query.items || (screenw < 1900 ? 21 : 27);
         let seriesId = req.params.serie
         let currentPage = req.params.page || 1;
         let begin = ((currentPage - 1) * itemsPerPage);
@@ -96,7 +98,7 @@ exports.videos = (req, res) => {
                     search: val,
                     action,
                     csrfToken: req.csrfToken(),
-                    step: (req.screenW < 1900 ? 7 : 9)
+                    step: (screenw < 1900 ? 7 : 9)
                 },
                 isVideoView: true
             }, (err, html) => {
@@ -131,8 +133,14 @@ exports.login = (req, res) => {
 }
 
 exports.loginPost = (req, res, next) => {
+    console.log(req.body)
+    let options = {
+        maxAge: 1000 * 60 * 60 * 24, // would expire after 15 minutes
+    }
+    res.cookie('screen-w', req.body.screenw, options)
+    let rediretTo = req.body.serieid.length === 0 ? "/" : '/serie-content/'+req.body.serieid;
     passport.authenticate('local', {
-        successRedirect: "/",
+        successRedirect: rediretTo,
         failureRedirect: "/login",
         failureFlash: true
     })(req, res, next);

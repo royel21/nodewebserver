@@ -9,6 +9,8 @@ block content
             form#login-form(method="post" action="/login")
                 h3.text-center Log In
                 input(type="hidden" name="_csrf" value=""+ csrfToken)
+                input(id="screenw" type="hidden" name="screenw" value="")
+                input(id="serieid" type="hidden" name="serieid" value="")
                 .mt-4.d-flex.flex-column.justify-content-end
                     div.input-group.my-2
                         .input-group-prepend
