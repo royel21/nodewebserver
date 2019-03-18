@@ -3,7 +3,7 @@ const db = require('../models')
 
 const mypassport = require('../passport_config')(passport);
 
-const sendResponse = (db, req, res, action, isVideoView) => {
+const sendResponse = (tempDb, req, res, action, isVideoView) => {
     let screenw = parseInt(req.cookies['screen-w']);
     let itemsPerPage = req.params.items || req.query.items || (screenw < 1900 ? 21 : 27);
     let seriesId = req.params.serie
@@ -24,7 +24,7 @@ const sendResponse = (db, req, res, action, isVideoView) => {
         condition.where = { Name: { [db.Op.like]: "%" + val + "%" } }
     }
 
-    db.findAndCountAll(condition).then(items => {
+    tempDb.findAndCountAll(condition).then(items => {
         var totalPages = Math.ceil(items.count / itemsPerPage);
         let view = req.query.partial ? "home/partial-items-view" : "home/index.pug";
         res.render(view, {
