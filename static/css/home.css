@@ -9,7 +9,7 @@
     outline: none;
     background-color: transparent;
     user-select: none;
-    padding: 2px;
+    padding: 5px;
 }
 
 
@@ -48,8 +48,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 160px;
-    margin: 6px 0;
+    height: 150px;
 }
 
 .item-cover img{
@@ -66,8 +65,8 @@ position: relative;
 .item-cover img[alt]:after{
   display: block;
   position: absolute;
-  top: -14px;
-  left: 0;
+  top: -3px;
+  left: -1px;
   background-color: rgba(52,58,64,0.99);
   font-family: 'Helvetica';
   font-weight: 300;
@@ -132,9 +131,14 @@ position: relative;
       padding-bottom: 5px;
     }
     .items img{
-      height: 60px;
+      height: 75px;
     }
      .item-cover{
-        height: 68px;
+        height: 75px;
+        margin: 4px 0;
+    }
+    .item-btns .item-fav,
+    .item-btns .item-del{
+        font-size: 18px;
     }
 }

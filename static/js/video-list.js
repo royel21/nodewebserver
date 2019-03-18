@@ -3,12 +3,10 @@ const contentScroll = document.getElementById('content')
 const calCol = () => colNum = Math.floor((window.innerWidth - 15) / ($('.items').eq(0).width()));
 
 var page = 1;
-var selectedIndex = 0;
+var selectedIndex = local.getItem('selectedIndex') || 0;
 var totalPage = 0;
 var currentPage = 1;
-var lastIndex = 0;
-var lastSerie;
-var SerieIndex = 0;
+
 
 const selectItem = async (index) => {
     selectedIndex = index;
@@ -145,8 +143,8 @@ $('body').on('dblclick', '.items-list .items', (e) => {
     if ($('#videos-list')[0]) {
         playVideo(item);
     } else {
-        lastSerie = window.location.pathname;
-        SerieIndex = selectedIndex;
+        config.serie.lastSerie = window.location.pathname;
+        config.serie.SerieIndex = selectedIndex;
         
         let url = "/serie-content/" + item.id;
         window.history.pushState(title, title, url);
@@ -167,17 +165,27 @@ $(window).bind('popstate', (event) => {
 });
 
 $('body').on('click', '#back', ()=>{
-    // window.history.back();
-    console.log(lastSerie, selectedIndex);
     let title = "Home";
-    window.history.pushState(title, title, lastSerie);
-    loadPartialPage(lastSerie, () => {
-        selectItem(SerieIndex);
-        SerieIndex = 0;
-        lastSerie = undefined;
+    window.history.pushState(title, title, config.serie.lastSerie);
+    loadPartialPage(config.serie.lastSerie, () => {
+        selectItem(config.serie.SerieIndex);
     });
 });
 
+$('#content').scroll((e)=> {
+    let distance = $('#content').scrollTop();
+    if(distance > 500){
+        $('#scroll-up').removeClass('d-none');
+    }else{
+         $('#scroll-up').addClass('d-none');
+    }
+});
+
+ $('#content').on('click', '#scroll-up',(e)=>{
+    $("#content").animate({ scrollTop: 0 }, "fast");
+    console.log('test')
+ });
+
 $(() => {
-    selectItem(0);
+    selectItem(selectedIndex);
 });

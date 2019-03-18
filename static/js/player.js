@@ -21,12 +21,15 @@ $('.btn-fullscr').click((e) => {
 
 var config = {
     sortBy: "Name-D",
+    serie: { lastSerie: "", lastIndex: 0 },
     volume: 0,
     isMuted: false,
     paused: true,
     hidecontrolduration: 3,
     recentMax: 100,
     recents: [],
+    itemsPerPage: 0,
+    seriesPerPage: 0,
     playerkey: {
         nextfile: {
             name: "PageDown",
@@ -93,6 +96,7 @@ updateRecents = () => {
 window.onbeforeunload = (e) => {
     if (config) {
         local.setObject('config', config);
+        local.setItem('selectedIndex', selectedIndex);
         updateRecents();
     }
 }
@@ -147,10 +151,11 @@ Slider.oninput = (value) => {
 
 const closePlayer = (e) => {
     updateRecents();
+    stopClock();
     if (document.fullscreenElement && !document.fullscreenElement.tagName.includes('BODY')) {
         setfullscreen(videoViewer);
     }
-    
+
     $('#video-viewer').fadeOut('fast', (e) => {
         $('#video-container').fadeOut(200, (e) => {
             selectItem(selectedIndex);
@@ -167,9 +172,16 @@ const pauseOrPlay = () => {
     var playPause = "Pausar";
     if (player.paused) {
         player.play().catch(e => { });
+        $('#video-name').fadeOut('slow');
+        $clock.removeClass('d-none');
+        $('#v-total-time').removeClass('d-none');
     } else {
         player.pause();
         playPause = "Reproducir";
+        $('#video-name').fadeIn('slow');
+        $clock.addClass('d-none');
+        $('#v-total-time').addClass('d-none');
+        
     }
     $('#video-viewer .fa-play-circle').attr('data-title', playPause);
     btnPlay.checked = config.paused = player.paused;
@@ -206,11 +218,6 @@ showCursor = () => {
     });
     window.clearTimeout(mouseTimer);
     mouseTimer = null;
-    $('#video-name').fadeIn('slow');
-    let toutVName = setTimeout(()=>{
-       $('#video-name').fadeOut('slow');
-       clearTimeout( toutVName);
-   }, 5000);
 }
 
 hideFooter = () => {
@@ -276,27 +283,34 @@ player.onvolumechange = function (e) {
 
 var pressStart, detectTap = false;
 var point = { X: 0, Y: 0 };
-player.onpointerdown = (e) => {
+
+player.ontouchstart = player.onmousedown = (e) => {
     e.preventDefault();
     detectTap = true;
     pressStart = new Date();
-    point.X = e.clientX;
-    point.Y = e.clientY;
+    if(e.type.includes('touch')){
+        point.X = e.touches[0].clientX;
+        point.Y = e.touches[0].clientY;
+        console.log("touchStart")   
+   }
 }
 
-player.onpointerup = player.onpointercancel = (e) => {
+player.ontouchend = player.ontouchcancel = player.onmouseup = player.onpointercancel = (e) => {
     e.preventDefault();
     detectTap = false;
     if ((new Date() - pressStart) < 200) {
         pauseOrPlay();
     }
+    console.log("touchEnd cancel");
 }
 
-player.onpointermove = (e) => {
+player.ontouchmove = (e) => {
     e.preventDefault();
+    let touch = e.touches[0];
+    console.log("touchMove");
     if (detectTap) {
         let offset = 2;
-        let diffY = e.clientY - point.Y;
+        let diffY = touch.clientY - point.Y;
         if (diffY < -offset) {
             console.log("Up: " + diffY);
             volcontrol.value = player.volume + 0.05;
@@ -304,22 +318,22 @@ player.onpointermove = (e) => {
         }
 
         if (diffY > offset) {
-            console.log("Down: " + (e.clientY - point.Y));
+            console.log("Down: " + (touch.clientY - point.Y));
             volcontrol.value -= 0.05;
             player.volume = volcontrol.value;
         }
-        let diffX = e.clientX - point.X;
+        let diffX = touch.clientX - point.X;
         if (diffX > offset) {
             console.log("right: " + diffX);
             player.currentTime += 2;
         }
 
         if (diffX < -offset) {
-            console.log("letf: " + (e.clientX - point.X));
+            console.log("letf: " + (touch.clientX - point.X));
             player.currentTime -= 2;
         }
-        point.X = e.clientX;
-        point.Y = e.clientY;
+        point.X = touch.clientX;
+        point.Y = touch.clientY;
     }
 }
 
@@ -345,35 +359,27 @@ const playVideo = (el) => {
         let id = el.id;
         currentFile = { id, current: 0 }
         updateRecents();
-        currentVideoId = id;
-        $(vContainer).fadeIn(300,()=>{ vContainer.focus(); } );
-        player.src = "/videoplayer/video/" + id;
-        $(videoViewer).fadeIn(300);
-        vContainer.focus();
-        $('.loading').css({ display: 'flex' });
-       $('#video-name').text($(el).text());
-       let toutVName = setTimeout(()=>{
-           $('#video-name').fadeOut('slow');
-           clearTimeout( toutVName);
-       }, 5000);
-       selectedIndex = $('.items').index(el);
-    }
 
+        if (!$(vContainer).is(':visible')) {
+            startClock();
+            $(vContainer).fadeIn(300, () => { vContainer.focus(); });
+            $(videoViewer).fadeIn(300);
+            vContainer.focus();
+        }
+
+        $('.loading').css({ display: 'flex' });
+
+        $('#video-name').text($(el).text());
+        currentVideoId = id;
+        player.src = "/videoplayer/video/" + id;
+        selectedIndex = $('.items').index(el);
+    }
 }
 
 $('body').on('click', '.fa-play-circle', (e) => {
     playVideo(e.target.closest('.items'));
 });
 
-
-window.addEventListener("orientationchange", function (e) {
-    console.log(screen.orientation.angle);
-    if ($(videoViewer).is(":visible")) {
-        if (screen.orientation.angle > 0 && !document.fullscreenElement) {
-            setfullscreen(videoViewer);
-        }
-    }
-});
 
 
 $("#video-viewer .fa-arrow-alt-circle-right").click((e) => {
@@ -476,3 +482,69 @@ document.onkeydown = (e) => {
         e.preventDefault();
     }
 }
+$(document).on('webkitfullscreenchange fullscreenchange', function (e) {
+    if (document.fullscreenElement === videoViewer && isAndroid) {
+        screen.orientation.lock('landscape');
+    } else {
+        screen.orientation.unlock();
+    }
+});
+
+var clockTimer;
+var $clock = $('#clock');
+startClock = () => {
+    $clock.text(new Date().toLocaleTimeString('en-US'));
+
+    clockTimer = setInterval(() => {
+        $clock.text(new Date().toLocaleTimeString('en-US'));
+    }, 1000);
+}
+
+stopClock = () => {
+    clearInterval(clockTimer);
+    $clock.text('');
+}
+
+navigator.getBattery().then(function(battery) {
+//   function updateAllBatteryInfo(){
+//     updateChargeInfo();
+//     updateLevelInfo();
+//     updateChargingInfo();
+//     updateDischargingInfo();
+//   }
+//   updateAllBatteryInfo();
+
+//   battery.addEventListener('chargingchange', function(){
+//     updateChargeInfo();
+//   });
+//   function updateChargeInfo(){
+//     console.log("Battery charging? "
+//                 + (battery.charging ? "Yes" : "No"));
+//   }
+
+//   battery.addEventListener('levelchange', function(){
+//     updateLevelInfo();
+//   });
+
+//   function updateLevelInfo(){
+//     console.log("Battery level: "
+//                 + battery.level * 100 + "%");
+//   }
+
+//   battery.addEventListener('chargingtimechange', function(){
+//     updateChargingInfo();
+//   });
+//   function updateChargingInfo(){
+//     console.log("Battery charging time: "
+//                  + battery.chargingTime + " seconds");
+//   }
+
+//   battery.addEventListener('dischargingtimechange', function(){
+//     updateDischargingInfo();
+//   });
+//   function updateDischargingInfo(){
+//     console.log("Battery discharging time: "
+//                  + battery.dischargingTime + " seconds");
+//   }
+
+});

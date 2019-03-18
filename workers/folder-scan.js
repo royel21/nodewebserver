@@ -4,7 +4,8 @@ const WinDrive = require('win-explorer');
 const { fork } = require('child_process');
 const fs = require('fs-extra');
 const path = require('path');
-const sharp = require('sharp')
+const sharp = require('sharp');
+const { NormalizeName } = require('../Utils/StringUtil')
 
 const db = require('../models');
 
@@ -14,27 +15,12 @@ const coverPath = path.join('./static', 'covers', 'series');
 const worker = fork('./workers/screenshot-worker.js');
 fs.mkdirsSync(coverPath);
 
-function NormalizeName(name, padding = 3) {
-    name = name.replace(/.mp4|.mkv|.avi|webm|ogg/ig, '');
-    var res1 = name.split(/\d+/g);
-    if (res1.length === 1) return name;
-    var res2 = name.match(/\d+/g);
-    var temp = "";
-    if (res1 !== null && res2 !== null) {
-        for (let [i, s] of res2.entries()) {
-            temp += res1[i] + String(Number(s)).padStart(padding, 0);
-        }
-        temp = temp + res1[res1.length - 1];
-    }
-    return temp;
-}
-
 PopulateDB = async (folder, files, fId, se) => {
     let filteredFile = files.filter((f) => {
         return f.isDirectory || ['mp4', 'mkv', 'avi', 'ogg'].includes(f.extension.toLocaleLowerCase()) &&
             !f.isHidden
     });
-    let videosFound = [];
+    
     for (let f of filteredFile) {
         try {
             if (!f.isDirectory) {
@@ -60,6 +46,10 @@ PopulateDB = async (folder, files, fId, se) => {
                         SerieId: se ? se.Id : null,
                         Size: f.Size
                     });
+                } else {
+                    if (!vfound.Size) {
+                        await vfound.update({ Size: f.Size });
+                    }
                 }
 
             } else {

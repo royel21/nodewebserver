@@ -5,8 +5,7 @@ const mypassport = require('../passport_config')(passport);
 
 exports.index = (req, res) => {
     if (req.user) {
-        console.log(req.params)
-        let itemsPerPage = req.params.items || req.query.items || (req.screenW < 1900 ? 12 : 24);
+        let itemsPerPage = req.params.items || req.query.items || (req.query.screenW < 1900 ? 21 : 27);
         let currentPage = req.params.page || 1;
         let begin = ((currentPage - 1) * itemsPerPage);
         let val = req.params.search || "";
@@ -33,7 +32,9 @@ exports.index = (req, res) => {
                     totalPages,
                     search: val,
                     action: "/series/",
-                    csrfToken: req.csrfToken()
+                    csrfToken: req.csrfToken(),
+                    step: (req.screenW < 1900 ? 7 : 9),
+                    screenw: req.screenW
                 }
             }, (err, html) => {
                 if(err) console.log(err);
@@ -61,14 +62,12 @@ exports.postSerieSearch = (req, res) => {
 }
 
 exports.videos = (req, res) => {
-    console.log(req.params)
-
-
-        let itemsPerPage = req.params.items || req.query.items || (req.screenW < 1900 ? 12 : 24);
+        let itemsPerPage = req.params.items || req.query.items || (req.screenW < 1900 ? 21 : 27);
         let seriesId = req.params.serie
         let currentPage = req.params.page || 1;
         let begin = ((currentPage - 1) * itemsPerPage);
         let val = req.params.search || "";
+        console.log(req.params)
         let condition = {
             order: ['Name'],
             offset: begin,
@@ -96,7 +95,8 @@ exports.videos = (req, res) => {
                     totalPages,
                     search: val,
                     action,
-                    csrfToken: req.csrfToken()
+                    csrfToken: req.csrfToken(),
+                    step: (req.screenW < 1900 ? 7 : 9)
                 },
                 isVideoView: true
             }, (err, html) => {

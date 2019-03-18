@@ -23,7 +23,7 @@ getCategoryVideos = async (data) => {
     return videos;
 }
 loadCategories = async (req, res) => {
-    let itemsPerPage = req.screenW < 1900 ? 16 : 19;
+    let itemsPerPage = req.query.screenW < 1900 ? 16 : 19;
     let cat;
     let cId = "";
     let items = await db.category.findAndCountAll({
@@ -85,7 +85,7 @@ exports.categories = (req, res) => {
 }
 
 exports.itemsList = (req, res) => {
-    let itemsPerPage = req.screenW < 1900 ? 16 : 19;
+    let itemsPerPage = req.query.screenW < 1900 ? 16 : 19;
     let currentPage = req.query.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
     let val = req.query.search || "";
@@ -122,7 +122,7 @@ exports.itemsList = (req, res) => {
 
 const loadVideos = async (req, res) => {
     console.time('s')
-    let itemsPerPage = req.screenW < 1900 ? 16 : 19;
+    let itemsPerPage = req.query.screenW < 1900 ? 16 : 19;
     let currentPage = req.query.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
     let val = req.query.search ? `%${req.query.search}%` : "%%";

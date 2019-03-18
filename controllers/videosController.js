@@ -3,6 +3,7 @@ let db = require('../models');
 const { fork } = require('child_process');
 const path = require('path');
 const fs = require('fs-extra')
+const { NormalizeName } = require('../Utils/StringUtil')
 
 exports.movies = (req, res) => {
     let itemsPerPage = req.params.items || req.query.items || 12;
@@ -88,7 +89,7 @@ exports.movieModalPost = (req, res) => {
         db.video.findOne({ where: { Id } }).then(video => {
             let originalFile = path.join(video.FullPath, video.Name);
             video.update(
-                { Name, Description }
+                { Name, Description, NameNormalize: NormalizeName(Name) }
             ).then((result) => {
                 let toFile = path.join(video.FullPath, Name);
                 console.log(originalFile, toFile);

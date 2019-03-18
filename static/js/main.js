@@ -4,7 +4,7 @@ var socket;
 const loadPartialPage = async (url, cb) => {
     if (!url) return;
 
-    $.get(url, { partial: true, screen: window.screen.width }, (resp) => {
+    $.get(url, { partial: true, screen: window.screen.widthW }, (resp) => {
         $('#container').replaceWith(resp.data);
         if (cb) cb();
     });

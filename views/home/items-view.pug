@@ -1,9 +1,9 @@
 mixin items-view(items, pagedatas, isVideoView)
     #container    
         #controls
-            if isVideoView    
+            if pagedatas.action.includes('content')    
                 span#back
-                    i.far.fa-arrow-alt-circle-left
+                    i.far.fa-arrow-alt-circle-up
             include ../share/search
             +search(pagedatas, pagedatas.action+"search", "search-form")
 
@@ -21,3 +21,4 @@ mixin items-view(items, pagedatas, isVideoView)
                         .item-cover
                             img.fa(draggable="false" src="/covers/"+ (isVideoView ? 'videos/folder-'+item.DirectoryId+'/' : 'series/')+item.Id+'.jpg' alt="La imagen se esta cargando actulalize")
                         .item-name= item.Name.replace(/.mp4|.mkv|.avi|webm|ogg/ig, '')
+        

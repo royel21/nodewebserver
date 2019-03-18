@@ -1,8 +1,9 @@
 mixin videos-view(video, pagedatas)
     #container    
         #controls
-            span#back
-                 i.far.fa-arrow-alt-circle-left
+            if pagedatas.isVideoView
+                span#back
+                    i.far.fa-arrow-alt-circle-up= pagedatas.isVideoView
             include ../share/search
             +search(pagedatas, pagedatas.action+"search", "search-form")
 

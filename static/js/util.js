@@ -1,4 +1,5 @@
 window.local = localStorage;
+var isAndroid = /(android)/i.test(navigator.userAgent);
 
 $.expr[":"].contains = $.expr.createPseudo(function (arg) {
     return function (elem) {

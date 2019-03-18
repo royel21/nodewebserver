@@ -19,7 +19,8 @@ block content
     else if videos
         include ./items-view
         +items-view(videos, pagedatas, true)
-        
+    span#scroll-up.d-none
+        i.far.fa-arrow-alt-circle-up
 block script
     script(src="/js/main.js")
     script(src="/js/video-list.js")

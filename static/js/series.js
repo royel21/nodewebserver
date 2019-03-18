@@ -135,8 +135,9 @@ $('#items-container').on('click', 'form .clear-search', (e) => {
 
 //add videos to selected item
 $('#items-container').on('click', '.v-add, #add-filtered-videos', (e) => {
-    let liItem = $('#items-list li.active')[0];
+    let liItem = $('#items-list .list-group li.active')[0];
     if (liItem) {
+        console.log(liItem)
         let li = e.target.closest('li')
         let videoId = li ? li.id : null;
 

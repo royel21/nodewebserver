@@ -23,6 +23,10 @@ body{
     color: #007bff;
 }
 
+#menu .active{
+    border-bottom: 1px solid;
+}
+
 #main{
     color: white;
     position: relative;
@@ -38,6 +42,7 @@ body{
     height: calc(100% - 44px);
     overflow-y: auto;
 }
+
 
 #nav-menu{
     position: fixed;
@@ -205,13 +210,16 @@ body{
 }
 
 #pager a{
-    font-weight: 100;
     font-size: 24px;
 }
 
 #pager .fa{
     font-weight: 600;
     font-size: 22px;
+}
+
+#pager .page-item:last-child .page-link{
+    border-radius: 0 0.25rem 0.25rem 0;;
 }
 
 .search-container{
@@ -292,6 +300,14 @@ body{
 }
 
 
+#scroll-up{
+    position: fixed;
+    z-index: 9999;
+    font-size: 30px;
+    bottom: 5px;
+    right: 20px;
+}
+
 @media all and (max-width: 650px){
     #full-screen{
         display: inline-block;
@@ -302,28 +318,64 @@ body{
         font-size: 40px;
     }
     #pager{
-        position: relative;
-        right: 6px;
+        display: flex;
+        justify-content: center;
     }
-    
-    #pager .page-item:nth-child(2) .page-link{
-        border-radius: 0.25em 0 0 .25rem;
-    }
-    
-    #pager .page-item:first-child,
+
+    #itemsPerPage,
     #pager .page-item:nth-child(3),
     #pager .page-item:nth-last-child(2),
-    #itemsPerPage{
+    #pager .page-item:nth-child(3) + .page-item:nth-last-child(7),
+    #pager .page-item:nth-child(3) + .page-item:nth-last-child(6) a:not([href*="/1/"]),
+    #pager .active + .page-item + .page-item:not(:last-child){
         display: none;
+    }
+
+    #scroll-up{
+        bottom: 60px;
+    }
+    #page-select{
+        height: 32px;
     }
 }
 
 @media all and (max-width: 450px){
     
+    #controls{
+        display: block;
+        height: 85px;
+        text-align: center;
+    }
+    
+    #controls #back{
+        font-size: 27px;
+        height: 42px;
+        display: inline-block;
+        position: relative;
+        margin-right: 5px;
+    }
+     #controls #back i{
+         position: relative;
+         top: 4px;
+     }
+    .search-container{
+        display: inline;
+        align-items: center;
+        width: 100%;
+    }
+    #search-form{
+        margin: 0 !important;
+    }
     #search-form .form-control{
         max-width: 108px;
     }
     #search-form .btn-search{
         max-width: 40px;
+    }
+   
+    .nav-item .nav-link{
+        display: inline-block;
+        border-bottom: 1px solid  white;
+        padding: 4px;
     }
 }
