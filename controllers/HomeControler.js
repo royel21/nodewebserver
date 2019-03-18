@@ -69,7 +69,6 @@ exports.videos = (req, res) => {
         let currentPage = req.params.page || 1;
         let begin = ((currentPage - 1) * itemsPerPage);
         let val = req.params.search || "";
-        console.log(req.params)
         let condition = {
             order: ['Name'],
             offset: begin,
@@ -133,7 +132,6 @@ exports.login = (req, res) => {
 }
 
 exports.loginPost = (req, res, next) => {
-    console.log(req.body)
     let options = {
         maxAge: 1000 * 60 * 60 * 24, // would expire after 15 minutes
     }
