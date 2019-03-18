@@ -13,12 +13,10 @@ block navbar
 block content
     #video-container(tabindex="0")
         include ../videoplayer/player
-    if series
-        include ./items-view
-        +items-view(series, pagedatas)
-    else if videos
-        include ./items-view
-        +items-view(videos, pagedatas, true)
+
+    include ./items-view
+    +items-view(items, pagedatas, isVideoView)
+
     span#scroll-up.d-none
         i.far.fa-arrow-alt-circle-up
 block script
