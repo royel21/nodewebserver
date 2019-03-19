@@ -166,6 +166,7 @@ $(window).bind('popstate', (event) => {
 $('body').on('click', '#back', ()=>{
     let title = "Home";
     window.history.pushState(title, title, config.serie.lastSerie);
+    local.setItem('serie', false);
     loadPartialPage(config.serie.lastSerie, () => {
         selectItem(config.serie.SerieIndex);
     });
