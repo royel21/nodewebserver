@@ -102,7 +102,7 @@
     min-height: 40px;
 }
 
-#.list-group-item .v-name{
+.list-group-item .v-name{
     white-space: nowrap;
 }
 
