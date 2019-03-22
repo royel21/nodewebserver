@@ -12,21 +12,7 @@ module.exports = (sequelize, DataTypes) => {
                 VideoCategory_unique: {
                     fields: ['CategoryId', 'VideoId']
                 }
-            },
-            // classMethods: {
-            //     associate: function(models) {
-        
-            //         Branch_Employee.belongsTo(models.model('Video'), {
-            //             as: 'video',
-            //             foreignKey: 'VideoId'
-            //         });
-        
-            //         Branch_Employee.belongsTo(models.model('Category'), {
-            //             as: 'category',
-            //             foreignKey: 'CategoryId'
-            //         });
-            //     }
-            // }
+            }
         });
 
     return VideoCategory;
