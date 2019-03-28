@@ -79,8 +79,8 @@ app.use(function (err, req, res, next) {
 });
 
 db.init().then(() => {
-  let server = app.listen(5080, function () {
-    console.log('Node server is running.. at http://localhost:5080');
+  let server = app.listen(80, function () {
+    console.log('Node server is running.. at http://localhost:80');
   });
 
   require('./socketio-server')(server, app);
