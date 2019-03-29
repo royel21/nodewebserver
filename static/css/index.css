@@ -361,7 +361,6 @@ body{
     .search-container{
         display: inline;
         align-items: center;
-        width: 100%;
     }
     #search-form{
         margin: 0 !important;
