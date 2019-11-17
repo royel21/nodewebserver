@@ -1,0 +1,7 @@
+# find - find files
+# -mtime - timestamp 
+# -detele - delete found files
+# wc -l - count files
+find PATH_TO_FILE -type -f | wc -l
+
+# systemctl status FILE.SERVICE

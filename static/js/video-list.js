@@ -6,6 +6,11 @@ var selectedIndex = local.getItem('selectedIndex') || 0;
 var totalPage = 0;
 var currentPage = 1;
 
+const UP = 38;
+const DOWN = 40;
+const LEFT = 37;
+const RIGHT = 39;
+const ENTER = 13;
 
 const selectItem = async (index) => {
     selectedIndex = index;
@@ -43,12 +48,12 @@ const calPages = () => {
 $('body').on('keydown', '.items-list', (e) => {
     calCol();
     calPages();
-    console.log(currentPage, totalPage)
+    
     let totalitem = $('.items').length;
     let title = document.title;
     var wasProcesed = false;
     switch (e.keyCode) {
-        case 13:
+        case ENTER:
             {
                 let item = e.target.closest('.items')
                 if ($('#videos-list')[0]) {
@@ -58,59 +63,61 @@ $('body').on('keydown', '.items-list', (e) => {
                     window.history.pushState(title, title, url);
                     lastIndex = selectedIndex;
                     local.setItem('serie', item.id);
+                    config.serie.SerieIndex = selectedIndex;
                     loadPartialPage(url, () => {
                         selectItem(0);
                     });
                 }
-                console.log("enter");
                 wasProcesed = true;
                 break;
             }
-        case 37:
+        case LEFT:
             {
-                if (selectedIndex > 0) {
+
+                if (e.ctrlKey && currentPage > 1) {
+
+                    let url = $('#pager .active').prev().find('a').attr('href');
+                    window.history.pushState(title, title, url);
+                    loadPartialPage(url, () => {
+                        selectItem($('.items').length - 1);
+                    });
+                }
+                else if (selectedIndex > 0) {
                     selectItem(selectedIndex - 1);
-                } else {
-                    if (currentPage > 1) {
-                        console.log("Prev Page");
-                        let url = $('#pager .active').prev().find('a').attr('href');
-                        window.history.pushState(title, title, url);
-                        loadPartialPage(url, () => {
-                            selectItem($('.items').length - 1);
-                        });
-                    }
                 }
                 wasProcesed = true;
                 break;
             }
-        case 38:
+        case UP:
             {
+                if(e.ctrlKey){
+                    goBack();
+                }else
                 if (selectedIndex - colNum >= 0) {
                     selectItem(selectedIndex - colNum);
                 }
                 wasProcesed = true;
                 break;
             }
-        case 39:
+        case RIGHT:
             {
-                if (selectedIndex < totalitem - 1) {
+                
+                if (e.ctrlKey && currentPage < totalPage) {
+                        
+                    let url = $('#pager .active').next().find('a').attr('href');
+                    window.history.pushState(title, title, url);
+                    loadPartialPage(url, () => {
+                        selectItem(0);
+                    });
+                }
+                else if (selectedIndex < totalitem - 1) {
                     selectItem(selectedIndex + 1);
-                } else {
-
-                    if (currentPage < totalPage) {
-                        console.log("Next Page");
-                        let url = $('#pager .active').next().find('a').attr('href');
-                        window.history.pushState(title, title, url);
-                        loadPartialPage(url, () => {
-                            selectItem(0);
-                        });
-                    }
                 }
                 wasProcesed = true;
                 break;
             }
 
-        case 40:
+        case DOWN:
             {
                 if (selectedIndex + colNum < totalitem) {
                     selectItem(selectedIndex + colNum);
@@ -144,7 +151,7 @@ $('body').on('dblclick', '.items-list .items', (e) => {
     } else {
         config.serie.lastSerie = window.location.pathname;
         config.serie.SerieIndex = selectedIndex;
-        
+
         let url = "/serie-content/" + item.id;
         window.history.pushState(title, title, url);
 
@@ -159,33 +166,36 @@ $('body').on('dblclick', '.items-list .items', (e) => {
 
 
 $(window).bind('popstate', (event) => {
-    console.log('pop: ' + event.originalEvent.state);
     selectItem(0);
 });
 
-$('body').on('click', '#back', ()=>{
+var goBack = () =>{
     let title = "Home";
     window.history.pushState(title, title, config.serie.lastSerie);
     local.setItem('serie', false);
     loadPartialPage(config.serie.lastSerie, () => {
         selectItem(config.serie.SerieIndex);
     });
+}
+
+$('body').on('click', '#back', () => {
+    goBack();
 });
 
-$('#content').scroll((e)=> {
+$('#content').scroll((e) => {
     let distance = $('#content').scrollTop();
-    if(distance > 500){
+    if (distance > 500) {
         $('#scroll-up').removeClass('d-none');
-    }else{
-         $('#scroll-up').addClass('d-none');
+    } else {
+        $('#scroll-up').addClass('d-none');
     }
 });
 
- $('#content').on('click', '#scroll-up',(e)=>{
+$('#content').on('click', '#scroll-up', (e) => {
     $("#content").animate({ scrollTop: 0 }, "fast");
     console.log('test')
- });
+});
 
-$(()=>{
+$(() => {
     selectItem(selectedIndex);
 })

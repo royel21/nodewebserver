@@ -1,4 +1,4 @@
-$('#tree-container').on('click', '.caret', (e) => {
+$(document).on('click', '#tree-container .caret', (e) => {
     let treeItem = e.target.closest('li');
     if (treeItem.childNodes.length === 2) {
         let dir = $(treeItem).find('.dir').text();
@@ -17,7 +17,7 @@ $('#tree-container').on('click', '.caret', (e) => {
 });
 
 
-$('#tree-container').on('click', '.dir', (e) => {
+$(document).on('click', '#tree-container .dir', (e) => {
     let dir = e.target.textContent;
     let path = e.target.closest('ul').dataset.path;
     socket.emit('scan-dir', { path, folder: dir });
@@ -28,13 +28,11 @@ $('#paths').on('click', '.fa-sync', (e) => {
     let li = e.target.closest('li');
     let dir = $(li).text();
     socket.emit('re-scan', { id: li.id, dir });
-    console.log("updating")
 });
 
 
 $('#paths .delete-path').click((e) => {
     let li = e.target.closest('li');
-    console.log(li.id)
     $.post('/admin/configs/delete-path', {
         id: li.id,
         _csrf: $("#paths").data('csrf')
@@ -69,5 +67,6 @@ $('#tab-config input[type="radio"]').change((e) => {
 
     if (e.target.id.includes('disk')) {
         socket.emit('load-disks', "load now");
+        console.log("loading-disk")
     }
 });

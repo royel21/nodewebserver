@@ -7,6 +7,7 @@
             "src/bindings.cpp"
         ],
         'include_dirs': [
+            "/usr/inlcude",
             "<!@(node -p \"require('node-addon-api').include\")"
         ],
         'dependencies': [

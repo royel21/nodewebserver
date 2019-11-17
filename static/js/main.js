@@ -25,6 +25,11 @@ $('body').on('click', '#table-controls .page-item, #controls .page-item', (e) =>
     let title = document.title;
     let url = e.target.tagName == 'I' ? e.target.closest('a').href : e.target.href;
     window.history.pushState(title, title, url);
+    if(!location.href.includes("admin")){
+        loadPartialPage(url, cb = () =>{
+            selectItem(0);
+        });    
+    }else
     loadPartialPage(url);
 });
 

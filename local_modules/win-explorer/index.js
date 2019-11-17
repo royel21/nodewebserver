@@ -1,33 +1,83 @@
-const WinExplore = require("./build/Release/win_explorer");
-const path = require('path')
 
+const path = require('path');
+const os = require("os");
+const fs = require("fs-extra");
 
-var drive = [
-    "Unknown Drive type", "Drive is invalid",
-    "Removable Drive", "Hard Disk",
-    "Remote (Network) Drive",
-    "CD-Rom/DVD-Rom", "Ram Drive"
-];
+var ListFiles;
+var ListFilesR;
+var ListFilesRO;
+var ListDrivesInfo;
+
+var WinExplore = { };
+
+if (os.platform().includes("win32")) {
+    WinExplore = require("./build/Release/win_explorer");
+    
+    var drive = [
+        "Unknown Drive type", "Drive is invalid",
+        "Removable Drive", "Hard Disk",
+        "Remote (Network) Drive",
+        "CD-Rom/DVD-Rom", "Ram Drive"
+    ];
+
+    function ListDrivesInfo() {
+        return WinExplore.ListDrivesInfo();
+    }
+
+} else if (os.platform().includes("linux")) {
+    
+WinExplore.ListFiles = (dir) => {
+    var foundFiles = fs.readdirSync(dir);
+    var tempFiles = [];
+    var i = 0;
+    for(let f of foundFiles)
+    {
+        if(['$'].includes(f[0]) || f.includes("System Volume Information")) continue;
+
+        let data = fs.statSync(path.join(dir,f));
+        tempFiles[i] = { 
+            isDirectory: false,
+            FileName: f,
+            Size: data.size,
+            isHidden: f[0] == '.',
+            extension: ""
+        }
+
+        if(data.isDirectory()){
+            tempFiles[i].isDirectory = true 
+        }else{
+            tempFiles[i].extension = f.split('.').pop()
+        }
+        i++;
+    }
+    
+    return tempFiles;
+};
+}
+
 sortFiles = (a, b) => {
     var a1 = a.FileName.replace(/\(/ig, "0").replace(/\[/ig, "1");
     var b1 = b.FileName.replace(/\(/ig, "0").replace(/\[/ig, "1");
     return a1.localeCompare(b1);
 };
 
-function ListFiles(dir, filters, options) {
+ListFiles = (dir, filters, options) =>{
     let opts = {
         hidden: !options.hidden ? options.hidden : true,
         file: !options.file ? options.file : true,
         directory: !options.directory ? options.directory : true
     };
+    
     var d = path.resolve(dir);
     var files = WinExplore.ListFiles(d, options.oneFile).sort(sortFiles);
+
     const checkFiles = (f) => {
         if (f.isHidden === !opts.hidden) return false;
         if (!f.isDirectory === opts.file) return true;
         if (f.isDirectory === opts.directory) return true;
         return false;
     }
+
     if (filters !== undefined && filters.length > 0) {
         return files.filter(v => {
             if (filters.includes(v.extension.toLowerCase())) {
@@ -37,7 +87,7 @@ function ListFiles(dir, filters, options) {
             }
         });
     } else {
-        return files.filter(f => checkFiles(f) );
+        return files.filter(f => checkFiles(f));
     }
 }
 
@@ -83,10 +133,6 @@ ListFilesRO = (dir) => {
         return files;
     }
     return listAll(temp);
-}
-
-function ListDrivesInfo() {
-    return WinExplore.ListDrivesInfo();
 }
 
 module.exports = {

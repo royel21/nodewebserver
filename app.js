@@ -44,6 +44,7 @@ app.use(flash());
 
 app.locals.moment = require('moment');
 app.locals.roles = { user: "Usurario", manager: "Manager", admin: "Administrador" };
+app.locals.fs = require("fs");
 
 app.use(function (req, res, next) {
   if (req.user) {
@@ -78,9 +79,11 @@ app.use(function (err, req, res, next) {
   return res.render('error');
 });
 
+const port = 4664;
+
 db.init().then(() => {
-  let server = app.listen(80, function () {
-    console.log('Node server is running.. at http://localhost:80');
+  let server = app.listen(port, function () {
+    console.log('Node server is running.. at http://localhost:'+port);
   });
 
   require('./socketio-server')(server, app);

@@ -35,18 +35,34 @@ module.exports = (server, app) => {
         });
     }
 
-
     io.on('connection', (socket) => {
+        console.log("socket start")
         if (app.locals.user && app.locals.user.Role.includes('admin')) {
             connections[socket.id];
             socket.on('load-disks', (client) => {
-                drivelist.list((error, drives) => {
-                    if (error) return next(createError(500));
 
+                drivelist.list().then(drives => {
+                    let disks = [];
+                    drives.forEach((drive) => {
+                        if (drive) {
+                            if (drive.mountpoints.length > 0)
+                                    disks.push(drive.mountpoints[0].path);
+                        }
+                    });
+                    disks.sort();
+                    let renderTree = pug.compileFile('./views/admin/configs/tree-view.pug');
+                    socket.emit('disk-loaded', renderTree({ disks }));
+                });
+
+                drivelist.list((error, drives) => {
+                    console.log("error", error)
+                    if (error) return next(createError(500));
+                    console.log(drives)
                     let disks = [];
                     if (drives) {
                         for (let disk of drives) {
-                            disks.push(disk.mountpoints[0].path);
+                            if (disk.mountpoints.length > 0)
+                                disks.push(disk.mountpoints[0].path);
                         }
                     }
                     disks.sort();
@@ -57,13 +73,13 @@ module.exports = (server, app) => {
 
             socket.on("scan-dir", (data) => {
                 //If is it root of disk return;
-                if(scanning) return;
+                if (scanning) return;
                 scanning = true;
                 if (["c:\\", "C:\\", "/"].includes(data.folder))
                     return socket.emit("path-added", false);
 
                 let dir = path.join(data.path || "", data.folder);
-
+                console.log(dir)
                 if (fs.existsSync(dir)) {
                     getNewId().then(id => {
                         db.directory.create({ Id: id, FullPath: dir, IsLoading: true }).then(newDir => {
@@ -86,18 +102,18 @@ module.exports = (server, app) => {
 
             socket.on('re-scan', (data) => {
                 console.log(data)
-                if(scanning) return;
+                if (scanning) return;
 
                 db.directory.findOne({ where: { Id: data.id } }).then(dir => {
                     if (dir) {
                         dir.update({ IsLoading: true });
-                            scanning = true;
+                        scanning = true;
                         startWork(dir);
                         console.log("start scan")
                     } else {
                         io.sockets.emit("scan-finish", data);
                     }
-                }).catch(err=>{
+                }).catch(err => {
                     console.log(err)
                 });
             });

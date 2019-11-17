@@ -1,9 +1,13 @@
 #include <napi.h>
-#include <Windows.h>
 #include <iostream>
 #include <wchar.h> 
 #include <vector>
-
+#ifdef WIN32
+  #include <Windows.h>
+#else
+  #include <dirent.h>
+  #include <sys/stat.h>
+#endif
 
 namespace Win_Explorer
 {

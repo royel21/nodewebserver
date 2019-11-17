@@ -34,7 +34,7 @@ exports.index = (req, res) => {
         var totalPages = Math.ceil(items.count / itemsPerPage);
         let view = req.query.partial ? "home/partial-items-view" : "home/index.pug";
         res.render(view, {
-            title: "Home",
+            title: "Home Server",
             items,
             pagedatas: {
                 currentPage,
