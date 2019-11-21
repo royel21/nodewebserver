@@ -5,5 +5,11 @@ local_modules/win-explorer/.vscode
 local_modules/win-explorer/bin
 local_modules/win-explorer/build
 local_modules/win-explorer/test
+
+local_modules/rcunrar/node_modules
+local_modules/rcunrar/.vscode
+local_modules/rcunrar/bin
+local_modules/rcunrar/build
+
 static/covers
 *.db

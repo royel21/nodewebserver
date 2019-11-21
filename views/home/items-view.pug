@@ -1,4 +1,4 @@
-mixin items-view(items, pagedatas, isVideoView)
+mixin items-view(items, pagedatas, isFile)
     #container    
         #controls
             if pagedatas.action.includes('content')    
@@ -10,7 +10,7 @@ mixin items-view(items, pagedatas, isVideoView)
             include ../share/pagination
             +pagination(items.count, pagedatas)
                 
-        .items-list(id=(isVideoView ? "videos-list" : "series-list"))
+        .items-list(id=(isFile ? "videos-list" : "series-list"))
             each item in items.rows
                 .items(tabindex="0" id=item.Id, data-duration=item.Duration)
                     .item-video
@@ -20,6 +20,6 @@ mixin items-view(items, pagedatas, isVideoView)
                             if !item.DirectoryId
                                 span.item-fav.far.fa-star
                         .item-cover
-                            img.fa(draggable="false" src="/covers/"+ (isVideoView ? 'videos/folder-'+item.DirectoryId+'/' : 'series/')+item.Id+'.jpg' alt="La imagen se esta cargando actulalize")
+                            img.fa(draggable="false" src="/covers/"+ (isFile ? 'files/folder-'+item.DirectoryId+'/' : 'series/')+item.Id+'.jpg' alt="La imagen se esta cargando actulalize")
                         .item-name= item.Name.replace(/.mp4|.mkv|.avi|webm|ogg/ig, '')
         

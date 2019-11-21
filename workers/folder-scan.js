@@ -20,7 +20,7 @@ var serieCovers = [];
 PopulateDB = async (folder, files, fId, se) => {
 
     let filteredFile = files.filter((f) => {
-        return f.isDirectory || ['mp4', 'mkv', 'avi', 'ogg'].includes(f.extension.toLocaleLowerCase()) &&
+        return f.isDirectory || ['mp4', 'mkv', 'avi', 'ogg', 'rar', 'zip'].includes(f.extension.toLocaleLowerCase()) &&
             !f.isHidden
     });
 
@@ -29,7 +29,7 @@ PopulateDB = async (folder, files, fId, se) => {
             if (!f.isDirectory) {
                 let Id = Math.random().toString(36).slice(-5);
                 let found = tempFiles.filter(v => v.Name === f.FileName);
-                let vfound = await db.video.findOne({
+                let vfound = await db.file.findOne({
                     where: {
                         $or: [{
                             Id: Id
@@ -45,6 +45,7 @@ PopulateDB = async (folder, files, fId, se) => {
                         Name: f.FileName,
                         NameNormalize: NormalizeName(f.FileName),
                         FullPath: folder,
+                        Type: /rar|zip/ig.test(f.extension) ? "Manga" : "Video",
                         DirectoryId: fId,
                         SerieId: se ? se.Id : null,
                         Size: f.Size
@@ -54,30 +55,37 @@ PopulateDB = async (folder, files, fId, se) => {
                         await vfound.update({ Size: f.Size });
                     }
                 }
-
+                
             } else {
                 let serie;
-                if (f.Files.find(a => !a.isDirectory && ['mp4', 'mkv', 'avi', 'ogg', 'webm'].includes(a.extension.toLocaleLowerCase()))) {
+                let firstFile = f.Files.filter(a => a.extension && ['mp4', 'mkv', 'avi', 'ogg', 'webm', 'rar', 'zip']
+                    .includes(a.extension.toLocaleLowerCase()))[0];
+
+                if (firstFile) {
                     let Name = path.basename(f.FileName);
                     let tempSerie = await db.serie.findOrCreate({ where: { Name } });
 
                     serie = tempSerie[0];
 
                     let SerieCover = path.join(coverPath, serie.Id + ".jpg");
-                    
+
                     if (!fs.existsSync(SerieCover)) {
+
                         let img = f.Files.find(a => a.extension && ['jpg', 'jpeg', 'png', 'gif'].includes(a.extension.toLocaleLowerCase()));
+
                         if (img) {
+
                             await sharp(path.join(f.FileName, img.FileName)).resize({ height: 200 }).toFile(SerieCover);
+
                         } else {
-                            let v = f.Files.filter(a => a.extension && ['mp4', 'mkv', 'avi', 'ogg', 'webm']
-                                .includes(a.extension.toLocaleLowerCase()))[0];
+
                             try {
                                 if (v) {
                                     serieCovers.push({
                                         serie: true,
-                                        vPath: path.join(f.FileName, v.FileName),
-                                        cPath: SerieCover
+                                        filePath: path.join(f.FileName, firstFile.FileName),
+                                        coverPath: SerieCover,
+                                        isVideo: /rar|zip/ig.test(firstFile.FileName)
                                     });
                                 }
                             } catch (err) {
@@ -93,21 +101,22 @@ PopulateDB = async (folder, files, fId, se) => {
         }
     }
 
-    if (tempFiles.length > 0) await db.video.bulkCreate(tempFiles);
+    if (tempFiles.length > 0) await db.file.bulkCreate(tempFiles);
     tempFiles = [];
 }
 
 scanOneDir = async (data) => {
 
     var fis = WinDrive.ListFilesRO(data.dir);
-    try{
+
+    try {
         await PopulateDB(data.dir, fis, data.id);
-    }catch(err){
+    } catch (err) {
         console.log(err);
     }
     console.log('start sub-worker')
     data.series = serieCovers;
-    
+
     worker.send(data);
 }
 

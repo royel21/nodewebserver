@@ -1,0 +1,35 @@
+{
+  "name": "rcunrar",
+  "version": "0.5.3",
+  "description": "Native Unrar Addon for electronjs",
+  "main": "index.js",
+  "files": [
+    "src",
+    "lib",
+    "tsconfig.json",
+    "librar",
+    "binding.gyp"
+  ],
+  "scripts": {
+    "start": "node index.js",
+    "build:dev": "node-gyp build --debug",
+    "build": "node-gyp 16 rebuild & tsc index.ts",
+    "rebuild:dev": "node-gyp rebuild --debug",
+    "rebuild": "node-gyp rebuild",
+    "clean": "node-gyp clean",
+    "prepublish": "npm run build"
+  },
+  "keywords": [
+    "node",
+    "addon",
+    "rar",
+    "unrar",
+    "fknop",
+    "native"
+  ],
+  "author": "R-Con",
+  "license": "MIT",
+  "dependencies": {
+    "node-addon-api": "^1.4.0"
+  }
+}

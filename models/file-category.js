@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
 
-    const VideoCategory = sequelize.define('VideoCategory', {
+    const FileCategory = sequelize.define('FileCategory', {
         Id:{
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -9,11 +9,11 @@ module.exports = (sequelize, DataTypes) => {
     }, {
             timestamps: false,
             uniqueKeys: {
-                VideoCategory_unique: {
-                    fields: ['CategoryId', 'VideoId']
+                FileCategory_unique: {
+                    fields: ['CategoryId', 'FileId']
                 }
             }
         });
 
-    return VideoCategory;
+    return FileCategory;
 }

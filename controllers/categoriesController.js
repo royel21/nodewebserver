@@ -1,26 +1,26 @@
 
 const db = require('../models');
 
-getCategoryVideos = async (data) => {
-    let videos = { count: 0, rows: [] };
+getCategoryFiles = async (data) => {
+    let files = { count: 0, rows: [] };
     let count = await db.sqlze.query(`Select count(*) as count 
-    from Videos where Name LIKE ? and Id ${data.not} in(Select VideoId from VideoCategories where CategoryId = ?)`,
+    from Files where Name LIKE ? and Id ${data.not} in(Select FileId from FileCategories where CategoryId = ?)`,
         {
             replacements: [data.val, data.caId],
             type: db.sqlze.QueryTypes.SELECT
         });
-    videos.count = count[0].count;
-    videos.rows = await db.sqlze.query(`Select Id, Name, NameNormalize 
-        from Videos where Name LIKE ? and Id ${data.not} in(Select VideoId 
-        from VideoCategories where CategoryId = ?) 
+    files.count = count[0].count;
+    files.rows = await db.sqlze.query(`Select Id, Name, NameNormalize 
+        from Files where Name LIKE ? and Id ${data.not} in(Select FileId 
+        from FileCategories where CategoryId = ?) 
         ORDER BY NameNormalize limit ?, ?;`,
         {
-            model: db.video,
+            model: db.file,
             mapToModel: true,
             replacements: [data.val, data.caId, data.begin, data.itemsPerPage],
             type: db.sqlze.QueryTypes.SELECT
         });
-    return videos;
+    return files;
 }
 loadCategories = async (req, res) => {
     let itemsPerPage = req.query.screenW < 1900 ? 16 : 19;
@@ -32,11 +32,11 @@ loadCategories = async (req, res) => {
         limit: itemsPerPage
     });
 
-    let videos = { count: 0, rows: [] };
+    let files = { count: 0, rows: [] };
 
     if (items.rows.length > 0) {
         cat = items.rows[0];
-        videos = await getCategoryVideos({ val: '%%', caId: cat.Id, not: '', begin: 0, itemsPerPage });
+        files = await getCategoryFiles({ val: '%%', caId: cat.Id, not: '', begin: 0, itemsPerPage });
     }
 
     let totalPages = Math.ceil(items.count / itemsPerPage);
@@ -56,11 +56,11 @@ loadCategories = async (req, res) => {
             csrfToken: req.csrfToken(),
             isList: true
         },
-        videos,
-        videopages: {
+        files,
+        filepages: {
             currentPage: 1,
             itemsPerPage,
-            totalPages: Math.ceil(videos.count / itemsPerPage),
+            totalPages: Math.ceil(files.count / itemsPerPage),
             search: "",
             action: "/admin/categories/",
             csrfToken: req.csrfToken(),
@@ -120,7 +120,7 @@ exports.itemsList = (req, res) => {
     });
 }
 
-const loadVideos = async (req, res) => {
+const loadFiles = async (req, res) => {
     console.time('s')
     let itemsPerPage = req.query.screenW < 1900 ? 16 : 19;
     let currentPage = req.query.page || 1;
@@ -129,54 +129,54 @@ const loadVideos = async (req, res) => {
 
     let caId = req.query.id;
     
-    let allVideos = req.query.isAllVideo == "true";
+    let allFiles = req.query.isAllFile == "true";
 
-    let not = allVideos ? "not" : "";
+    let not = allFiles ? "not" : "";
     
-    let videos = await getCategoryVideos({ val, caId, not, begin, itemsPerPage });
+    let files = await getCategoryFiles({ val, caId, not, begin, itemsPerPage });
 
     console.timeEnd('s');
     val = req.query.search || "";
-    res.render('admin/partial-video-list', {
-        videos,
-        videopages: {
+    res.render('admin/partial-file-list', {
+        files,
+        filepages: {
             currentPage,
             itemsPerPage,
-            totalPages: Math.ceil(videos.count / itemsPerPage),
+            totalPages: Math.ceil(files.count / itemsPerPage),
             search: val,
             action: "/admin/categories/",
             csrfToken: req.csrfToken(),
-            isList: allVideos,
+            isList: allFiles,
         }
     });
 }
 
-exports.videosList = (req, res) => {
+exports.filesList = (req, res) => {
 
-    loadVideos(req, res).catch(err => {
+    loadFiles(req, res).catch(err => {
         if (err) console.log(err);
         res.status(500).send('Internal Server Error');
     });
 }
 
 
-exports.addVideos = (req, res) => {
+exports.addFiles = (req, res) => {
     let Id = req.body.itemId;
-    let videoId = req.body.videoId || null;
+    let fileId = req.body.fileId || null;
     let search = req.body.search || "";
     let condition = {
         order: ['NameNormalize'],
         attributes: ['Id'],
         where:
-            videoId ? { Id: videoId } : { Name: { [db.Op.like]: "%" + search + "%" } }
+            fileId ? { Id: fileId } : { Name: { [db.Op.like]: "%" + search + "%" } }
     };
 
     db.category.findOne({ where: { Id } }).then(category => {
         if (category) {
-            db.video.findAll(condition).then(videos => {
+            db.file.findAll(condition).then(files => {
 
-                category.addVideos(videos);
-                res.send({ count: videos.length });
+                category.addFiles(files);
+                res.send({ count: files.length });
             }).catch(err => {
                 if (err) console.log(err);
                 res.status(500).send('Internal Server Error');
@@ -188,12 +188,12 @@ exports.addVideos = (req, res) => {
     });
 }
 
-exports.removeVideo = (req, res) => {
+exports.removeFile = (req, res) => {
     let catId = req.body.itemId;
-    let vId = req.body.videoId || null;
-    db.video.findOne({ where: { Id: vId } }).then(video => {
+    let vId = req.body.fileId || null;
+    db.file.findOne({ where: { Id: vId } }).then(file => {
         db.category.findOne({ where: { Id: catId } }).then(cat => {
-            cat.removeVideo(video).then(result => {
+            cat.removeFile(file).then(result => {
                 res.send({ state: "Ok" });
             })
         });

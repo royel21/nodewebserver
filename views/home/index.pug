@@ -11,11 +11,12 @@ block navbar
     +navbar(user, url)
 
 block content
-    #video-container(tabindex="0")
-        include ../videoplayer/player
+    if pagedatas.action.includes("videos")
+        #video-container(tabindex="0")
+            include ../videoplayer/player
 
     include ./items-view
-    +items-view(items, pagedatas, isVideoView)
+    +items-view(items, pagedatas, isFile)
 
     span#scroll-up.d-none
         i.far.fa-arrow-alt-circle-up

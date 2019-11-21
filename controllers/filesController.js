@@ -11,7 +11,7 @@ exports.movies = (req, res) => {
     let begin = ((currentPage - 1) * itemsPerPage);
     let val = req.params.search || "";
 
-    db.video.findAndCountAll({
+    db.file.findAndCountAll({
         order: ['NameNormalize'],
         offset: begin,
         limit: itemsPerPage,
@@ -60,7 +60,7 @@ exports.postSearch = (req, res) => {
 exports.movie_modal = (req, res) => {
     var uid = req.query.uid;
     if (uid) {
-        db.video.findOne({
+        db.file.findOne({
             where: {
                 Id: uid
             }
@@ -86,12 +86,12 @@ exports.movieModalPost = (req, res) => {
     let Description = req.body.description;
     let Id = req.body.id;
     if (Id && Name && Name.length > 0) {
-        db.video.findOne({ where: { Id } }).then(video => {
-            let originalFile = path.join(video.FullPath, video.Name);
-            video.update(
+        db.file.findOne({ where: { Id } }).then(file => {
+            let originalFile = path.join(file.FullPath, file.Name);
+            file.update(
                 { Name, Description, NameNormalize: NormalizeName(Name) }
             ).then((result) => {
-                let toFile = path.join(video.FullPath, Name);
+                let toFile = path.join(file.FullPath, Name);
                 console.log(originalFile, toFile);
                 fs.move(originalFile, toFile);
                 res.send({ state: "ok", Id, Name });
@@ -105,15 +105,15 @@ exports.movieModalPost = (req, res) => {
     }
 }
 
-exports.deleteVideo = (req, res) => {
+exports.deleteFile = (req, res) => {
     let id = req.body.id;
     let fid = req.body.fid;
     let name = req.body.name;
     if (id) {
-        db.video.findOne({ where: { Id: id } }).then(video => {
-            video.destroy().then(() => {
-                fs.removeSync(path.join('./static/covers', 'folder-' + video.DirectoryId, video.Id + ".jpg"));
-                res.send({ state: "ok", msg: "Video Borrado" });
+        db.file.findOne({ where: { Id: id } }).then(file => {
+            file.destroy().then(() => {
+                fs.removeSync(path.join('./static/covers', 'folder-' + file.DirectoryId, file.Id + ".jpg"));
+                res.send({ state: "ok", msg: "File Borrado" });
             });
         }).catch(err => {
             console.log(err)

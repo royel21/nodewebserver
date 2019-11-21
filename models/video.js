@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         },
         Duration: {
-            type: DataTypes.FLOAT(5, 2),
+            type: DataTypes.FLOAT(8, 2),
             defaultValue: 0,
             allowNull: false
         },

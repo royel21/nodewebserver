@@ -8,7 +8,7 @@ loadSeries = async (req, res) => {
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
     let val = "";
-    let videos = { rows: [], count: 0 };
+    let files = { rows: [], count: 0 };
     let sId = "";
     let items = await db.serie.findAndCountAll({
         order: ['Name'],
@@ -18,7 +18,7 @@ loadSeries = async (req, res) => {
 
     if (items.rows.length > 0) {
         sId = items.rows[0].Id;
-        videos = await db.video.findAndCountAll({
+        files = await db.file.findAndCountAll({
             order: ['NameNormalize'],
             offset: 0,
             limit: itemsPerPage,
@@ -43,11 +43,11 @@ loadSeries = async (req, res) => {
             action: "/admin/series/",
             csrfToken: req.csrfToken()
         },
-        videos,
-        videopages: {
+        files,
+        filepages: {
             currentPage: 1,
             itemsPerPage,
-            totalPages: Math.ceil(videos.count / itemsPerPage),
+            totalPages: Math.ceil(files.count / itemsPerPage),
             search: val,
             action: "/admin/series/",
             csrfToken: req.csrfToken()
@@ -105,14 +105,14 @@ exports.itemsList = (req, res) => {
     });
 }
 
-exports.videosList = (req, res) => {
+exports.filesList = (req, res) => {
     let itemsPerPage = req.query.screenW < 1900 ? 16 : 19;
     let currentPage = req.query.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
     let val = req.query.search || "";
 
     let serieId = req.query.id;
-    let view = req.query.isAllVideo === "true";
+    let view = req.query.isAllFile === "true";
     if (view) {
         serieId = null;
     }
@@ -126,11 +126,11 @@ exports.videosList = (req, res) => {
         }
     };
 
-    db.video.findAndCountAll(condition).then(videos => {
-        var totalPages = Math.ceil(videos.count / itemsPerPage);
-        res.render('admin/partial-video-list', {
-            videos,
-            videopages: {
+    db.file.findAndCountAll(condition).then(files => {
+        var totalPages = Math.ceil(files.count / itemsPerPage);
+        res.render('admin/partial-file-list', {
+            files,
+            filepages: {
                 currentPage,
                 itemsPerPage,
                 totalPages,
@@ -146,15 +146,15 @@ exports.videosList = (req, res) => {
     });
 }
 
-exports.addVideos = (req, res) => {
+exports.addFiles = (req, res) => {
     let serieId = req.body.itemId;
-    let videoId = req.body.videoId || null;
+    let fileId = req.body.fileId || null;
     let search = req.body.search || "";
     let condition = {
         order: ['NameNormalize'],
         attributes: ['Id', 'Name'],
         where:
-            videoId ? { [db.Op.and]: [{ Id: videoId }, { SerieId: null }] } :
+            fileId ? { [db.Op.and]: [{ Id: fileId }, { SerieId: null }] } :
                 {
                     [db.Op.and]: [{ Name: { [db.Op.like]: "%" + search + "%" } }, { SerieId: null }]
                 }
@@ -162,9 +162,9 @@ exports.addVideos = (req, res) => {
 
     db.serie.findOne({ where: { Id: serieId } }).then(serie => {
         if (serie) {
-            db.video.findAll(condition).then(videos => {
-                serie.addVideos(videos);
-                res.send({ count: videos.length });
+            db.file.findAll(condition).then(files => {
+                serie.addFiles(files);
+                res.send({ count: files.length });
             }).catch(err => {
                 if (err) console.log(err);
                 res.status(500).send('Internal Server Error');
@@ -177,9 +177,9 @@ exports.addVideos = (req, res) => {
 }
 
 
-exports.removeVideo = (req, res) => {
-    let Id = req.body.videoId;
-    db.video.update(
+exports.removeFile = (req, res) => {
+    let Id = req.body.fileId;
+    db.file.update(
         { SerieId: null },
         { where: { Id } }
     ).then(result => {

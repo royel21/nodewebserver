@@ -8,7 +8,9 @@ mixin navbar(user, url)
         .collapse.navbar-collapse#navbarSupportedContent
             ul.navbar-nav.mr-auto
                 li.nav-item
-                    a.nav-link(href="/" class=""+(url === '/' || url.includes('serie-content') ? "active" : "")) Series
+                    a.nav-link(href="/" class=""+(url === '/' || url.includes('serie-content') ? "active" : "")) Series 
+                li.nav-item
+                    a.nav-link(href="/mangas" class=""+(url === '/mangas' || url.includes('mangas') ? "active" : "")) Mangas
                 li.nav-item
                     a.nav-link(href="/videos" class=""+(url.includes('videos') ? "active" : "")) Todos los videos
             ul.ml-auto.nav.navbar-nav

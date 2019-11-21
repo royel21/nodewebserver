@@ -1,7 +1,6 @@
 const Sequelize = require("sequelize");
 const path = require('path');
-const fs = require('fs-extra');
-var dbPath = path.join('./video.db');
+var dbPath = path.join('./files.db');
 
 const db = {};
 
@@ -23,14 +22,16 @@ const sequelize = new Sequelize('sqlite:./' + dbPath, {
 });
 
 db.Op = Op;
+
 db.user = require('./user')(sequelize, DataTypes);
-db.video = require('./video')(sequelize, DataTypes);
+db.file = require('./file')(sequelize, DataTypes);
 db.category = require('./category')(sequelize, DataTypes);
 db.serie = require('./serie')(sequelize, DataTypes);
 db.favorite = require('./favorites')(sequelize, DataTypes);
 db.directory = require('./directories')(sequelize, DataTypes);
-db.favoriteVideo = require('./favorite-video')(sequelize, DataTypes);
-db.videoCategory = require('./VideoCategory')(sequelize, DataTypes);
+
+db.favoriteFile = require('./favorite-file')(sequelize, DataTypes);
+db.fileCategory = require('./file-category')(sequelize, DataTypes);
 
 db.sqlze = sequelize;
 
@@ -43,18 +44,19 @@ db.user.afterCreate((user, options) => {
     }
 });
 
-db.category.belongsToMany(db.video, { through: { model: db.videoCategory } });
-db.video.belongsToMany(db.category, { through: { model: db.videoCategory } });
+db.category.belongsToMany(db.file, { through: { model: db.fileCategory } });
+db.file.belongsToMany(db.category, { through: { model: db.fileCategory } });
 
-db.favorite.belongsToMany(db.video, { through: db.favoriteVideo, foreignKey: "FavoriteId" });
-db.video.belongsToMany(db.favorite, { through: db.favoriteVideo, foreignKey: "VideoId" });
+db.favorite.belongsToMany(db.file, { through: { model: db.favoriteFile } });
+db.file.belongsToMany(db.favorite, { through: { model: db.favoriteFile } });
 
-db.directory.hasMany(db.video, { onDelete: 'cascade' });
-db.video.belongsTo(db.directory);
-db.video.belongsTo(db.serie);
+db.directory.hasMany(db.file, { onDelete: 'cascade' });
+
+db.file.belongsTo(db.directory);
+db.file.belongsTo(db.serie);
 
 db.user.hasOne(db.favorite);
-db.serie.hasMany(db.video);
+db.serie.hasMany(db.file);
 
 db.init = async () => {
     await sequelize.sync();
@@ -68,34 +70,34 @@ db.init = async () => {
         });
     }
 
-    if (await db.category.findOne({ where: { Name: "Aventuras" } }) == null) {
-        let categories = [{
-            Name: "Aventuras"
-        }, {
-            Name: "Acción"
-        }, {
-            Name: "Ciencia Ficción"
-        }, {
-            Name: "Animación"
-        }, {
-            Name: "Artes Marciales‎"
-        }, {
-            Name: "Histórico"
-        }, {
-            Name: "Guerras"
-        }, {
-            Name: "Misterio"
-        }, {
-            Name: "Infantiles"
-        }, {
-            Name: "Documentales"
-        }, {
-            Name: "Dramas"
-        }, {
-            Name: "Fantasia"
-        }];
-        await db.category.bulkCreate(categories)
-    }
+    // if (await db.category.findOne({ where: { Name: "Aventuras" } }) == null) {
+    //     let categories = [{
+    //         Name: "Aventuras"
+    //     }, {
+    //         Name: "Acción"
+    //     }, {
+    //         Name: "Ciencia Ficción"
+    //     }, {
+    //         Name: "Animación"
+    //     }, {
+    //         Name: "Artes Marciales‎"
+    //     }, {
+    //         Name: "Histórico"
+    //     }, {
+    //         Name: "Guerras"
+    //     }, {
+    //         Name: "Misterio"
+    //     }, {
+    //         Name: "Infantiles"
+    //     }, {
+    //         Name: "Documentales"
+    //     }, {
+    //         Name: "Dramas"
+    //     }, {
+    //         Name: "Fantasia"
+    //     }];
+    //     await db.category.bulkCreate(categories)
+    // }
 }
 
 module.exports = db;

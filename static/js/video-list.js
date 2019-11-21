@@ -56,7 +56,7 @@ $('body').on('keydown', '.items-list', (e) => {
         case ENTER:
             {
                 let item = e.target.closest('.items')
-                if ($('#videos-list')[0]) {
+                if ($('#files-list')[0]) {
                     playVideo(item);
                 } else {
                     let url = "/serie-content/" + item.id;
@@ -146,7 +146,7 @@ $('body').on('dblclick', '.items-list .items', (e) => {
     let item = e.target.classList[0] === "items" ? e.target : e.target.closest('.items');
     let title = document.title;
 
-    if ($('#videos-list')[0]) {
+    if ($('#files-list')[0]) {
         playVideo(item);
     } else {
         config.serie.lastSerie = window.location.pathname;

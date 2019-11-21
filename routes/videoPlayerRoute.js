@@ -7,13 +7,12 @@ router.get('/', function (req, res) {
   res.render("videoplayer/index.pug", { title: "Express Server" });
 });
 //hello
-router.get("/video/:videoid", (req, res) => {
-  db.video.findOne({ attributes: ['FullPath', 'Name', 'Size'], where: { Id: req.params.videoid } })
-    .then(video => {
-      if (video) {
-        var file = path.join(video.FullPath, video.Name);
+router.get("/video/:fileid", (req, res) => {
+  db.file.findOne({ attributes: ['FullPath', 'Name', 'Size'], where: { Id: req.params.fileid } })
+    .then(file => {
+      if (file) {
         // var file = "D:\\Download\\Jav\\ADN-189.mp4"
-        var total = video.Size;
+        var total = file.Size;
         var range = req.headers.range;
         if (!range) {
           // 416 Wrong range
@@ -38,7 +37,7 @@ router.get("/video/:videoid", (req, res) => {
           "Content-Type": "video/mp4"
         });
 
-        var stream = fs.createReadStream(file, { start: start, end: end })
+        var stream = fs.createReadStream(path.join(file.FullPath, file.Name), { start: start, end: end })
           .on("open", function () {
             stream.pipe(res);
           }).on("error", function (err) {

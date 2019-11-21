@@ -23,12 +23,12 @@ if (!loadVideos) {
         let selecteditem = $('.list .content-list .active')[0];
         data.id = selecteditem ? selecteditem.id : "";
 
-        let url = getAction() + 'videos-list';
+        let url = getAction() + 'files-list';
         //console.log(url, data, selecteditem)
 
         $.get(url, data, (resp, status) => {
-            $('#videos-list').replaceWith(resp);
-            $('#total-videos').text("Total - "+$('#videos-list').data('total'));
+            $('#files-list').replaceWith(resp);
+            $('#total-videos').text("Total - "+$('#files-list').data('total'));
         });
     }
     //load items list
@@ -43,13 +43,13 @@ if (!loadVideos) {
     }
     // load page base on target pager
     loadFromPager = (element, data) => {
-        if (element.closest('.list').id.includes('videos-list')) {
-            data.search = $('#videos-list .search-input').val();
+        if (element.closest('.list').id.includes('files-list')) {
+            data.search = $('#files-list .search-input').val();
             loadVideos(data);
         } else {
             loadItemList(data, ()=>{
                 if (!isAllVideo() || getAction().includes('categories'))
-                loadVideos({ page: getCurPage('videos') }, 'videos-list');
+                loadVideos({ page: getCurPage('videos') }, 'files-list');
             });
 
         }
@@ -95,7 +95,7 @@ $('#items-container').on('click', '.content-list li', (e) => {
         $(li).addClass('active');
 
         if (!isAllVideo() || getAction().includes('categories'))
-            loadVideos({ page: getCurPage('videos') }, 'videos-list');
+            loadVideos({ page: getCurPage('videos') }, 'files-list');
     }
 });
 

@@ -4,33 +4,45 @@ const db = require('../models')
 const mypassport = require('../passport_config')(passport);
 
 exports.index = (req, res) => {
-    let isVideoView = /video|content/ig.test(req.url);
+    let isFile = /video|content/ig.test(req.url);
     
-    let tempDb = isVideoView ? db.video : db.serie;
+    let isManga = req.url.includes("manga");
+    if(isManga) isFile = true;
 
+    //Select the database
+    let tempDb = isFile ? db.file : db.serie;
+    //Screen config
     let screenw = parseInt(req.cookies['screen-w']);
     let itemsPerPage = req.params.items || req.query.items || (screenw < 1900 ? 21 : 27);
+    //parameters
     let seriesId = req.params.serie
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
-    let val = req.params.search || "";
-    let condition = {
-        order: isVideoView ? ["NameNormalize"] : ["name"],
+    let search = req.params.search || "";
+    //query
+    let query = {
+        order: isFile ? ["NameNormalize"] : ["name"],
         offset: begin,
         limit: itemsPerPage
     }
-    let action = isVideoView ? "/videos/" : "/series/";
+
+    let action = isManga ? "/mangas/" : isFile ? "/videos/" :  "/series/";
+
     if (seriesId) {
 
         action = "/serie-content/" + seriesId + "/"
-        condition.where = {
-            [db.Op.and]: [{ Name: { [db.Op.like]: "%" + val + "%" } }, { SerieId: seriesId }]
+        query.where = {
+            [db.Op.and]: [{ Name: { [db.Op.like]: "%" + search + "%" } }, { SerieId: seriesId }]
         }
     } else {
-        condition.where = { Name: { [db.Op.like]: "%" + val + "%" } }
+        query.where = { Name: { [db.Op.like]: "%" + search + "%" } }
+        
+        if(isFile){
+            query.where.Type = isManga ? "Manga" : "Video"
+        }
     }
 
-    tempDb.findAndCountAll(condition).then(items => {
+    tempDb.findAndCountAll(query).then(items => {
         var totalPages = Math.ceil(items.count / itemsPerPage);
         let view = req.query.partial ? "home/partial-items-view" : "home/index.pug";
         res.render(view, {
@@ -40,12 +52,12 @@ exports.index = (req, res) => {
                 currentPage,
                 itemsPerPage,
                 totalPages,
-                search: val,
+                search: search,
                 action,
                 csrfToken: req.csrfToken(),
                 step: (screenw < 1900 ? 7 : 9)
             },
-            isVideoView
+            isFile
         }, (err, html) => {
             if (err) console.log(err);
 
@@ -64,13 +76,13 @@ exports.index = (req, res) => {
 
 exports.postSearch = (req, res) => {
     let itemsPerPage = req.body.items;
-    let val = req.body.search || "";
+    let search = req.body.search || "";
 
     let serieId = req.params.serie;
-    let url = `/series/1/${itemsPerPage}/${val}?partial=true`;
+    let url = `/series/1/${itemsPerPage}/${search}?partial=true`;
 
     if(/video|content/ig.test(req.url)){
-        url = (serieId ? `/serie-content/${serieId}` : '/videos') + `/1/${itemsPerPage}/${val}?partial=true`;
+        url = (serieId ? `/serie-content/${serieId}` : '/videos') + `/1/${itemsPerPage}/${search}?partial=true`;
     }
     res.redirect(url);
 }

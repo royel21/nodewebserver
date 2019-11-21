@@ -1,0 +1,4 @@
+ // "install": "node-gyp rebuild",
+    // "build": "node-gyp build",
+    // "tsc": "tsc -p tsconfig.json",
+    // "prepublish": "npm run tsc"
