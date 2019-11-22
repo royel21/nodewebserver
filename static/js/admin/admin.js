@@ -1,5 +1,25 @@
 
 socket = io();
+var loadFunctions = (page) => {
+    switch (page) {
+        case "Categories":
+        case "Series": {
+            loadSeriesConfig();
+            break;
+        }
+        case "Files": {
+            loadFilesConfig();
+            break;
+        }
+        case "Directories": {
+            loadDirectories();
+            break;
+        }
+        default: {
+
+        }
+    }
+}
 
 $('.sidenav .nav-link').click((e) => {
     e.preventDefault();
@@ -13,41 +33,13 @@ $('.sidenav .nav-link').click((e) => {
     $('.sidenav a').removeClass("active");
     a.classList.add('active');
 
-    let script = "/js/";
-    
-    switch ($(e.target.closest('li')).text()) {
-        case "Series": {
-            script += "series.js"
-            break;
-        }
-        case "Peliculas": {
-            script += "movies.js"
-            break;
-        }
-        case "Categorias": {
-            script += "series.js"
-            break;
-        }
-        case "Directorios": {
-            script += "directories.js"
-            break;
-        }
-        default: {
-            script = "";
-        }
-    }
     $('#container').fadeOut('fast');
     $.get(url, { partial: true, screen: window.screen.width }, (resp) => {
-         $('#container').remove();
-         $('#content').append(resp.data);
-         if(script){
-            var loadedScript = document.createElement("script");
-            loadedScript.id = 'pagescript';
-            loadedScript.src = script;
-            $('#pagescript').replaceWith(loadedScript);
-        }
+        $('#container').remove();
+        $('#content').append(resp.data);
+        loadFunctions($(e.target.closest('li')).text());
     });
-    
+
 });
 
 $(document).on("click", ".show-form", (e) => {
@@ -126,3 +118,5 @@ $(document).on('submit', '#create-edit', (e) => {
 $('body').on('click', '.cat', (e) => {
     e.target.remove();
 });
+
+loadFunctions($('.sidenav li .active').text());

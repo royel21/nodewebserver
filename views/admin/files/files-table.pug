@@ -1,10 +1,10 @@
-mixin movies_table(movies, pagedatas) 
+mixin files_table(files, pagedatas) 
     #container.text-light.bg-dark.rounded.mx-2(data-action=pagedatas.action, data-csrf=pagedatas.csrfToken)
         #table-controls
             include ../../share/search
             +search(pagedatas, pagedatas.action+"search", "search-form")
             include ../../share/pagination
-            +pagination(movies.count, pagedatas)
+            +pagination(files.count, pagedatas)
         #table-container
             table.table.table-dark.user-table.table-hover
                 thead
@@ -13,13 +13,13 @@ mixin movies_table(movies, pagedatas)
                         th Nombre
                         th Ruta En Disco
                 tbody
-                    each video in movies.rows
-                        tr(id=""+ video.Id, data-fid=video.DirectoryId)
+                    each file in files.rows
+                        tr(id=""+ file.Id, data-fid=file.DirectoryId)
                             td
                                 span.show-form
                                     i.fas.fa-edit.fa-2x
                                 span.show-delete
                                     i.ml-2.text-danger.fas.fa-trash-alt.fa-2x
                             td
-                                span= video.Name
-                            td= video.FullPath
+                                span= file.Name
+                            td= file.FullPath

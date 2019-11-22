@@ -50,25 +50,25 @@ module.exports = (server, app) => {
                         }
                     });
                     disks.sort();
-                    let renderTree = pug.compileFile('./views/admin/configs/tree-view.pug');
+                    let renderTree = pug.compileFile('./views/admin/directories/tree-view.pug');
                     socket.emit('disk-loaded', renderTree({ disks }));
                 });
 
-                drivelist.list((error, drives) => {
-                    console.log("error", error)
-                    if (error) return next(createError(500));
-                    console.log(drives)
-                    let disks = [];
-                    if (drives) {
-                        for (let disk of drives) {
-                            if (disk.mountpoints.length > 0)
-                                disks.push(disk.mountpoints[0].path);
-                        }
-                    }
-                    disks.sort();
-                    let renderTree = pug.compileFile('./views/admin/configs/tree-view.pug');
-                    socket.emit('disk-loaded', renderTree({ disks }));
-                });
+                // drivelist.list((error, drives) => {
+                //     console.log("error", error)
+                //     if (error) return next(createError(500));
+                //     console.log(drives)
+                //     let disks = [];
+                //     if (drives) {
+                //         for (let disk of drives) {
+                //             if (disk.mountpoints.length > 0)
+                //                 disks.push(disk.mountpoints[0].path);
+                //         }
+                //     }
+                //     disks.sort();
+                //     let renderTree = pug.compileFile('./views/admin/directories/tree-view.pug');
+                //     socket.emit('disk-loaded', renderTree({ disks }));
+                // });
             });
 
             socket.on("scan-dir", (data) => {
@@ -84,7 +84,7 @@ module.exports = (server, app) => {
                     getNewId().then(id => {
                         db.directory.create({ Id: id, FullPath: dir, IsLoading: true }).then(newDir => {
                             if (newDir) {
-                                let renderTree = pug.compileFile('./views/admin/configs/path-item.pug');
+                                let renderTree = pug.compileFile('./views/admin/directories/path-item.pug');
                                 socket.emit("path-added", renderTree(newDir));
                                 startWork(newDir);
                             } else {

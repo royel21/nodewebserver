@@ -7,12 +7,12 @@ const { fork } = require('child_process');
 
 exports.configs = (req, res, next) => {
     db.directory.findAll().then(directories => {
-        let view = req.query.partial ? "admin/configs/partial-configs" : "admin/index.pug";
+        let view = req.query.partial ? "admin/directories/partial-directories" : "admin/index.pug";
 
         res.render(view, {
-            title: "Configuraciones", directories,
+            title: "Directories", directories,
             pagedatas: {
-                action: "/admin/configs/",
+                action: "/admin/directories/",
                 csrfToken: req.csrfToken()
             }
         }, (err, html) => {
@@ -38,14 +38,14 @@ exports.folderContent = (req, res) => {
     }
 
     let folders = windrive.ListFiles(dir, [], { hidden: true, file: false, directory: true });
-    return folders.length == 0 ? res.send("") : res.render('admin/configs/tree-node', { fpath: dir, folders });
+    return folders.length == 0 ? res.send("") : res.render('admin/directories/tree-node', { fpath: dir, folders });
 }
 
 exports.deletePath = (req, res) => {
     let id = req.body.id;
     db.directory.destroy({ where: { Id: id } }).then(deletePath => {
         if (deletePath > 0) {
-            let coverPath = path.resolve('./static', 'covers', 'videos', 'folder-'+id);
+            let coverPath = path.resolve('./public', 'covers', 'videos', 'folder-'+id);
             if (fs.existsSync(coverPath)) {
                 const worker = fork('./workers/delete-worker.js');
                 worker.send(coverPath);

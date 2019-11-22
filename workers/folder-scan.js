@@ -10,7 +10,7 @@ const { NormalizeName } = require('../Utils/StringUtil')
 const db = require('../models');
 
 var tempFiles = [];
-const coverPath = path.join('./static', 'covers', 'series');
+const coverPath = path.join('./public', 'covers', 'series');
 
 const worker = fork('./workers/screenshot-worker.js');
 fs.mkdirsSync(coverPath);
@@ -106,10 +106,11 @@ PopulateDB = async (folder, files, fId, se) => {
 scanOneDir = async (data) => {
 
     var fis = WinDrive.ListFilesRO(data.dir);
-   
-    let serie = await createCover(data.dir, fis);
+    let serie;
+    if (fis.length > 0)
+        serie = await createCover(data.dir, fis);
     await PopulateDB(data.dir, fis, data.id, serie);
-    
+
     data.series = serieCovers;
     worker.send(data);
 }

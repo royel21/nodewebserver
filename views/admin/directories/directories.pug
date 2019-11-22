@@ -1,13 +1,13 @@
-mixin configs(directories, pagedatas)
+mixin directories(directories, pagedatas)
     #container.text-light.bg-dark.rounded.mx-
-        .nav.nav-tabs#tab-config
+        .nav.nav-tabs#tab-directory
             .nav-item
-                input#tab-config-dirs(type="radio" name="tabs" checked)
-                label.nav-link(for="tab-config-dirs")
+                input#tab-directory-dirs(type="radio" name="tabs" checked)
+                label.nav-link(for="tab-directory-dirs")
                     .fas.fa-folder-plus
             .nav-item
-                input#tab-config-disk(type="radio" name="tabs")
-                label.nav-link(for="tab-config-disk")
+                input#tab-directory-disk(type="radio" name="tabs")
+                label.nav-link(for="tab-directory-disk")
                     .fas.fa-hdd
 
         ul#paths.list-group.text-dark.font-weight-bold(data-csrf=pagedatas.csrfToken)

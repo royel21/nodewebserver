@@ -43,7 +43,7 @@ loadCategories = async (req, res) => {
     let view = req.query.partial ? "admin/partial-items-home" : "admin/index.pug";
 
     res.render(view, {
-        title: "Categorias",
+        title: "Categories",
         id: "category",
         cId,
         items,

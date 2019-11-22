@@ -25,7 +25,7 @@
     "csurf": "^1.10.0",
     "drivelist": "^8.0.9",
     "express": "^4.16.4",
-    "express-fileupload": "^1.1.1-alpha.3",
+    "express-fileupload": "^1.1.6",
     "express-session": "^1.15.6",
     "ffmpeg-static": "^2.4.0",
     "ffprobe-static": "^3.0.0",
@@ -50,7 +50,11 @@
     "win-explorer": "file:local_modules/win-explorer"
   },
   "devDependencies": {
-    "gulp": "^4.0.0",
+    "del": "^5.1.0",
+    "gulp": "^4.0.2",
+    "gulp-clean-css": "^4.2.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-minify": "^3.1.0",
     "nodemon": "^1.18.10"
   }
 }

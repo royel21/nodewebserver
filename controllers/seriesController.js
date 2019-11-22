@@ -2,7 +2,7 @@
 const db = require('../models');
 const fs = require('fs-extra');
 
-if (!fs.existsSync('./static/covers/series')) fs.mkdirs('./static/covers/series');
+if (!fs.existsSync('./public/covers/series')) fs.mkdirs('./public/covers/series');
 loadSeries = async (req, res) => {
     let itemsPerPage = req.query.screenW < 1900 ? 16 : 19;
     let currentPage = req.params.page || 1;

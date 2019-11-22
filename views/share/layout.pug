@@ -7,10 +7,6 @@ html(lang="en")
         link(rel="manifest" href="/manifest.json")
         meta(name="viewport" content="initial-scale=1")
         link(rel="shortcut icon" href="/images/home.ico" type="image/ico")
-        link(rel="stylesheet" href="/lib/css/bootstrap.min.css" type="text/css")
-        link(rel="stylesheet" href="/lib/css/all.min.css" type="text/css")
-        link(rel="stylesheet" href="/css/nav-menu.css" type="text/css")
-        link(rel="stylesheet" href="/css/index.css" type="text/css")
         block css
     body
         block navbar
@@ -27,10 +23,6 @@ html(lang="en")
                 block content
             span#full-screen
                 i.fas.fa-expand-arrows-alt.popup-msg(data-title="Pantalla Completa")
-
-    script(src="/lib/js/jquery.js")
-    script(src="/js/util.js")
-    script(src="/lib/js/socket.io.slim.js")
     block script
 
     

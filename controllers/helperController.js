@@ -2,7 +2,7 @@ const db = require('../models');
 const fs = require('fs-extra');
 const sharp = require('sharp')
 
-const coverPath = './static/covers/series/';
+const coverPath = './public/covers/series/';
 
 
 exports.modal = (req, res) => {

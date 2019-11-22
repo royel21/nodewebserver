@@ -5,7 +5,7 @@ const path = require('path');
 const fs = require('fs-extra')
 const { NormalizeName } = require('../Utils/StringUtil')
 
-exports.movies = (req, res) => {
+exports.files = (req, res) => {
     let itemsPerPage = req.params.items || req.query.items || 12;
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
@@ -20,19 +20,19 @@ exports.movies = (req, res) => {
                 [db.Op.like]: "%" + val + "%"
             }
         }
-    }).then(movies => {
+    }).then(files => {
 
-        var totalPages = Math.ceil(movies.count / itemsPerPage);
-        let view = req.query.partial ? "admin/movies/partial-movies-table" : "admin/index.pug";
+        var totalPages = Math.ceil(files.count / itemsPerPage);
+        let view = req.query.partial ? "admin/files/partial-files-table" : "admin/index.pug";
         res.render(view, {
-            title: "Peliculas",
-            movies,
+            title: "Files",
+            files,
             pagedatas: {
                 currentPage,
                 itemsPerPage,
                 totalPages,
                 search: val,
-                action: "/admin/movies/",
+                action: "/admin/files/",
                 csrfToken: req.csrfToken()
             }
         }, (err, html) => {
@@ -54,10 +54,10 @@ exports.postSearch = (req, res) => {
     let itemsPerPage = req.body.items || 12;
     let currentPage = req.body.page || 1;
     let val = req.body.search || "";
-    res.redirect(`/admin/movies/${currentPage}/${itemsPerPage}/${val}?partial=true`)
+    res.redirect(`/admin/files/${currentPage}/${itemsPerPage}/${val}?partial=true`)
 }
 
-exports.movie_modal = (req, res) => {
+exports.file_modal = (req, res) => {
     var uid = req.query.uid;
     if (uid) {
         db.file.findOne({
@@ -65,11 +65,11 @@ exports.movie_modal = (req, res) => {
                 Id: uid
             }
         }).then(data => {
-            let movie = data ? data : {};
-            res.render("admin/movies/modal",
+            let file = data ? data : {};
+            res.render("admin/files/modal",
                 {
-                    movie, csrfToken: req.csrfToken(),
-                    modalTitle: uid ? "Editar Pelicula" : "Agregar Pelicula"
+                    file, csrfToken: req.csrfToken(),
+                    modalTitle: uid ? "Editar File" : "Agregar File"
                 });
         }).catch(err => {
             if (err) console.log(err);
@@ -81,7 +81,7 @@ exports.movie_modal = (req, res) => {
 }
 
 
-exports.movieModalPost = (req, res) => {
+exports.fileModalPost = (req, res) => {
     let Name = req.body.name;
     let Description = req.body.description;
     let Id = req.body.id;
@@ -112,7 +112,7 @@ exports.deleteFile = (req, res) => {
     if (id) {
         db.file.findOne({ where: { Id: id } }).then(file => {
             file.destroy().then(() => {
-                fs.removeSync(path.join('./static/covers', 'folder-' + file.DirectoryId, file.Id + ".jpg"));
+                fs.removeSync(path.join('./public/covers', 'folder-' + file.DirectoryId, file.Id + ".jpg"));
                 res.send({ state: "ok", msg: "File Borrado" });
             });
         }).catch(err => {

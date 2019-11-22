@@ -5,9 +5,9 @@ const mypassport = require('../passport_config')(passport);
 
 exports.index = (req, res) => {
     let isFile = /video|content/ig.test(req.url);
-    
+
     let isManga = req.url.includes("manga");
-    if(isManga) isFile = true;
+    if (isManga) isFile = true;
 
     //Select the database
     let tempDb = isFile ? db.file : db.serie;
@@ -15,7 +15,11 @@ exports.index = (req, res) => {
     let screenw = parseInt(req.cookies['screen-w']);
     let itemsPerPage = req.params.items || req.query.items || (screenw < 1900 ? 21 : 27);
     //parameters
-    let seriesId = req.params.serie
+    let seriesId = req.params.serie;
+    if (!db.serie.findOne({ where: { Id: seriesId } })) {
+        seriesId = null;
+    }
+
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
     let search = req.params.search || "";
@@ -26,7 +30,7 @@ exports.index = (req, res) => {
         limit: itemsPerPage
     }
 
-    let action = isManga ? "/mangas/" : isFile ? "/videos/" :  "/series/";
+    let action = isManga ? "/mangas/" : isFile ? "/videos/" : "/series/";
 
     if (seriesId) {
 
@@ -36,8 +40,8 @@ exports.index = (req, res) => {
         }
     } else {
         query.where = { Name: { [db.Op.like]: "%" + search + "%" } }
-        
-        if(isFile){
+
+        if (isFile) {
             query.where.Type = isManga ? "Manga" : "Video"
         }
     }
@@ -81,10 +85,10 @@ exports.postSearch = (req, res) => {
     let serieId = req.params.serie;
     let url = `/series/1/${itemsPerPage}/${search}?partial=true`;
 
-    if(/video|content|manga/ig.test(req.url)){
-        url = (serieId ? `/serie-content/${serieId}` : /mangas/ig.test(req.url) ? "/mangas": '/videos') + `/1/${itemsPerPage}/${search}?partial=true`;
+    if (/video|content|manga/ig.test(req.url)) {
+        url = (serieId ? `/serie-content/${serieId}` : /mangas/ig.test(req.url) ? "/mangas" : '/videos') + `/1/${itemsPerPage}/${search}?partial=true`;
     }
-    
+
     res.redirect(url);
 }
 

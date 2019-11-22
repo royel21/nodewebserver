@@ -80,7 +80,7 @@ const myworker = async (id) => {
 process.on("message", (data) => {
 
     seriesThumbNails(data.series).then(() => {
-        vCover = path.resolve('./static', 'covers', 'files', 'folder-' + data.id);
+        vCover = path.resolve('./public', 'covers', 'files', 'folder-' + data.id);
         console.log("creating file covers");
         if (!fs.existsSync(vCover)) {
             fs.mkdirsSync(vCover);

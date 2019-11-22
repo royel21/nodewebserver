@@ -10,6 +10,5 @@ local_modules/rcunrar/node_modules
 local_modules/rcunrar/.vscode
 local_modules/rcunrar/bin
 local_modules/rcunrar/build
-
-static/covers
+public/covers
 *.db

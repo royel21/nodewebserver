@@ -2,9 +2,6 @@ extends ../share/layout
 
 block css
     link(rel="stylesheet" href="/css/admin.css" type="text/css")
-    link(rel="stylesheet" href="/css/modal.css" type="text/css")
-    link(rel="stylesheet" href="/css/tree-view.css" type="text/css")
-    link(rel="stylesheet" href="/css/series.css" type="text/css")
 
 block navbar
     include ../share/navbar
@@ -15,45 +12,39 @@ block navbar
     .sidenav
         ul#mytab.navbar.navbar-dark.nav-tabs(role="tablist")
             li.nav-item
-                a.nav-link(href="/admin/users" class=""+(users ? "active" : ""))
+                a.nav-link(href="/admin/users" class=""+(/Users/ig.test(title) ? "active" : ""))
                     i.fa.fa-users.text-primary
                         span Users
             li.nav-item
-                a.nav-link(href="/admin/series" class=""+(id && id.includes('serie') ? "active" : ""))
-                    i.fas.fa-film.text-primary
+                a.nav-link(href="/admin/series" class=""+(/Series/ig.test(title) ? "active" : ""))
+                    i.fas.fa-folder.text-primary
                         span Folders
             li.nav-item
-                a.nav-link(href="/admin/movies" class=""+(movies ? "active" : ""))
+                a.nav-link(href="/admin/files" class=""+(/Files/ig.test(title) ? "active" : ""))
                     i.fas.fa-film.text-primary
                         span Files
             li.nav-item
-                a.nav-link(href="/admin/categories" class=""+(id && id.includes('category') ? "active" : ""))
+                a.nav-link(href="/admin/categories" class=""+(/Cate/ig.test(title) ? "active" : ""))
                     i.fas.fa-tags.text-primary
                         span Categories
             li.nav-item
-                a.nav-link(href="/admin/configs" class=""+(directories ? "active" : ""))
+                a.nav-link(href="/admin/directories" class=""+(/Directories/ig.test(title) ? "active" : ""))
                     i.fas.fa-cogs.text-primary
                         span Directories
 
 block content
-    -let pageScript = ""
-    if users
+    if /Users/ig.test(title)
         include ./users/users-table
         +users_table(users, pagedatas)
-    else if movies
-        include ./movies/movies-table
-        +movies_table(movies, pagedatas)
-        -pageScript = "/js/movies.js"
-    else if items
+    else if /Files/ig.test(title)
+        include ./files/files-table
+        +files_table(files, pagedatas)
+    else if /Serie|Cate/ig.test(title)
         include ./items_home
         +items_home(items, files, filepages, itemspages, title, id)
-        -pageScript = "/js/series.js"
-    else if directories
-        include ./configs/configs
-        +configs(directories, pagedatas)
-        -pageScript = "/js/directories.js"
+    else if /Directories/ig.test(title)
+        include ./directories/directories
+        +directories(directories, pagedatas)
 
 block script
-    script(src="/js/main.js")
     script(src="/js/admin.js")
-    script(id="pagescript" src=""+pageScript)

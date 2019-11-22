@@ -25,7 +25,7 @@ exports.users = (req, res) => {
         var totalPages = Math.ceil(users.count / itemsPerPage);
         let view = req.query.partial ? "admin/users/partial-users-table" : "admin/index";
         res.render(view, {
-            title: "Usuarios", users,
+            title: "Users", users,
             pagedatas: {
                 currentPage,
                 itemsPerPage,
