@@ -1,4 +1,4 @@
-mixin items_home(items, videos, videopages, itemspages, title, id)
+mixin items_home(items, files, filepages, itemspages, title, id)
     #container.text-light.bg-dark.rounded.mx-2(data-action=itemspages.action, data-csrf=itemspages.csrfToken)
         #items-container.card.text-dark.row
             .col-6
@@ -11,12 +11,12 @@ mixin items_home(items, videos, videopages, itemspages, title, id)
                 .list-titles
                     .nav.nav-tabs
                         .nav-item
-                            input#tab-list-videos(type="radio" name="tabs" checked)
-                            label.nav-link(for="tab-list-videos") Lista de videos
+                            input#tab-list-files(type="radio" name="tabs" checked)
+                            label.nav-link(for="tab-list-files") Lista de files
                         .nav-item
-                            input#tab-all-videos(type="radio" name="tabs")
-                            label.nav-link(for="tab-all-videos") Todos los Videos
-                    span#total-videos.badge.badge-primary= videos.count
-                include ./video-list
-                +videoList(videos, videopages)
+                            input#tab-all-files(type="radio" name="tabs")
+                            label.nav-link(for="tab-all-files") Todos los files
+                    span#total-files.badge.badge-primary = files.count
+                include ./file-list
+                +fileList(files, filepages)
                 

@@ -3,14 +3,14 @@ mixin items-view(items, pagedatas, isFile)
         #controls
             if pagedatas.action.includes('content')    
                 span#back
-                    i.far.fa-arrow-alt-circle-up
+                    i.far.fa-arrow-alt-circle-left
             include ../share/search
             +search(pagedatas, pagedatas.action+"search", "search-form")
 
             include ../share/pagination
             +pagination(items.count, pagedatas)
                 
-        .items-list(id=(isFile ? "videos-list" : "series-list"))
+        .items-list(id=(isFile ? "files-list" : "series-list"))
             each item in items.rows
                 .items(tabindex="0" id=item.Id, data-duration=item.Duration)
                     .item-video

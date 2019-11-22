@@ -13,83 +13,16 @@ var Slider = null;
 var update = false;
 var currentVideoId = "";
 
-let currentFile = { id: 0, currentTime: 0 };
-
 $('.btn-fullscr').click((e) => {
     setfullscreen(videoViewer)
 });
 
-var config = {
-    sortBy: "Name-D",
-    serie: { lastSerie: "", lastIndex: 0 },
-    volume: 0,
-    isMuted: false,
-    paused: true,
-    hidecontrolduration: 3,
-    recentMax: 100,
-    recents: [],
-    itemsPerPage: 0,
-    seriesPerPage: 0,
-    playerkey: {
-        nextfile: {
-            name: "PageDown",
-            keycode: 34,
-            isctrl: false
-        },
-        previousfile: {
-            name: "PageDown",
-            keycode: 33,
-            isctrl: false
-        },
-        forward: {
-            name: "ArrowRight",
-            keycode: 39,
-            isctrl: false
-        },
-        rewind: {
-            name: "ArrowLeft",
-            keycode: 37,
-            isctrl: false
-        },
-        playpause: {
-            name: "Space",
-            keycode: 32,
-            isctrl: false
-        },
-        fullscreen: {
-            name: "Enter",
-            keycode: 13,
-            isctrl: false
-        },
-        volumeup: {
-            name: "ArrowUp",
-            keycode: 38,
-            isctrl: false
-        },
-        volumedown: {
-            name: "ArrowDown",
-            keycode: 40,
-            isctrl: false
-        },
-        volumemute: {
-            name: "m",
-            keycode: 77,
-            isctrl: false
-        },
-        closeplayer: {
-            name: "x",
-            keycode: 88,
-            isctrl: true
-        }
-    }
-}
-
-updateRecents = () => {
-    let tempM = config.recents.removeBy(currentFile, "id");
+updaterecentVideos = () => {
+    let tempM = config.recentVideos.removeBy(currentFile, "id");
     if (tempM != undefined) currentFile.current = tempM.current;
-    config.recents.unshift(currentFile);
-    if (config.recents.length > config.recentMax) {
-        config.recents.pop();
+    config.recentVideos.unshift(currentFile);
+    if (config.recentVideos.length > config.recentVideoMax) {
+        config.recentVideos.pop();
     }
 }
 
@@ -97,7 +30,7 @@ window.onbeforeunload = (e) => {
     if (config) {
         local.setObject('config', config);
         local.setItem('selectedIndex', selectedIndex);
-        updateRecents();
+        updaterecentVideos();
     }
 }
 
@@ -123,12 +56,12 @@ Slider.onPreview = (value) => {
 
 const configPlayer = () => {
     vDuration = formatTime(player.duration);
-    $vTotalTime.text(formatTime(player.currentTime) + "/" + vDuration);
+    $vTotalTime.text(formatTime(player.currentPos) + "/" + vDuration);
 
     player.volume = config.volume;
 
     player.muted = btnMuted.checked = config.isMuted;
-    player.currentTime = currentFile.current;
+    player.currentPos = currentFile.current;
     if (!config.paused) pauseOrPlay();
     $('.loading').css({ display: 'none' });
 
@@ -146,11 +79,11 @@ volcontrol.value = config.volume;
 $('#video-viewer .fa-volume-up').attr('data-title', config.isMuted ? "Unmute" : "Mute");
 
 Slider.oninput = (value) => {
-    player.currentTime = value;
+    player.currentPos = value;
 }
 
 const closePlayer = (e) => {
-    updateRecents();
+    updaterecentVideos();
     stopClock();
     if (document.fullscreenElement && !document.fullscreenElement.tagName.includes('BODY')) {
         setfullscreen(videoViewer);
@@ -256,9 +189,9 @@ player.onplay = player.onpause = hideFooter;
 
 player.ontimeupdate = (e) => {
     if (update && Slider) {
-        Slider.value = Math.floor(player.currentTime);
-        $vTotalTime.text(formatTime(player.currentTime) + "/" + vDuration);
-        currentFile.current = player.currentTime;
+        Slider.value = Math.floor(player.currentPos);
+        $vTotalTime.text(formatTime(player.currentPos) + "/" + vDuration);
+        currentFile.current = player.currentPos;
     }
 }
 
@@ -324,12 +257,12 @@ player.ontouchmove = (e) => {
         let diffX = touch.clientX - point.X;
         if (diffX > offset) {
             console.log("right: " + diffX);
-            player.currentTime += 2;
+            player.currentPos += 2;
         }
 
         if (diffX < -offset) {
             console.log("letf: " + (touch.clientX - point.X));
-            player.currentTime -= 2;
+            player.currentPos -= 2;
         }
         point.X = touch.clientX;
         point.Y = touch.clientY;
@@ -357,7 +290,7 @@ const playVideo = (el) => {
         update = false;
         let id = el.id;
         currentFile = { id, current: 0 }
-        updateRecents();
+        updaterecentVideos();
 
         if (!$(vContainer).is(':visible')) {
             startClock();
@@ -415,7 +348,7 @@ document.onkeydown = (e) => {
             case keys.rewind.keycode:
                 {
                     if (e.ctrlKey == keys.rewind.isctrl)
-                        player.currentTime -= 6;
+                        player.currentPos -= 6;
                     break;
                 }
             case keys.volumeup.keycode:
@@ -429,7 +362,7 @@ document.onkeydown = (e) => {
             case keys.forward.keycode:
                 {
                     if (e.ctrlKey == keys.forward.isctrl)
-                        player.currentTime += 6;
+                        player.currentPos += 6;
                     break;
                 }
             case keys.volumedown.keycode:

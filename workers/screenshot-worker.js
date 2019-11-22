@@ -99,7 +99,7 @@ process.on("message", (data) => {
 var seriesThumbNails = async (series) => {
     for (let s of series) {
         try {
-            if (s.isVideo) {
+            if (!s.isManga) {
                 console.log(s.coverPath);
                 let duration = await getVideoDuration(s.filePath);
                 if (isNaN(duration)) continue;

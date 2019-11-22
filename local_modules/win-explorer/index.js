@@ -72,7 +72,11 @@ ListFiles = (dir, filters, options) =>{
     var files = WinExplore.ListFiles(d, options.oneFile).sort(sortFiles);
 
     const checkFiles = (f) => {
-        if (f.isHidden === !opts.hidden) return false;
+        if (f.isHidden)
+        {
+            if(!opts.hidden) return false;
+        } 
+
         if (!f.isDirectory === opts.file) return true;
         if (f.isDirectory === opts.directory) return true;
         return false;

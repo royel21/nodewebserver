@@ -101,8 +101,12 @@ position: relative;
 }
 
 #back{
+    position: absolute;
     align-self: center;
     margin-left: 5px;
+}
+#back + .search-container{
+    margin-left: 42px;
 }
 
 @media all and (max-width: 650px)

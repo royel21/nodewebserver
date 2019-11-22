@@ -1,0 +1,21 @@
+mixin fileList(files, filepages)
+    -let noItems = true
+    #file-list.list(data-total=files.count)
+        .controls
+            if filepages.isList
+                span#add-filtered-files.btn.btn-primary Add All 
+                    i.fas.fa-plus-circle
+            include ../share/search
+            +search(filepages, filepages.action+"search-files",'search-files')
+            include ../share/pagination
+            +pagination(files.count, filepages, noItems)
+        ul.list-group
+            each file in files.rows
+                li.list-group-item(id=file.Id)
+                    if filepages.isList
+                        span.v-add
+                            i.fas.fa-plus-circle
+                    else
+                        span.v-remove.text-danger
+                            i.fas.fa-trash-alt
+                    span.v-name= file.Name

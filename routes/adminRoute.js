@@ -16,7 +16,7 @@ router.post("/users/search", usersController.postSearch);
 
 router.get("/series", seriesController.series);
 router.get("/series/modal", helperController.modal);
-router.get("/series/files-list", seriesController.filesList);
+router.get("/series/file-list", seriesController.filesList);
 router.get("/series/items-list", seriesController.itemsList);
 router.post("/series/add-files", seriesController.addFiles);
 router.post("/series/modal-post", helperController.modalPost);
@@ -25,7 +25,7 @@ router.post('/series/delete-item', helperController.delete);
 
 router.get("/categories/", categoriesController.categories);
 router.get("/categories/modal", helperController.modal);
-router.get("/categories/files-list", categoriesController.filesList);
+router.get("/categories/file-list", categoriesController.filesList);
 router.get("/categories/items-list", categoriesController.itemsList);
 router.post("/categories/add-files", categoriesController.addFiles);
 router.post("/categories/modal-post", helperController.modalPost);

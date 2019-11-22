@@ -13,5 +13,6 @@ router.get("/series/:page?/:items?/:search?", homeController.index);
 router.post("/login", homeController.loginPost);
 router.post("/series/search", homeController.postSearch);
 router.post("/videos/search", homeController.postSearch);
+router.post("/mangas/search", homeController.postSearch);
 router.post("/serie-content/:serie/search", homeController.postSearch);
 module.exports = router;

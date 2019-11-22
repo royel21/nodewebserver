@@ -66,7 +66,7 @@ Napi::Array Win_Explorer::ListFiles(const Napi::CallbackInfo &info)
     try
     {
 
-      if (ffd.cFileName[0] == L'.')
+      if (ffd.cFileName[0] == L'.' || ffd.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM)
         continue;
       Napi::Object file = Napi::Object::New(env);
       file.Set("FileName", Napi::String::New(env, (const char16_t *)ffd.cFileName));

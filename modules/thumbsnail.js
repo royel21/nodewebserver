@@ -46,13 +46,19 @@ module.exports.ZipCover = (file, coverP) => {
 
             if (firstImg == undefined) {
                 resolve(false);
+                zip.close();
             } else {
                 sharp(zip.entryDataSync(firstImg)).jpeg({
                     quality: 80
                 }).resize(240).toFile(coverP, (error) => {
                     resolve(coverP);
+                    zip.close();
                 });
             }
         });
+        zip.on("error", (error) => {
+            console.log(file, error);
+            zip.close();
+        })
     });
 }

@@ -12,6 +12,74 @@ const LEFT = 37;
 const RIGHT = 39;
 const ENTER = 13;
 
+
+let currentFile = { id: 0, currentPos: 0 };
+
+var config = {
+    sortBy: "Name-D",
+    serie: { lastSerie: "", lastIndex: 0 },
+    volume: 0,
+    isMuted: false,
+    paused: true,
+    hidecontrolduration: 3,
+    recentVideoMax: 100,
+    recentVideos: [],
+    itemsPerPage: 0,
+    seriesPerPage: 0,
+    playerkey: {
+        nextfile: {
+            name: "PageDown",
+            keycode: 34,
+            isctrl: false
+        },
+        previousfile: {
+            name: "PageDown",
+            keycode: 33,
+            isctrl: false
+        },
+        forward: {
+            name: "ArrowRight",
+            keycode: 39,
+            isctrl: false
+        },
+        rewind: {
+            name: "ArrowLeft",
+            keycode: 37,
+            isctrl: false
+        },
+        playpause: {
+            name: "Space",
+            keycode: 32,
+            isctrl: false
+        },
+        fullscreen: {
+            name: "Enter",
+            keycode: 13,
+            isctrl: false
+        },
+        volumeup: {
+            name: "ArrowUp",
+            keycode: 38,
+            isctrl: false
+        },
+        volumedown: {
+            name: "ArrowDown",
+            keycode: 40,
+            isctrl: false
+        },
+        volumemute: {
+            name: "m",
+            keycode: 77,
+            isctrl: false
+        },
+        closeplayer: {
+            name: "x",
+            keycode: 88,
+            isctrl: true
+        }
+    }
+}
+
 const selectItem = async (index) => {
     selectedIndex = index;
     var nextEl = $('.items').get(index);
@@ -56,7 +124,7 @@ $('body').on('keydown', '.items-list', (e) => {
         case ENTER:
             {
                 let item = e.target.closest('.items')
-                if ($('#files-list')[0]) {
+                if ($('#file-list')[0]) {
                     playVideo(item);
                 } else {
                     let url = "/serie-content/" + item.id;
@@ -146,7 +214,7 @@ $('body').on('dblclick', '.items-list .items', (e) => {
     let item = e.target.classList[0] === "items" ? e.target : e.target.closest('.items');
     let title = document.title;
 
-    if ($('#files-list')[0]) {
+    if ($('#file-list')[0]) {
         playVideo(item);
     } else {
         config.serie.lastSerie = window.location.pathname;

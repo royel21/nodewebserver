@@ -1,34 +1,34 @@
-var loadVideos;
+var loadFiles;
 var getId;
 var getAction;
 var loadItemList;
 var loadFromPager;
 var _csrf;
 var getCurPage;
-var isAllVideo;
-//load videos for current admin page
-if (!loadVideos) {
+var isAllFile;
+//load files for current admin page
+if (!loadFiles) {
 
     _csrf = $('#container').data('csrf');
-    isAllVideo = () => {
+    isAllFile = () => {
         let tab = $('.list-titles input[type="radio"]:checked')[0];
-        return tab ? tab.id.includes('all-videos') : false;
+        return tab ? tab.id.includes('all-files') : false;
     }
     getAction = (e) => $('#container').data('action');
-    //load videos list
-    loadVideos = (data) => {
+    //load files list
+    loadFiles = (data) => {
 
-        data.isAllVideo = isAllVideo();
+        data.isAllFiles = isAllFile();
 
         let selecteditem = $('.list .content-list .active')[0];
         data.id = selecteditem ? selecteditem.id : "";
 
-        let url = getAction() + 'files-list';
+        let url = getAction() + 'file-list';
         //console.log(url, data, selecteditem)
 
         $.get(url, data, (resp, status) => {
-            $('#files-list').replaceWith(resp);
-            $('#total-videos').text("Total - "+$('#files-list').data('total'));
+            $('#file-list').replaceWith(resp);
+            $('#total-files').text("Total - "+$('#file-list').data('total'));
         });
     }
     //load items list
@@ -43,13 +43,13 @@ if (!loadVideos) {
     }
     // load page base on target pager
     loadFromPager = (element, data) => {
-        if (element.closest('.list').id.includes('files-list')) {
-            data.search = $('#files-list .search-input').val();
-            loadVideos(data);
+        if (element.closest('.list').id.includes('file-list')) {
+            data.search = $('#file-list .search-input').val();
+            loadFiles(data);
         } else {
             loadItemList(data, ()=>{
-                if (!isAllVideo() || getAction().includes('categories'))
-                loadVideos({ page: getCurPage('videos') }, 'files-list');
+                if (!isAllFile() || getAction().includes('categories'))
+                loadFiles({ page: getCurPage('files') }, 'file-list');
             });
 
         }
@@ -72,7 +72,7 @@ if (!loadVideos) {
                     console.log(resp.message);
                 } else {
                     loadItemList({ page: getCurPage('items') }, () => {
-                        loadVideos({ page: getCurPage('videos') });
+                        loadFiles({ page: getCurPage('files') });
                     });
                     hideForm();
                 }
@@ -94,14 +94,14 @@ $('#items-container').on('click', '.content-list li', (e) => {
         $('.content-list li').removeClass("active");
         $(li).addClass('active');
 
-        if (!isAllVideo() || getAction().includes('categories'))
-            loadVideos({ page: getCurPage('videos') }, 'files-list');
+        if (!isAllFile() || getAction().includes('categories'))
+            loadFiles({ page: getCurPage('files') }, 'file-list');
     }
 });
 
-//Load videos on tab change
+//Load files on tab change
 $('#items-container .list-titles').on('change', 'input[type="radio"]', (e) => {
-    loadVideos({});
+    loadFiles({});
 });
 
 
@@ -133,8 +133,8 @@ $('#items-container').on('click', 'form .clear-search', (e) => {
     loadFromPager(e.target, {});
 });
 
-//add videos to selected item
-$('#items-container').on('click', '.v-add, #add-filtered-videos', (e) => {
+//add files to selected item
+$('#items-container').on('click', '.v-add, #add-filtered-files', (e) => {
     let liItem = $('#items-list .list-group li.active')[0];
     if (liItem) {
         console.log(liItem)
@@ -142,22 +142,22 @@ $('#items-container').on('click', '.v-add, #add-filtered-videos', (e) => {
         let videoId = li ? li.id : null;
 
         let itemId = liItem.id;
-        let search = $('#search-videos .search-input').val();
+        let search = $('#search-files .search-input').val();
         
         if (videoId || search) {
-            $.post(getAction() + 'add-videos', { itemId, search, videoId, _csrf }, (resp) => {
+            $.post(getAction() + 'add-files', { itemId, search, videoId, _csrf }, (resp) => {
                 if (resp.err) {
-                    showError('Filtre primero no se puede agregar todos los videos juntos', 'text-danger');
+                    showError('Filtre primero no se puede agregar todos los files juntos', 'text-danger');
                 } else {
                     if (search) {
-                        showError('Videos Agregados: ' + resp.count, 'text-success');
+                        showError('Files Agregados: ' + resp.count, 'text-success');
                     }
-                    loadVideos({ search, page: getCurPage('videos') });
+                    loadFiles({ search, page: getCurPage('files') });
                 }
             });
         } else {
             console.log("vId & search null")
-            showError('Filtre primero no se puede agregar todos los videos juntos', 'text-danger');
+            showError('Filtre primero no se puede agregar todos los files juntos', 'text-danger');
         }
 
     } else {
@@ -178,15 +178,15 @@ $('#items-container').on('click', '.fa-trash-alt', (e) => {
         console.log(resp);
         if (resp.state.includes('Ok')) {
             $(li).fadeOut('fast', (e) => {
-                let vPage = getCurPage('videos');
+                let vPage = getCurPage('files');
                 
                 if (isItem) {
                     loadItemList({ page: getCurPage('items') }, () => {
-                        loadVideos({ page: vPage });
+                        loadFiles({ page: vPage });
                     });
                 } else {
                     if(vPage.length > 0){
-                        loadVideos({ page: vPage });
+                        loadFiles({ page: vPage });
                     }else{
                         $(li).fadeOut('fast',()=>{
                             li.remove();

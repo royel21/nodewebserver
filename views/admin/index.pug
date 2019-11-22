@@ -17,23 +17,23 @@ block navbar
             li.nav-item
                 a.nav-link(href="/admin/users" class=""+(users ? "active" : ""))
                     i.fa.fa-users.text-primary
-                        span Usuarios
+                        span Users
             li.nav-item
                 a.nav-link(href="/admin/series" class=""+(id && id.includes('serie') ? "active" : ""))
                     i.fas.fa-film.text-primary
-                        span Series
+                        span Folders
             li.nav-item
                 a.nav-link(href="/admin/movies" class=""+(movies ? "active" : ""))
                     i.fas.fa-film.text-primary
-                        span Peliculas
+                        span Files
             li.nav-item
                 a.nav-link(href="/admin/categories" class=""+(id && id.includes('category') ? "active" : ""))
                     i.fas.fa-tags.text-primary
-                        span Categorias
+                        span Categories
             li.nav-item
                 a.nav-link(href="/admin/configs" class=""+(directories ? "active" : ""))
                     i.fas.fa-cogs.text-primary
-                        span Directorios
+                        span Directories
 
 block content
     -let pageScript = ""
@@ -46,7 +46,7 @@ block content
         -pageScript = "/js/movies.js"
     else if items
         include ./items_home
-        +items_home(items, videos, videopages, itemspages, title, id)
+        +items_home(items, files, filepages, itemspages, title, id)
         -pageScript = "/js/series.js"
     else if directories
         include ./configs/configs

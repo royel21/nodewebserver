@@ -11,13 +11,7 @@
     "binding.gyp"
   ],
   "scripts": {
-    "start": "node index.js",
-    "build:dev": "node-gyp build --debug",
-    "build": "node-gyp 16 rebuild & tsc index.ts",
-    "rebuild:dev": "node-gyp rebuild --debug",
-    "rebuild": "node-gyp rebuild",
-    "clean": "node-gyp clean",
-    "prepublish": "npm run build"
+    "build": "node-gyp 16 rebuild & tsc index.ts"
   },
   "keywords": [
     "node",

@@ -112,7 +112,7 @@ exports.filesList = (req, res) => {
     let val = req.query.search || "";
 
     let serieId = req.query.id;
-    let view = req.query.isAllFile === "true";
+    let view = req.query.isAllFiles === "true";
     if (view) {
         serieId = null;
     }

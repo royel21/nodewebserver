@@ -1,11 +1,12 @@
 extends ../share/layout
 
 block css
-    link(rel="stylesheet" href="/css/fullscreen.css" type="text/css")
     link(rel="stylesheet" href="/css/home.css" type="text/css")
-    link(rel="stylesheet" href="/css/videoplayer.css" type="text/css")
-    link(rel="stylesheet" href="/css/sliders.css" type="text/css")
-    link(rel="stylesheet" href="/css/footer.css" type="text/css")
+    if pagedatas.action.includes("videos")
+        link(rel="stylesheet" href="/css/fullscreen.css" type="text/css")
+        link(rel="stylesheet" href="/css/videoplayer.css" type="text/css")
+        link(rel="stylesheet" href="/css/sliders.css" type="text/css")
+        link(rel="stylesheet" href="/css/footer.css" type="text/css")
 block navbar
     include ../share/navbar
     +navbar(user, url)
@@ -22,7 +23,8 @@ block content
         i.far.fa-arrow-alt-circle-up
 block script
     script(src="/js/main.js")
-    script(src="/js/video-list.js")
-    script(src="/js/sliders.js")
-    script(src="/js/player.js")
+    script(src="/js/file-list.js")
+    if pagedatas.action.includes("videos")
+        script(src="/js/sliders.js")
+        script(src="/js/player.js")
     script(src="/js/move-element.js")

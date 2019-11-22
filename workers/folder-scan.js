@@ -17,6 +17,40 @@ fs.mkdirsSync(coverPath);
 
 var serieCovers = [];
 
+createCover = async (dir, files) => {
+    let serie;
+    let firstFile = files.filter(a => a.extension && ['mp4', 'mkv', 'avi', 'ogg', 'webm', 'rar', 'zip']
+        .includes(a.extension.toLocaleLowerCase()))[0];
+
+    if (firstFile) {
+        let Name = path.basename(dir);
+        let tempSerie = await db.serie.findOrCreate({ where: { Name } });
+
+        serie = tempSerie[0];
+
+        let SerieCover = path.join(coverPath, serie.Id + ".jpg");
+
+        if (!fs.existsSync(SerieCover)) {
+
+            let img = files.find(a => a.extension && ['jpg', 'jpeg', 'png', 'gif'].includes(a.extension.toLocaleLowerCase()));
+
+            if (img) {
+
+                await sharp(path.join(dir, img.FileName)).resize({ height: 200 }).toFile(SerieCover);
+
+            } else {
+                serieCovers.push({
+                    serie: true,
+                    filePath: path.join(dir, firstFile.FileName),
+                    coverPath: SerieCover,
+                    isManga: /rar|zip/ig.test(firstFile.FileName)
+                });
+            }
+        }
+    }
+    return serie;
+}
+
 PopulateDB = async (folder, files, fId, se) => {
 
     let filteredFile = files.filter((f) => {
@@ -51,53 +85,17 @@ PopulateDB = async (folder, files, fId, se) => {
                         Size: f.Size
                     });
                 } else {
-                    if (!vfound.Size) {
+                    if (vfound) {
                         await vfound.update({ Size: f.Size });
                     }
                 }
-                
+
             } else {
-                let serie;
-                let firstFile = f.Files.filter(a => a.extension && ['mp4', 'mkv', 'avi', 'ogg', 'webm', 'rar', 'zip']
-                    .includes(a.extension.toLocaleLowerCase()))[0];
-
-                if (firstFile) {
-                    let Name = path.basename(f.FileName);
-                    let tempSerie = await db.serie.findOrCreate({ where: { Name } });
-
-                    serie = tempSerie[0];
-
-                    let SerieCover = path.join(coverPath, serie.Id + ".jpg");
-
-                    if (!fs.existsSync(SerieCover)) {
-
-                        let img = f.Files.find(a => a.extension && ['jpg', 'jpeg', 'png', 'gif'].includes(a.extension.toLocaleLowerCase()));
-
-                        if (img) {
-
-                            await sharp(path.join(f.FileName, img.FileName)).resize({ height: 200 }).toFile(SerieCover);
-
-                        } else {
-
-                            try {
-                                if (v) {
-                                    serieCovers.push({
-                                        serie: true,
-                                        filePath: path.join(f.FileName, firstFile.FileName),
-                                        coverPath: SerieCover,
-                                        isVideo: /rar|zip/ig.test(firstFile.FileName)
-                                    });
-                                }
-                            } catch (err) {
-                                console.log(err, f.FileName)
-                            }
-                        }
-                    }
-                }
+                let serie = await createCover(f.FileName, f.Files);
                 await PopulateDB(f.FileName, f.Files, fId, serie);
             }
         } catch (error) {
-            console.log(error)
+            console.log(f, error);
         }
     }
 
@@ -108,15 +106,11 @@ PopulateDB = async (folder, files, fId, se) => {
 scanOneDir = async (data) => {
 
     var fis = WinDrive.ListFilesRO(data.dir);
-
-    try {
-        await PopulateDB(data.dir, fis, data.id);
-    } catch (err) {
-        console.log(err);
-    }
-    console.log('start sub-worker')
+   
+    let serie = await createCover(data.dir, fis);
+    await PopulateDB(data.dir, fis, data.id, serie);
+    
     data.series = serieCovers;
-
     worker.send(data);
 }
 
@@ -127,5 +121,8 @@ process.on("message", (data) => {
         process.exit();
     });
 
-    scanOneDir(data);
+    scanOneDir(data).catch(err => {
+        console.log(err);
+        process.exit();
+    });
 });

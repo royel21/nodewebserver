@@ -37,7 +37,7 @@ exports.folderContent = (req, res) => {
         dir = req.body.folder;
     }
 
-    let folders = windrive.ListFiles(dir, [], { hidden: false, file: false, directory: true });
+    let folders = windrive.ListFiles(dir, [], { hidden: true, file: false, directory: true });
     return folders.length == 0 ? res.send("") : res.render('admin/configs/tree-node', { fpath: dir, folders });
 }
 

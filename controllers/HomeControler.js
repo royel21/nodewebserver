@@ -81,9 +81,10 @@ exports.postSearch = (req, res) => {
     let serieId = req.params.serie;
     let url = `/series/1/${itemsPerPage}/${search}?partial=true`;
 
-    if(/video|content/ig.test(req.url)){
-        url = (serieId ? `/serie-content/${serieId}` : '/videos') + `/1/${itemsPerPage}/${search}?partial=true`;
+    if(/video|content|manga/ig.test(req.url)){
+        url = (serieId ? `/serie-content/${serieId}` : /mangas/ig.test(req.url) ? "/mangas": '/videos') + `/1/${itemsPerPage}/${search}?partial=true`;
     }
+    
     res.redirect(url);
 }
 
