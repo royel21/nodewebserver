@@ -214,7 +214,7 @@ $('body').on('dblclick', '.items-list .items', (e) => {
     let item = e.target.classList[0] === "items" ? e.target : e.target.closest('.items');
     let title = document.title;
 
-    if ($('#file-list')[0]) {
+    if (document.getElementById("file-list")) {
         playVideo(item);
     } else {
         config.serie.lastSerie = window.location.pathname;
