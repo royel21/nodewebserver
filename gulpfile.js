@@ -50,7 +50,6 @@ gulp.task('home-css', function () {
             homecss + 'index.css',
             homecss + 'fullscreen.css',
             homecss + 'videoplayer.css',
-            homecss + "mangaviewer.css",
             homecss + 'sliders.css',
             homecss + 'footer.css'
         ])
@@ -68,7 +67,6 @@ gulp.task('home-js', function () {
             homePath + "file-list.js",
             homePath + "sliders.js",
             homePath + "player.js",
-            homePath + "manga-viewer.js",
             homePath + "move-element.js"
         )).pipe(concat('home.js'))
         // .pipe(minify({
@@ -89,7 +87,7 @@ gulp.task('admin-css', function () {
             homecss + 'admin.css',
             homecss + 'modal.css',
             homecss + 'tree-view.css',
-            homecss + 'series.css'
+            homecss + 'folders.css'
         ])
         .pipe(concat('admin.css'))
         .pipe(cleanCss())
@@ -101,7 +99,7 @@ gulp.task('admin-js', function () {
         jslibs.concat(
             util,
             homePath + "main.js",
-            adminPath + "series.js",
+            adminPath + "folders.js",
             adminPath + "files.js",
             adminPath + "directories.js",
             adminPath + "admin.js"

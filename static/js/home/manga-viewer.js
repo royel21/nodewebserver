@@ -1,7 +1,0 @@
-openManga = (item) =>{
-
-}
-
-const hideMediaModal = () =>{
-    
-}

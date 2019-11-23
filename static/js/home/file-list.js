@@ -1,4 +1,5 @@
-const contentScroll = document.getElementById('content')
+const contentScroll = document.getElementById('content');
+const mediaContainer = document.getElementById('media-container');
 const calCol = () => colNum = Math.floor((window.innerWidth - 15) / ($('.items').eq(0).width()));
 
 var page = 1;
@@ -114,15 +115,17 @@ const calPages = () => {
 }
 
 processFile = (item) => {
+    
     if (item.dataset.type.includes("Video")) {
         $('#manga-viewer').addClass('d-none');
         $('#video-viewer').removeClass('d-none');
         playVideo(item);
     } else {
-        $('#manga-viewer').addClass('d-none');
-        $('#video-viewer').removeClass('d-none');
+        $('#manga-viewer').removeClass('d-none');
+        $('#video-viewer').addClass('d-none');
         openManga(item);
     }
+    mediaContainer.focus();
 }
 
 $('body').on('click', '.items .fa-play-circle', (e) => {

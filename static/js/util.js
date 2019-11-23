@@ -47,6 +47,25 @@ formatTime = (time) => {
     return (h == 0 ? "" : String(h).padStart(2, "0") + ':') +
         String(min).padStart(2, "0") + ':' + String(sec).padStart(2, "0");
 }
+
+
+var clockTimer;
+var $clock = $('.clock');
+startClock = () => {
+    $clock.fadeIn();
+    $clock.text(new Date().toLocaleTimeString('en-US'));
+
+    clockTimer = setInterval(() => {
+        $clock.text(new Date().toLocaleTimeString('en-US'));
+    }, 1000);
+}
+
+stopClock = () => {
+    $clock.fadeOut();
+    clearInterval(clockTimer);
+    $clock.text('');
+}
+
 var lastEl;
 
 setfullscreen = (element) => {
@@ -65,9 +84,11 @@ setfullscreen = (element) => {
             if (!document.fullscreenElement) {
                 element.requestFullscreen().catch(err => { });
                 if (element.tagName === 'BODY') lastEl = element;
+                startClock();
             } else {
                 document.exitFullscreen().catch(err => { });
                 lastEl = null;
+                stopClock();
             }
         }
 

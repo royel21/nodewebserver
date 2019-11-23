@@ -81,7 +81,7 @@ var loadSeriesConfig = () => {
         $('#f-name').text(e.target.files[0].name)
     });
 
-    //select a item from the list and load its video
+    //select a item from the list and load its file
     $('#items-container').on('click', '.content-list li', (e) => {
         if (e.target.classList.contains('fas')) return;
 
@@ -135,13 +135,13 @@ var loadSeriesConfig = () => {
         if (liItem) {
             console.log(liItem)
             let li = e.target.closest('li')
-            let videoId = li ? li.id : null;
+            let fileId = li ? li.id : null;
 
             let itemId = liItem.id;
             let search = $('#search-files .search-input').val();
 
-            if (videoId || search) {
-                $.post(getAction() + 'add-files', { itemId, search, videoId, _csrf }, (resp) => {
+            if (fileId || search) {
+                $.post(getAction() + 'add-files', { itemId, search, fileId, _csrf }, (resp) => {
                     if (resp.err) {
                         showError('Filtre primero no se puede agregar todos los files juntos', 'text-danger');
                     } else {
@@ -157,7 +157,7 @@ var loadSeriesConfig = () => {
             }
 
         } else {
-            showError('No Hay Serie Para Agregar Video', 'text-danger');
+            showError('No Hay Serie Para Agregar File', 'text-danger');
         }
     });
 
@@ -165,12 +165,12 @@ var loadSeriesConfig = () => {
         let action = getAction();
         let isItem = e.target.closest('.list').id.includes('items-list');
 
-        let postUrl = action + 'delete-' + (isItem ? 'item' : 'video');
+        let postUrl = action + 'delete-' + (isItem ? 'item' : 'file');
         let li = e.target.closest('li');
         let id = li.id;
         //let liItem = $('#items-list li.active')[0];
 
-        $.post(postUrl, { itemId: li.id, videoId: id, _csrf }, (resp) => {
+        $.post(postUrl, { itemId: li.id, fileId: id, _csrf }, (resp) => {
             
             if (resp.state.includes('Ok')) {
                 $(li).fadeOut('fast', (e) => {

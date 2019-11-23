@@ -1,0 +1,189 @@
+#manga-viewer{
+    position: fixed;
+    height: 450px;
+    width: 400px;
+    background-color: black;
+    user-select: none;
+    pointer-events: all;
+}
+
+#manga-viewer #img-viewer{
+    position: relative;
+    height: calc(100% - 42px);
+    width: 100%;
+}
+
+#manga-viewer .footer{
+    position: relative;
+    max-height: 45px;
+    height: 42px;
+}
+
+#manga-viewer .footer i{
+    font-size: 26px;
+    bottom: 0px;
+}
+
+#close-manga-modal{
+    position: absolute;
+}
+
+
+#webtoon-active{
+    position: absolute;
+    bottom: 5px;
+    right: 2px;
+    display: inline-block;
+    width: initial;
+}
+
+#webtoon-active label{
+    font-size: 12px;
+    width: 90px;
+    border-radius: 4px;
+}
+
+#webtoon-active label:before{
+    width: 0;
+}
+
+#webtoon-active label:after{
+    left: 70px;
+    font-size: 15px;
+}
+
+
+#manga-viewer .checked-box{
+    display: none;
+}
+
+.checked-mark{
+   cursor: pointer;
+   color: black;
+   font-weight: bold;
+   font-family: Arial, Font Awesome\ 5 Free;
+   transition: all .2s;
+}
+
+.checked-mark:before{
+   content: " ";
+   position: absolute;
+   display:inline-block;
+   left: 49.5%;
+   width: 125px;
+   height: 100%;
+   background-color: white;
+   border-radius: 0 5px 5px 0;
+   font-size: 25px;
+}
+
+.checked-mark:after{
+   content: "\f00c";
+   position: absolute;
+   left: 68%;
+   font-size: 25px;
+}
+
+.checked-box:checked + .checked-mark:after{
+   content: "\f00d";
+}
+
+.select-style{
+   display: flex;
+   align-items: center;
+   padding: .375rem .50rem;
+   margin-bottom: 0;
+   font-size: 1rem;
+   line-height: 1.5;
+   color: #495057;
+   text-align: center;
+   white-space: nowrap;
+   color: white;
+}
+
+#manga-viewer:-webkit-full-screen #img-viewer{
+    height: 100%;
+}
+
+#manga-viewer:-webkit-full-screen .select-style{
+
+   background-color: #e9ecef;
+   border: 1px solid #ced4da;
+   border-top-left-radius: .25rem;
+   border-bottom-left-radius: .25rem;
+   font-weight: bold;
+   color: black;
+}
+
+.select-style span{
+   margin: 0 5px;
+}
+
+#manga-viewer .btn-fullscr-m{
+    position: absolute;
+    left: 45px;
+}
+
+#manga-viewer:-webkit-full-screen #webtoon-active{
+    bottom: 40px;
+}
+
+#manga-viewer:-webkit-full-screen .footer{
+    height: 0;
+}
+
+#manga-viewer .btn-img-config{
+    position: absolute;
+    left: 80px;
+}
+
+#manga-area-control{
+    display:flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
+#area-top,
+#area-center,
+#area-botton{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.area{
+    border: 1px antiquewhite solid;
+    flex-grow: 1;
+}
+
+.center-img,
+#img-content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.center-img,
+#img-content::-webkit-scrollbar-track {
+    margin: 0;
+}
+
+.center-img img{
+    -webkit-user-drag: none;
+    width: 100%;
+    max-height: 100%;
+    max-width: 100%;
+    background-color: white;
+}
+
+.center-img{
+    position: absolute;
+    top:0;
+    left: 0;
+    pointer-events: none;
+}

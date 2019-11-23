@@ -1,31 +1,31 @@
-#video-viewer:-webkit-full-screen .footer{
+.move-modal:-webkit-full-screen .footer{
     padding: 0;
     margin: 0;
     border-radius: 0;
 }
 
-#video-viewer:-webkit-full-screen .main{
+.move-modal:-webkit-full-screen .main{
     padding: 0;
 }  
 
 
-#video-viewer:-webkit-full-screen .slide-down{
+.move-modal:-webkit-full-screen .slide-down{
   height: 0;
   display: none;
 }
 
-#video-viewer:-webkit-full-screen .footer {
+.move-modal:-webkit-full-screen .footer {
     position: fixed;
     background-color: transparent;
     bottom: 5px;
 }
 
-#video-viewer:-webkit-full-screen #footer-toolbar {
+.move-modal:-webkit-full-screen #footer-toolbar {
     display: inline-block;
     border-radius: .5rem;
     background-color: rgba(67, 66, 75, 0.7);
 }
 
-#video-viewer:-webkit-full-screen .hide-footer{
+.move-modal:-webkit-full-screen .hide-footer{
     bottom: -100px;
 }

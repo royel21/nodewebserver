@@ -3,7 +3,7 @@ socket = io();
 var loadFunctions = (page) => {
     switch (page) {
         case "Categories":
-        case "Series": {
+        case "Folders": {
             loadSeriesConfig();
             break;
         }

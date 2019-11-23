@@ -86,5 +86,5 @@ db.init().then(() => {
     console.log('Node server is running.. at http://localhost:'+port);
   });
 
-  require('./socketio-server')(server, app);
+  require('./modules/socketio-server')(server, app);
 });

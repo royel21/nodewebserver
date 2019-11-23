@@ -2,8 +2,8 @@ video{
     object-fit: fill;
 }
 
-#clock{
-    display: inline-block;
+.clock{
+    display: none;
     width: 100px;
     position: absolute;
     right: 4px;
@@ -16,13 +16,12 @@ video{
     padding: 0 6px
 }
 
-#video-viewer:-webkit-full-screen #clock{
+.move-modal:-webkit-full-screen .clock{
     font-size: 20px;
     width: 150px;
 }
 
 #media-container{
-    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -33,7 +32,7 @@ video{
     align-items: center;
     height: 100%;
     width: 100%;
-    overflow-y: auto;
+    overflow-y: hidden;
     z-index: 10001;
     outline: none;
     pointer-events: none;
@@ -404,13 +403,14 @@ body .content {
        top: 5px;
        left: 0;
     }
-    #clock{
+    .clock{
+        display: inline-block;
         bottom: initial;
         font-size: 14px;
         width: 140px;
         bottom: initial;
     }
-    #video-viewer:-webkit-full-screen #clock{
+    .move-modal:-webkit-full-screen .clock{
         font-size: 16px;
         width: initial;
         bottom: initial;

@@ -3,7 +3,6 @@ var btnPlay = document.getElementById('v-play');
 var btnMuted = document.getElementById('v-mute');
 var player = document.getElementById('player');
 const videoViewer = document.getElementById('video-viewer');
-const vContainer = document.getElementById('media-container');
 var $vTotalTime = $('#v-total-time');
 var totalTime;
 var fileN = 0;
@@ -84,7 +83,7 @@ Slider.oninput = (value) => {
 
 const closePlayer = (e) => {
     updaterecentVideos();
-    stopClock();
+
     if (document.fullscreenElement && !document.fullscreenElement.tagName.includes('BODY')) {
         setfullscreen(videoViewer);
     }
@@ -114,7 +113,7 @@ const pauseOrPlay = () => {
         $('#video-name').fadeIn('slow');
         $clock.addClass('d-none');
         $('#v-total-time').addClass('d-none');
-        
+
     }
     $('#video-viewer .fa-play-circle').attr('data-title', playPause);
     btnPlay.checked = config.paused = player.paused;
@@ -132,7 +131,7 @@ btnMuted.onchange = () => {
     $('#video-viewer .fa-volume-up').attr('data-title', btnMuted.checked ? "No Silenciar" : "Silenciar");
 }
 // deltaY obviously records vertical scroll, deltaX and deltaZ exist too
-vContainer.onwheel = (event) => {
+mediaContainer.onwheel = (event) => {
     if (event.deltaY < 0) {
         volcontrol.value = player.volume + 0.05;
         player.volume = volcontrol.value;
@@ -220,11 +219,11 @@ player.ontouchstart = player.onmousedown = (e) => {
     e.preventDefault();
     detectTap = true;
     pressStart = new Date();
-    if(e.type.includes('touch')){
+    if (e.type.includes('touch')) {
         point.X = e.touches[0].clientX;
         point.Y = e.touches[0].clientY;
-        console.log("touchStart")   
-   }
+        console.log("touchStart")
+    }
 }
 
 player.ontouchend = player.ontouchcancel = player.onmouseup = player.onpointercancel = (e) => {
@@ -291,13 +290,7 @@ const playVideo = (el) => {
         let id = el.id;
         currentFile = { id, current: 0 }
         updaterecentVideos();
-
-        if (!$(vContainer).is(':visible')) {
-            startClock();
-            $(vContainer).fadeIn(300, () => { vContainer.focus(); });
-            $(videoViewer).fadeIn(300);
-            vContainer.focus();
-        }
+        $(videoViewer).fadeIn(300);
 
         $('.loading').css({ display: 'flex' });
 
@@ -324,7 +317,7 @@ $("#video-viewer .fa-arrow-alt-circle-left").click((e) => {
 });
 
 document.onkeydown = (e) => {
-    if (vContainer.style.display === "block") {
+    if (videoViewer.style.display === "block") {
         var keys = config.playerkey;
         console.log(e.keyCode);
         switch (e.keyCode) {
@@ -410,68 +403,12 @@ document.onkeydown = (e) => {
     }
 }
 $(document).on('webkitfullscreenchange fullscreenchange', function (e) {
-    if (document.fullscreenElement === videoViewer && isAndroid) {
-        screen.orientation.lock('landscape');
-    } else {
-        screen.orientation.unlock();
+
+    if (videoViewer.style.display === "block") {
+        if (document.fullscreenElement === videoViewer && isAndroid) {
+            screen.orientation.lock('landscape');
+        } else {
+            screen.orientation.unlock();
+        }
     }
-});
-
-var clockTimer;
-var $clock = $('#clock');
-startClock = () => {
-    $clock.text(new Date().toLocaleTimeString('en-US'));
-
-    clockTimer = setInterval(() => {
-        $clock.text(new Date().toLocaleTimeString('en-US'));
-    }, 1000);
-}
-
-stopClock = () => {
-    clearInterval(clockTimer);
-    $clock.text('');
-}
-
-navigator.getBattery().then(function(battery) {
-//   function updateAllBatteryInfo(){
-//     updateChargeInfo();
-//     updateLevelInfo();
-//     updateChargingInfo();
-//     updateDischargingInfo();
-//   }
-//   updateAllBatteryInfo();
-
-//   battery.addEventListener('chargingchange', function(){
-//     updateChargeInfo();
-//   });
-//   function updateChargeInfo(){
-//     console.log("Battery charging? "
-//                 + (battery.charging ? "Yes" : "No"));
-//   }
-
-//   battery.addEventListener('levelchange', function(){
-//     updateLevelInfo();
-//   });
-
-//   function updateLevelInfo(){
-//     console.log("Battery level: "
-//                 + battery.level * 100 + "%");
-//   }
-
-//   battery.addEventListener('chargingtimechange', function(){
-//     updateChargingInfo();
-//   });
-//   function updateChargingInfo(){
-//     console.log("Battery charging time: "
-//                  + battery.chargingTime + " seconds");
-//   }
-
-//   battery.addEventListener('dischargingtimechange', function(){
-//     updateDischargingInfo();
-//   });
-//   function updateDischargingInfo(){
-//     console.log("Battery discharging time: "
-//                  + battery.dischargingTime + " seconds");
-//   }
-
 });
