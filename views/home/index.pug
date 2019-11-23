@@ -1,30 +1,21 @@
 extends ../share/layout
 
 block css
-    if /series/ig.test(pagedatas.action)
-        link(rel="stylesheet" href="/css/series.css" type="text/css")
-    if pagedatas.action.includes("mangas")
-        link(rel="stylesheet" href="/css/mangas.css" type="text/css")
-    if /videos|serie-content/ig.test(pagedatas.action)
-        link(rel="stylesheet" href="/css/videos.css" type="text/css")
+    link(rel="stylesheet" href="/css/home.css" type="text/css")
+
 block navbar
     include ../share/navbar
     +navbar(user, url)
 
 block content
-    if /videos|serie-content/ig.test(pagedatas.action)
-        #video-container(tabindex="0")
-            include ../videoplayer/player
-
+    #media-container(tabindex="0")
+        include ../videoplayer/player
+        include ../home/manga-viewer
+        
     include ./items-view
     +items-view(items, pagedatas, isFile)
 
     span#scroll-up.d-none
         i.far.fa-arrow-alt-circle-up
 block script
-    if pagedatas.action.includes("series")
-        script(src="/js/series.js")
-    if pagedatas.action.includes("mangas")
-        script(src="/js/mangas.js")
-    if /videos|serie-content/ig.test(pagedatas.action)
-        script(src="/js/videos.js")
+    script(src="/js/home.js")

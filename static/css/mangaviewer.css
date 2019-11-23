@@ -1,0 +1,5 @@
+#manga-viewer{
+    display: none;
+    user-select: none;
+    pointer-events: all;
+}

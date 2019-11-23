@@ -3,7 +3,7 @@ var btnPlay = document.getElementById('v-play');
 var btnMuted = document.getElementById('v-mute');
 var player = document.getElementById('player');
 const videoViewer = document.getElementById('video-viewer');
-const vContainer = document.getElementById('video-container');
+const vContainer = document.getElementById('media-container');
 var $vTotalTime = $('#v-total-time');
 var totalTime;
 var fileN = 0;
@@ -90,7 +90,7 @@ const closePlayer = (e) => {
     }
 
     $('#video-viewer').fadeOut('fast', (e) => {
-        $('#video-container').fadeOut(200, (e) => {
+        $('#media-container').fadeOut(200, (e) => {
             selectItem(selectedIndex);
             currentFile = {};
             player.pause();
@@ -307,11 +307,6 @@ const playVideo = (el) => {
         selectedIndex = $('.items').index(el);
     }
 }
-
-$('body').on('click', '.fa-play-circle', (e) => {
-    playVideo(e.target.closest('.items'));
-});
-
 
 
 $("#video-viewer .fa-arrow-alt-circle-right").click((e) => {

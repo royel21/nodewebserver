@@ -21,7 +21,7 @@ video{
     width: 150px;
 }
 
-#video-container{
+#media-container{
     display: none;
     position: fixed;
     top: 0;
@@ -34,27 +34,23 @@ video{
     height: 100%;
     width: 100%;
     overflow-y: auto;
-    background-color: rgba(0,0,0, 0.55);
     z-index: 10001;
     outline: none;
+    pointer-events: none;
 }
 
-#video-viewer {
+#media-container #video-viewer{
     position: fixed;
     display: flex;
     flex-direction: column;
     background-color: black;
     padding: 0;
-    height: 100%;
-    width: 100%;
-}
-
-#video-container #video-viewer{
     width: 600px;
     height: 400px;
     min-width: 600px;
     min-height: 400px;
     user-select: none;
+    pointer-events: all;
 }
 
 #video-player{

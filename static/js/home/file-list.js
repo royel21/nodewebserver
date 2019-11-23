@@ -113,10 +113,26 @@ const calPages = () => {
     totalPage = Math.ceil(parseInt($('.badge').text()) / parseInt($('#item').val())) || 1;
 }
 
+processFile = (item) => {
+    if (item.dataset.type.includes("Video")) {
+        $('#manga-viewer').addClass('d-none');
+        $('#video-viewer').removeClass('d-none');
+        playVideo(item);
+    } else {
+        $('#manga-viewer').addClass('d-none');
+        $('#video-viewer').removeClass('d-none');
+        openManga(item);
+    }
+}
+
+$('body').on('click', '.items .fa-play-circle', (e) => {
+    processFile(e.target.closest('.items'));
+});
+
 $('body').on('keydown', '.items-list', (e) => {
     calCol();
     calPages();
-    
+
     let totalitem = $('.items').length;
     let title = document.title;
     var wasProcesed = false;
@@ -124,8 +140,8 @@ $('body').on('keydown', '.items-list', (e) => {
         case ENTER:
             {
                 let item = e.target.closest('.items')
-                if ($('#file-list')[0]) {
-                    playVideo(item);
+                if (item.dataset.type) {
+                    processFile(item);
                 } else {
                     let url = "/serie-content/" + item.id;
                     window.history.pushState(title, title, url);
@@ -158,20 +174,20 @@ $('body').on('keydown', '.items-list', (e) => {
             }
         case UP:
             {
-                if(e.ctrlKey){
+                if (e.ctrlKey) {
                     goBack();
-                }else
-                if (selectedIndex - colNum >= 0) {
-                    selectItem(selectedIndex - colNum);
-                }
+                } else
+                    if (selectedIndex - colNum >= 0) {
+                        selectItem(selectedIndex - colNum);
+                    }
                 wasProcesed = true;
                 break;
             }
         case RIGHT:
             {
-                
+
                 if (e.ctrlKey && currentPage < totalPage) {
-                        
+
                     let url = $('#pager .active').next().find('a').attr('href');
                     window.history.pushState(title, title, url);
                     loadPartialPage(url, () => {
@@ -214,8 +230,8 @@ $('body').on('dblclick', '.items-list .items', (e) => {
     let item = e.target.classList[0] === "items" ? e.target : e.target.closest('.items');
     let title = document.title;
 
-    if (document.getElementById("file-list")) {
-        playVideo(item);
+    if (item.dataset.type) {
+        processFile(item);
     } else {
         config.serie.lastSerie = window.location.pathname;
         config.serie.SerieIndex = selectedIndex;
@@ -237,7 +253,7 @@ $(window).bind('popstate', (event) => {
     selectItem(0);
 });
 
-var goBack = () =>{
+var goBack = () => {
     let title = "Home";
     window.history.pushState(title, title, config.serie.lastSerie);
     local.setItem('serie', false);

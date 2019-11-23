@@ -12,7 +12,7 @@ mixin items-view(items, pagedatas, isFile)
                 
         .items-list(id=(isFile ? "files-list" : "series-list"))
             each item in items.rows
-                .items(tabindex="0" id=item.Id, data-duration=item.Duration)
+                .items(tabindex="0" id=item.Id, data-duration=item.Duration data-type=(isFile ? item.Type : ""))
                     .item-video
                         .item-btns
                             if item.DirectoryId
@@ -20,6 +20,6 @@ mixin items-view(items, pagedatas, isFile)
                             if !item.DirectoryId
                                 span.item-fav.far.fa-star
                         .item-cover
-                            img.fa(draggable="false" src="/covers/"+ (isFile ? 'files/folder-'+item.DirectoryId+'/' : 'series/')+item.Id+'.jpg' alt="La imagen se esta cargando actulalize")
+                            img.fa(draggable="false" src="/covers/"+ (isFile ? 'files/folder-'+item.DirectoryId+'/' : 'series/')+item.Id+'.jpg' alt="Loading Image - Reload")
                         .item-name= item.Name.replace(/.mp4|.mkv|.avi|webm|ogg/ig, '')
         

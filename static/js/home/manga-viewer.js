@@ -1,0 +1,7 @@
+openManga = (item) =>{
+
+}
+
+const hideMediaModal = () =>{
+    
+}
