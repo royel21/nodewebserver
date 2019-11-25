@@ -493,7 +493,13 @@ $('#content').on('click', '#scroll-up', (e) => {
 
 $(() => {
     selectItem(selectedIndex);
-})
+});
+
+
+document.onkeydown = (e) =>{
+    playerKeyDown(e);
+    mangaVewerKeyDown(e);
+}
 class SliderRange {
     constructor(el) {
         this.oninput = null;
@@ -948,7 +954,7 @@ $("#video-viewer .fa-arrow-alt-circle-left").click((e) => {
     }
 });
 
-document.onkeydown = (e) => {
+var playerKeyDown = (e) => {
     if (videoViewer.style.display === "block") {
         var keys = config.playerkey;
         console.log(e.keyCode);

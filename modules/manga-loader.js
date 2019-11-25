@@ -23,8 +23,8 @@ module.exports.loadZipImages = (data, socket) => {
     }
 
     if (zip && entries) {
-        for (let i = data.page; i < 10 && i < zips[data.id].entries.length; i++) {
-            socket.emit('loaded-zipedimage', { page: i, img: zip.entryDataSync(entries[i]) });
+        for (let i = data.page; i < (data.page+10) && i < zips[data.id].entries.length; i++) {
+            socket.emit('loaded-zipedimage', { page: i, img: zip.entryDataSync(entries[i]).toString('base64') });
         }
     }
     else {
@@ -51,16 +51,15 @@ module.exports.loadZipImages = (data, socket) => {
                     zip.on('ready', () => {
                         let entries = Object.values(zip.entries()).sort((a, b) => {
                             return String(a.name).localeCompare(String(b.name))
-                        });
+                        }).filter((entry)=>{ return !entry.isDirectory});
 
                         zips[data.id].entries = entries;
-
                         zips[data.id].zip = zip;
                         
-                        console.log(zip.entryDataSync(entries[0]));
 
-                        for (let i = data.page; i < 10 && i < zips[data.id].entries.length; i++) {
-                            socket.emit('loaded-zipedimage', { total: entries.length, page: i, img: zip.entryDataSync(entries[i]) });
+                        for (let i = data.page; i < (data.page+10) && i < zips[data.id].entries.length; i++) {
+                            console.log(entries[i]);
+                            socket.emit('loaded-zipedimage', { total: entries.length, page: i, img: zip.entryDataSync(entries[i]).toString('base64') });
                             console.log('data send')
                         }
                     });

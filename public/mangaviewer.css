@@ -5,6 +5,7 @@
     background-color: black;
     user-select: none;
     pointer-events: all;
+    outline: none;
 }
 
 #manga-viewer #img-viewer{

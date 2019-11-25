@@ -316,7 +316,7 @@ $("#video-viewer .fa-arrow-alt-circle-left").click((e) => {
     }
 });
 
-document.onkeydown = (e) => {
+var playerKeyDown = (e) => {
     if (videoViewer.style.display === "block") {
         var keys = config.playerkey;
         console.log(e.keyCode);

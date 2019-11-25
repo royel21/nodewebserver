@@ -285,4 +285,10 @@ $('#content').on('click', '#scroll-up', (e) => {
 
 $(() => {
     selectItem(selectedIndex);
-})
+});
+
+
+document.onkeydown = (e) =>{
+    playerKeyDown(e);
+    mangaVewerKeyDown(e);
+}

@@ -1,24 +1,19 @@
 const mangaViewer = document.getElementById('manga-viewer');
 const closeMViewer = document.getElementById('close-manga-modal');
-socket = io();
+const currentImg = document.getElementById('myimg');
+var socket = io();
 
-socket.on("loaded-zipedimage", (data) => {
-    console.log(data)
-});
-
-openManga = (item) => {
-    let src = item.getElementsByTagName('img')[0].src;
-    mangaViewer.querySelector('#myimg').src = src;
-    
-    socket.emit('loadzip-image', { id: item.id, page: 0 });
-    
-    $(mangaViewer).fadeIn(300, (e) => {
-    });
+var currentManga = {
+    id: "",
+    currentPage: 0,
+    total: 0,
+    imgs: {}
 }
 
-$('.btn-fullscr-m').click((e) => {
-    setfullscreen(mangaViewer);
-})
+var mId = "";
+var mPage = 0;
+var mTotalPages = 0;
+var mImages = {};
 
 closeMViewer.onclick = (e) => {
     $(mangaViewer).fadeOut(200, () => {
@@ -28,7 +23,75 @@ closeMViewer.onclick = (e) => {
     });
 }
 
+$('.btn-fullscr-m').click((e) => {
+    setfullscreen(mangaViewer);
+});
+
+socket.on("loaded-zipedimage", (data) => {
+    //console.log(data);
+    if (data.page === mPage) {
+        currentImg.src = 'data:img/jpeg;base64, ' + data.img.toString();
+        $(mangaViewer).fadeIn(300, (e) => {
+            mangaViewer.focus();
+        });
+    }
+    mImages[data.page] = data.img;
+
+    if (data.total) mtotalPage = data.total;
+
+});
+
+openManga = (item) => {
+    let src = item.getElementsByTagName('img')[0].src;
+    mangaViewer.querySelector('#myimg').src = src;
+
+    mId = item.id;
+    mPage = 0;
+    socket.emit('loadzip-image', { id: item.id, page: mPage });
+}
+
+var nextImg = () => {
+    if (mPage > 0) {
+        socket.emit('loadzip-image', { id: mId, page: ++mPage });
+    }
+}
+
+var prevImg = () => {
+    if (mPage < mTotalPages - 1) {
+        socket.emit('loadzip-image', { id: mId, page: ++mPage });
+    }
+}
+
+
+var nextManga = (e) => {
+    let next = $('#' + mId).next()[0];
+    if (next) {
+        openManga(next)
+    }
+}
+
+var prevManga = (e) => (e) => {
+    let prev = $('#' + mId).prev()[0];
+    if (prev) {
+        openManga(prev);
+    }
+};
+
+
+
+
 $('#btn-img-config').click((e) => {
     console.log('clicked');
-    //socket.emit('scan-dir', { path, folder: dir });
 });
+
+
+var mangaVewerKeyDown = (e) => {
+    if ($(mangaViewer).is(':visible')) {
+        e.stopPropagation();
+        e.preventDefault();
+        console.log(e.keyCode);
+        switch (e.keyCode) {
+
+        }
+    }
+}
