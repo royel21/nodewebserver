@@ -90,7 +90,7 @@ process.on("message", (data) => {
             console.log("finish");
             process.exit();
         }).catch(err => {
-            console.log(error);
+            console.log(err);
             process.exit();
         });
     });

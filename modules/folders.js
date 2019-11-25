@@ -6,6 +6,7 @@ const path = require('path');
 const pug = require('pug');
 
 var scanning = false;
+var io;
 var socket;
 var db;
 
@@ -32,7 +33,8 @@ const startWork = (directory) => {
     });
 }
 
-module.exports.setSocket = (_socket, _db) => {
+module.exports.setSocket = (_io, _socket, _db) => {
+    io = _io;
     socket = _socket;
     db = _db;
 }

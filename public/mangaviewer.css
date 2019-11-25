@@ -132,7 +132,7 @@
     height: 0;
 }
 
-#manga-viewer .btn-img-config{
+#manga-viewer #btn-img-config{
     position: absolute;
     left: 80px;
 }

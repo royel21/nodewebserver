@@ -1,7 +1,76 @@
-var socket;
-var db
+const StreamZip = require('node-stream-zip')
+const path = require('path');
+const fs = require('fs-extra');
+var db;
+var zips = {};
+var lastId = "";
 
-module.exports.setSocket = (_socket, _db) => {
-    socket = _socket;
+
+module.exports.removeZip = (id) => {
+
+}
+
+module.exports.setSocket = (_db) => {
     db = _db;
+}
+
+module.exports.loadZipImages = (data, socket) => {
+    let zip;
+    let entries;
+    if (lastId === data.id) {
+        zip = zips[data.id].zip;
+        entries = zips[data.id].entries;
+    }
+
+    if (zip && entries) {
+        for (let i = data.page; i < 10 && i < zips[data.id].entries.length; i++) {
+            socket.emit('loaded-zipedimage', { page: i, img: zip.entryDataSync(entries[i]) });
+        }
+    }
+    else {
+
+        if (zips[data.id] && zips[data.id].zip) {
+            zips[data.id].zip.close();
+            delete zips[data.id].zip;
+            delete zips[data.id].entries;
+        } else {
+            zips[data.id] = {};
+        }
+
+        lastId = data.id;
+        db.file.findOne({ where: { Id: data.id } }).then(file => {
+            if (file) {
+                let filePath = path.resolve(file.FullPath, file.Name);
+                console.log(filePath);
+                if (fs.existsSync(filePath)) {
+                    zip = new StreamZip({
+                        file: path.resolve(file.FullPath, file.Name),
+                        storeEntries: true
+                    });
+
+                    zip.on('ready', () => {
+                        let entries = Object.values(zip.entries()).sort((a, b) => {
+                            return String(a.name).localeCompare(String(b.name))
+                        });
+
+                        zips[data.id].entries = entries;
+
+                        zips[data.id].zip = zip;
+                        
+                        console.log(zip.entryDataSync(entries[0]));
+
+                        for (let i = data.page; i < 10 && i < zips[data.id].entries.length; i++) {
+                            socket.emit('loaded-zipedimage', { total: entries.length, page: i, img: zip.entryDataSync(entries[i]) });
+                            console.log('data send')
+                        }
+                    });
+
+                    zip.on('error', (err) => {
+                        socket.emit('loaded-zipedimage', { error: 'some error' });
+                        console.log(err)
+                    });
+                }
+            }
+        });
+    }
 }
