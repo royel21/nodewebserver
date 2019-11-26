@@ -37,7 +37,7 @@ function moveEl(el, left, top, w, h) {
     }
 
     if ((top + h + 5) > $(window).height()) {
-        top = $(window).height() - h - 5;
+        top = $(window).height() - h - 1;
     }
     el.style.left = left + 'px';
     el.style.top = top + 'px';

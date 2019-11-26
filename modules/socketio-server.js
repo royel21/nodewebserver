@@ -6,7 +6,6 @@ module.exports = (server, app) => {
 
     const db = require('../models');
 
-    const connections = {};
     io.on('connection', (socket) => {
 
         folders.setSocket(io, socket, db);
@@ -24,9 +23,7 @@ module.exports = (server, app) => {
         }
 
         socket.on('disconnect', (client) => {
-
-            connections[socket.id] = null;
-            delete connections[socket.Id]
+            mloader.removeZip(socket.id);
         });
     });
 }

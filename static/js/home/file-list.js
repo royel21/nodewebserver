@@ -106,6 +106,8 @@ const selectItem = async (index) => {
         }
         clearTimeout(tout);
     });
+    $('.items').removeClass('active');
+    $(nextEl).addClass('active');
     return nextEl;
 }
 
