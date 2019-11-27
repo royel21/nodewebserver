@@ -47,18 +47,10 @@ var mTotalPages = 0;
 var mImages = [];
 var mLoading = false;
 
-closeMViewer.onclick = (e) => {
-    $(mangaViewer).fadeOut(200, () => {
-        if (document.fullscreenElement) {
-            setfullscreen(mangaViewer);
-        }
-    });
-    mImages = [];
+var loadNewImages = (pagetoload = 10) =>{
+    mLoading = true;
+    socket.emit('loadzip-image', { id: mId, page: mPage, pagetoload });
 }
-
-$('.btn-fullscr-m').click((e) => {
-    setfullscreen(mangaViewer);
-});
 
 socket.on("loaded-zipedimage", (data) => {
     //console.log(data);
@@ -79,16 +71,28 @@ socket.on("loaded-zipedimage", (data) => {
     }
 });
 
+closeMViewer.onclick = (e) => {
+    $(mangaViewer).fadeOut(200, () => {
+        if (document.fullscreenElement) {
+            setfullscreen(mangaViewer);
+        }
+    });
+    mImages = [];
+}
+
+$('.btn-fullscr-m').click((e) => {
+    setfullscreen(mangaViewer);
+});
+
+
 openManga = (item) => {
     mId = item.id;
     mPage = 0;
     mImages = [];
-    socket.emit('loadzip-image', { id: item.id, page: mPage, pagetoload: 10 });
     let src = item.getElementsByTagName('img')[0].src;
     mImageView.src = src;
-    mLoading = true;
-    mloadingAnimation.style.display = "block";
-
+    mloadingAnimation.style.display = "flex";
+    loadNewImages(10);
 }
 
 var nextImg = () => {
@@ -97,11 +101,12 @@ var nextImg = () => {
         let timg = mImages[mPage + 1];
         if (timg) {
             mImageView.src = mImages[++mPage];
+            if(mPage > 5){
+                mImages[mPage-6] = "";
+            }
         }
         if ((mPage + 5) < mTotalPages && !mImages[mPage+5] && !mLoading) {
-            socket.emit('loadzip-image', { id: mId, page: mPage, pagetoload: 10 });
-            mLoading = true; 
-            mloadingAnimation.style.display = "block";
+            loadNewImages(10);
         }
     }else{
         nextManga();
@@ -110,7 +115,12 @@ var nextImg = () => {
 
 var prevImg = () => {
     if (mPage > 0 && !mLoading) {
-        //socket.emit('loadzip-image', { id: mId, page: ++mPage });
+        if(mImages[mPage-1]){
+            mImageView.src = mImages[--mPage];
+            mImages.pop();
+        }else{
+            loadNewImages(1);
+        }
     }else{
         prevManga();
     }
@@ -140,7 +150,6 @@ var mangaVewerKeyDown = (e) => {
     if ($(mangaViewer).is(':visible')) {
         e.stopPropagation();
         e.preventDefault();
-        console.log(e.keyCode);
         let keys = mangaConfig.keys;
 
         switch (e.keyCode) {
@@ -158,6 +167,10 @@ var mangaVewerKeyDown = (e) => {
             }  
             case keys.prevManga.keycode: {
                 prevManga();
+                break;
+            }
+            case keys.fullscreen.keycode:{
+                setfullscreen(mangaViewer);
                 break;
             } 
         }

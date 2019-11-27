@@ -163,11 +163,12 @@
 }
 
 #manga-area-control{
+    position: absolute;
     display:flex;
     flex-direction: row;
     height: 100%;
     width: 100%;
-    position: absolute;
+    z-index: 999;
 }
 #area-top,
 #area-center,
@@ -212,3 +213,30 @@
     left: 0;
     pointer-events: none;
 }
+
+#manga-viewer:-webkit-full-screen #myimg{
+    width: 60%;
+    height: 100%;
+}
+
+@media all and (max-width: 400px){
+    #manga-viewer{
+        height: 100%;
+        width: 100%;
+    }
+
+    #manga-viewer:-webkit-full-screen #myimg,
+    #manga-viewer #myimg{
+        width: 100%;
+        height: initial;
+    }
+
+    #manga-viewer:-webkit-full-screen #webtoon-active {
+      bottom: 5px;
+    }
+    .clock{
+        bottom: 0;
+        top: initial;
+    }
+}
+

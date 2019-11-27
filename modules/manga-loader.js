@@ -49,7 +49,7 @@ module.exports.loadZipImages = (data, socket) => {
                         user.zip = zip;
 
 
-                        for (let i = data.page; i < (data.pagetoload + 10) && i < entries.length; i++) {
+                        for (let i = data.page; i < (data.page + data.pagetoload) && i < entries.length; i++) {
                             socket.emit('loaded-zipedimage', {
                                 total: entries.length,
                                 page: i,
