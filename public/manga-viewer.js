@@ -3,7 +3,7 @@ const mImageView = mangaViewer.querySelector('#myimg');
 const closeMViewer = document.getElementById('close-manga-modal');
 const currentImg = document.getElementById('myimg');
 const mloadingAnimation = document.getElementById('m-loading'); 
-
+var disconnected = false;
 var socket = io();
 
 var mangaConfig = {
@@ -43,13 +43,14 @@ var mangaConfig = {
 
 var mId = "";
 var mPage = 0;
+
 var mTotalPages = 0;
 var mImages = [];
 var mLoading = false;
 
-var loadNewImages = (pagetoload = 10) =>{
+var loadNewImages = (fromPage, pagetoload = 20) =>{
     mLoading = true;
-    socket.emit('loadzip-image', { id: mId, page: mPage, pagetoload });
+    socket.emit('loadzip-image', { id: mId, page: fromPage, pagetoload });
 }
 
 socket.on("loaded-zipedimage", (data) => {
@@ -69,6 +70,20 @@ socket.on("loaded-zipedimage", (data) => {
         mLoading = false;
         mloadingAnimation.style.display = "none";
     }
+});
+
+socket.on('connect_error', error=>{
+    console.log(error);
+});
+
+socket.on('Disconnect', error=>{
+    console.log(error);
+});
+socket.on('Reconnect', error=>{
+    console.log(error);
+});
+socket.on('Error', error=>{
+    console.log(error);
 });
 
 closeMViewer.onclick = (e) => {
@@ -92,7 +107,7 @@ openManga = (item) => {
     let src = item.getElementsByTagName('img')[0].src;
     mImageView.src = src;
     mloadingAnimation.style.display = "flex";
-    loadNewImages(10);
+    loadNewImages(0, 20);
 }
 
 var nextImg = () => {
@@ -101,12 +116,13 @@ var nextImg = () => {
         let timg = mImages[mPage + 1];
         if (timg) {
             mImageView.src = mImages[++mPage];
-            if(mPage > 5){
-                mImages[mPage-6] = "";
+            if(mPage > 10){
+                mImages[mPage-11] = "";
             }
         }
-        if ((mPage + 5) < mTotalPages && !mImages[mPage+5] && !mLoading) {
-            loadNewImages(10);
+
+        if (mImages.length < mTotalPages && (mImages.length - mPage) < 10 && !mImages[mPage+5] && !mLoading) {
+            loadNewImages(mImages.length-1, 10);
         }
     }else{
         nextManga();
@@ -119,7 +135,8 @@ var prevImg = () => {
             mImageView.src = mImages[--mPage];
             mImages.pop();
         }else{
-            loadNewImages(1);
+            mPage--;
+            loadNewImages(mPage, 1);
         }
     }else{
         prevManga();
@@ -176,3 +193,18 @@ var mangaVewerKeyDown = (e) => {
         }
     }
 }
+var areaEvents = {
+    "area1": "",
+    "area2": "",
+    "area3": "",
+    "area4": nextImg,
+    "area5": "",
+    "area6": nextImg,
+    "area7": nextManga,
+    "area8": prevImg,
+    "area9": prevManga
+} 
+//Area Control
+$('#manga-area-control').on('click','.area',(e)=>{
+        areaEvents[e.target.id]();
+});

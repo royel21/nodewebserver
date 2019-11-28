@@ -6,14 +6,14 @@ mixin navbar(user, url)
             span.navbar-toggler-icon
         input#toggle-menu(type="checkbox")
         .collapse.navbar-collapse#navbarSupportedContent
-            ul.navbar-nav.mr-auto
+            ul.navbar-nav.mr-auto.bg-dark
                 li.nav-item
                     a.nav-link(href="/" class=""+(url === '/' || url.includes('serie-content') ? "active" : "")) Series 
                 li.nav-item
                     a.nav-link(href="/mangas" class=""+(url === '/mangas' || url.includes('mangas') ? "active" : "")) Mangas
                 li.nav-item
                     a.nav-link(href="/videos" class=""+(url.includes('videos') ? "active" : "")) Todos los videos
-            ul.ml-auto.nav.navbar-nav
+            ul.ml-auto.nav.navbar-nav.bg-dark
                 li.nav-item
                     if user
                         a.nav-link(href="/admin" class=""+(url.includes('admin') ? "active" : ""))

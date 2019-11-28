@@ -10,22 +10,6 @@ body{
     font-family: "Helvetica Neue", Arial, sans-serif;
 }
 
-#menu{
-    position: sticky;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-}
-
-#menu  i.fa-user{
-    margin-right: 8px;
-    color: #007bff;
-}
-
-#menu .active{
-    border-bottom: 1px solid;
-}
 
 #main{
     color: white;
@@ -41,20 +25,6 @@ body{
     min-height: calc(100% - 44px);
     height: calc(100% - 44px);
     overflow-y: auto;
-}
-
-
-#nav-menu{
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    padding: .2rem .75rem;
-}
-
-#nav-menu input,
-#nav-menu button{
-    font-size: 12px;
 }
 
 .card{
@@ -317,10 +287,6 @@ body{
         right: 15px;
         font-size: 40px;
     }
-    #pager{
-        display: flex;
-        justify-content: center;
-    }
 
     #itemsPerPage,
     #pager .page-item:nth-child(3),
@@ -343,20 +309,12 @@ body{
     
     #controls{
         display: block;
-        height: 85px;
+        height: 60px;
         text-align: center;
     }
     
     #controls #back{
-        font-size: 27px;
-        height: 42px;
-        display: inline-block;
-        position: relative;
-        margin-right: 5px;
-    }
-     #controls #back i{
-         position: relative;
-         top: 4px;
+        display: none;
      }
     .search-container{
         display: inline;
@@ -372,9 +330,19 @@ body{
         max-width: 40px;
     }
    
+    #back + .search-container{
+        margin-left: 0px;
+        margin-right: 10px;
+    }
     .nav-item .nav-link{
         display: inline-block;
         border-bottom: 1px solid  white;
         padding: 4px;
+    }
+}
+
+@media all and (max-height: 640px){
+    #content{
+        padding-bottom: 70px;
     }
 }

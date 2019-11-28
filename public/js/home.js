@@ -289,31 +289,28 @@ var config = {
     }
 }
 
-const selectItem = async (index) => {
+const selectItem = (index) => {
     selectedIndex = index;
     var nextEl = $('.items').get(index);
-    var tout = setTimeout(() => {
-        if (nextEl != undefined) {
-            var scroll = contentScroll.scrollTop,
-                elofft = nextEl.offsetTop;
+    if (nextEl != undefined) {
+        var scroll = contentScroll.scrollTop,
+            elofft = nextEl.offsetTop;
 
-            if (elofft - scroll + 1 < -1) {
-                scroll = elofft;
-            }
-
-            var top = elofft + nextEl.offsetHeight;
-            var sctop = scroll + contentScroll.offsetHeight;
-            if (top - sctop + 1 > 0) {
-                scroll = scroll + (top - sctop);
-            }
-            contentScroll.scroll({
-                top: scroll,
-                behavior: 'auto'
-            });
-            $(nextEl).focus();
+        if (elofft - scroll + 1 < -1) {
+            scroll = elofft;
         }
-        clearTimeout(tout);
-    });
+
+        var top = elofft + nextEl.offsetHeight;
+        var sctop = scroll + contentScroll.offsetHeight;
+        if (top - sctop + 1 > 0) {
+            scroll = scroll + (top - sctop);
+        }
+        contentScroll.scroll({
+            top: scroll,
+            behavior: 'auto'
+        });
+        $(nextEl).focus();
+    }
     $('.items').removeClass('active');
     $(nextEl).addClass('active');
     return nextEl;
@@ -325,7 +322,7 @@ const calPages = () => {
 }
 
 processFile = (item) => {
-    
+
     if (item.dataset.type.includes("Video")) {
         $('#manga-viewer').addClass('d-none');
         $('#video-viewer').removeClass('d-none');
@@ -433,31 +430,45 @@ $('body').on('keydown', '.items-list', (e) => {
         e.preventDefault();
     }
 });
-
+var dblclick = 0;
+var lastItem = { id: "" };
+var timeOut;
 $('body').on('click', '.items', (e) => {
     let item = e.target.classList[0] === "items" ? e.target : e.target.closest('.items');
+    dblclick++;
+    if (!timeOut) {
+        timeOut = setTimeout(() => {
+            if (dblclick > 1 && lastItem.id === item.id) {
+                lastItem.id = item.id;
+                let title = document.title;
+
+                if (item.dataset.type) {
+                    processFile(item);
+                } else {
+                    config.serie.lastSerie = window.location.pathname;
+                    config.serie.SerieIndex = selectedIndex;
+
+                    let url = "/serie-content/" + item.id;
+                    window.history.pushState(title, title, url);
+
+                    lastIndex = selectedIndex;
+                    local.setItem('serie', item.id);
+                    loadPartialPage(url, () => {
+                        selectItem(0);
+                    });
+                }
+            }
+            console.log(dblclick)
+            dblclick = 0;
+            clearTimeout(timeOut);
+            timeOut = null;
+        }, 300);
+    }
     selectItem($('.items').index(item));
+    lastItem.id = item.id;
 });
 
 $('body').on('dblclick', '.items-list .items', (e) => {
-    let item = e.target.classList[0] === "items" ? e.target : e.target.closest('.items');
-    let title = document.title;
-
-    if (item.dataset.type) {
-        processFile(item);
-    } else {
-        config.serie.lastSerie = window.location.pathname;
-        config.serie.SerieIndex = selectedIndex;
-
-        let url = "/serie-content/" + item.id;
-        window.history.pushState(title, title, url);
-
-        lastIndex = selectedIndex;
-        local.setItem('serie', item.id);
-        loadPartialPage(url, () => {
-            selectItem(0);
-        });
-    }
 
 });
 
@@ -498,7 +509,7 @@ $(() => {
 });
 
 
-document.onkeydown = (e) =>{
+document.onkeydown = (e) => {
     playerKeyDown(e);
     mangaVewerKeyDown(e);
 }
