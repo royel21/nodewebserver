@@ -19,8 +19,8 @@ class SliderRange {
                         </span>
                     </div>
                 </div>`);
-
-        this.$element.empty().append(this.$slider);
+        
+        this.$element.append(this.$slider);
 
         this.$slider.find('.rc-track').mousedown((e) => {
             this.isSliderThumbPressed = true;

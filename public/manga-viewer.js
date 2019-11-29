@@ -3,15 +3,12 @@ const mImageView = mangaViewer.querySelector('#myimg');
 const closeMViewer = document.getElementById('close-manga-modal');
 const currentImg = document.getElementById('myimg');
 const mloadingAnimation = document.getElementById('m-loading');
+const imgpreview = document.getElementById('img-preview');
+
 var disconnected = false;
 var socket = io();
 
 var mangaIds = {};
-
-
-window.onbeforeunload = (e) => {
-    localStorage.setObject('mangas', mangaIds);
-}
 
 var mangaConfig = {
     keys: {
@@ -48,12 +45,39 @@ var mangaConfig = {
     }
 }
 
+var mSlider = new SliderRange('#m-slider');
+
+mSlider.min = 0;
+mSlider.value = 0;
 var mId = "";
 var mPage = 0;
 
 var mTotalPages = 0;
 var mImages = [];
 var mLoading = false;
+var pimages;
+
+var createElements = (count) => {
+    let c = document.createDocumentFragment();
+    for (let i = 0; i < count; i++) {
+        var tdiv = document.createElement('div');
+        var tpage = document.createElement('div');
+        var timgdiv = document.createElement('div');
+        var timg = document.createElement('img');
+
+        tpage.textContent = i + 1;
+        timgdiv.appendChild(timg);
+        timgdiv.classList.add("pimgs");
+        tdiv.appendChild(timgdiv);
+        tdiv.appendChild(tpage);
+
+        c.appendChild(tdiv);
+    }
+    imgpreview.innerHTML = "";
+    imgpreview.appendChild(c);
+    pimages = imgpreview.querySelectorAll('img');
+}
+
 
 var loadNewImages = (fromPage, pagetoload = 20) => {
     mLoading = true;
@@ -62,22 +86,13 @@ var loadNewImages = (fromPage, pagetoload = 20) => {
 
 var fullScreen = (e) => { setfullscreen(mangaViewer); }
 var updatePageNumber = () => {
-    $('#page-number').text((mPage + 1) + "/" + mTotalPages)
+    $('#page-number').text(mPage + 1);
+    $('#page-total').text(mTotalPages);
     mangaIds[mId].page = mPage;
+    mSlider.value = mPage;
+    pimages[mPage].scrollIntoView()
 };
 var tout;
-var showInfo = () => {
-    if (tout) clearTimeout(tout);
-
-    $('#m-pagen').removeClass('d-none');
-    $('#m-name').removeClass('d-none');
-
-    tout = setTimeout(() => {
-        $('#m-pagen').addClass('d-none');
-        $('#m-name').addClass('d-none');
-        clearTimeout();
-    }, 5000);
-}
 
 socket.on("loaded-zipedimage", (data) => {
     //console.log(data);
@@ -86,17 +101,25 @@ socket.on("loaded-zipedimage", (data) => {
         $(mangaViewer).fadeIn(300, (e) => {
             mangaViewer.focus();
         });
-        mangaIds[mId].total = data.total;
+        mloadingAnimation.style.display = "none";
+
+
+        if (data.total) {
+            mTotalPages = data.total;
+            createElements(data.total);
+            mSlider.max = data.total;
+            mangaIds[mId].total = data.total;
+        }
+
+        updatePageNumber();
     }
 
-    if (data.img) mImages[data.page] = 'data:img/jpeg;base64, ' + data.img;
-
-    if (data.total) mTotalPages = data.total;
+    if (data.img) {
+        pimages[data.page].src = mImages[data.page] = 'data:img/jpeg;base64, ' + data.img;
+    }
 
     if (data.last) {
         mLoading = false;
-        mloadingAnimation.style.display = "none";
-        updatePageNumber();
     }
 });
 
@@ -114,7 +137,7 @@ socket.on('Error', error => {
     console.log(error);
 });
 
-closeMViewer.onclick = (e) => {
+var mclose = () => {
     $(mangaViewer).fadeOut(200, () => {
         if (document.fullscreenElement) {
             fullScreen();
@@ -123,16 +146,18 @@ closeMViewer.onclick = (e) => {
     mImages = [];
 }
 
+closeMViewer.onclick = mclose;
+
 $('.btn-fullscr-m').click(fullScreen);
 
 
 openManga = (item) => {
     mId = item.id;
     let m = mangaIds[mId];
-    if(m){
+    if (m) {
         mPage = m.page;
         mTotalPages = m.total;
-    }else{
+    } else {
         mangaIds[mId] = { id: mId, page: 0, total: 0 };
         mPage = 0;
     }
@@ -143,15 +168,23 @@ openManga = (item) => {
     mImageView.src = src;
     mloadingAnimation.style.display = "flex";
     loadNewImages(mPage, 20);
+}
 
-    
+mSlider.oninput = (value) => {
+    let val = Math.floor(value);
+    pimages[val].scrollIntoView();
+    let img = mImages[val];
 
-    showInfo();
+    mImageView.src = img ? "" : img;
+    mPage = val;
+    if (!img && !mLoading) {
+        loadNewImages(mPage, 10);
+    }
+    updatePageNumber();
 }
 
 var nextImg = () => {
     if (mPage < mTotalPages - 1) {
-        //socket.emit('loadzip-image', { id: mId, page: ++mPage });
         let timg = mImages[mPage + 1];
         if (timg) {
             mImageView.src = mImages[++mPage];
@@ -238,7 +271,7 @@ var mangaVewerKeyDown = (e) => {
 var placeHolder = () => { }
 var areaEvents = {
     "area1": placeHolder,
-    "area2": placeHolder,
+    "area2": mclose,
     "area3": placeHolder,
     "area4": nextImg,
     "area5": fullScreen,

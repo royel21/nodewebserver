@@ -15,23 +15,23 @@ module.exports.setSocket = (_db) => {
 
 module.exports.loadZipImages = (data, socket) => {
     //get last user or create
-    let user = users[socket.id] ? users[socket.id] : users[socket.id] = { lastId:"", zip:{}, entries:[] };
-    
+    let user = users[socket.id] ? users[socket.id] : users[socket.id] = { lastId: "", zip: {}, entries: [] };
+
     if (user.lastId === data.id) {
         for (let i = data.page; i < (data.page + data.pagetoload) && i < user.entries.length; i++) {
-            try{
-                
+            try {
+
                 let data = user.zip.entryDataSync(user.entries[i]).toString('base64');
 
                 socket.emit('loaded-zipedimage', {
                     page: i,
                     img: data
                 });
-            }catch(err){
+            } catch (err) {
                 console.log(err);
             }
         }
-        socket.emit('loaded-zipedimage', { last: true});
+        socket.emit('loaded-zipedimage', { last: true });
     }
     else {
 
@@ -63,7 +63,7 @@ module.exports.loadZipImages = (data, socket) => {
                                 img: zip.entryDataSync(entries[i]).toString('base64')
                             });
                         }
-                        socket.emit('loaded-zipedimage', { last: true});
+                        socket.emit('loaded-zipedimage', { last: true });
                         console.log('data send')
                     });
 

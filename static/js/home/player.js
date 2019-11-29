@@ -31,6 +31,7 @@ window.onbeforeunload = (e) => {
         local.setItem('selectedIndex', selectedIndex);
         updaterecentVideos();
     }
+    localStorage.setObject('mangas', mangaIds);
 }
 
 if (local.hasObject('config')) {
@@ -55,12 +56,12 @@ Slider.onPreview = (value) => {
 
 const configPlayer = () => {
     vDuration = formatTime(player.duration);
-    $vTotalTime.text(formatTime(player.currentPos) + "/" + vDuration);
+    $vTotalTime.text(formatTime(player.currentTime) + "/" + vDuration);
 
     player.volume = config.volume;
 
     player.muted = btnMuted.checked = config.isMuted;
-    player.currentPos = currentFile.current;
+    player.currentTime = currentFile.current;
     if (!config.paused) pauseOrPlay();
     $('.loading').css({ display: 'none' });
 
@@ -78,7 +79,7 @@ volcontrol.value = config.volume;
 $('#video-viewer .fa-volume-up').attr('data-title', config.isMuted ? "Unmute" : "Mute");
 
 Slider.oninput = (value) => {
-    player.currentPos = value;
+    player.currentTime = value;
 }
 
 const closePlayer = (e) => {
@@ -89,12 +90,10 @@ const closePlayer = (e) => {
     }
 
     $('#video-viewer').fadeOut('fast', (e) => {
-        $('#media-container').fadeOut(200, (e) => {
-            selectItem(selectedIndex);
-            currentFile = {};
-            player.pause();
-            player.src = "";
-        });
+        selectItem(selectedIndex);
+        currentFile = {};
+        player.pause();
+        player.src = "";
     });
 }
 
@@ -188,9 +187,9 @@ player.onplay = player.onpause = hideFooter;
 
 player.ontimeupdate = (e) => {
     if (update && Slider) {
-        Slider.value = Math.floor(player.currentPos);
-        $vTotalTime.text(formatTime(player.currentPos) + "/" + vDuration);
-        currentFile.current = player.currentPos;
+        Slider.value = Math.floor(player.currentTime);
+        $vTotalTime.text(formatTime(player.currentTime) + "/" + vDuration);
+        currentFile.current = player.currentTime;
     }
 }
 
@@ -256,12 +255,12 @@ player.ontouchmove = (e) => {
         let diffX = touch.clientX - point.X;
         if (diffX > offset) {
             console.log("right: " + diffX);
-            player.currentPos += 2;
+            player.currentTime += 2;
         }
 
         if (diffX < -offset) {
             console.log("letf: " + (touch.clientX - point.X));
-            player.currentPos -= 2;
+            player.currentTime -= 2;
         }
         point.X = touch.clientX;
         point.Y = touch.clientY;
@@ -290,7 +289,7 @@ const playVideo = (el) => {
         let id = el.id;
         currentFile = { id, current: 0 }
         updaterecentVideos();
-        $(videoViewer).fadeIn(300);
+       // $(videoViewer).fadeIn(()=>{ videoViewer.focus(); }, 300);
 
         $('.loading').css({ display: 'flex' });
 
@@ -317,7 +316,7 @@ $("#video-viewer .fa-arrow-alt-circle-left").click((e) => {
 });
 
 var playerKeyDown = (e) => {
-    if (videoViewer.style.display === "block") {
+    if ($(videoViewer).is(':visible')) {
         var keys = config.playerkey;
         console.log(e.keyCode);
         switch (e.keyCode) {
@@ -336,7 +335,7 @@ var playerKeyDown = (e) => {
             case keys.rewind.keycode:
                 {
                     if (e.ctrlKey == keys.rewind.isctrl)
-                        player.currentPos -= 6;
+                        player.currentTime -= 6;
                     break;
                 }
             case keys.volumeup.keycode:
@@ -350,7 +349,7 @@ var playerKeyDown = (e) => {
             case keys.forward.keycode:
                 {
                     if (e.ctrlKey == keys.forward.isctrl)
-                        player.currentPos += 6;
+                        player.currentTime += 6;
                     break;
                 }
             case keys.volumedown.keycode:

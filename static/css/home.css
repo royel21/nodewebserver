@@ -88,7 +88,7 @@ position: relative;
    z-index: 5;
 }
 
-#files-list .active > .item-video {
+.items-list .active .item-video {
     background-color: rgba(0,123,255,0.4) !important;
     box-shadow: 0 0 10px;
 }
