@@ -48,7 +48,7 @@ const myworker = async (id) => {
             
             if (/zip/ig.test(f.Name)) {
                 await thumbnails.ZipCover(fullPath, coverPath);
-            } else if (/rar/ig.test(s.filePath)) {
+            } else if (/rar/ig.test(f.filePath)) {
                 await thumbnails.RarCover(fullPath, coverPath);
             }
             
