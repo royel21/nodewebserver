@@ -1,24 +1,25 @@
 mixin navbar(user, url)
-    nav#menu.navbar.navbar-expand-sm.navbar-dark.bg-dark
-        a.navbar-brand(href="/")
-            i.fas.fa-home
-        label.navbar-toggler(for="toggle-menu")
-            span.navbar-toggler-icon
-        input#toggle-menu(type="checkbox")
-        .collapse.navbar-collapse#navbarSupportedContent
-            ul.navbar-nav.mr-auto.bg-dark
+    nav#menu.navbar.navbar-expand-lg.navbar-dark.bg-dark
+        ul.navbar-nav.bg-dark
                 li.nav-item
-                    a.nav-link(href="/" class=""+(url === '/' || url.includes('serie-content') ? "active" : "")) Series 
+                    a.nav-link(href="/" class=""+(url === '/' || url.includes('folder-content') ? "active" : ""))
+                        i.fas.fa-folder
+                        span  Folders 
                 li.nav-item
-                    a.nav-link(href="/mangas" class=""+(url === '/mangas' || url.includes('mangas') ? "active" : "")) Mangas
+                    a.nav-link(href="/mangas" class=""+(url === '/mangas' || url.includes('mangas') ? "active" : "")) 
+                        i.fas.fa-book-open
+                        span  Mangas
                 li.nav-item
-                    a.nav-link(href="/videos" class=""+(url.includes('videos') ? "active" : "")) Todos los videos
-            ul.ml-auto.nav.navbar-nav.bg-dark
-                li.nav-item
-                    if user
-                        a.nav-link(href="/admin" class=""+(url.includes('admin') ? "active" : ""))
-                            i.fas.fa-user.f-2x
-                            span= user.Name
-                    if(user)
-                        li.nav-item
-                            a.nav-link(href="/logout") Logout
+                    a.nav-link(href="/videos" class=""+(url.includes('videos') ? "active" : ""))
+                        i.fas.fa-film
+                        span  All Videos
+        ul.navbar-nav.bg-dark
+            li.nav-item
+                if user
+                    a.nav-link(href="/admin" class=""+(url.includes('admin') ? "active" : ""))
+                        i.fas.fa-cog.f-2x
+                        span= " "+user.Name
+                if(user)
+                    li.nav-item
+                        a#login.nav-link(href="/logout") Logout
+            

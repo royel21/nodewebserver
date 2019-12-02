@@ -2,15 +2,15 @@
 const db = require('../models');
 const fs = require('fs-extra');
 
-if (!fs.existsSync('./public/covers/series')) fs.mkdirs('./public/covers/series');
-loadSeries = async (req, res) => {
+if (!fs.existsSync('./public/covers/folders')) fs.mkdirs('./public/covers/folders');
+loadFolders = async (req, res) => {
     let itemsPerPage = req.query.screenW < 1900 ? 16 : 19;
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
     let val = "";
     let files = { rows: [], count: 0 };
     let sId = "";
-    let items = await db.serie.findAndCountAll({
+    let items = await db.folder.findAndCountAll({
         order: ['Name'],
         offset: begin,
         limit: itemsPerPage
@@ -22,8 +22,8 @@ loadSeries = async (req, res) => {
             order: ['NameNormalize'],
             offset: 0,
             limit: itemsPerPage,
-            where: { SerieId: sId },
-            attributes: ['Id', 'Name', 'SerieId']
+            where: { FolderId: sId },
+            attributes: ['Id', 'Name', 'FolderId']
         });
     }
 
@@ -31,8 +31,8 @@ loadSeries = async (req, res) => {
     let view = req.query.partial ? "admin/partial-items-home" : "admin/index.pug";
 
     res.render(view, {
-        title: "Series",
-        id: "serie",
+        title: "Folders",
+        id: "folder",
         sId,
         items,
         itemspages: {
@@ -40,7 +40,7 @@ loadSeries = async (req, res) => {
             itemsPerPage,
             totalPages,
             search: val,
-            action: "/admin/series/",
+            action: "/admin/folders/",
             csrfToken: req.csrfToken()
         },
         files,
@@ -49,7 +49,7 @@ loadSeries = async (req, res) => {
             itemsPerPage,
             totalPages: Math.ceil(files.count / itemsPerPage),
             search: val,
-            action: "/admin/series/",
+            action: "/admin/folders/",
             csrfToken: req.csrfToken()
         }
     }, (err, html) => {
@@ -63,8 +63,8 @@ loadSeries = async (req, res) => {
     });
 }
 
-exports.series = (req, res) => {
-    loadSeries(req, res).catch(err => {
+exports.folders = (req, res) => {
+    loadFolders(req, res).catch(err => {
         if (err) console.log(err);
         res.status(500).send('Internal Server Error');
     });
@@ -75,7 +75,7 @@ exports.itemsList = (req, res) => {
     let currentPage = req.query.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
     let val = req.query.search || "";
-    db.serie.findAndCountAll({
+    db.folder.findAndCountAll({
         order: ['Name'],
         offset: begin,
         limit: itemsPerPage,
@@ -93,10 +93,10 @@ exports.itemsList = (req, res) => {
                 itemsPerPage,
                 totalPages: Math.ceil(items.count / itemsPerPage),
                 search: val,
-                action: "/admin/series/",
+                action: "/admin/folders/",
                 csrfToken: req.csrfToken(),
                 isList: true,
-                id: 'series'
+                id: 'folders'
             }
         })
     }).catch(err => {
@@ -111,10 +111,10 @@ exports.filesList = (req, res) => {
     let begin = ((currentPage - 1) * itemsPerPage);
     let val = req.query.search || "";
 
-    let serieId = req.query.id;
+    let folderId = req.query.id;
     let view = req.query.isAllFiles === "true";
     if (view) {
-        serieId = null;
+        folderId = null;
     }
     let condition = {
         order: ['NameNormalize'],
@@ -122,7 +122,7 @@ exports.filesList = (req, res) => {
         limit: itemsPerPage,
         attributes: ['Id', 'Name'],
         where: {
-            [db.Op.and]: [{ Name: { [db.Op.like]: "%" + val + "%" } }, { SerieId: serieId }]
+            [db.Op.and]: [{ Name: { [db.Op.like]: "%" + val + "%" } }, { FolderId: folderId }]
         }
     };
 
@@ -135,7 +135,7 @@ exports.filesList = (req, res) => {
                 itemsPerPage,
                 totalPages,
                 search: val,
-                action: "/admin/series/",
+                action: "/admin/folders/",
                 csrfToken: req.csrfToken(),
                 isList: view
             }
@@ -147,23 +147,23 @@ exports.filesList = (req, res) => {
 }
 
 exports.addFiles = (req, res) => {
-    let serieId = req.body.itemId;
+    let folderId = req.body.itemId;
     let fileId = req.body.fileId || null;
     let search = req.body.search || "";
     let condition = {
         order: ['NameNormalize'],
         attributes: ['Id', 'Name'],
         where:
-            fileId ? { [db.Op.and]: [{ Id: fileId }, { SerieId: null }] } :
+            fileId ? { [db.Op.and]: [{ Id: fileId }, { FolderId: null }] } :
                 {
-                    [db.Op.and]: [{ Name: { [db.Op.like]: "%" + search + "%" } }, { SerieId: null }]
+                    [db.Op.and]: [{ Name: { [db.Op.like]: "%" + search + "%" } }, { FolderId: null }]
                 }
     };
 
-    db.serie.findOne({ where: { Id: serieId } }).then(serie => {
-        if (serie) {
+    db.folder.findOne({ where: { Id: folderId } }).then(folder => {
+        if (folder) {
             db.file.findAll(condition).then(files => {
-                serie.addFiles(files);
+                folder.addFiles(files);
                 res.send({ count: files.length });
             }).catch(err => {
                 if (err) console.log(err);
@@ -180,7 +180,7 @@ exports.addFiles = (req, res) => {
 exports.removeFile = (req, res) => {
     let Id = req.body.fileId;
     db.file.update(
-        { SerieId: null },
+        { FolderId: null },
         { where: { Id } }
     ).then(result => {
         console.log('result:', result);

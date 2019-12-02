@@ -79,7 +79,7 @@ const myworker = async (id) => {
 
 process.on("message", (data) => {
 
-    seriesThumbNails(data.series).then(() => {
+    foldersThumbNails(data.folders).then(() => {
         vCover = path.resolve('./public', 'covers', 'files', 'folder-' + data.id);
         console.log("creating file covers");
         if (!fs.existsSync(vCover)) {
@@ -96,8 +96,8 @@ process.on("message", (data) => {
     });
 });
 
-var seriesThumbNails = async (series) => {
-    for (let s of series) {
+var foldersThumbNails = async (folders) => {
+    for (let s of folders) {
         try {
             if (!s.isManga) {
                 console.log(s.coverPath);

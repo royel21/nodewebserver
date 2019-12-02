@@ -1,4 +1,4 @@
-var loadSeriesConfig = () => {
+var loadFoldersConfig = () => {
     let getAction;
     let loadItemList;
     let loadFromPager;
@@ -157,7 +157,7 @@ var loadSeriesConfig = () => {
             }
 
         } else {
-            showError('No Hay Serie Para Agregar File', 'text-danger');
+            showError('No Hay Folder Para Agregar File', 'text-danger');
         }
     });
 

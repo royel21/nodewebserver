@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
 
-    const Serie = sequelize.define('Serie', {
+    const Folder = sequelize.define('Folders', {
         Id: {
             type: DataTypes.STRING(10),
             primaryKey: true,
@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
         });
-    return Serie;
+    return Folder;
 }
 
 

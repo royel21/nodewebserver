@@ -16,7 +16,7 @@ block navbar
                     i.fa.fa-users.text-primary
                         span Users
             li.nav-item
-                a.nav-link(href="/admin/series" class=""+(/Series/ig.test(title) ? "active" : ""))
+                a.nav-link(href="/admin/folders" class=""+(/folders/ig.test(title) ? "active" : ""))
                     i.fas.fa-folder.text-primary
                         span Folders
             li.nav-item
@@ -39,7 +39,7 @@ block content
     else if /Files/ig.test(title)
         include ./files/files-table
         +files_table(files, pagedatas)
-    else if /Serie|Cate/ig.test(title)
+    else if /folder|Cate/ig.test(title)
         include ./items_home
         +items_home(items, files, filepages, itemspages, title, id)
     else if /Directories/ig.test(title)

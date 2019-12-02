@@ -50,6 +50,9 @@ app.use(function (req, res, next) {
   if (req.user) {
     app.locals.user = req.user;
     app.locals.url = req.url
+    if(req.url === '/folder-content/'){
+      res.redirect('/');
+    }
   } else if (req.url !== "/login") {
     return res.redirect('/login');
   }

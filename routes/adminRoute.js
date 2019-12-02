@@ -5,7 +5,7 @@ const filesController = require('../controllers/filesController');
 const helperController = require('../controllers/helperController');
 const categoriesController = require('../controllers/categoriesController');
 const directoriesController = require('../controllers/directoriesController');
-const seriesController = require('../controllers/seriesController');
+const foldersController = require('../controllers/foldersController');
 
 router.get("/", usersController.index);
 router.get("/users", usersController.users);
@@ -14,14 +14,14 @@ router.get("/users/:page?/:items?/:search?", usersController.users);
 router.post("/users/create-edit", usersController.userModalPost);
 router.post("/users/search", usersController.postSearch);
 
-router.get("/series", seriesController.series);
-router.get("/series/modal", helperController.modal);
-router.get("/series/file-list", seriesController.filesList);
-router.get("/series/items-list", seriesController.itemsList);
-router.post("/series/add-files", seriesController.addFiles);
-router.post("/series/modal-post", helperController.modalPost);
-router.post("/series/delete-file", seriesController.removeFile);
-router.post('/series/delete-item', helperController.delete);
+router.get("/folders", foldersController.folders);
+router.get("/folders/modal", helperController.modal);
+router.get("/folders/file-list", foldersController.filesList);
+router.get("/folders/items-list", foldersController.itemsList);
+router.post("/folders/add-files", foldersController.addFiles);
+router.post("/folders/modal-post", helperController.modalPost);
+router.post("/folders/delete-file", foldersController.removeFile);
+router.post('/folders/delete-item', helperController.delete);
 
 router.get("/categories/", categoriesController.categories);
 router.get("/categories/modal", helperController.modal);

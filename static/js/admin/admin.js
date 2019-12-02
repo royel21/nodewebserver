@@ -1,10 +1,18 @@
 
 socket = io();
+
+socket.on('disconnect', error => {
+    console.log(error);
+    if(error.includes('transport')){
+        location.href = '/login';
+    }
+});
+
 var loadFunctions = (page) => {
     switch (page) {
         case "Categories":
         case "Folders": {
-            loadSeriesConfig();
+            loadFoldersConfig();
             break;
         }
         case "Files": {

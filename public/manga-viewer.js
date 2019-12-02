@@ -145,18 +145,11 @@ socket.on("loaded-zipedimage", (data) => {
     }
 });
 
-socket.on('connect_error', error => {
+socket.on('disconnect', error => {
     console.log(error);
-});
-
-socket.on('Disconnect', error => {
-    console.log(error);
-});
-socket.on('Reconnect', error => {
-    console.log(error);
-});
-socket.on('Error', error => {
-    console.log(error);
+    if(error.includes('transport')){
+        location.href = '/login';
+    }
 });
 
 var mclose = () => {

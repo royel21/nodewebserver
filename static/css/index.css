@@ -334,11 +334,6 @@ body{
         margin-left: 0px;
         margin-right: 10px;
     }
-    .nav-item .nav-link{
-        display: inline-block;
-        border-bottom: 1px solid  white;
-        padding: 4px;
-    }
 }
 
 @media all and (max-height: 640px){

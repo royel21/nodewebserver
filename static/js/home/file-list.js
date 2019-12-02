@@ -18,7 +18,7 @@ let currentFile = { id: 0, currentPos: 0 };
 
 var config = {
     sortBy: "Name-D",
-    serie: { lastSerie: "", lastIndex: 0 },
+    folder: { lastfolder: "", lastIndex: 0 },
     volume: 0,
     isMuted: false,
     paused: true,
@@ -26,7 +26,7 @@ var config = {
     recentVideoMax: 100,
     recentVideos: [],
     itemsPerPage: 0,
-    seriesPerPage: 0,
+    foldersPerPage: 0,
     playerkey: {
         nextfile: {
             name: "PageDown",
@@ -145,11 +145,11 @@ $('body').on('keydown', '.items-list', (e) => {
                 if (item.dataset.type) {
                     processFile(item);
                 } else {
-                    let url = "/serie-content/" + item.id;
+                    let url = "/folder-content/" + item.id;
                     window.history.pushState(title, title, url);
                     lastIndex = selectedIndex;
-                    local.setItem('serie', item.id);
-                    config.serie.SerieIndex = selectedIndex;
+                    local.setItem('folder', item.id);
+                    config.folder.folderIndex = selectedIndex;
                     loadPartialPage(url, () => {
                         selectItem(0);
                     });
@@ -237,20 +237,20 @@ $('body').on('click', '.items', (e) => {
                 if (item.dataset.type) {
                     processFile(item);
                 } else {
-                    config.serie.lastSerie = window.location.pathname;
-                    config.serie.SerieIndex = selectedIndex;
+                    config.folder.lastfolder = window.location.pathname;
+                    config.folder.folderIndex = selectedIndex;
 
-                    let url = "/serie-content/" + item.id;
+                    let url = "/folder-content/" + item.id;
                     window.history.pushState(title, title, url);
 
                     lastIndex = selectedIndex;
-                    local.setItem('serie', item.id);
+                    local.setItem('folder', item.id);
                     loadPartialPage(url, () => {
                         selectItem(0);
                     });
                 }
             }
-            console.log(dblclick)
+            
             dblclick = 0;
             clearTimeout(timeOut);
             timeOut = null;
@@ -271,10 +271,10 @@ $(window).bind('popstate', (event) => {
 
 var goBack = () => {
     let title = "Home";
-    window.history.pushState(title, title, config.serie.lastSerie);
-    local.setItem('serie', false);
-    loadPartialPage(config.serie.lastSerie, () => {
-        selectItem(config.serie.SerieIndex);
+    window.history.pushState(title, title, config.folder.lastfolder);
+    local.setItem('folder', false);
+    loadPartialPage(config.folder.lastfolder, () => {
+        selectItem(config.folder.folderIndex);
     });
 }
 
@@ -293,7 +293,6 @@ $('#content').scroll((e) => {
 
 $('#content').on('click', '#scroll-up', (e) => {
     $("#content").animate({ scrollTop: 0 }, "fast");
-    console.log('test')
 });
 
 $(() => {

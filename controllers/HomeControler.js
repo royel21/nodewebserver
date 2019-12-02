@@ -10,14 +10,14 @@ exports.index = (req, res) => {
     if (isManga) isFile = true;
 
     //Select the database
-    let tempDb = isFile ? db.file : db.serie;
+    let tempDb = isFile ? db.file : db.folder;
     //Screen config
     let screenw = parseInt(req.cookies['screen-w']);
     let itemsPerPage = req.params.items || req.query.items || (screenw < 1900 ? 21 : 27);
     //parameters
-    let seriesId = req.params.serie;
-    if (!db.serie.findOne({ where: { Id: seriesId } })) {
-        seriesId = null;
+    let foldersId = req.params.folder;
+    if (!db.folder.findOne({ where: { Id: foldersId } })) {
+        foldersId = null;
     }
 
     let currentPage = req.params.page || 1;
@@ -36,17 +36,17 @@ exports.index = (req, res) => {
         },
     }
 
-    let action = isManga ? "/mangas/" : isFile ? "/videos/" : "/series/";
+    let action = isManga ? "/mangas/" : isFile ? "/videos/" : "/folders/";
 
-    if (seriesId) {
+    if (foldersId) {
 
-        action = "/serie-content/" + seriesId + "/"
+        action = "/folder-content/" + foldersId + "/"
         query.where = {
             [db.Op.and]: [{
                 Name: {
                     [db.Op.like]: "%" + search + "%"
                 }
-            }, { SerieId: seriesId }]
+            }, { FolderId: foldersId }]
         }
     } else {
         query.where = {
@@ -96,11 +96,11 @@ exports.postSearch = (req, res) => {
     let itemsPerPage = req.body.items;
     let search = req.body.search || "";
 
-    let serieId = req.params.serie;
-    let url = `/series/1/${itemsPerPage}/${search}?partial=true`;
+    let folderId = req.params.folder;
+    let url = `/folders/1/${itemsPerPage}/${search}?partial=true`;
 
     if (/video|content|manga/ig.test(req.url)) {
-        url = (serieId ? `/serie-content/${serieId}` : /mangas/ig.test(req.url) ? "/mangas" : '/videos') + `/1/${itemsPerPage}/${search}?partial=true`;
+        url = (folderId ? `/folder-content/${folderId}` : /mangas/ig.test(req.url) ? "/mangas" : '/videos') + `/1/${itemsPerPage}/${search}?partial=true`;
     }
 
     res.redirect(url);
@@ -119,7 +119,7 @@ exports.loginPost = (req, res, next) => {
     }
     res.cookie('screen-w', req.body.screenw, options);
 
-    let rediretTo = req.body.serieid === 'false' ? "/" : '/serie-content/' + req.body.serieid;
+    let rediretTo = req.body.folderid === 'false' ? "/" : '/folder-content/' + req.body.folderid;
 
     passport.authenticate('local', {
         successRedirect: rediretTo,

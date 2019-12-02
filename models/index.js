@@ -26,7 +26,7 @@ db.Op = Op;
 db.user = require('./user')(sequelize, DataTypes);
 db.file = require('./file')(sequelize, DataTypes);
 db.category = require('./category')(sequelize, DataTypes);
-db.serie = require('./serie')(sequelize, DataTypes);
+db.folder = require('./folder')(sequelize, DataTypes);
 db.favorite = require('./favorites')(sequelize, DataTypes);
 db.directory = require('./directories')(sequelize, DataTypes);
 
@@ -53,10 +53,10 @@ db.file.belongsToMany(db.favorite, { through: { model: db.favoriteFile } });
 db.directory.hasMany(db.file, { onDelete: 'cascade' });
 
 db.file.belongsTo(db.directory);
-db.file.belongsTo(db.serie);
+db.file.belongsTo(db.folder);
 
 db.user.hasOne(db.favorite);
-db.serie.hasMany(db.file);
+db.folder.hasMany(db.file);
 
 db.init = async () => {
     await sequelize.sync();

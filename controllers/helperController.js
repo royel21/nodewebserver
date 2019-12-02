@@ -2,22 +2,22 @@ const db = require('../models');
 const fs = require('fs-extra');
 const sharp = require('sharp')
 
-const coverPath = './public/covers/series/';
+const coverPath = './public/covers/folders/';
 
 
 exports.modal = (req, res) => {
-    const isSerie = req.url.includes('series');
-    let tempDB = isSerie ? db.serie : db.category;
+    const isFolder = req.url.includes('folders');
+    let tempDB = isFolder ? db.folder : db.category;
 
     let Id = req.query.uid;
-    let modalTitle = Id ? (isSerie ? "Editar Serie" : "Editar Categoria") : (isSerie ? "Nueva Serie" : "Nueva Categoria");
+    let modalTitle = Id ? (isFolder ? "Editar Folder" : "Editar Categoria") : (isFolder ? "Nueva Folder" : "Nueva Categoria");
 
     tempDB.findOne({ where: { Id } }).then(item => {
         res.render('admin/item-modal', {
             item,
             csrfToken: req.csrfToken(),
             modalTitle,
-            isSerie
+            isFolder
         });
     }).catch(err => {
         if (err) console.log(err);
@@ -34,13 +34,13 @@ const createCover = (req, item) => {
 }
 
 createItem = (req, res) => {
-    const isSerie = req.url.includes('series')
+    const isFolder = req.url.includes('folders')
 
     const name = req.body.name;
-    let tempDB = isSerie ? db.serie : db.category;
+    let tempDB = isFolder ? db.folder : db.category;
     tempDB.create({ Name: name }).then(item => {
         if (item) {
-            if (isSerie) createCover(req, item);
+            if (isFolder) createCover(req, item);
             res.render('admin/item-row', { item });
         } else
             res.send({ err: "500", message: err });
@@ -51,13 +51,13 @@ createItem = (req, res) => {
 }
 
 editItem = (req, res) => {
-    const isSerie = req.url.includes('series')
+    const isFolder = req.url.includes('folders')
 
     const name = req.body.name;
-    let tempDB = isSerie ? db.serie : db.category;
+    let tempDB = isFolder ? db.folder : db.category;
     let Id = req.body.id;
     
-    if (isSerie) createCover(req, {Id});
+    if (isFolder) createCover(req, {Id});
 
     tempDB.update({ Name: name }, { where: { Id } }).then(item => {
         if (item) {
@@ -81,14 +81,14 @@ exports.modalPost = (req, res) => {
 
 exports.delete = (req, res) => {
     let id = req.body.itemId;
-    let isSerie = req.url.includes('series');
-    let tempDB = isSerie ? db.serie : db.category;
-    console.log("Id:"+id, isSerie)
+    let isFolder = req.url.includes('folders');
+    let tempDB = isFolder ? db.folder : db.category;
+    console.log("Id:"+id, isFolder)
     tempDB.destroy({ where: { Id: id } }).then(result => {
         console.log(result)
         if (result > 0) {
             res.send({ state: "Ok", id });
-            if (isSerie) {
+            if (isFolder) {
                 fs.remove(coverPath + id + '.jpg')
             }
         } else {

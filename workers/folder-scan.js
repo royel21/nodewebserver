@@ -8,45 +8,45 @@ const { NormalizeName, Capitalize } = require('../Utils/StringUtil')
 const db = require('../models');
 
 var tempFiles = [];
-const coverPath = path.join('./public', 'covers', 'series');
+const coverPath = path.join('./public', 'covers', 'folders');
 
 const worker = fork('./workers/screenshot-worker.js');
 fs.mkdirsSync(coverPath);
 
-var serieCovers = [];
+var folderCovers = [];
 
 createCover = async(dir, files) => {
-    let serie;
+    let folder;
     let firstFile = files.filter(a => a.extension && ['mp4', 'mkv', 'avi', 'ogg', 'webm', 'rar', 'zip']
         .includes(a.extension.toLocaleLowerCase()))[0];
 
     if (firstFile) {
         let Name = path.basename(dir);
-        let tempSerie = await db.serie.findOrCreate({ where: { Name } });
+        let tempFolder = await db.folder.findOrCreate({ where: { Name } });
 
-        serie = tempSerie[0];
+        folder = tempFolder[0];
 
-        let SerieCover = path.join(coverPath, serie.Id + ".jpg");
+        let FolderCover = path.join(coverPath, folder.Id + ".jpg");
 
-        if (!fs.existsSync(SerieCover)) {
+        if (!fs.existsSync(FolderCover)) {
 
             let img = files.find(a => a.extension && ['jpg', 'jpeg', 'png', 'gif'].includes(a.extension.toLocaleLowerCase()));
 
             if (img) {
 
-                await sharp(path.join(dir, img.FileName)).resize({ height: 200 }).toFile(SerieCover);
+                await sharp(path.join(dir, img.FileName)).resize({ height: 200 }).toFile(FolderCover);
 
             } else {
-                serieCovers.push({
-                    serie: true,
+                folderCovers.push({
+                    folder: true,
                     filePath: path.join(dir, firstFile.FileName),
-                    coverPath: SerieCover,
+                    coverPath: FolderCover,
                     isManga: /rar|zip/ig.test(firstFile.FileName)
                 });
             }
         }
     }
-    return serie;
+    return folder;
 }
 
 PopulateDB = async(folder, files, fId, se) => {
@@ -67,7 +67,7 @@ PopulateDB = async(folder, files, fId, se) => {
                             Id: Id
                         }, {
                             Name: f.FileName,
-                            SerieId: se ? se.Id : null
+                            FolderId: se ? se.Id : null
                         }]
                     }
                 });
@@ -80,7 +80,7 @@ PopulateDB = async(folder, files, fId, se) => {
                         FullPath: folder,
                         Type: /rar|zip/ig.test(f.extension) ? "Manga" : "Video",
                         DirectoryId: fId,
-                        SerieId: se ? se.Id : null,
+                        FolderId: se ? se.Id : null,
                         Size: f.Size
                     });
                 } else {
@@ -94,8 +94,8 @@ PopulateDB = async(folder, files, fId, se) => {
                 }
 
             } else {
-                let serie = await createCover(f.FileName, f.Files);
-                await PopulateDB(f.FileName, f.Files, fId, serie);
+                let folder = await createCover(f.FileName, f.Files);
+                await PopulateDB(f.FileName, f.Files, fId, folder);
             }
         } catch (error) {
             console.log(f, error);
@@ -113,12 +113,12 @@ scanOneDir = async(data) => {
     }
 
     var fis = WinDrive.ListFilesRO(data.dir);
-    let serie;
+    let folder;
     if (fis.length > 0)
-        serie = await createCover(data.dir, fis);
-    await PopulateDB(data.dir, fis, data.id, serie);
+        folder = await createCover(data.dir, fis);
+    await PopulateDB(data.dir, fis, data.id, folder);
 
-    data.series = serieCovers;
+    data.folders = folderCovers;
     worker.send(data);
 }
 

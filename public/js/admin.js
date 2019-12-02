@@ -26,23 +26,23 @@ var u,f,l,d=String.fromCharCode;t.exports={version:"2.1.2",encode:a,decode:h}},f
 window.local = localStorage;
 var isAndroid = /(android)/i.test(navigator.userAgent);
 
-$.expr[":"].contains = $.expr.createPseudo(function (arg) {
-    return function (elem) {
+$.expr[":"].contains = $.expr.createPseudo(function(arg) {
+    return function(elem) {
         return $(elem).text().trim().toUpperCase().includes(arg.trim().toUpperCase());
     };
 });
 
-$.expr[":"].textequalto = $.expr.createPseudo(function (arg) {
-    return function (elem) {
+$.expr[":"].textequalto = $.expr.createPseudo(function(arg) {
+    return function(elem) {
         return $(elem).text().trim().toUpperCase() === arg.trim().toUpperCase();
     };
 });
 
-Storage.prototype.setObject = function (key, value) {
+Storage.prototype.setObject = function(key, value) {
     this.setItem(key, JSON.stringify(value));
 }
 
-Storage.prototype.getObject = function (key) {
+Storage.prototype.getObject = function(key) {
     var value = this.getItem(key);
     if (value == "undefined") return {};
     return value && JSON.parse(value);
@@ -52,11 +52,11 @@ Storage.prototype.hasObject = (key) => {
     return local.getObject(key) != null && !$.isEmptyObject(local.getObject(key));
 }
 
-Number.prototype.map = function (in_min, in_max, out_min, out_max) {
+Number.prototype.map = function(in_min, in_max, out_min, out_max) {
     return (this - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-Array.prototype.removeBy = function (obj, by) {
+Array.prototype.removeBy = function(obj, by) {
     var i = this.length;
     while (i--) {
         if (this[i] instanceof Object && this[i][by] === obj[by]) {
@@ -64,6 +64,7 @@ Array.prototype.removeBy = function (obj, by) {
         }
     }
 }
+
 
 formatTime = (time) => {
     var h = Math.floor(time / 3600);
@@ -98,20 +99,20 @@ setfullscreen = (element) => {
         if (lastEl && element.tagName !== 'BODY') {
             if (document.fullscreenElement.tagName === 'BODY') {
                 document.exitFullscreen().then(() => {
-                    element.requestFullscreen().catch(err => { });
-                }).catch(err => { });
+                    element.requestFullscreen().catch(err => {});
+                }).catch(err => {});
             } else {
                 document.exitFullscreen().then(() => {
-                    lastEl.requestFullscreen().catch(err => { });
-                }).catch(err => { });
+                    lastEl.requestFullscreen().catch(err => {});
+                }).catch(err => {});
             }
         } else {
             if (!document.fullscreenElement) {
-                element.requestFullscreen().catch(err => { });
+                element.requestFullscreen().catch(err => {});
                 if (element.tagName === 'BODY') lastEl = element;
                 startClock();
             } else {
-                document.exitFullscreen().catch(err => { });
+                document.exitFullscreen().catch(err => {});
                 lastEl = null;
                 stopClock();
             }
@@ -129,8 +130,12 @@ const loadPartialPage = async (url, cb) => {
     if (!url) return;
     
     $.get(url, { partial: true}, (resp) => {
-        $('#container').replaceWith(resp.data);
-        if (cb) cb();
+        if(resp.data){
+            $('#container').replaceWith(resp.data);
+            if (cb) cb();
+        }else{
+            location.href = '/login';
+        }
     });
 }
 
@@ -140,7 +145,7 @@ window.onpopstate = function (e) {
     $('.sidenav a').removeClass("active");
     $(`.sidenav .nav-link:contains("${e.state}")`).addClass('active');
     loadPartialPage(url, () => {
-        if ($('#series-list')[0]) selectItem(lastIndex);
+        if ($('#folders-list')[0]) selectItem(lastIndex);
     });
 }
 
@@ -206,7 +211,7 @@ $('#full-screen').on('click', (e)=>{
     setfullscreen($('body')[0]);
 });
 
-var loadSeriesConfig = () => {
+var loadFoldersConfig = () => {
     let getAction;
     let loadItemList;
     let loadFromPager;
@@ -365,7 +370,7 @@ var loadSeriesConfig = () => {
             }
 
         } else {
-            showError('No Hay Serie Para Agregar File', 'text-danger');
+            showError('No Hay Folder Para Agregar File', 'text-danger');
         }
     });
 
@@ -495,11 +500,19 @@ var loadDirectories = () => {
 
 
 socket = io();
+
+socket.on('disconnect', error => {
+    console.log(error);
+    if(error.includes('transport')){
+        location.href = '/login';
+    }
+});
+
 var loadFunctions = (page) => {
     switch (page) {
         case "Categories":
         case "Folders": {
-            loadSeriesConfig();
+            loadFoldersConfig();
             break;
         }
         case "Files": {

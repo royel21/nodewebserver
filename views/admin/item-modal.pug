@@ -2,7 +2,7 @@
     #modal.card.bg-dark.text-light
         #modal-header.text-center
             h3= modalTitle
-        form#item-create-edit(method="post" action="/admin/series/modal-post")
+        form#item-create-edit(method="post" action="/admin/folders/modal-post")
             input(type="hidden" name="id" value=""+ (item ? item.Id :  ""))
             input(type="hidden" name="_csrf" value=""+ csrfToken)
             #errors.text-danger.text-center
@@ -10,7 +10,7 @@
                 .input-group-prepend
                     label.input-group-text(for="name") Nombre
                 input#namename.form-control(required="" type="text" name="name" value=""+ (item ? item.Name : ""))
-            if(isSerie)
+            if(isFolder)
                 .input-group.my-3
                     .input-group-prepend
                         label.input-group-text Cover

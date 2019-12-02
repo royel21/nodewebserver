@@ -26,23 +26,23 @@ var u,f,l,d=String.fromCharCode;t.exports={version:"2.1.2",encode:a,decode:h}},f
 window.local = localStorage;
 var isAndroid = /(android)/i.test(navigator.userAgent);
 
-$.expr[":"].contains = $.expr.createPseudo(function (arg) {
-    return function (elem) {
+$.expr[":"].contains = $.expr.createPseudo(function(arg) {
+    return function(elem) {
         return $(elem).text().trim().toUpperCase().includes(arg.trim().toUpperCase());
     };
 });
 
-$.expr[":"].textequalto = $.expr.createPseudo(function (arg) {
-    return function (elem) {
+$.expr[":"].textequalto = $.expr.createPseudo(function(arg) {
+    return function(elem) {
         return $(elem).text().trim().toUpperCase() === arg.trim().toUpperCase();
     };
 });
 
-Storage.prototype.setObject = function (key, value) {
+Storage.prototype.setObject = function(key, value) {
     this.setItem(key, JSON.stringify(value));
 }
 
-Storage.prototype.getObject = function (key) {
+Storage.prototype.getObject = function(key) {
     var value = this.getItem(key);
     if (value == "undefined") return {};
     return value && JSON.parse(value);
@@ -52,11 +52,11 @@ Storage.prototype.hasObject = (key) => {
     return local.getObject(key) != null && !$.isEmptyObject(local.getObject(key));
 }
 
-Number.prototype.map = function (in_min, in_max, out_min, out_max) {
+Number.prototype.map = function(in_min, in_max, out_min, out_max) {
     return (this - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-Array.prototype.removeBy = function (obj, by) {
+Array.prototype.removeBy = function(obj, by) {
     var i = this.length;
     while (i--) {
         if (this[i] instanceof Object && this[i][by] === obj[by]) {
@@ -64,6 +64,7 @@ Array.prototype.removeBy = function (obj, by) {
         }
     }
 }
+
 
 formatTime = (time) => {
     var h = Math.floor(time / 3600);
@@ -98,20 +99,20 @@ setfullscreen = (element) => {
         if (lastEl && element.tagName !== 'BODY') {
             if (document.fullscreenElement.tagName === 'BODY') {
                 document.exitFullscreen().then(() => {
-                    element.requestFullscreen().catch(err => { });
-                }).catch(err => { });
+                    element.requestFullscreen().catch(err => {});
+                }).catch(err => {});
             } else {
                 document.exitFullscreen().then(() => {
-                    lastEl.requestFullscreen().catch(err => { });
-                }).catch(err => { });
+                    lastEl.requestFullscreen().catch(err => {});
+                }).catch(err => {});
             }
         } else {
             if (!document.fullscreenElement) {
-                element.requestFullscreen().catch(err => { });
+                element.requestFullscreen().catch(err => {});
                 if (element.tagName === 'BODY') lastEl = element;
                 startClock();
             } else {
-                document.exitFullscreen().catch(err => { });
+                document.exitFullscreen().catch(err => {});
                 lastEl = null;
                 stopClock();
             }
@@ -129,8 +130,12 @@ const loadPartialPage = async (url, cb) => {
     if (!url) return;
     
     $.get(url, { partial: true}, (resp) => {
-        $('#container').replaceWith(resp.data);
-        if (cb) cb();
+        if(resp.data){
+            $('#container').replaceWith(resp.data);
+            if (cb) cb();
+        }else{
+            location.href = '/login';
+        }
     });
 }
 
@@ -140,7 +145,7 @@ window.onpopstate = function (e) {
     $('.sidenav a').removeClass("active");
     $(`.sidenav .nav-link:contains("${e.state}")`).addClass('active');
     loadPartialPage(url, () => {
-        if ($('#series-list')[0]) selectItem(lastIndex);
+        if ($('#folders-list')[0]) selectItem(lastIndex);
     });
 }
 
@@ -226,7 +231,7 @@ let currentFile = { id: 0, currentPos: 0 };
 
 var config = {
     sortBy: "Name-D",
-    serie: { lastSerie: "", lastIndex: 0 },
+    folder: { lastfolder: "", lastIndex: 0 },
     volume: 0,
     isMuted: false,
     paused: true,
@@ -234,7 +239,7 @@ var config = {
     recentVideoMax: 100,
     recentVideos: [],
     itemsPerPage: 0,
-    seriesPerPage: 0,
+    foldersPerPage: 0,
     playerkey: {
         nextfile: {
             name: "PageDown",
@@ -353,11 +358,11 @@ $('body').on('keydown', '.items-list', (e) => {
                 if (item.dataset.type) {
                     processFile(item);
                 } else {
-                    let url = "/serie-content/" + item.id;
+                    let url = "/folder-content/" + item.id;
                     window.history.pushState(title, title, url);
                     lastIndex = selectedIndex;
-                    local.setItem('serie', item.id);
-                    config.serie.SerieIndex = selectedIndex;
+                    local.setItem('folder', item.id);
+                    config.folder.folderIndex = selectedIndex;
                     loadPartialPage(url, () => {
                         selectItem(0);
                     });
@@ -445,20 +450,20 @@ $('body').on('click', '.items', (e) => {
                 if (item.dataset.type) {
                     processFile(item);
                 } else {
-                    config.serie.lastSerie = window.location.pathname;
-                    config.serie.SerieIndex = selectedIndex;
+                    config.folder.lastfolder = window.location.pathname;
+                    config.folder.folderIndex = selectedIndex;
 
-                    let url = "/serie-content/" + item.id;
+                    let url = "/folder-content/" + item.id;
                     window.history.pushState(title, title, url);
 
                     lastIndex = selectedIndex;
-                    local.setItem('serie', item.id);
+                    local.setItem('folder', item.id);
                     loadPartialPage(url, () => {
                         selectItem(0);
                     });
                 }
             }
-            console.log(dblclick)
+            
             dblclick = 0;
             clearTimeout(timeOut);
             timeOut = null;
@@ -479,10 +484,10 @@ $(window).bind('popstate', (event) => {
 
 var goBack = () => {
     let title = "Home";
-    window.history.pushState(title, title, config.serie.lastSerie);
-    local.setItem('serie', false);
-    loadPartialPage(config.serie.lastSerie, () => {
-        selectItem(config.serie.SerieIndex);
+    window.history.pushState(title, title, config.folder.lastfolder);
+    local.setItem('folder', false);
+    loadPartialPage(config.folder.lastfolder, () => {
+        selectItem(config.folder.folderIndex);
     });
 }
 
@@ -501,7 +506,6 @@ $('#content').scroll((e) => {
 
 $('#content').on('click', '#scroll-up', (e) => {
     $("#content").animate({ scrollTop: 0 }, "fast");
-    console.log('test')
 });
 
 $(() => {

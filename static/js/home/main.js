@@ -5,8 +5,12 @@ const loadPartialPage = async (url, cb) => {
     if (!url) return;
     
     $.get(url, { partial: true}, (resp) => {
-        $('#container').replaceWith(resp.data);
-        if (cb) cb();
+        if(resp.data){
+            $('#container').replaceWith(resp.data);
+            if (cb) cb();
+        }else{
+            location.href = '/login';
+        }
     });
 }
 
@@ -16,7 +20,7 @@ window.onpopstate = function (e) {
     $('.sidenav a').removeClass("active");
     $(`.sidenav .nav-link:contains("${e.state}")`).addClass('active');
     loadPartialPage(url, () => {
-        if ($('#series-list')[0]) selectItem(lastIndex);
+        if ($('#folders-list')[0]) selectItem(lastIndex);
     });
 }
 
