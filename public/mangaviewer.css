@@ -109,8 +109,6 @@ body #img-preview::-webkit-scrollbar {
     left: 42%;
 }
 
-#page-total {}
-
 #manga-viewer #img-viewer {
     position: relative;
     height: calc(100% - 40px);
