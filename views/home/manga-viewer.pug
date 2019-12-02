@@ -8,9 +8,13 @@
                 span#manga-name
             #img-preview
             #m-slider
-                span#page-number
-                span#page-total
+                #m-progress
+                    span.page-number
+                    input#m-range(name="mrange" type="range" style="--min: 0; --max: 100; --val: 0;")
+                    out#mr-out(for="mrange")
+                    span#page-total
     #img-viewer
+        span.page-number
         #manga-area-control
             #area-top
                 .area#area1
@@ -24,7 +28,7 @@
                 .area#area7
                 .area#area8
                 .area#area9
-            #btn-carusel
+            .area#area10
         #img-content
             #animate-image-1.center-img
                 img#myimg

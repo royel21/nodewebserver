@@ -1,4 +1,3 @@
-
 const { fork } = require('child_process');
 const drivelist = require('drivelist');
 const fs = require('fs-extra');
@@ -10,7 +9,7 @@ var io;
 var socket;
 var db;
 
-const getNewId = async () => {
+const getNewId = async() => {
     let id = Math.random().toString(36).slice(-5);
     let dir = await db.directory.findOne({ where: { Id: id } })
     if (dir == null) {
@@ -30,6 +29,7 @@ const startWork = (directory) => {
         io.sockets.emit("scan-finish", data);
         directory.update({ IsLoading: false });
         scanning = false;
+        console.log("scan-finish")
     });
 }
 

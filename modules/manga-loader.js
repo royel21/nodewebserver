@@ -18,22 +18,37 @@ module.exports.loadZipImages = (data, socket) => {
     let user = users[socket.id] ? users[socket.id] : users[socket.id] = { lastId: "", zip: {}, entries: [] };
 
     if (user.lastId === data.id) {
-        for (let i = data.page; i < (data.page + data.pagetoload) && i < user.entries.length; i++) {
-            try {
+        if (data.range) {
+            for (let i of data.range) {
+                try {
 
-                let data = user.zip.entryDataSync(user.entries[i]).toString('base64');
+                    let data = user.zip.entryDataSync(user.entries[i]).toString('base64');
 
-                socket.emit('loaded-zipedimage', {
-                    page: i,
-                    img: data
-                });
-            } catch (err) {
-                console.log(err);
+                    socket.emit('loaded-zipedimage', {
+                        page: i,
+                        img: data
+                    });
+                } catch (err) {
+                    console.log(err);
+                }
+            }
+        } else {
+            for (let i = data.page < 0 ? 0 : data.page; i < (data.page + data.pagetoload) && i < user.entries.length; i++) {
+                try {
+
+                    let data = user.zip.entryDataSync(user.entries[i]).toString('base64');
+
+                    socket.emit('loaded-zipedimage', {
+                        page: i,
+                        img: data
+                    });
+                } catch (err) {
+                    console.log(err);
+                }
             }
         }
-        socket.emit('loaded-zipedimage', { last: true });
-    }
-    else {
+        socket.emit('m-finish', { last: true });
+    } else {
 
         user.lastId = data.id;
 
@@ -55,16 +70,16 @@ module.exports.loadZipImages = (data, socket) => {
                         user.entries = entries;
                         user.zip = zip;
 
+                        socket.emit('m-info', { total: entries.length });
 
-                        for (let i = data.page; i < (data.page + data.pagetoload) && i < entries.length; i++) {
+                        for (let i = data.page < 0 ? 0 : data.page; i < (data.page + data.pagetoload) && i < entries.length; i++) {
                             socket.emit('loaded-zipedimage', {
-                                total: entries.length,
                                 page: i,
                                 img: zip.entryDataSync(entries[i]).toString('base64')
                             });
                         }
-                        socket.emit('loaded-zipedimage', { last: true });
-                        console.log('data send')
+                        socket.emit('m-finish', { last: true });
+                        console.log('data send');
                     });
 
                     zip.on('error', (err) => {

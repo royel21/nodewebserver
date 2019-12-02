@@ -516,6 +516,7 @@ document.onkeydown = (e) => {
 class SliderRange {
     constructor(el) {
         this.oninput = null;
+        this.onchange = null;
         this.onPreview = null;
         this._value = 50;
         this._min = 0;
@@ -534,31 +535,44 @@ class SliderRange {
                         </span>
                     </div>
                 </div>`);
-        
+
         this.$element.append(this.$slider);
 
-        this.$slider.find('.rc-track').mousedown((e) => {
+        this.$slider.find('.rc-track').on('mousedown touchstart', (e) => {
             this.isSliderThumbPressed = true;
-            this.updateValue(e.pageX - this.getOffset());
+            let xpos;
+            if (e.type == "touchstart") {
+                xpos = e.touches[0].pageX;
+            } else {
+                xpos = e.pageX;
+            }
+            this.updateValue(xpos - this.getOffset());
         });
 
-        this.$slider.find('.rc-thumb').mousedown((e) => {
+        this.$slider.find('.rc-thumb').on('mousedown touchstart', (e) => {
             this.isSliderThumbPressed = true;
         });
 
-        $(document).mousemove((ev) => {
+        $(document).on('mousemove touchmove', (e) => {
             if (this.isSliderThumbPressed) {
-                var newPos = Math.floor(ev.pageX - this.getOffset());
+                let xpos;
+                if (e.type == "touchmove") {
+                    xpos = e.touches[0].pageX;
+                } else {
+                    xpos = e.pageX;
+                }
+
+                var newPos = Math.floor(xpos - this.getOffset());
                 if (newPos > -11 && newPos < this.offsetW()) {
                     this.updateValue(newPos);
                 }
             }
         });
 
-        this.$slider.find('.rc-track').on('mousemove', (ev) => {
+        this.$slider.find('.rc-track').on('mousemove', (e) => {
             if (this.onPreview) {
 
-                var newPos = Math.floor(ev.pageX - this.getOffset()) + 13;
+                var newPos = Math.floor(e.pageX - this.getOffset()) + 13;
 
                 var current = Number(newPos.map(0, this.$slider.width(), this.min, this.max).toFixed(2));
                 var pos = newPos.map(0, this.$slider.width(), 0, 100).toFixed(0);
@@ -573,14 +587,17 @@ class SliderRange {
             }
         });
 
-        $(document).mouseup((e) => {
+        $(document).on('mouseup touchend',(e) => {
+            if (this.isSliderThumbPressed){
+                if(this.onchange) this.onchange(this._value);
+            }
             this.isSliderThumbPressed = false;
             e.stopPropagation();
         });
     }
 
     getOffset() {
-        return this.$slider[0].getBoundingClientRect().x + 13;
+        return this.$slider[0].getBoundingClientRect().x - 25;
     }
 
     offsetW() {

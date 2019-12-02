@@ -24,10 +24,16 @@ exports.index = (req, res) => {
     let begin = ((currentPage - 1) * itemsPerPage);
     let search = req.params.search || "";
     //query
+
     let query = {
-        order: isFile ? ["NameNormalize"] : ["name"],
+        order: db.sqlze.col('N'),
         offset: begin,
-        limit: itemsPerPage
+        limit: itemsPerPage,
+        attributes: {
+            include: [
+                [db.sqlze.fn('REPLACE', db.sqlze.col("Name"), '[', '0'), 'N']
+            ]
+        },
     }
 
     let action = isManga ? "/mangas/" : isFile ? "/videos/" : "/series/";
@@ -36,10 +42,18 @@ exports.index = (req, res) => {
 
         action = "/serie-content/" + seriesId + "/"
         query.where = {
-            [db.Op.and]: [{ Name: { [db.Op.like]: "%" + search + "%" } }, { SerieId: seriesId }]
+            [db.Op.and]: [{
+                Name: {
+                    [db.Op.like]: "%" + search + "%"
+                }
+            }, { SerieId: seriesId }]
         }
     } else {
-        query.where = { Name: { [db.Op.like]: "%" + search + "%" } }
+        query.where = {
+            Name: {
+                [db.Op.like]: "%" + search + "%"
+            }
+        }
 
         if (isFile) {
             query.where.Type = isManga ? "Manga" : "Video"

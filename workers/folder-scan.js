@@ -1,11 +1,9 @@
-
-
 const WinDrive = require('win-explorer');
 const { fork } = require('child_process');
 const fs = require('fs-extra');
 const path = require('path');
 const sharp = require('sharp');
-const { NormalizeName } = require('../Utils/StringUtil')
+const { NormalizeName, Capitalize } = require('../Utils/StringUtil')
 
 const db = require('../models');
 
@@ -17,7 +15,7 @@ fs.mkdirsSync(coverPath);
 
 var serieCovers = [];
 
-createCover = async (dir, files) => {
+createCover = async(dir, files) => {
     let serie;
     let firstFile = files.filter(a => a.extension && ['mp4', 'mkv', 'avi', 'ogg', 'webm', 'rar', 'zip']
         .includes(a.extension.toLocaleLowerCase()))[0];
@@ -51,7 +49,7 @@ createCover = async (dir, files) => {
     return serie;
 }
 
-PopulateDB = async (folder, files, fId, se) => {
+PopulateDB = async(folder, files, fId, se) => {
 
     let filteredFile = files.filter((f) => {
         return f.isDirectory || ['mp4', 'mkv', 'avi', 'ogg', 'rar', 'zip'].includes(f.extension.toLocaleLowerCase()) &&
@@ -68,7 +66,8 @@ PopulateDB = async (folder, files, fId, se) => {
                         $or: [{
                             Id: Id
                         }, {
-                            Name: f.FileName
+                            Name: f.FileName,
+                            SerieId: se ? se.Id : null
                         }]
                     }
                 });
@@ -86,7 +85,11 @@ PopulateDB = async (folder, files, fId, se) => {
                     });
                 } else {
                     if (vfound) {
-                        await vfound.update({ Size: f.Size });
+                        let newName = Capitalize(vfound.Name);
+                        if (!newName.includes(vfound.Name)) {
+                            await vfound.update({ Name: newName });
+                            fs.moveSync(path.join(folder, vfound.Name), path.join(folder, newName));
+                        }
                     }
                 }
 
@@ -103,7 +106,11 @@ PopulateDB = async (folder, files, fId, se) => {
     tempFiles = [];
 }
 
-scanOneDir = async (data) => {
+scanOneDir = async(data) => {
+    let files = await db.file.findAll({ where: { DirectoryId: data.id } });
+    for (let f of files) {
+        if (!fs.existsSync(path.join(f.FullPath, f.Name))) await f.destroy();
+    }
 
     var fis = WinDrive.ListFilesRO(data.dir);
     let serie;

@@ -4,11 +4,24 @@ const closeMViewer = document.getElementById('close-manga-modal');
 const currentImg = document.getElementById('myimg');
 const mloadingAnimation = document.getElementById('m-loading');
 const imgpreview = document.getElementById('img-preview');
+const mSlider = document.getElementById('m-range');
 
 var disconnected = false;
 var socket = io();
 
 var mangaIds = {};
+
+Array.prototype.IndexOfUndefined = function(from) {
+    var i = from;
+    while (i++) {
+        if (!this[i].src.includes('data:')) {
+            return i;
+        }
+    }
+}
+
+var map = (val, min, max) => { return (val - min) / (max - min) }
+var mapNum = (val, in_min, in_max, out_min, out_max) => { return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min; }
 
 var mangaConfig = {
     keys: {
@@ -45,37 +58,41 @@ var mangaConfig = {
     }
 }
 
-var mSlider = new SliderRange('#m-slider');
-
-mSlider.min = 0;
-mSlider.value = 0;
 var mId = "";
 var mPage = 0;
 
 var mTotalPages = 0;
 var mImages = [];
 var mLoading = false;
-var pimages;
+var pimages = [];
 
 var createElements = (count) => {
-    let c = document.createDocumentFragment();
-    for (let i = 0; i < count; i++) {
-        var tdiv = document.createElement('div');
-        var tpage = document.createElement('div');
-        var timgdiv = document.createElement('div');
-        var timg = document.createElement('img');
+    let total = imgpreview.querySelectorAll('img').length;
+    if (total < count) {
+        let c = document.createDocumentFragment();
+        for (let i = total; i < count; i++) {
+            var tdiv = document.createElement('div');
+            var tpage = document.createElement('div');
+            var timgdiv = document.createElement('div');
+            var timg = document.createElement('img');
 
-        tpage.textContent = i + 1;
-        timgdiv.appendChild(timg);
-        timgdiv.classList.add("pimgs");
-        tdiv.appendChild(timgdiv);
-        tdiv.appendChild(tpage);
+            tpage.textContent = i + 1;
+            timgdiv.appendChild(timg);
+            timgdiv.classList.add("pimgs");
+            tdiv.appendChild(timgdiv);
+            tdiv.appendChild(tpage);
 
-        c.appendChild(tdiv);
+            c.appendChild(tdiv);
+        }
+        imgpreview.appendChild(c);
+    } else {
+        for (let i = total - 1; i > count - 1; i--) {
+            imgpreview.childNodes[i].remove();
+        }
     }
-    imgpreview.innerHTML = "";
-    imgpreview.appendChild(c);
-    pimages = imgpreview.querySelectorAll('img');
+
+    pimages = Array.from(imgpreview.querySelectorAll('img'));
+    lazyLoad();
 }
 
 
@@ -84,15 +101,34 @@ var loadNewImages = (fromPage, pagetoload = 20) => {
     socket.emit('loadzip-image', { id: mId, page: fromPage, pagetoload });
 }
 
-var fullScreen = (e) => { setfullscreen(mangaViewer); }
+var fullScreen = (e) => {
+    setfullscreen(mangaViewer);
+}
+
 var updatePageNumber = () => {
-    $('#page-number').text(mPage + 1);
+    $('.page-number').text(mPage + 1);
     $('#page-total').text(mTotalPages);
     mangaIds[mId].page = mPage;
     mSlider.value = mPage;
-    pimages[mPage].scrollIntoView()
+    pimages[mPage].scrollIntoView();
+    mSlider.style.setProperty('--val', +mPage);
+    $('#img-viewer .page-number').text((mPage + 1) + " - " + mTotalPages);
 };
-var tout;
+
+
+socket.on("m-info", (data) => {
+    createElements(data.total);
+    mTotalPages = data.total;
+    mSlider.max = data.total - 1;
+    mangaIds[mId].total = data.total;
+    mSlider.style.setProperty('--max', +(data.total - 1));
+    updatePageNumber();
+
+});
+
+socket.on('m-finish', (data) => {
+    mLoading = false;
+});
 
 socket.on("loaded-zipedimage", (data) => {
     //console.log(data);
@@ -102,24 +138,10 @@ socket.on("loaded-zipedimage", (data) => {
             mangaViewer.focus();
         });
         mloadingAnimation.style.display = "none";
-
-
-        if (data.total) {
-            mTotalPages = data.total;
-            createElements(data.total);
-            mSlider.max = data.total;
-            mangaIds[mId].total = data.total;
-        }
-
-        updatePageNumber();
     }
 
     if (data.img) {
-        pimages[data.page].src = mImages[data.page] = 'data:img/jpeg;base64, ' + data.img;
-    }
-
-    if (data.last) {
-        mLoading = false;
+        pimages[data.page].src = 'data:img/jpeg;base64, ' + data.img;
     }
 });
 
@@ -142,8 +164,9 @@ var mclose = () => {
         if (document.fullscreenElement) {
             fullScreen();
         }
+        stopClock();
     });
-    mImages = [];
+     $('#img-preview img').each((i, el)=>{ el.src = "" });
 }
 
 closeMViewer.onclick = mclose;
@@ -161,40 +184,53 @@ openManga = (item) => {
         mangaIds[mId] = { id: mId, page: 0, total: 0 };
         mPage = 0;
     }
+    
+    $('#img-preview img').each((i, el)=>{ el.src = "" });
 
-    mImages = [];
     $('#manga-name').text($("#" + mId).text());
     let src = item.getElementsByTagName('img')[0].src;
     mImageView.src = src;
     mloadingAnimation.style.display = "flex";
-    loadNewImages(mPage, 20);
+    loadNewImages(mPage - 5, 20);
+
+    if (window.innerWidth < 600) {
+        startClock();
+    }
+}
+mSlider.oninput = (e) => {
+    let val = parseInt(mSlider.value);
+    mSlider.style.setProperty('--val', +mSlider.value);
+    pimages[val].scrollIntoView();
 }
 
-mSlider.oninput = (value) => {
-    let val = Math.floor(value);
-    pimages[val].scrollIntoView();
-    let img = mImages[val];
+mSlider.onchange = (e) => {
 
-    mImageView.src = img ? "" : img;
-    mPage = val;
-    if (!img && !mLoading) {
-        loadNewImages(mPage, 10);
+    let val = parseInt(mSlider.value);
+    if (pimages[val]) {
+
+        let img = pimages[val].src;
+
+        mImageView.src = img ? img : mImageView.src;
+        mPage = val;
+//         if (!img && !mLoading) {
+//             loadNewImages(mPage - 3, 10);
+//         }
     }
     updatePageNumber();
+    mSlider.style.setProperty('--val', +mSlider.value);
 }
 
 var nextImg = () => {
     if (mPage < mTotalPages - 1) {
-        let timg = mImages[mPage + 1];
-        if (timg) {
-            mImageView.src = mImages[++mPage];
-            if (mPage > 10) {
-                mImages[mPage - 11] = "";
-            }
+        let timg = pimages[mPage + 1].src;
+        if (timg.includes('data:')) {
+            mImageView.src = timg;
+            mPage++;
         }
 
-        if (mImages.length < mTotalPages && (mImages.length - mPage) < 10 && !mImages[mPage + 5] && !mLoading) {
-            loadNewImages(mImages.length - 1, 10);
+        if (pimages[mPage + 10] && !pimages[mPage + 10].src.includes('data:') && !mLoading) {
+
+            loadNewImages(pimages.IndexOfUndefined(mPage) - 1, 10);
         }
         updatePageNumber();
     } else {
@@ -204,12 +240,13 @@ var nextImg = () => {
 
 var prevImg = () => {
     if (mPage > 0 && !mLoading) {
-        if (mImages[mPage - 1]) {
-            mImageView.src = mImages[--mPage];
-            mImages.pop();
+        let img = pimages[mPage - 1].src;
+        if (img.includes('data:')) {
+            mImageView.src = img;
+            mPage--;
         } else {
             mPage--;
-            loadNewImages(mPage, 1);
+            loadNewImages(mPage - 2, 1);
         }
         updatePageNumber();
     } else {
@@ -244,50 +281,137 @@ var mangaVewerKeyDown = (e) => {
         let keys = mangaConfig.keys;
 
         switch (e.keyCode) {
-            case keys.nextPage.keycode: {
-                nextImg();
-                break;
-            }
-            case keys.prevPage.keycode: {
-                prevImg();
-                break;
-            }
-            case keys.nextManga.keycode: {
-                nextManga();
-                break;
-            }
-            case keys.prevManga.keycode: {
-                prevManga();
-                break;
-            }
-            case keys.fullscreen.keycode: {
-                fullScreen();
-                break;
-            }
+            case keys.nextPage.keycode:
+                {
+                    nextImg();
+                    break;
+                }
+            case keys.prevPage.keycode:
+                {
+                    prevImg();
+                    break;
+                }
+            case keys.nextManga.keycode:
+                {
+                    nextManga();
+                    break;
+                }
+            case keys.prevManga.keycode:
+                {
+                    prevManga();
+                    break;
+                }
+            case keys.fullscreen.keycode:
+                {
+                    fullScreen();
+                    break;
+                }
         }
     }
 }
 
-var placeHolder = () => { }
-var areaEvents = {
-    "area1": placeHolder,
-    "area2": mclose,
-    "area3": placeHolder,
-    "area4": nextImg,
-    "area5": fullScreen,
-    "area6": nextImg,
-    "area7": prevManga,
-    "area8": prevImg,
-    "area9": nextManga
+$('#m-caru, .manga-control').click((e) => {
+    if (e.target.id.includes('m-caru') || e.target.classList.contains('manga-control')) {
+        $('#m-caru').fadeOut(300);
+    }
+});
+
+var showCarusel = (e) => {
+    $('#m-caru').fadeIn(300);
+    $(mSlider).trigger('input');
 }
-//Area Control
+
+var placeHolder = (e) => {}
+var areaEvents = {
+        "area1": placeHolder,
+        "area2": mclose,
+        "area3": placeHolder,
+        "area4": nextImg,
+        "area5": fullScreen,
+        "area6": nextImg,
+        "area7": prevManga,
+        "area8": prevImg,
+        "area9": nextManga,
+        "area10": showCarusel
+    }
+    //Area Control
 $('#manga-area-control').on('click', '.area', (e) => {
     areaEvents[e.target.id]();
-    showInfo();
 });
 $(() => {
     let mangas = localStorage.getObject('mangas');
     if (mangas) {
         mangaIds = mangas;
     }
+});
+
+/********************************Range*****************************/
+
+var el, newPoint, newPlace, offset;
+
+// Select all range inputs, watch for change
+$("#m-range").on('input', function(e) {
+
+    // Cache this for efficiency
+    el = $(this);
+
+    // Measure width of range input
+    let width = el.width();
+    
+    let outPadding = parseInt($('#mr-out').css('padding-left'));
+    let max = parseInt(el[0].max);
+    let val = parseInt(el.val());
+    //  // Figure out placement percentage between left and right of input
+    newPoint = map(val, el[0].min, max) * width + el[0].offsetLeft;
+
+    if (val > (max / 2)) {
+        newPoint -= $('#mr-out').width() / 2;
+    }
+
+    $('#mr-out').css({
+        left: newPoint
+    }).text(parseInt(el.val()) + 1);
+});
+
+let scrTout;
+
+
+lazyLoad = () => {
+    let inView = [];
+    var lazyImageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+            let lazyThumb = entry.target.querySelector('img');
+            if (entry.isIntersecting) {
+               if(!lazyThumb.src.includes('data:')) inView.push(pimages.indexOf(lazyThumb));
+            }
+        });
+
+        if (scrTout) clearTimeout(scrTout);
+
+        scrTout = setTimeout(() => {
+            if(!mLoading){
+                mLoading = true;
+                socket.emit('loadzip-image', { id: mId, range: inView });
+            }
+            clearTimeout(scrTout);
+            scrTout = null;
+            console.log(inView)
+            inView = [];
+        }, 50);
+
+    }, {
+        rootMargin: "600px",
+        threshold: 0.1
+    });
+
+   imgpreview.childNodes.forEach((lazyImg) => {
+        lazyImageObserver.observe(lazyImg);
+    });
+}
+
+$(imgpreview).on('click', '.pimgs', (e) => {
+    let index = e.target.parentElement.textContent - 1;
+    mSlider.value = index;
+    $(mSlider).trigger('change');
+    $(mSlider).trigger('input');
 });
