@@ -166,7 +166,7 @@ var mclose = () => {
         }
         stopClock();
     });
-     $('#img-preview img').each((i, el)=>{ el.src = "" });
+    $('#img-preview img').each((i, el) => { el.src = "" });
 }
 
 closeMViewer.onclick = mclose;
@@ -174,7 +174,7 @@ closeMViewer.onclick = mclose;
 $('.btn-fullscr-m').click(fullScreen);
 
 
-openManga = (item) => {
+var openManga = (item) => {
     mId = item.id;
     let m = mangaIds[mId];
     if (m) {
@@ -184,8 +184,8 @@ openManga = (item) => {
         mangaIds[mId] = { id: mId, page: 0, total: 0 };
         mPage = 0;
     }
-    
-    $('#img-preview img').each((i, el)=>{ el.src = "" });
+
+    $('#img-preview img').each((i, el) => { el.src = "" });
 
     $('#manga-name').text($("#" + mId).text());
     let src = item.getElementsByTagName('img')[0].src;
@@ -212,9 +212,9 @@ mSlider.onchange = (e) => {
 
         mImageView.src = img ? img : mImageView.src;
         mPage = val;
-//         if (!img && !mLoading) {
-//             loadNewImages(mPage - 3, 10);
-//         }
+        //         if (!img && !mLoading) {
+        //             loadNewImages(mPage - 3, 10);
+        //         }
     }
     updatePageNumber();
     mSlider.style.setProperty('--val', +mSlider.value);
@@ -357,7 +357,7 @@ $("#m-range").on('input', function(e) {
 
     // Measure width of range input
     let width = el.width();
-    
+
     let outPadding = parseInt($('#mr-out').css('padding-left'));
     let max = parseInt(el[0].max);
     let val = parseInt(el.val());
@@ -376,20 +376,20 @@ $("#m-range").on('input', function(e) {
 let scrTout;
 
 
-lazyLoad = () => {
+var lazyLoad = () => {
     let inView = [];
     var lazyImageObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach((entry) => {
             let lazyThumb = entry.target.querySelector('img');
             if (entry.isIntersecting) {
-               if(!lazyThumb.src.includes('data:')) inView.push(pimages.indexOf(lazyThumb));
+                if (!lazyThumb.src.includes('data:')) inView.push(pimages.indexOf(lazyThumb));
             }
         });
 
         if (scrTout) clearTimeout(scrTout);
 
         scrTout = setTimeout(() => {
-            if(!mLoading){
+            if (!mLoading) {
                 mLoading = true;
                 socket.emit('loadzip-image', { id: mId, range: inView });
             }
@@ -404,7 +404,7 @@ lazyLoad = () => {
         threshold: 0.1
     });
 
-   imgpreview.childNodes.forEach((lazyImg) => {
+    imgpreview.childNodes.forEach((lazyImg) => {
         lazyImageObserver.observe(lazyImg);
     });
 }
