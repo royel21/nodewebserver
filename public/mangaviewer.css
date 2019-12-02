@@ -429,6 +429,12 @@ body #img-preview::-webkit-scrollbar {
     #manga-viewer .footer {
         height: 0;
     }
+
+    #manga-viewer:-webkit-full-screen #myimg {
+        width: 100%;
+        height: initial;
+    }
+    
     #manga-viewer:-webkit-full-screen #m-caru {
         height: 100%;
     }
