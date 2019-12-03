@@ -3,8 +3,6 @@ extends ../share/layout
 block css
     if  env === 'development'
         link(rel="stylesheet" href="/static/css/home.css" type="text/css")
-        link(rel="stylesheet" href="/static/css/nav-menu.css" type="text/css")
-        link(rel="stylesheet" href="/static/css/index.css" type="text/css")
         link(rel="stylesheet" href="/static/css/fullscreen.css" type="text/css")
         link(rel="stylesheet" href="/static/css/videoplayer.css" type="text/css")
         link(rel="stylesheet" href="/static/css/mangaviewer.css" type="text/css")
@@ -30,7 +28,7 @@ block content
 block script
     if  env === 'development'
         script(src="/static/js/util.js")
-        script(src="/static/js/home/main.js")
+        script(src="/static/js/main.js")
         script(src="/static/js/home/file-list.js")
         script(src="/static/js/home/sliders.js")
         script(src="/static/js/home/player.js")

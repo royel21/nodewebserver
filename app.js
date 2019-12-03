@@ -48,15 +48,18 @@ app.locals.fs = require("fs");
 
 app.use(function(req, res, next) {
     app.locals.env = process.env.NODE_ENV
+
     if (req.url === '/folder-content/') {
         res.redirect('/');
     }
+
     if (req.user) {
         app.locals.user = req.user;
         app.locals.url = req.url;
     } else if (req.url !== "/login") {
         return res.redirect('/login');
     }
+
     next();
 });
 

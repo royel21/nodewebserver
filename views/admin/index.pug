@@ -1,7 +1,13 @@
 extends ../share/layout
 
 block css
-    link(rel="stylesheet" href="/css/admin.css" type="text/css")
+    if  env === 'development'
+        link(rel="stylesheet" href="/static/css/admin.css" type="text/css")
+        link(rel="stylesheet" href="/static/css/modal.css" type="text/css")
+        link(rel="stylesheet" href="/static/css/tree-view.css" type="text/css")
+        link(rel="stylesheet" href="/static/css/folders.css" type="text/css")
+    else
+        link(rel="stylesheet" href="/css/admin.css" type="text/css")
 
 block navbar
     include ../share/navbar
@@ -47,4 +53,11 @@ block content
         +directories(directories, pagedatas)
 
 block script
-    script(src="/js/admin.js")
+    if  env === 'development'
+        script(src="/static/js/main.js")
+        script(src="/static/js/admin/folders.js")
+        script(src="/static/js/admin/files.js")
+        script(src="/static/js/admin/directories.js")
+        script(src="/static/js/admin/admin.js")
+    else
+        script(src="/js/admin.js")
