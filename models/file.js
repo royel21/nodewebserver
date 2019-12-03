@@ -10,16 +10,12 @@ module.exports = (sequelize, DataTypes) => {
         Name: {
             type: DataTypes.STRING(150)
         },
-        NameNormalize:
-        {
-            type: DataTypes.STRING(100)
-        },
         CurrentPos: {
-            type: DataTypes.FLOAT(8,2).UNSIGNED,
+            type: DataTypes.FLOAT(8, 2).UNSIGNED,
             defaultValue: 0
         },
         Duration: {
-            type: DataTypes.FLOAT(8,2).UNSIGNED,
+            type: DataTypes.FLOAT(8, 2).UNSIGNED,
             defaultValue: 0
         },
         FullPath: {
@@ -27,12 +23,12 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: "",
             allowNull: false
         },
-        Type:{
+        Type: {
             type: DataTypes.STRING(25),
             defaultValue: "",
             allowNull: false
         },
-        Size:{
+        Size: {
             type: DataTypes.INTEGER,
             allowNull: true
         },

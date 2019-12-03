@@ -76,7 +76,6 @@ PopulateDB = async(folder, files, fId, se) => {
                     tempFiles.push({
                         Id,
                         Name: f.FileName,
-                        NameNormalize: NormalizeName(f.FileName),
                         FullPath: folder,
                         Type: /rar|zip/ig.test(f.extension) ? "Manga" : "Video",
                         DirectoryId: fId,
