@@ -1,8 +1,17 @@
 extends ../share/layout
 
 block css
-    link(rel="stylesheet" href="/css/home.css" type="text/css")
-    link(rel="stylesheet" href="/mangaviewer.css" type="text/css")
+    if  env === 'development'
+        link(rel="stylesheet" href="/static/css/home.css" type="text/css")
+        link(rel="stylesheet" href="/static/css/nav-menu.css" type="text/css")
+        link(rel="stylesheet" href="/static/css/index.css" type="text/css")
+        link(rel="stylesheet" href="/static/css/fullscreen.css" type="text/css")
+        link(rel="stylesheet" href="/static/css/videoplayer.css" type="text/css")
+        link(rel="stylesheet" href="/static/css/mangaviewer.css" type="text/css")
+        link(rel="stylesheet" href="/static/css/sliders.css" type="text/css")
+        link(rel="stylesheet" href="/static/css/footer.css" type="text/css")
+    else
+        link(rel="stylesheet" href="/css/home.css" type="text/css")
 
 block navbar
     include ../share/navbar
@@ -19,5 +28,13 @@ block content
     span#scroll-up.d-none
         i.far.fa-arrow-alt-circle-up
 block script
-    script(src="/js/home.js")
-    script(src="/manga-viewer.js")
+    if  env === 'development'
+        script(src="/static/js/util.js")
+        script(src="/static/js/home/main.js")
+        script(src="/static/js/home/file-list.js")
+        script(src="/static/js/home/sliders.js")
+        script(src="/static/js/home/player.js")
+        script(src="/static/js/home/manga-viewer.js")
+        script(src="/static/js/home/move-element.js")
+    else
+        script(src="/js/home.js")

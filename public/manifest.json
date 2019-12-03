@@ -1,4 +1,4 @@
 {
-    "name": "Local video App",
-    "display": "standalone"
+    "name": "Local Media App",
+    "display": "fullscreen"
 }

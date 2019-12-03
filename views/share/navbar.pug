@@ -1,18 +1,18 @@
 mixin navbar(user, url)
     nav#menu.navbar.navbar-expand-lg.navbar-dark.bg-dark
         ul.navbar-nav.bg-dark
-                li.nav-item
-                    a.nav-link(href="/" class=""+(url === '/' || url.includes('folder-content') ? "active" : ""))
-                        i.fas.fa-folder
-                        span  Folders 
-                li.nav-item
-                    a.nav-link(href="/mangas" class=""+(url === '/mangas' || url.includes('mangas') ? "active" : "")) 
-                        i.fas.fa-book-open
-                        span  Mangas
-                li.nav-item
-                    a.nav-link(href="/videos" class=""+(url.includes('videos') ? "active" : ""))
-                        i.fas.fa-film
-                        span  All Videos
+            li.nav-item
+                a.nav-link(href="/" class=""+(url === '/' || url.includes('folder-content') ? "active" : ""))
+                    i.fas.fa-folder
+                    span  Folders 
+            li.nav-item
+                a.nav-link(href="/mangas" class=""+(url === '/mangas' || url.includes('mangas') ? "active" : "")) 
+                    i.fas.fa-book-open
+                    span  Mangas
+            li.nav-item
+                a.nav-link(href="/videos" class=""+(url.includes('videos') ? "active" : ""))
+                    i.fas.fa-film
+                    span  All Videos
         ul.navbar-nav.bg-dark
             li.nav-item
                 if user

@@ -1,7 +1,11 @@
 extends ../share/layout
 
 block css
-    link(rel="stylesheet" href="/css/login.css" type="text/css")
+    if env === 'development'
+        link(rel="stylesheet" href="/static/css/index.css" type="text/css")
+        link(rel="stylesheet" href="/static/css/login.css" type="text/css")
+    else
+        link(rel="stylesheet" href="/css/login.css" type="text/css")
 
 block content
     #center-login
@@ -27,4 +31,7 @@ block content
                 .text-center.my-2
                     button.btn.btn-primary.ml-2(type="submit") Login
 block script
-    script(src="/js/login.js")
+    if  env === 'development'
+        script(src="/static/js/home/login.js")
+    else
+        script(src="/js/login.js")

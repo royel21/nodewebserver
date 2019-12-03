@@ -4,13 +4,13 @@ const minify = require('gulp-minify')
 const cleanCss = require('gulp-clean-css')
 const del = require('del')
 
-var csslib = './static/lib/css/*.css';
-var homecss = './static/css/';
-var jslib = './static/lib/js/';
-var jslibs = [jslib + 'jquery.min.js', jslib + 'popper.min.js', jslib + 'bootstrap.min.js', jslib + 'socket.io.slim.js']
-var util = './static/js/util.js'
-var homePath = './static/js/home/';
-var adminPath = './static/js/admin/';
+var csslib = './public/static/lib/css/*.css';
+var homecss = './public/static/css/';
+var jslib = './public/static/lib/js/';
+var jslibs = [jslib + 'jquery.min.js', jslib + 'socket.io.slim.js']
+var util = './public/static/js/util.js'
+var homePath = './public/static/js/home/';
+var adminPath = './public/static/js/admin/';
 
 
 gulp.task('login-css', function () {

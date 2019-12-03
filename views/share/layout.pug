@@ -7,6 +7,9 @@ html(lang="en")
         link(rel="manifest" href="/manifest.json")
         meta(name="viewport" content="initial-scale=1")
         link(rel="shortcut icon" href="/images/home.ico" type="image/ico")
+        if  env === 'development'
+            link(rel="stylesheet" href="/static/lib/css/all.min.css" type="text/css")
+            link(rel="stylesheet" href="/static/lib/css/bootstrap.min.css" type="text/css")
         block css
     body
         block navbar
@@ -21,8 +24,9 @@ html(lang="en")
                         span.btn.btn-secondary Cerrar
             div#content
                 block content
-            span#full-screen
-                i.fas.fa-expand-arrows-alt.popup-msg(data-title="Pantalla Completa")
-    block script
-
+        if env === 'development'
+            script(src="/static/lib/js/jquery.js")
+            script(src="/static/lib/js/socket.io.slim.js")
+        block script
+        
     

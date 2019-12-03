@@ -47,12 +47,13 @@ app.locals.roles = { user: "Usurario", manager: "Manager", admin: "Administrador
 app.locals.fs = require("fs");
 
 app.use(function(req, res, next) {
+    app.locals.env = process.env.NODE_ENV
     if (req.url === '/folder-content/') {
         res.redirect('/');
     }
     if (req.user) {
         app.locals.user = req.user;
-        app.locals.url = req.url
+        app.locals.url = req.url;
     } else if (req.url !== "/login") {
         return res.redirect('/login');
     }
@@ -75,7 +76,7 @@ app.use(function(err, req, res, next) {
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
     // render the error page
-    res.status(err.status || 500);
+    //res.status(err.status || 500);
     if (!req.url.includes('covers') && !req.url.includes('.map')) {
         console.log("some errors:", req.url, err.message);
     }
@@ -91,3 +92,4 @@ db.init().then(() => {
 
     require('./modules/socketio-server')(server, app);
 });
+console.log(process.env.NODE_ENV)

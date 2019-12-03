@@ -98,3 +98,9 @@ setfullscreen = (element) => {
         console.log(err)
     }
 }
+
+if(isAndroid){
+    $('#login').on('click',(e)=>{
+        window.history.pushState({}, '');
+    });
+}
