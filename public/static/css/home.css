@@ -117,6 +117,10 @@
     .items img {
         height: 120px;
     }
+    
+    #back+.search-container {
+        margin-left: 0px;
+    }
 }
 
 @media all and (max-width: 450px) {

@@ -1,28 +1,22 @@
-
 const db = require('../models');
 
-getCategoryFiles = async (data) => {
-    let files = { count: 0, rows: [] };
-    let count = await db.sqlze.query(`Select count(*) as count 
-    from Files where Name LIKE ? and Id ${data.not} in(Select FileId from FileCategories where CategoryId = ?)`,
-        {
-            replacements: [data.val, data.caId],
-            type: db.sqlze.QueryTypes.SELECT
-        });
-    files.count = count[0].count;
-    files.rows = await db.sqlze.query(`Select Id, Name, NameNormalize 
-        from Files where Name LIKE ? and Id ${data.not} in(Select FileId 
-        from FileCategories where CategoryId = ?) 
-        ORDER BY NameNormalize limit ?, ?;`,
-        {
-            model: db.file,
-            mapToModel: true,
-            replacements: [data.val, data.caId, data.begin, data.itemsPerPage],
-            type: db.sqlze.QueryTypes.SELECT
-        });
+getCategoryFiles = async(data) => {
+    files = await db.file.findAndCountAll({
+        atributtes: ['Id', 'Name', 'NameNormalize'],
+        offset: data.begin,
+        limit: data.itemsPerPage,
+        where: {
+            [db.Op.and]: [{
+                Name: {
+                    [db.Op.like]: "%" + data.val + "%"
+                }
+            }, db.sqlze.literal(`File.Id ${data.not} IN (Select FileId from FileCategories where CategoryId = '${data.caId}')`)]
+        }
+    });
     return files;
 }
-loadCategories = async (req, res) => {
+
+loadCategories = async(req, res) => {
     let itemsPerPage = req.query.screenW < 1900 ? 16 : 19;
     let cat;
     let cId = "";
@@ -36,7 +30,7 @@ loadCategories = async (req, res) => {
 
     if (items.rows.length > 0) {
         cat = items.rows[0];
-        files = await getCategoryFiles({ val: '%%', caId: cat.Id, not: '', begin: 0, itemsPerPage });
+        files = await getCategoryFiles({ val: '', caId: cat.Id, not: '', begin: 0, itemsPerPage });
     }
 
     let totalPages = Math.ceil(items.count / itemsPerPage);
@@ -120,21 +114,19 @@ exports.itemsList = (req, res) => {
     });
 }
 
-const loadFiles = async (req, res) => {
-    console.time('s')
+const loadFiles = async(req, res) => {
     let itemsPerPage = req.query.screenW < 1900 ? 16 : 19;
     let currentPage = req.query.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
-    let val = req.query.search ? `%${req.query.search}%` : "%%";
+    let val = req.query.search ? `${req.query.search}` : "";
 
     let caId = req.query.id;
-    
-    let allFiles = req.query.isAllFile == "true";
+    let allFiles = req.query.isAllFiles == "true";
 
     let not = allFiles ? "not" : "";
-    
-    let files = await getCategoryFiles({ val, caId, not, begin, itemsPerPage });
 
+    console.time('s')
+    let files = await getCategoryFiles({ val, caId, not, begin, itemsPerPage });
     console.timeEnd('s');
     val = req.query.search || "";
     res.render('admin/partial-file-list', {
@@ -167,8 +159,11 @@ exports.addFiles = (req, res) => {
     let condition = {
         order: ['NameNormalize'],
         attributes: ['Id'],
-        where:
-            fileId ? { Id: fileId } : { Name: { [db.Op.like]: "%" + search + "%" } }
+        where: fileId ? { Id: fileId } : {
+            Name: {
+                [db.Op.like]: "%" + search + "%"
+            }
+        }
     };
 
     db.category.findOne({ where: { Id } }).then(category => {

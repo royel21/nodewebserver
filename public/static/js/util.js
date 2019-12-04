@@ -1,5 +1,4 @@
 window.local = localStorage;
-var isAndroid = /(android)/i.test(navigator.userAgent);
 
 $.expr[":"].contains = $.expr.createPseudo(function(arg) {
     return function(elem) {
@@ -97,10 +96,4 @@ setfullscreen = (element) => {
     } catch (err) {
         console.log(err)
     }
-}
-
-if(isAndroid){
-    $('#login').on('click',(e)=>{
-        window.history.pushState({}, '');
-    });
 }

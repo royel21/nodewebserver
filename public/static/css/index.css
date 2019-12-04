@@ -181,6 +181,7 @@ body{
 
 #pager a{
     font-size: 24px;
+    height: 32px;
 }
 
 #pager .fa{
@@ -289,7 +290,7 @@ body{
         right: 15px;
     }
     #page-select{
-        height: 32px;
+        height: 33px;
     }
 }
 
@@ -324,7 +325,7 @@ body{
     }
 }
 
-@media all and (max-height: 640px){
+@media all and (max-height: 640px) and (max-width: 640px) {
     #content{
         padding-bottom: 70px;
     }

@@ -1,4 +1,7 @@
-window.history.replaceState(document.title, document.title, document.location.href);
+var isAndroid = /(android)/i.test(navigator.userAgent);
+if(isAndroid){
+    window.history.replaceState(null, null);
+}
 var socket;
 
 const loadPartialPage = async (url, cb) => {
@@ -15,20 +18,28 @@ const loadPartialPage = async (url, cb) => {
 }
 
 window.onpopstate = function (e) {
-    let url = document.location.href;
-    document.title = e.state;
-    $('.sidenav a').removeClass("active");
-    $(`.sidenav .nav-link:contains("${e.state}")`).addClass('active');
-    loadPartialPage(url, () => {
-        if ($('#folders-list')[0]) selectItem(lastIndex);
-    });
+    if(!isAndroid){
+        let url = document.location.href;
+        document.title = e.state;
+        $('.sidenav a').removeClass("active");
+        $(`.sidenav .nav-link:contains("${e.state}")`).addClass('active');
+        loadPartialPage(url, () => {
+            if ($('#folders-list')[0]) selectItem(lastIndex);
+        });
+    }else{
+        e.preventDefault();
+        window.history.pushState({}, '');
+    }
 }
 
 $('body').on('click', '#table-controls .page-item, #controls .page-item', (e) => {
     e.preventDefault();
     let title = document.title;
     let url = e.target.tagName == 'I' ? e.target.closest('a').href : e.target.href;
-    window.history.pushState(title, title, url);
+    if(!isAndroid){
+        window.history.pushState(title, title, url);
+    }
+
     if(!location.href.includes("admin")){
         loadPartialPage(url, cb = () =>{
             selectItem(0);
@@ -43,7 +54,9 @@ const choosePage = (el) => {
         let path = location.pathname.split(/\/\d*\//)[0]+"/";
         console.log(path)
         let url = path + el.elements["page"].value + "/" + el.elements["items"].value + "/" + el.elements["search"].value;
-        window.history.pushState(title, title, url.replace('//', '/'));
+        if(!isAndroid){
+            window.history.pushState(title, title, url.replace('//', '/'));
+        }
         loadPartialPage(url);
     }
 }
@@ -62,8 +75,10 @@ const submitItemAndSearchForm = (e) => {
     $.post(url, $(form).serialize(), (resp) => {
 
         $('#container').replaceWith(resp.data);
-        let title = document.title;
-        window.history.pushState(title, title, resp.url.replace('?partial=true', ''));
+        if(!isAndroid){
+            let title = document.title;
+            window.history.pushState(title, title, resp.url.replace('?partial=true', ''));
+        }
 
     });
 }
@@ -84,4 +99,29 @@ const showError = (msg, className) => {
 
 $('#full-screen').on('click', (e)=>{
     setfullscreen($('body')[0]);
+});
+
+
+if(isAndroid){
+    $('#login').on('click',(e)=>{
+       window.history.replaceState(null, null);
+    });
+}
+
+$('.navbar ul:first-child .nav-link').click((e)=>{
+    if(isAndroid){
+        $('.navbar ul:first-child .active').removeClass('active');
+        $(e.target.closest('.nav-link')).addClass('active');
+        e.preventDefault();
+        let text = e.target.closest('.nav-item').textContent;
+        if(text.includes('Folders')){
+            loadPartialPage("/");
+        } 
+        if(text.includes('Mangas')){
+            loadPartialPage("/mangas");
+        } 
+        if(text.includes('All')){
+            loadPartialPage("/videos");
+        }   
+    }
 });

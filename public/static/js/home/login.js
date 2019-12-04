@@ -7,8 +7,5 @@ $(()=>{
     }
     
     $('#screenw').val(window.screen.width);
-    $(document).on('popstate',(e)=>{
-        e.preventDefault();
-        window.history.pushState({}, '');
-    });
+    window.history.replaceState(null, null);
 });

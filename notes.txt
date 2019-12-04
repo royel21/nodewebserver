@@ -1,0 +1,18 @@
+
+    data.val = `%${data.val}%`
+    let files = { count: 0, rows: [] };
+    let count = await db.sqlze.query(`Select count(*) as count 
+    from Files where Name LIKE ? and Id ${data.not} in(Select FileId from FileCategories where CategoryId = ?)`, {
+        replacements: [data.val, data.caId],
+        type: db.sqlze.QueryTypes.SELECT
+    });
+    files.count = count[0].count;
+    files.rows = await db.sqlze.query(`Select Id, Name, NameNormalize 
+        from Files where Name LIKE ? and Id ${data.not} in(Select FileId 
+        from FileCategories where CategoryId = ?) 
+        ORDER BY NameNormalize limit ?, ?;`, {
+        model: db.file,
+        mapToModel: true,
+        replacements: [data.val, data.caId, data.begin, data.itemsPerPage],
+        type: db.sqlze.QueryTypes.SELECT
+    });

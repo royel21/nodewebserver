@@ -12,11 +12,11 @@ mixin items_home(items, files, filepages, itemspages, title, id)
                     .nav.nav-tabs
                         .nav-item
                             input#tab-list-files(type="radio" name="tabs" checked)
-                            label.nav-link(for="tab-list-files") Lista de files
+                            label.nav-link(for="tab-list-files") In List
                         .nav-item
                             input#tab-all-files(type="radio" name="tabs")
-                            label.nav-link(for="tab-all-files") Todos los files
-                    span#total-files.badge.badge-primary = files.count
+                            label.nav-link(for="tab-all-files") Not Listed
+                    span#total-files.badge.badge-primary= files.count
                 include ./file-list
                 +fileList(files, filepages)
                 

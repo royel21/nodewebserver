@@ -7,8 +7,8 @@ const db = {};
 const Op = Sequelize.Op
 const DataTypes = Sequelize.DataTypes
 const sequelize = new Sequelize('sqlite:./' + dbPath, {
-    // logging: console.log,
     logging: false,
+    // logging: console.log,
     operatorsAliases: {
         $and: Op.and,
         $or: Op.or,
@@ -58,7 +58,7 @@ db.file.belongsTo(db.folder);
 db.user.hasOne(db.favorite);
 db.folder.hasMany(db.file);
 
-db.init = async () => {
+db.init = async() => {
     await sequelize.sync();
 
     if (await db.user.findOne({ where: { Name: "Administrator" } }) == null) {
