@@ -169,12 +169,8 @@ exports.addFiles = (req, res) => {
     db.category.findOne({ where: { Id } }).then(category => {
         if (category) {
             db.file.findAll(condition).then(files => {
-
                 category.addFiles(files);
                 res.send({ count: files.length });
-            }).catch(err => {
-                if (err) console.log(err);
-                res.status(500).send('Internal Server Error');
             });
         }
     }).catch(err => {

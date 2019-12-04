@@ -8,8 +8,8 @@
     display: flex;
     justify-content: space-between;
 }
-
-#menu  i.fa-user{
+#menu i.fa-user-cog,
+#menu i.fa-user{
     margin-right: 8px;
     color: #007bff;
 }
@@ -74,5 +74,8 @@
     }
     #login{
         line-height: 1.9;
+    }
+    .navbar-nav:nth-child(2) .nav-item:first-child{
+        display: none;
     }
 }

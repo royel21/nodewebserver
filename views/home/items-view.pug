@@ -17,6 +17,7 @@ mixin items-view(items, pagedatas, isFile)
                         .item-btns
                             if item.DirectoryId
                                 span.item-del.far.fa-play-circle
+                                span.item-fav.far.fa-star
                             if !item.DirectoryId
                                 span.item-fav.far.fa-star
                         .item-cover

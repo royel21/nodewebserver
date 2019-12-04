@@ -1,8 +1,11 @@
 var express = require('express');
 var router = express.Router();
 var homeController = require('../controllers/HomeControler');
+var favController = require('../controllers/favoritesController');
 
-router.get("/", homeController.index);
+router.get("/", favController.favorite);
+router.get("/favorites/:page?/:items?/:search?", favController.favorite);
+
 router.get("/login", homeController.login);
 router.get("/logout", homeController.logout);
 router.get("/videos/:page?/:items?/:search?", homeController.index);

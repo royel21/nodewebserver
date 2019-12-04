@@ -7,5 +7,6 @@ $(()=>{
     }
     
     $('#screenw').val(window.screen.width);
-    window.history.replaceState(null, null);
+    
+    window.history.pushState({},"Log In", "/login");
 });

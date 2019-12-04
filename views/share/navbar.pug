@@ -1,8 +1,12 @@
 mixin navbar(user, url)
-    nav#menu.navbar.navbar-expand-lg.navbar-dark.bg-dark
+    nav#menu.navbar.navbar-expand-sm.navbar-dark.bg-dark
         ul.navbar-nav.bg-dark
             li.nav-item
-                a.nav-link(href="/" class=""+(url === '/' || url.includes('folder-content') ? "active" : ""))
+                a.nav-link(href="/" class=""+(url === '/' || url.includes('favorites') ? "active" : ""))
+                    i.fas.fa-heart
+                    span  Favorites
+            li.nav-item
+                a.nav-link(href="/folders" class=""+(url === '/folders' || url.includes('folder-content') ? "active" : ""))
                     i.fas.fa-folder
                     span  Folders 
             li.nav-item
@@ -15,9 +19,13 @@ mixin navbar(user, url)
                     span  All Videos
         ul.navbar-nav.bg-dark
             li.nav-item
-                if user
+                if ['manager', 'admin'].includes(user.Role)
                     a.nav-link(href="/admin" class=""+(url.includes('admin') ? "active" : ""))
-                        i.fas.fa-cog.f-2x
+                        i.fas.fa-user-cog.f-2x
+                        span= " "+user.Name
+                else
+                    span.nav-link(class=""+(url.includes('admin') ? "active" : ""))
+                        i.fas.fa-user.f-2x
                         span= " "+user.Name
                 if(user)
                     li.nav-item

@@ -17,7 +17,6 @@ gulp.task('login-css', function() {
     return gulp.src(
             [
                 csslib,
-                homecss + 'nav-menu.css',
                 homecss + 'index.css',
                 homecss + 'login.css'
             ])

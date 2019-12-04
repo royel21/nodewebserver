@@ -214,7 +214,7 @@ $('body').on('keydown', '.items-list', (e) => {
     }
 
     if (e.ctrlKey && e.keyCode == 70) {
-        showSearch(e);
+        //showSearch(e);
     }
 
     if (wasProcesed) {
@@ -260,9 +260,6 @@ $('body').on('click', '.items', (e) => {
     lastItem.id = item.id;
 });
 
-$('body').on('dblclick', '.items-list .items', (e) => {
-
-});
 
 
 $(window).bind('popstate', (event) => {
@@ -300,7 +297,16 @@ $(() => {
 });
 
 
+$('body').on('click', '.items .item-fav', (e)=>{
+    let item = e.target.classList[0] === "items" ? e.target : e.target.closest('.items');
+    console.log(e.target);
+
+    e.preventDefault();
+    e.stopPropagation();
+});
+
 document.onkeydown = (e) => {
     playerKeyDown(e);
     mangaVewerKeyDown(e);
 }
+

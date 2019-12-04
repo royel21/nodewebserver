@@ -1,6 +1,6 @@
 var isAndroid = /(android)/i.test(navigator.userAgent);
 if(isAndroid){
-    window.history.replaceState(null, null);
+    window.history.pushState({},"Log In", window.location.href);
 }
 var socket;
 
@@ -17,7 +17,7 @@ const loadPartialPage = async (url, cb) => {
     });
 }
 
-window.onpopstate = function (e) {
+$(window).on('popstate', function (e) {
     if(!isAndroid){
         let url = document.location.href;
         document.title = e.state;
@@ -28,9 +28,9 @@ window.onpopstate = function (e) {
         });
     }else{
         e.preventDefault();
-        window.history.pushState({}, '');
+         window.history.pushState(null, '','');
     }
-}
+});
 
 $('body').on('click', '#table-controls .page-item, #controls .page-item', (e) => {
     e.preventDefault();
@@ -101,12 +101,9 @@ $('#full-screen').on('click', (e)=>{
     setfullscreen($('body')[0]);
 });
 
-
-if(isAndroid){
-    $('#login').on('click',(e)=>{
-       window.history.replaceState(null, null);
-    });
-}
+$('#login').on('click',(e)=>{
+        window.history.pushState({},"Log In", "/login");
+});
 
 $('.navbar ul:first-child .nav-link').click((e)=>{
     if(isAndroid){
