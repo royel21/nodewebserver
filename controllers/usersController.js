@@ -1,4 +1,3 @@
-
 let db = require('../models');
 
 exports.index = (req, res) => {
@@ -21,36 +20,37 @@ exports.users = (req, res) => {
             }
         }
     }).then(users => {
-        
+
         var totalPages = Math.ceil(users.count / itemsPerPage);
         let view = req.query.partial ? "admin/users/partial-users-table" : "admin/index";
         res.render(view, {
-            title: "Users", users,
+            title: "Users",
+            users,
             pagedatas: {
                 currentPage,
                 itemsPerPage,
                 totalPages,
                 search: val,
-                action:"/admin/users/",
+                action: "/admin/users/",
                 csrfToken: req.csrfToken()
             }
-        },(err, html) => {
-            if(err) console.log(err);
-            if(req.query.partial){
+        }, (err, html) => {
+            if (err) console.log(err);
+            if (req.query.partial) {
                 res.send({ url: req.url, data: html });
 
-            }else{
+            } else {
                 res.send(html);
             }
         });
-        
+
     }).catch(err => {
         console.log(err);
         res.status(500).send('Internal Server Error');
     });
 }
 
-exports.postSearch = (req, res) =>{
+exports.postSearch = (req, res) => {
     let itemsPerPage = req.body.items || 10;
     let currentPage = req.body.page || 1;
     let val = req.body.search || "";
@@ -58,7 +58,7 @@ exports.postSearch = (req, res) =>{
 }
 
 exports.user_modal = (req, res) => {
-    
+
     var uid = req.query.uid;
     db.user.findOne({
         where: {
@@ -66,11 +66,11 @@ exports.user_modal = (req, res) => {
         }
     }).then(data => {
         let user = data ? data : {};
-        res.render("admin/users/user_form",
-            {
-                user: user, csrfToken: req.csrfToken(),
-                modalTitle: uid ? "Editar usuario" : "Crear Usuario"
-            });
+        res.render("admin/users/user_form", {
+            user: user,
+            csrfToken: req.csrfToken(),
+            modalTitle: uid ? "Editar usuario" : "Crear Usuario"
+        });
     }).catch(err => {
         console.log(err);
         res.status(500).send('Internal Server Error');
@@ -79,13 +79,13 @@ exports.user_modal = (req, res) => {
 
 const sendPostResponse = (res, action, state, user) => {
     return res.render("admin/users/user-row", { user }, (err, html) => {
-        if(err) console.log(err);
+        if (err) console.log(err);
         res.send({ action, state, name: user.Name, data: html });
     });
 }
 
 const createUser = (req, res) => {
-    
+
     if (req.body.username === "" || req.body.username === undefined) {
         return res.send({ err: "Nombre no puede estar vacio" });
     } else if (req.body.password == "" || req.body.password === undefined) {
@@ -105,12 +105,12 @@ const createUser = (req, res) => {
 }
 
 const updateUser = (req, res) => {
-    
+
     db.user.findOne({
         where: { Id: req.body.id }
     }).then(user_found => {
         if (user_found) {
-            
+
             if (req.user.Name === user_found.Name) {
                 return res.send({ state: "error", data: "No puede actualizar usuario en uso" });
             }
@@ -129,7 +129,7 @@ const updateUser = (req, res) => {
             res.send({ state: "error", data: "Usuario no encontrado" });
         }
     }).catch(err => {
-        if(err) console.log(err);
+        if (err) console.log(err);
         res.send({ state: "error", data: "Error Interno del servidor" });
     });
 }
@@ -139,5 +139,26 @@ exports.userModalPost = (req, res) => {
         createUser(req, res);
     } else {
         updateUser(req, res);
+    }
+}
+
+var deleteUser = async(Id, res) => {
+    let user = await db.user.findOne({ where: { Id } });
+    if (user) {
+        //await user.destroy();
+        res.send({ status: "Ok", msg: "User Delete Successfull" });
+    } else {
+        res.send({ status: "Error", msg: "User Not Found" });
+    }
+}
+
+exports.delete = (req, res) => {
+    if (req.user.Id == req.body.id) {
+        res.send({ state: "Error", msg: "Can't Delete User In Use" });
+    } else {
+        deleteUser(req.body.id, res).catch(err => {
+            console.log(err);
+            res.send({ status: "Error", msg: "Error Interno del servidor" });
+        });
     }
 }

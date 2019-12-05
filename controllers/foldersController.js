@@ -1,9 +1,8 @@
-
 const db = require('../models');
 const fs = require('fs-extra');
 
 if (!fs.existsSync('./public/covers/folders')) fs.mkdirs('./public/covers/folders');
-loadFolders = async (req, res) => {
+loadFolders = async(req, res) => {
     let itemsPerPage = req.query.screenW < 1900 ? 16 : 19;
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
@@ -19,7 +18,7 @@ loadFolders = async (req, res) => {
     if (items.rows.length > 0) {
         sId = items.rows[0].Id;
         files = await db.file.findAndCountAll({
-            order: ['NameNormalize'],
+            order: ['Name'],
             offset: 0,
             limit: itemsPerPage,
             where: { FolderId: sId },
@@ -122,7 +121,8 @@ exports.filesList = (req, res) => {
         limit: itemsPerPage,
         attributes: ['Id', 'Name'],
         where: {
-            [db.Op.and]: [{ Name: { [db.Op.like]: "%" + val + "%" } }, { FolderId: folderId }]
+            [db.Op.and]: [{ Name: {
+                    [db.Op.like]: "%" + val + "%" } }, { FolderId: folderId }]
         }
     };
 
@@ -153,11 +153,11 @@ exports.addFiles = (req, res) => {
     let condition = {
         order: ['NameNormalize'],
         attributes: ['Id', 'Name'],
-        where:
-            fileId ? { [db.Op.and]: [{ Id: fileId }, { FolderId: null }] } :
-                {
-                    [db.Op.and]: [{ Name: { [db.Op.like]: "%" + search + "%" } }, { FolderId: null }]
-                }
+        where: fileId ? {
+            [db.Op.and]: [{ Id: fileId }, { FolderId: null }] } : {
+            [db.Op.and]: [{ Name: {
+                    [db.Op.like]: "%" + search + "%" } }, { FolderId: null }]
+        }
     };
 
     db.folder.findOne({ where: { Id: folderId } }).then(folder => {
@@ -179,10 +179,7 @@ exports.addFiles = (req, res) => {
 
 exports.removeFile = (req, res) => {
     let Id = req.body.fileId;
-    db.file.update(
-        { FolderId: null },
-        { where: { Id } }
-    ).then(result => {
+    db.file.update({ FolderId: null }, { where: { Id } }).then(result => {
         console.log('result:', result);
 
         res.send({ state: "Ok", Id });

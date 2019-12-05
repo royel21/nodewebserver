@@ -11,16 +11,16 @@ module.exports = (server, app) => {
         folders.setSocket(io, socket, db);
         mloader.setSocket(db);
 
-        if (app.locals.user && app.locals.user.Role.includes('admin')) {
+        if (app.locals.user) {
 
             socket.on('load-disks', folders.diskLoader);
 
             socket.on("scan-dir", folders.diskScaner);
 
             socket.on('re-scan', folders.reScan);
-
-            socket.on('loadzip-image', (data) => mloader.loadZipImages(data, socket));
         }
+
+        socket.on('loadzip-image', (data) => mloader.loadZipImages(data, socket));
 
         socket.on('disconnect', (client) => {
             mloader.removeZip(socket.id);

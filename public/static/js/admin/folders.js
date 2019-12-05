@@ -22,7 +22,6 @@ var loadFoldersConfig = () => {
         data.id = selecteditem ? selecteditem.id : "";
 
         let url = getAction() + 'file-list';
-        console.log(url, data)
 
         $.get(url, data, (resp, status) => {
             $('#file-list').replaceWith(resp);
@@ -172,7 +171,8 @@ var loadFoldersConfig = () => {
 
         $.post(postUrl, { itemId: li.id, fileId: id, _csrf }, (resp) => {
             
-            if (resp.state.includes('Ok')) {
+            if (resp.status === "Ok") {
+                
                 $(li).fadeOut('fast', (e) => {
                     let vPage = getCurPage('files');
 

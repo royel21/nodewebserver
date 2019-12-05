@@ -205,9 +205,6 @@ mSlider.onchange = (e) => {
 
         mImageView.src = img ? img : mImageView.src;
         mPage = val;
-        //         if (!img && !mLoading) {
-        //             loadNewImages(mPage - 3, 10);
-        //         }
     }
     updatePageNumber();
     mSlider.style.setProperty('--val', +mSlider.value);

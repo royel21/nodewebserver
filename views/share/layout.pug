@@ -12,10 +12,13 @@ html(lang="en")
             link(rel="stylesheet" href="/static/lib/css/bootstrap.min.css" type="text/css")
             link(rel="stylesheet" href="/static/css/nav-menu.css" type="text/css")
             link(rel="stylesheet" href="/static/css/index.css" type="text/css")
+            link(rel="stylesheet" href="/static/css/modal.css" type="text/css")
         block css
     body
         block navbar
         
+        #modal-container
+            #modal.card.bg-dark.text-light
         div#main
             #popup
             #error-container

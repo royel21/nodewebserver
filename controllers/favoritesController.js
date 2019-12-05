@@ -1,9 +1,8 @@
-
 const db = require('../models');
 
-var getFavoriteFiles = async (user, data) => {
+var getFavoriteFiles = async(user, data) => {
     let fav = await user.getFavorite();
-
+    console.log(fav.Id)
     files = await db.file.findAndCountAll({
         atributtes: ['Id', 'Name', 'NameNormalize'],
         offset: data.begin,
@@ -13,7 +12,7 @@ var getFavoriteFiles = async (user, data) => {
                 Name: {
                     [db.Op.like]: "%" + data.search + "%"
                 }
-            }, db.sqlze.literal(`File.Id IN (Select FileId from FileCategories where CategoryId = '${fav.Id}')`)]
+            }, db.sqlze.literal(`File.Id IN (Select FileId from FavoriteFiles where FavoriteId = '${fav.Id}')`)]
         }
     });
     return files;
@@ -22,7 +21,7 @@ var getFavoriteFiles = async (user, data) => {
 exports.favorite = (req, res) => {
 
     let screenw = parseInt(req.cookies['screen-w']);
-    let itemsPerPage = req.params.items || req.query.items || (screenw < 1900 ? 21 : 27);
+    let itemsPerPage = req.params.items || req.query.items || 100;
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage) || 0;
     let search = req.params.search || "";
@@ -38,7 +37,7 @@ exports.favorite = (req, res) => {
                 itemsPerPage,
                 totalPages,
                 search: search,
-                action: '/favorites',
+                action: '/favorites/',
                 csrfToken: req.csrfToken(),
                 step: (screenw < 1900 ? 7 : 9)
             },
@@ -58,21 +57,30 @@ exports.favorite = (req, res) => {
     });
 }
 
-var addFav = async (user, id)=>{
-    let fav = await user.getFavorite();
+exports.postSearch = (req, res) => {
+    let itemsPerPage = req.body.items;
+    let search = req.body.search || "";
 
-    let file = await db.file.findOne({Id: id});
-    if(file){
-        await fav.addFile(file);
-        return true;
+    res.redirect(`/favorites/1/${itemsPerPage}/${search}?partial=true`);
+}
+
+var addFav = async(user, id) => {
+    let fav = await user.getFavorite();
+    if (fav) {
+        let file = await db.favoriteFile.findOrCreate({ where: { FileId: id, FavoriteId: fav.Id } });
+        console.log(file[0]);
+        if (file[0].isNewRecord) {
+            //await fav.addFile(file);
+            return true;
+        }
     }
     return false;
 }
 
-exports.addToFavorite = (req, res) =>{
-    addFav(req.user, req.query.fileId).then((result)=>{
-        res.send({result});
-    }).catch(err=>{
+exports.postFavorite = (req, res) => {
+    addFav(req.user, req.body.id).then((result) => {
+        res.send({ result });
+    }).catch(err => {
         console.log('fav-error', err);
     });
 }

@@ -299,10 +299,13 @@ $(() => {
 
 $('body').on('click', '.items .item-fav', (e)=>{
     let item = e.target.classList[0] === "items" ? e.target : e.target.closest('.items');
-    console.log(e.target);
-
+    console.log(e.target, item.id);
+    $.post('/favorites/addfav',{id: item.id, _csrf: $('#search-form input[name=_csrf]').val()}, (resp) => {
+        console.log(resp);
+    });
     e.preventDefault();
     e.stopPropagation();
+
 });
 
 document.onkeydown = (e) => {

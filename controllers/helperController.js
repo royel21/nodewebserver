@@ -56,8 +56,8 @@ editItem = (req, res) => {
     const name = req.body.name;
     let tempDB = isFolder ? db.folder : db.category;
     let Id = req.body.id;
-    
-    if (isFolder) createCover(req, {Id});
+
+    if (isFolder) createCover(req, { Id });
 
     tempDB.update({ Name: name }, { where: { Id } }).then(item => {
         if (item) {
@@ -83,11 +83,11 @@ exports.delete = (req, res) => {
     let id = req.body.itemId;
     let isFolder = req.url.includes('folders');
     let tempDB = isFolder ? db.folder : db.category;
-    console.log("Id:"+id, isFolder)
+
     tempDB.destroy({ where: { Id: id } }).then(result => {
-        console.log(result)
+
         if (result > 0) {
-            res.send({ state: "Ok", id });
+            res.send({ status: "Ok" });
             if (isFolder) {
                 fs.remove(coverPath + id + '.jpg')
             }

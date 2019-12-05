@@ -57,44 +57,33 @@ $(document).on("click", ".show-form", (e) => {
     let action = $('#container').data('action');
     console.log(uid, action)
     $.get(action + "modal", { uid }, (resp) => {
-        $('body').prepend(resp);
-        $('#modal').fadeIn();
+        $('#modal').empty().append(resp);
+        $('#modal-container').fadeIn("fast", ()=>{
+            $('#modal').fadeIn("fast");
+            $('#modal-container').css({display: "flex"});
+        });
     });
 });
 
-hideForm = () => {
-    $('#modal-container').fadeOut(() => {
-        $('#modal-container').remove();
-    });
-}
-
-$(document).on("click", ".close-modal", hideForm);
-
-var confirm = (message, className) => {
-    $('#create-edit').remove();
-    $('#modal-header').addClass(className).text(message)
-    $('#modal').append($('<div class="text-center mt-3"><button class="btn btn-primary">Close<div>'));
-    $('#modal').on('click', 'button', (e) => {
-        hideForm();
-    });
-    $('#modal button').focus();
-}
 
 $('body').on('click', 'tbody .fa-trash-alt', (e) => {
-    let tr = e.target.closest('tr');
-    let $tr = $(tr);
-    $.post($('#container').data('action') + 'delete', { id: tr.id, _csrf: $('#container').data('csrf'), name: $tr.text(), fid: $(tr).data('fid') }, (resp) => {
-        if (resp) {
-            console.log("deleting", $tr.text());
+    let $tr = $(e.target.closest('tr'));
+    let name = $tr.find('td').get(1).textContent;
+    console.log($tr.attr('id'), name)
+    $.post($('#container').data('action') + 'delete', { id: $tr.attr('id'), _csrf: $('#container').data('csrf') }, (resp) => {
+        if (resp.status === "Ok") {
+            
             $tr.fadeOut("fast", () => {
                 $tr.remove();
+                confirm(resp.msg, "text-success");
             });
+        }else{
+            confirm(resp.msg, "text-danger");
         }
     });
 });
 
 $(document).on('submit', '#create-edit', (e) => {
-    console.log("testing")
     e.preventDefault();
     var $form = $('#create-edit');
     let formData = $(e.target).serializeArray();

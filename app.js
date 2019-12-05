@@ -49,13 +49,19 @@ app.locals.fs = require("fs");
 app.use(function(req, res, next) {
     app.locals.env = process.env.NODE_ENV
 
-    if (req.url === '/folder-content/') {
-        res.redirect('/');
-    }
 
     if (req.user) {
         app.locals.user = req.user;
         app.locals.url = req.url;
+
+        if (req.url === '/folder-content/') {
+            return res.redirect('/');
+        }
+
+        if (req.url.includes('/admin') && !['manager', 'admin'].includes(req.user.Role)) {
+            return res.redirect('/');
+        }
+
     } else if (req.url !== "/login") {
         return res.redirect('/login');
     }
@@ -95,4 +101,5 @@ db.init().then(() => {
 
     require('./modules/socketio-server')(server, app);
 });
+
 console.log(process.env.NODE_ENV)

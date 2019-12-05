@@ -1,20 +1,18 @@
-#modal-container
-    #modal.card.bg-dark.text-light
-        #modal-header.text-center
-            h3= modalTitle
-        form#update-file(method="post" action="/admin/files/update")
-            input(type="hidden" name="id" value=""+ (file.Id ? file.Id :  ""))
-            input(type="hidden" name="_csrf" value=""+ csrfToken)
-            #errors.text-danger.text-center
-            .input-group.my-3
-                .input-group-prepend
-                    label.input-group-text(for="name") Nombre
-                input#name.form-control(required="" type="text" name="name" value=""+ (file.Name ? file.Name : ""))
-            .my-3
-                .text-area-head.text-center.input-group-text
-                    label(for="description") Descripcion
-                textarea#description.form-control(type="textarea" name="description" value=""+ (file.Descreption ? file.Descreption : ""))
-            .text-center.mt-3
-                button.btn.btn-secondary.close-modal(type="button") Cancelar
-                button.btn.btn-primary.ml-2(type="submit") Guardar
+#modal-header.text-center
+    h3= modalTitle
+form#update-file(method="post" action="/admin/files/update")
+    input(type="hidden" name="id" value=""+ (file.Id ? file.Id :  ""))
+    input(type="hidden" name="_csrf" value=""+ csrfToken)
+    #errors.text-danger.text-center
+    .input-group.my-3
+        .input-group-prepend
+            label.input-group-text(for="name") Nombre
+        input#name.form-control(required="" type="text" name="name" value=""+ (file.Name ? file.Name : ""))
+    .my-3
+        .text-area-head.text-center.input-group-text
+            label(for="description") Descripcion
+        textarea#description.form-control(type="textarea" name="description" value=""+ (file.Descreption ? file.Descreption : ""))
+    .text-center.mt-3
+        button.btn.btn-secondary.close-modal(type="button") Cancelar
+        button.btn.btn-primary.ml-2(type="submit") Guardar
         

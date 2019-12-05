@@ -46,6 +46,7 @@ gulp.task('home-css', function() {
                 csslib,
                 homecss + 'home.css',
                 homecss + 'nav-menu.css',
+                homecss + 'modal.css',
                 homecss + 'index.css',
                 homecss + 'fullscreen.css',
                 homecss + 'videoplayer.css',

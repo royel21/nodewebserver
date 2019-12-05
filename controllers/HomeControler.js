@@ -56,13 +56,16 @@ exports.index = (req, res) => {
         }
 
         if (isFile) {
-            query.where.Type = isManga ? "Manga" : "Video"
+            query.where.Type = isManga ? "Manga" : "Video";
+            query.attributes.include[1] = [db.sqlze.literal('(Select FileId from FavoriteFiles where FileId == FILE.Id)'), "isFav"];
+
         }
     }
 
     tempDb.findAndCountAll(query).then(items => {
         var totalPages = Math.ceil(items.count / itemsPerPage);
         let view = req.query.partial ? "home/partial-items-view" : "home/index.pug";
+
         res.render(view, {
             title: "Home Server",
             items,

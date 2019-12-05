@@ -13,6 +13,7 @@ router.get("/users/modal", usersController.user_modal);
 router.get("/users/:page?/:items?/:search?", usersController.users);
 router.post("/users/create-edit", usersController.userModalPost);
 router.post("/users/search", usersController.postSearch);
+router.post("/users/delete", usersController.delete);
 
 router.get("/folders", foldersController.folders);
 router.get("/folders/modal", helperController.modal);

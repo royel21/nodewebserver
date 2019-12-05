@@ -122,3 +122,24 @@ $('.navbar ul:first-child .nav-link').click((e)=>{
         }   
     }
 });
+/********************************************modal********************/
+
+
+var confirm = (message, className) => {
+    $('#modal').empty().append($(`<div id="modal-header" class="text-center ${className}"><h2>${message}</h2></div>`));
+    $('#modal').append($('<div class="text-center mt-3"><button class="btn btn-primary close-modal">Close<div>'));
+    $('#modal button').focus();
+
+    $('#modal-container').css({display: "flex"});
+    $('#modal-container').fadeIn("fast", ()=>{
+        $('#modal').fadeIn("fast");
+    });
+}
+
+hideForm = () => {
+    $('#modal-container').fadeOut("fast", ()=>{
+        $('#modal').fadeOut("fast");
+    });
+}
+
+$(document).on("click", ".close-modal", hideForm);

@@ -1,4 +1,3 @@
-
 let db = require('../models');
 const { fork } = require('child_process');
 const path = require('path');
@@ -12,7 +11,7 @@ exports.files = (req, res) => {
     let val = req.params.search || "";
 
     db.file.findAndCountAll({
-        order: ['NameNormalize'],
+        order: ['Name'],
         offset: begin,
         limit: itemsPerPage,
         where: {
@@ -66,11 +65,11 @@ exports.file_modal = (req, res) => {
             }
         }).then(data => {
             let file = data ? data : {};
-            res.render("admin/files/modal",
-                {
-                    file, csrfToken: req.csrfToken(),
-                    modalTitle: uid ? "Editar File" : "Agregar File"
-                });
+            res.render("admin/files/modal", {
+                file,
+                csrfToken: req.csrfToken(),
+                modalTitle: uid ? "Editar File" : "Agregar File"
+            });
         }).catch(err => {
             if (err) console.log(err);
             res.status(500).send('Internal Server Error');
@@ -88,9 +87,7 @@ exports.fileModalPost = (req, res) => {
     if (Id && Name && Name.length > 0) {
         db.file.findOne({ where: { Id } }).then(file => {
             let originalFile = path.join(file.FullPath, file.Name);
-            file.update(
-                { Name, Description, NameNormalize: NormalizeName(Name) }
-            ).then((result) => {
+            file.update({ Name, Description, NameNormalize: NormalizeName(Name) }).then((result) => {
                 let toFile = path.join(file.FullPath, Name);
                 console.log(originalFile, toFile);
                 fs.move(originalFile, toFile);
@@ -107,8 +104,6 @@ exports.fileModalPost = (req, res) => {
 
 exports.deleteFile = (req, res) => {
     let id = req.body.id;
-    let fid = req.body.fid;
-    let name = req.body.name;
     if (id) {
         db.file.findOne({ where: { Id: id } }).then(file => {
             file.destroy().then(() => {

@@ -61,18 +61,17 @@ PopulateDB = async(folder, files, fId, se) => {
             if (!f.isDirectory) {
                 let Id = Math.random().toString(36).slice(-5);
                 let found = tempFiles.filter(v => v.Name === f.FileName);
-                let vfound = await db.file.findOne({
+                let vfound = await db.file.findAll({
                     where: {
                         $or: [{
                             Id: Id
                         }, {
-                            Name: f.FileName,
-                            FolderId: se ? se.Id : null
+                            Name: f.FileName
                         }]
                     }
                 });
 
-                if (found.length === 0 && !vfound) {
+                if (found.length === 0 && vfound.length === 0) {
                     tempFiles.push({
                         Id,
                         Name: f.FileName,
@@ -83,13 +82,20 @@ PopulateDB = async(folder, files, fId, se) => {
                         Size: f.Size
                     });
                 } else {
-                    if (vfound) {
-                        let newName = Capitalize(vfound.Name);
-                        if (!newName.includes(vfound.Name)) {
-                            await vfound.update({ Name: newName });
-                            fs.moveSync(path.join(folder, vfound.Name), path.join(folder, newName));
-                        }
+                    // if (vfound) {
+                    //     let newName = Capitalize(vfound.Name);
+                    //     if (!newName.includes(vfound.Name)) {
+                    //         await vfound.update({ Name: newName });
+                    //         fs.moveSync(path.join(folder, vfound.Name), path.join(folder, newName));
+                    //     }
+                    // }
+                    if (vfound.length > 1) {
+                        console.log(vfound[1].Name)
+                        await vfound[1].destroy();
                     }
+                    // if (vfound && found.length > 0) {
+
+                    // }
                 }
 
             } else {
@@ -101,7 +107,7 @@ PopulateDB = async(folder, files, fId, se) => {
         }
     }
 
-    if (tempFiles.length > 0) await db.file.bulkCreate(tempFiles);
+    //if (tempFiles.length > 0) await db.file.bulkCreate(tempFiles);
     tempFiles = [];
 }
 
@@ -115,6 +121,7 @@ scanOneDir = async(data) => {
     let folder;
     if (fis.length > 0)
         folder = await createCover(data.dir, fis);
+
     await PopulateDB(data.dir, fis, data.id, folder);
 
     data.folders = folderCovers;

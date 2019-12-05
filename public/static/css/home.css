@@ -34,6 +34,13 @@
     top: 5px;
     left: 5px;
     color: brown;
+    float: right;
+}
+
+.item-play {
+    top: 5px;
+    left: 5px;
+    color: seashell;
     float: left;
 }
 
