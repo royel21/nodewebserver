@@ -105,22 +105,36 @@ $('#login').on('click',(e)=>{
         window.history.pushState({},"Log In", "/login");
 });
 
-$('.navbar ul:first-child .nav-link').click((e)=>{
-    if(isAndroid){
-        $('.navbar ul:first-child .active').removeClass('active');
+$('.navbar ul .nav-link:not(#login)').click((e)=>{
+    //if(isAndroid){
+        $('.navbar ul .active').removeClass('active');
         $(e.target.closest('.nav-link')).addClass('active');
-        e.preventDefault();
         let text = e.target.closest('.nav-item').textContent;
-        if(text.includes('Folders')){
-            loadPartialPage("/");
-        } 
-        if(text.includes('Mangas')){
-            loadPartialPage("/mangas");
-        } 
-        if(text.includes('All')){
-            loadPartialPage("/videos");
-        }   
-    }
+        
+        switch(text.trim()){
+            case "Recents":{
+                loadPartialPage("/");
+                break;
+            }
+            case "Folders":{
+                loadPartialPage("/folders");
+                break;
+            }
+            case "Mangas":{
+                loadPartialPage("/mangas");
+                break;
+            }
+            case "All Videos":{
+                loadPartialPage("/videos");
+                break;
+            }
+            case "Favorites":{
+                loadPartialPage("/favorites");
+                break;
+            }
+        }
+        e.preventDefault();  
+    //}
 });
 /********************************************modal********************/
 

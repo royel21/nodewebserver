@@ -5,6 +5,17 @@ var db;
 var users = {};
 var lastId;
 
+var addRecent = async(user, id) => {
+    let recent = await user.getRecent();
+    if (recent) {
+        let file = await db.recentFile.findOrCreate({ where: { FileId: id, RecentId: recent.Id } });
+        if (!file[0].isNewRecord) {
+            file[0].update({LastRead: new Date() });
+        }
+    }
+    return false;
+}
+
 module.exports.removeZip = (id) => {
     delete users[id];
 }
@@ -13,7 +24,7 @@ module.exports.setSocket = (_db) => {
     db = _db;
 }
 
-module.exports.loadZipImages = (data, socket) => {
+module.exports.loadZipImages = (data, socket, currentUser) => {
     //get last user or create
     let user = users[socket.id] ? users[socket.id] : users[socket.id] = { lastId: "", zip: {}, entries: [] };
 
@@ -49,9 +60,12 @@ module.exports.loadZipImages = (data, socket) => {
         }
         socket.emit('m-finish', { last: true });
     } else {
+        
+        if(users[socket.id]){
+
+        }
 
         user.lastId = data.id;
-
         db.file.findOne({ where: { Id: user.lastId } }).then(file => {
             if (file) {
                 let filePath = path.resolve(file.FullPath, file.Name);
@@ -63,6 +77,9 @@ module.exports.loadZipImages = (data, socket) => {
                     });
 
                     zip.on('ready', () => {
+
+                        addRecent(currentUser, data.id);
+
                         let entries = Object.values(zip.entries()).sort((a, b) => {
                             return String(a.name).localeCompare(String(b.name))
                         }).filter((entry) => { return !entry.isDirectory });

@@ -15,6 +15,8 @@ fs.mkdirsSync(coverPath);
 
 var folderCovers = [];
 
+var DirectoryId;
+
 createCover = async(dir, files) => {
     let folder;
     let firstFile = files.filter(a => a.extension && ['mp4', 'mkv', 'avi', 'ogg', 'webm', 'rar', 'zip']
@@ -22,7 +24,7 @@ createCover = async(dir, files) => {
 
     if (firstFile) {
         let Name = path.basename(dir);
-        let tempFolder = await db.folder.findOrCreate({ where: { Name } });
+        let tempFolder = await db.folder.findOrCreate({ where: { Name, DirectoryId } });
 
         folder = tempFolder[0];
 
@@ -49,7 +51,7 @@ createCover = async(dir, files) => {
     return folder;
 }
 
-PopulateDB = async(folder, files, fId, se) => {
+PopulateDB = async(folder, files, fd) => {
 
     let filteredFile = files.filter((f) => {
         return f.isDirectory || ['mp4', 'mkv', 'avi', 'ogg', 'rar', 'zip'].includes(f.extension.toLocaleLowerCase()) &&
@@ -70,44 +72,29 @@ PopulateDB = async(folder, files, fId, se) => {
                         }]
                     }
                 });
-
+                
                 if (found.length === 0 && vfound.length === 0) {
                     tempFiles.push({
                         Id,
                         Name: f.FileName,
                         FullPath: folder,
                         Type: /rar|zip/ig.test(f.extension) ? "Manga" : "Video",
-                        DirectoryId: fId,
-                        FolderId: se ? se.Id : null,
+                        DirectoryId,
+                        FolderId: fd ? fd.Id : null,
                         Size: f.Size
                     });
-                } else {
-                    // if (vfound) {
-                    //     let newName = Capitalize(vfound.Name);
-                    //     if (!newName.includes(vfound.Name)) {
-                    //         await vfound.update({ Name: newName });
-                    //         fs.moveSync(path.join(folder, vfound.Name), path.join(folder, newName));
-                    //     }
-                    // }
-                    if (vfound.length > 1) {
-                        console.log(vfound[1].Name)
-                        await vfound[1].destroy();
-                    }
-                    // if (vfound && found.length > 0) {
-
-                    // }
-                }
+                } 
 
             } else {
                 let folder = await createCover(f.FileName, f.Files);
-                await PopulateDB(f.FileName, f.Files, fId, folder);
+                await PopulateDB(f.FileName, f.Files, folder);
             }
         } catch (error) {
             console.log(f, error);
         }
     }
 
-    //if (tempFiles.length > 0) await db.file.bulkCreate(tempFiles);
+    if (tempFiles.length > 0) await db.file.bulkCreate(tempFiles);
     tempFiles = [];
 }
 
@@ -117,12 +104,14 @@ scanOneDir = async(data) => {
         if (!fs.existsSync(path.join(f.FullPath, f.Name))) await f.destroy();
     }
 
+    DirectoryId = data.id;
+
     var fis = WinDrive.ListFilesRO(data.dir);
     let folder;
     if (fis.length > 0)
         folder = await createCover(data.dir, fis);
-
-    await PopulateDB(data.dir, fis, data.id, folder);
+        
+    await PopulateDB(data.dir, fis, folder);
 
     data.folders = folderCovers;
     worker.send(data);
@@ -131,10 +120,9 @@ scanOneDir = async(data) => {
 process.on("message", (data) => {
 
     worker.on('close', () => {
-        process.send(data);
         process.exit();
     });
-
+    
     scanOneDir(data).catch(err => {
         console.log(err);
         process.exit();

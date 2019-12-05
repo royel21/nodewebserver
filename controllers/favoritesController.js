@@ -2,9 +2,9 @@ const db = require('../models');
 
 var getFavoriteFiles = async(user, data) => {
     let fav = await user.getFavorite();
-    console.log(fav.Id)
     files = await db.file.findAndCountAll({
-        atributtes: ['Id', 'Name', 'NameNormalize'],
+        atributtes: ['Id', 'Name'],
+        order:['Name'],
         offset: data.begin,
         limit: data.itemsPerPage,
         where: {
@@ -68,11 +68,7 @@ var addFav = async(user, id) => {
     let fav = await user.getFavorite();
     if (fav) {
         let file = await db.favoriteFile.findOrCreate({ where: { FileId: id, FavoriteId: fav.Id } });
-        console.log(file[0]);
-        if (file[0].isNewRecord) {
-            //await fav.addFile(file);
-            return true;
-        }
+        if (file[0].isNewRecord) return true;
     }
     return false;
 }

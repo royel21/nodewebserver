@@ -20,7 +20,7 @@ module.exports = (server, app) => {
             socket.on('re-scan', folders.reScan);
         }
 
-        socket.on('loadzip-image', (data) => mloader.loadZipImages(data, socket));
+        socket.on('loadzip-image', (data) => mloader.loadZipImages(data, socket, app.locals.user));
 
         socket.on('disconnect', (client) => {
             mloader.removeZip(socket.id);

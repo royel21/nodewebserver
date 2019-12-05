@@ -2,7 +2,11 @@ mixin navbar(user, url)
     nav#menu.navbar.navbar-expand-sm.navbar-dark.bg-dark
         ul.navbar-nav.bg-dark
             li.nav-item
-                a.nav-link(href="/" class=""+(url === '/' || url.includes('folder-content') ? "active" : ""))
+                a.nav-link(href="/" class=""+(url === '/' || url.includes('recents') ? "active" : ""))
+                    i.fas.fa-clipboard-list
+                    span  Recents 
+            li.nav-item
+                a.nav-link(href="/folders" class=""+(url.includes('/folders') || url.includes('folder-content') ? "active" : ""))
                     i.fas.fa-folder
                     span  Folders 
             li.nav-item

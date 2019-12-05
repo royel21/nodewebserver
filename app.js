@@ -47,8 +47,7 @@ app.locals.roles = { user: "Usurario", manager: "Manager", admin: "Administrador
 app.locals.fs = require("fs");
 
 app.use(function(req, res, next) {
-    app.locals.env = process.env.NODE_ENV
-
+    app.locals.env = process.env.NODE_ENV;
 
     if (req.user) {
         app.locals.user = req.user;

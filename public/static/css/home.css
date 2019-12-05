@@ -1,5 +1,5 @@
 .items-list {
-    display: inline-flex;
+    display: flex;
     flex-wrap: wrap;
     min-height: 100%;
 }

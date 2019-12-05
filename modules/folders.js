@@ -22,14 +22,14 @@ const getNewId = async() => {
 const startWork = (directory) => {
 
     const worker = fork('./workers/folder-scan.js');
+    let data = { id: directory.Id, dir: directory.FullPath };
+    worker.send(data);
 
-    worker.send({ id: directory.Id, dir: directory.FullPath });
-
-    worker.on("message", (data) => {
+    worker.on('exit', ()=>{
         io.sockets.emit("scan-finish", data);
         directory.update({ IsLoading: false });
         scanning = false;
-        console.log("scan-finish")
+        console.log("scan-finish");
     });
 }
 
@@ -75,7 +75,7 @@ module.exports.diskScaner = (data) => {
                     socket.emit("path-added", false);
                 }
             }).catch(err => {
-                console.log(err);
+                
                 socket.emit("path-added", false);
             });
         });
@@ -87,9 +87,10 @@ module.exports.diskScaner = (data) => {
 module.exports.reScan = (data) => {
 
     if (scanning) return;
-
+    
     db.directory.findOne({ where: { Id: data.id } }).then(dir => {
         if (dir) {
+            
             dir.update({ IsLoading: true });
             scanning = true;
             startWork(dir);

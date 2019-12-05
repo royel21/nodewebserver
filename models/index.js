@@ -28,8 +28,10 @@ db.file = require('./file')(sequelize, DataTypes);
 db.category = require('./category')(sequelize, DataTypes);
 db.folder = require('./folder')(sequelize, DataTypes);
 db.favorite = require('./favorites')(sequelize, DataTypes);
+db.recent = require('./recents')(sequelize, DataTypes);
 db.directory = require('./directories')(sequelize, DataTypes);
 
+db.recentFile = require('./recent-file')(sequelize, DataTypes);
 db.favoriteFile = require('./favorite-file')(sequelize, DataTypes);
 db.fileCategory = require('./file-category')(sequelize, DataTypes);
 
@@ -44,18 +46,34 @@ db.user.afterCreate((user, options) => {
     }
 });
 
+db.user.afterCreate((user, options) => {
+    if (!['manager', 'admin'].includes(user.Role)) {
+        db.recent.create({
+            Name: user.Name,
+            UserId: user.Id
+        });
+    }
+});
+
 db.category.belongsToMany(db.file, { through: { model: db.fileCategory } });
 db.file.belongsToMany(db.category, { through: { model: db.fileCategory } });
 
 db.favorite.belongsToMany(db.file, { through: { model: db.favoriteFile } });
 db.file.belongsToMany(db.favorite, { through: { model: db.favoriteFile } });
 
+db.recent.belongsToMany(db.file, { through: { model: db.recentFile } });
+db.file.belongsToMany(db.recent, { through: { model: db.recentFile } });
+
 db.directory.hasMany(db.file, { onDelete: 'cascade' });
+db.directory.hasMany(db.folder, { onDelete: 'cascade' });
+
+db.folder.belongsTo(db.directory);
 
 db.file.belongsTo(db.directory);
 db.file.belongsTo(db.folder);
 
 db.user.hasOne(db.favorite);
+db.user.hasOne(db.recent);
 db.folder.hasMany(db.file);
 
 db.init = async() => {

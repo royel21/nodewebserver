@@ -58,7 +58,6 @@ const myworker = async (id) => {
                 let tempVal = await getVideoDuration(fullPath);
                 if (isNaN(tempVal)) continue;
                 duration = parseFloat(tempVal);
-                console.log("duration: ", duration);
                 if (f.Duration < 1) {
                     await f.update({ Duration: duration });
                 }
@@ -81,7 +80,6 @@ process.on("message", (data) => {
 
     foldersThumbNails(data.folders).then(() => {
         vCover = path.resolve('./public', 'covers', 'files', 'folder-' + data.id);
-        console.log("creating file covers");
         if (!fs.existsSync(vCover)) {
             fs.mkdirsSync(vCover);
         }
@@ -100,7 +98,6 @@ var foldersThumbNails = async (folders) => {
     for (let s of folders) {
         try {
             if (!s.isManga) {
-                console.log(s.coverPath);
                 let duration = await getVideoDuration(s.filePath);
                 if (isNaN(duration)) continue;
                 await getScreenShot(s.filePath, s.coverPath, duration);
