@@ -122,10 +122,9 @@ exports.loginPost = (req, res, next) => {
     }
     res.cookie('screen-w', req.body.screenw, options);
 
-    let rediretTo = req.body.folderid === 'false' ? "/" : '/folder-content/' + req.body.folderid;
 
     passport.authenticate('local', {
-        successRedirect: rediretTo,
+        successRedirect: '/',
         failureRedirect: "/login",
         failureFlash: true
     })(req, res, next);

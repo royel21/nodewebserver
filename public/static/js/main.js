@@ -106,7 +106,7 @@ $('#login').on('click',(e)=>{
 });
 
 $('.navbar ul .nav-link:not(#login)').click((e)=>{
-    //if(isAndroid){
+    if(isAndroid){
         $('.navbar ul .active').removeClass('active');
         $(e.target.closest('.nav-link')).addClass('active');
         let text = e.target.closest('.nav-item').textContent;
@@ -134,7 +134,7 @@ $('.navbar ul .nav-link:not(#login)').click((e)=>{
             }
         }
         e.preventDefault();  
-    //}
+    }
 });
 /********************************************modal********************/
 

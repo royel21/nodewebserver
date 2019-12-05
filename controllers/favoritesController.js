@@ -1,10 +1,10 @@
 const db = require('../models');
 
-var getFavoriteFiles = async(user, data) => {
+var getFavoriteFiles = async (user, data) => {
     let fav = await user.getFavorite();
     files = await db.file.findAndCountAll({
         atributtes: ['Id', 'Name'],
-        order:['Name'],
+        order: ['Name'],
         offset: data.begin,
         limit: data.itemsPerPage,
         where: {
@@ -64,7 +64,7 @@ exports.postSearch = (req, res) => {
     res.redirect(`/favorites/1/${itemsPerPage}/${search}?partial=true`);
 }
 
-var addFav = async(user, id) => {
+var addFav = async (user, id) => {
     let fav = await user.getFavorite();
     if (fav) {
         let file = await db.favoriteFile.findOrCreate({ where: { FileId: id, FavoriteId: fav.Id } });
@@ -75,6 +75,27 @@ var addFav = async(user, id) => {
 
 exports.postFavorite = (req, res) => {
     addFav(req.user, req.body.id).then((result) => {
+        res.send({ result });
+    }).catch(err => {
+        console.log('fav-error', err);
+    });
+}
+
+var removeFile = async (user, id) => {
+    let fav = await user.getFavorite();
+    if (fav) {
+        let file = await db.file.findOne({ where: { Id: id } });
+        if(file){
+            let result = await fav.removeFile(file);
+            return true;
+        }
+    }
+    return false;
+}
+
+exports.postRemoveFile = (req, res) => {
+
+    removeFile(req.user, req.body.id).then((result) => {
         res.send({ result });
     }).catch(err => {
         console.log('fav-error', err);

@@ -24,7 +24,8 @@ router.post("/folder-content/:folder/search", homeController.postSearch);
 
 
 router.get("/favorites/:page?/:items?/:search?", favController.favorite);
-router.post("/favorites/addfav", favController.postFavorite)
+router.post("/favorites/addfav", favController.postFavorite);
+router.post("/favorites/remove", favController.postRemoveFile)
 router.post("/favorites/search", favController.postSearch);
 
 module.exports = router;
