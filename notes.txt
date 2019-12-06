@@ -1,18 +1,36 @@
 
-    data.val = `%${data.val}%`
-    let files = { count: 0, rows: [] };
-    let count = await db.sqlze.query(`Select count(*) as count 
-    from Files where Name LIKE ? and Id ${data.not} in(Select FileId from FileCategories where CategoryId = ?)`, {
-        replacements: [data.val, data.caId],
-        type: db.sqlze.QueryTypes.SELECT
-    });
-    files.count = count[0].count;
-    files.rows = await db.sqlze.query(`Select Id, Name, NameNormalize 
-        from Files where Name LIKE ? and Id ${data.not} in(Select FileId 
-        from FileCategories where CategoryId = ?) 
-        ORDER BY NameNormalize limit ?, ?;`, {
-        model: db.file,
-        mapToModel: true,
-        replacements: [data.val, data.caId, data.begin, data.itemsPerPage],
-        type: db.sqlze.QueryTypes.SELECT
-    });
+data.val = `%${data.val}%`
+let files = { count: 0, rows: [] };
+let count = await db.sqlze.query(`Select count(*) as count 
+from Files where Name LIKE ? and Id ${data.not} in(Select FileId from FileCategories where CategoryId = ?)`, {
+    replacements: [data.val, data.caId],
+    type: db.sqlze.QueryTypes.SELECT
+});
+files.count = count[0].count;
+files.rows = await db.sqlze.query(`Select Id, Name, NameNormalize 
+    from Files where Name LIKE ? and Id ${data.not} in(Select FileId 
+    from FileCategories where CategoryId = ?) 
+    ORDER BY NameNormalize limit ?, ?;`, {
+    model: db.file,
+    mapToModel: true,
+    replacements: [data.val, data.caId, data.begin, data.itemsPerPage],
+    type: db.sqlze.QueryTypes.SELECT
+});
+
+before npm update 
+----------------------------------------------------
+bcrypt             3.0.6    3.0.7   3.0.7  nodewebserver
+body-parser       1.18.3   1.19.0  1.19.0  nodewebserver
+express           4.16.4   4.17.1  4.17.1  nodewebserver
+express-session   1.15.6   1.17.0  1.17.0  nodewebserver
+ffmpeg-static      2.4.0    2.7.0   2.7.0  nodewebserver
+fs-extra           7.0.1    7.0.1   8.1.0  nodewebserver
+http-errors        1.7.1    1.7.3   1.7.3  nodewebserver
+nodemon          1.18.10   1.19.4   2.0.1  nodewebserver
+pm2                3.5.1    3.5.1   4.2.0  nodewebserver
+pug                2.0.3    2.0.4   2.0.4  nodewebserver
+sequelize         4.44.3   4.44.3  5.21.2  nodewebserver
+sharp             0.23.3   0.23.4  0.23.4  nodewebserver
+socket.io          2.2.0    2.3.0   2.3.0  nodewebserver
+sqlite3            4.1.0    4.1.1   4.1.1  nodewebserver
+validator        10.11.0  10.11.0  12.1.0  nodewebserver

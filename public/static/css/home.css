@@ -31,22 +31,17 @@
 }
 
 .item-del {
-    top: 5px;
-    left: 5px;
     color: brown;
     float: right;
+    margin-left: 5px;
 }
 
 .item-play {
-    top: 5px;
-    left: 5px;
     color: seashell;
     float: left;
 }
 
 .item-fav {
-    top: 5px;
-    right: 5px;
     float: right;
 }
 

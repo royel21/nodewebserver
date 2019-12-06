@@ -1,6 +1,6 @@
 const db = require('../models');
 
-var getFavoriteFiles = async(user, data) => {
+var getFavoriteFiles = async (user, data) => {
     let fav = await user.getFavorite();
     let files = { count: 0, rows: [] };
     if (fav) {
@@ -24,7 +24,7 @@ var getFavoriteFiles = async(user, data) => {
 exports.favorite = (req, res) => {
 
     let screenw = parseInt(req.cookies['screen-w']);
-    let itemsPerPage = req.params.items || req.query.items || 100;
+    let itemsPerPage = req.params.items || req.query.items || screenw > 1900 ? 21 : 27;
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage) || 0;
     let search = req.params.search || "";
@@ -67,32 +67,23 @@ exports.postSearch = (req, res) => {
     res.redirect(`/favorites/1/${itemsPerPage}/${search}?partial=true`);
 }
 
-var addFav = async(user, id) => {
-    let fav = await user.getFavorite();
-    if (fav) {
-        let file = await db.favoriteFile.findOrCreate({ where: { FileId: id, FavoriteId: fav.Id } });
-        console.log(file[1])
-        if (file[1]) return true;
-    }
-    return false;
-}
-
 exports.postFavorite = (req, res) => {
-    addFav(req.user, req.body.id).then((result) => {
-        res.send({ result });
+    db.favoriteFile.findOrCreate({
+        where:
+            { FileId: req.body.id, FavoriteId: req.user.Favorite.Id }
+    }).then(file => {
+        return res.send({ result: file[1] ? true : false });
     }).catch(err => {
         console.log('fav-error', err);
+        return res.send({ result: false });
     });
 }
 
-var removeFile = async(user, id) => {
-    let fav = await user.getFavorite();
-    if (fav) {
-        let file = await db.file.findOne({ where: { Id: id } });
-        if (file) {
-            let result = await fav.removeFile(file);
-            return true;
-        }
+var removeFile = async (user, id) => {
+    let file = await db.file.findOne({ where: { Id: id } });
+    if (file) {
+        await user.Favorite.removeFile(file);
+        return true;
     }
     return false;
 }

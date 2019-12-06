@@ -3,15 +3,12 @@ var router = express.Router();
 const fs = require("fs");
 const path = require("path");
 const db = require('../models')
-router.get('/', function (req, res) {
-  res.render("videoplayer/index.pug", { title: "Express Server" });
-});
-//hello
+
 router.get("/video/:fileid", (req, res) => {
   db.file.findOne({ attributes: ['FullPath', 'Name', 'Size'], where: { Id: req.params.fileid } })
     .then(file => {
       if (file) {
-        // var file = "D:\\Download\\Jav\\ADN-189.mp4"
+        
         var total = file.Size;
         var range = req.headers.range;
         if (!range) {

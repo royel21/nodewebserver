@@ -1,9 +1,10 @@
 const db = require('../models');
 
-var getRecentFiles = async(user, data) => {
+var getRecentFiles = async (user, data) => {
     let favorite = await user.getFavorite() || { Id: "" };
-    console.time("rc")
+    console.time("rc");
     let recent = await user.getRecent();
+
     let files = { count: 0, rows: [] };
     if (recent) {
         files.rows = await recent.getFiles({
@@ -24,7 +25,7 @@ var getRecentFiles = async(user, data) => {
         });
         files.count = await db.recentFile.count({ where: { RecentId: recent.Id } });
     }
-    console.timeEnd("rc")
+    console.timeEnd("rc");
     return files;
 }
 
@@ -61,7 +62,7 @@ exports.recent = (req, res) => {
                 res.send(html);
             }
         });
-
+        return null;
     }).catch(err => {
         console.log('fav-error', err);
     });
@@ -72,4 +73,23 @@ exports.postSearch = (req, res) => {
     let search = req.body.search || "";
 
     res.redirect(`/recents/1/${itemsPerPage}/${search}?partial=true`);
+}
+
+
+var removeFile = async (user, id) => {
+    let file = await db.file.findOne({ where: { Id: id } });
+    if (file) {
+        await user.Recent.removeFile(file);
+        return true;
+    }
+    return false;
+}
+
+exports.postRemoveFile = (req, res) => {
+
+    return removeFile(req.user, req.body.id).then((result) => {
+        return res.send({ result });
+    }).catch(err => {
+        console.log('fav-error', err);
+    });
 }

@@ -289,7 +289,7 @@ const playVideo = (el) => {
         let id = el.id;
         currentFile = { id, current: 0 }
         updaterecentVideos();
-       // $(videoViewer).fadeIn(()=>{ videoViewer.focus(); }, 300);
+       $(videoViewer).fadeIn(()=>{ videoViewer.focus(); });
 
         $('.loading').css({ display: 'flex' });
 
@@ -304,14 +304,14 @@ const playVideo = (el) => {
 $("#video-viewer .fa-arrow-alt-circle-right").click((e) => {
     let next = $('#' + currentVideoId).next()[0];
     if (next) {
-        playVideo(next)
+        processFile(next)
     }
 });
 
 $("#video-viewer .fa-arrow-alt-circle-left").click((e) => {
     let prev = $('#' + currentVideoId).prev()[0];
     if (prev) {
-        playVideo(prev);
+        processFile(prev);
     }
 });
 

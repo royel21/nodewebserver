@@ -10,7 +10,11 @@ module.exports = (passport) => {
         db.user.findOne({
             where: {
                 Name: username
-            }
+            }, include: [
+                { model: db.userConfig },
+                { model: db.favorite },
+                { model: db.recent }
+            ]
         }).then((user) => {
             if (user) {
                 done(null, user);
@@ -26,7 +30,7 @@ module.exports = (passport) => {
         usernameField: 'username',
         passwordField: 'password',
         passReqToCallback: true
-    }, function(req, username, password, done) {
+    }, function (req, username, password, done) {
         if (username == null || username == "") {
             req.flash('userError', 'Id de usuario vacio');
             return done(null, false);
@@ -38,7 +42,11 @@ module.exports = (passport) => {
         return db.user.findOne({
             where: {
                 Name: username
-            }
+            }, include: [
+                { model: db.userConfig },
+                { model: db.favorite },
+                { model: db.recent }
+            ]
         }).then(user => {
             if (user) {
                 user.validPassword(password).then((result) => {

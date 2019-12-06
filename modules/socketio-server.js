@@ -1,10 +1,12 @@
-const folders = require('./folders')
-const mloader = require('./manga-loader')
+const folders = require('./folders');
+const mloader = require('./manga-loader');
+const recent = require('./update-recent')
+
+const db = require('../models');
 
 module.exports = (server, app) => {
     const io = require('socket.io')(server);
 
-    const db = require('../models');
 
     io.on('connection', (socket) => {
 
@@ -22,6 +24,8 @@ module.exports = (server, app) => {
             socket.on('update-last-page', mloader.updatePos);
 
             socket.on('loadzip-image', (data) => mloader.loadZipImages(data, socket, app.locals.user));
+
+            socket.on('add-recent', (id) => { recent.updateRecent(app.locals.user, id) });
         }
 
         socket.on('disconnect', (client) => {

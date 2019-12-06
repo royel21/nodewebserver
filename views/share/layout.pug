@@ -16,9 +16,9 @@ html(lang="en")
         block css
     body
         block navbar
-        
-        #modal-container
-            #modal.card.bg-dark.text-light
+        if !url.includes('/login')
+            #modal-container
+                #modal.card.bg-dark.text-light
         div#main
             #popup
             #error-container

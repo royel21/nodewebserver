@@ -13,6 +13,7 @@ const LEFT = 37;
 const RIGHT = 39;
 const ENTER = 13;
 
+var socket = io();
 
 let currentFile = { id: 0, currentPos: 0 };
 
@@ -124,6 +125,9 @@ processFile = (item) => {
         $('#video-viewer').addClass('d-none');
         openManga(item);
     }
+    socket.emit('add-recent', item.id);
+    if(location.href === '/' || location.href.includes('/recents'))
+        $('#files-list').prepend(item);
     mediaContainer.focus();
 }
 
@@ -303,7 +307,7 @@ $('body').on('click', '.items .item-fav', (e)=>{
     $.post('/favorites/addfav',{id: item.id, _csrf: $('#search-form input[name=_csrf]').val()}, (resp) => {
         console.log(resp);
         if(resp.result){
-            $(e.target).toggleClass('text-warning');
+            $(e.target).toggleClass('text-warning far fas');
         }
     });
     e.preventDefault();
@@ -313,7 +317,8 @@ $('body').on('click', '.items .item-fav', (e)=>{
 
 $('body').on('click', '.items .item-del', (e)=>{
     let item = e.target.classList[0] === "items" ? e.target : e.target.closest('.items');
-    $.post('/favorites/remove',{id: item.id, _csrf: $('#search-form input[name=_csrf]').val()}, (resp) => {
+    let action = location.href.includes('favorites') ? '/favorites/remove' : '/recents/remove' ;
+    $.post(action, {id: item.id, _csrf: $('#search-form input[name=_csrf]').val()}, (resp) => {
         console.log(resp);
         if(resp.result)
             $(item).fadeOut(()=>{ item.remove(); });

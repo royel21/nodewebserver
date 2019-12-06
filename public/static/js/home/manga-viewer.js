@@ -7,7 +7,6 @@ const imgpreview = document.getElementById('img-preview');
 const mSlider = document.getElementById('m-range');
 
 var disconnected = false;
-var socket = io();
 
 var mangaIds = {};
 
@@ -247,7 +246,7 @@ var prevImg = () => {
 var nextManga = () => {
     let next = $('#' + mId).next()[0];
     if (next && !mLoading) {
-        openManga(next);
+        processFile(next);
         selectItem($('.items').index(next));
     }
 }
@@ -255,7 +254,7 @@ var nextManga = () => {
 var prevManga = () => {
     let prev = $('#' + mId).prev()[0];
     if (prev && !mLoading) {
-        openManga(prev);
+        processFile(prev);
         selectItem($('.items').index(prev));
     }
 };
@@ -385,7 +384,6 @@ var lazyLoad = () => {
             }
             clearTimeout(scrTout);
             scrTout = null;
-            console.log(inView)
             inView = [];
         }, 50);
 
