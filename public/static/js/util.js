@@ -69,31 +69,31 @@ stopClock = () => {
 var lastEl;
 
 setfullscreen = (element) => {
-    try {
-        if (lastEl && element.tagName !== 'BODY') {
-            if (document.fullscreenElement.tagName === 'BODY') {
-                document.exitFullscreen().then(() => {
+        try {
+            if (lastEl && element.tagName !== 'BODY') {
+                if (document.fullscreenElement.tagName === 'BODY') {
+                    document.exitFullscreen().then(() => {
+                        element.requestFullscreen().catch(err => {});
+                    }).catch(err => {});
+                } else {
+                    document.exitFullscreen().then(() => {
+                        lastEl.requestFullscreen().catch(err => {});
+                    }).catch(err => {});
+                }
+            } else {
+                if (!document.fullscreenElement) {
                     element.requestFullscreen().catch(err => {});
-                }).catch(err => {});
-            } else {
-                document.exitFullscreen().then(() => {
-                    lastEl.requestFullscreen().catch(err => {});
-                }).catch(err => {});
+                    if (element.tagName === 'BODY') lastEl = element;
+                    startClock();
+                } else {
+                    document.exitFullscreen().catch(err => {});
+                    lastEl = null;
+                    stopClock();
+                }
             }
-        } else {
-            if (!document.fullscreenElement) {
-                element.requestFullscreen().catch(err => {});
-                if (element.tagName === 'BODY') lastEl = element;
-                startClock();
-            } else {
-                document.exitFullscreen().catch(err => {});
-                lastEl = null;
-                stopClock();
-            }
-        }
 
-        $('.fa-expand-arrows-alt').attr('data-title', document.webkitIsFullScreen ? "Pantalla Completa" : "Salir Pantalla Completa");
-    } catch (err) {
-        console.log(err)
-    }
+            $('.fa-expand-arrows-alt').attr('data-title', document.webkitIsFullScreen ? "Pantalla Completa" : "Salir Pantalla Completa");
+        } catch (err) {
+            console.log(err)
+        }
 }

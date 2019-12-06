@@ -86,9 +86,9 @@ const sendPostResponse = (res, action, state, user) => {
 
 const createUser = (req, res) => {
 
-    if (req.body.username === "" || req.body.username === undefined) {
+    if (!req.body.username) {
         return res.send({ err: "Nombre no puede estar vacio" });
-    } else if (req.body.password == "" || req.body.password === undefined) {
+    } else if (!req.body.password) {
         return res.send({ err: "password no puede estar vacio" })
     }
 
@@ -123,14 +123,14 @@ const updateUser = (req, res) => {
                 State: req.body.state,
                 Password: pass
             }).then(updatedUser => {
-                sendPostResponse(res, "Usuario", "update", updatedUser);
+                return sendPostResponse(res, "Usuario", "update", updatedUser);
             });
         } else {
-            res.send({ state: "error", data: "Usuario no encontrado" });
+            return res.send({ state: "error", data: "Usuario no encontrado" });
         }
     }).catch(err => {
         if (err) console.log(err);
-        res.send({ state: "error", data: "Error Interno del servidor" });
+        return res.send({ state: "error", data: "Error Interno del servidor" });
     });
 }
 
@@ -145,10 +145,10 @@ exports.userModalPost = (req, res) => {
 var deleteUser = async(Id, res) => {
     let user = await db.user.findOne({ where: { Id } });
     if (user) {
-        //await user.destroy();
-        res.send({ status: "Ok", msg: "User Delete Successfull" });
+        await user.destroy();
+        return res.send({ status: "Ok", msg: "User Delete Successfull" });
     } else {
-        res.send({ status: "Error", msg: "User Not Found" });
+        return res.send({ status: "Error", msg: "User Not Found" });
     }
 }
 

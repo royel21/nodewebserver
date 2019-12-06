@@ -116,13 +116,16 @@ exports.filesList = (req, res) => {
         folderId = null;
     }
     let condition = {
-        order: ['NameNormalize'],
+        order: ['Name'],
         offset: begin,
         limit: itemsPerPage,
         attributes: ['Id', 'Name'],
         where: {
-            [db.Op.and]: [{ Name: {
-                    [db.Op.like]: "%" + val + "%" } }, { FolderId: folderId }]
+            [db.Op.and]: [{
+                Name: {
+                    [db.Op.like]: "%" + val + "%"
+                }
+            }, { FolderId: folderId }]
         }
     };
 
@@ -151,12 +154,16 @@ exports.addFiles = (req, res) => {
     let fileId = req.body.fileId || null;
     let search = req.body.search || "";
     let condition = {
-        order: ['NameNormalize'],
+        order: ['Name'],
         attributes: ['Id', 'Name'],
         where: fileId ? {
-            [db.Op.and]: [{ Id: fileId }, { FolderId: null }] } : {
-            [db.Op.and]: [{ Name: {
-                    [db.Op.like]: "%" + search + "%" } }, { FolderId: null }]
+            [db.Op.and]: [{ Id: fileId }, { FolderId: null }]
+        } : {
+            [db.Op.and]: [{
+                Name: {
+                    [db.Op.like]: "%" + search + "%"
+                }
+            }, { FolderId: null }]
         }
     };
 

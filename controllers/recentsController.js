@@ -1,14 +1,17 @@
 const db = require('../models');
 
-var getRecentFiles = async (user, data) => {
+var getRecentFiles = async(user, data) => {
+    let favorite = await user.getFavorite() || { Id: "" };
     console.time("rc")
     let recent = await user.getRecent();
     let files = { count: 0, rows: [] };
     if (recent) {
         files.rows = await recent.getFiles({
-            attributes: ['Id', 'Name', 'DirectoryId','Type'], 
+            attributes: ['Id', 'Name', 'DirectoryId', 'Type', [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" + favorite.Id + "')"), "isFav"]],
             joinTableAttributes: ['LastRead'],
-            order: [[db.sqlze.literal("RecentFile.LastRead"), 'DESC']],
+            order: [
+                [db.sqlze.literal("RecentFile.LastRead"), 'DESC']
+            ],
             offset: data.begin,
             limit: data.itemsPerPage,
             where: {
@@ -19,7 +22,7 @@ var getRecentFiles = async (user, data) => {
                 }]
             }
         });
-        files.count = await db.recentFile.count({where:{ RecentId: recent.Id}});
+        files.count = await db.recentFile.count({ where: { RecentId: recent.Id } });
     }
     console.timeEnd("rc")
     return files;

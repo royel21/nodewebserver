@@ -36,22 +36,26 @@ db.favoriteFile = require('./favorite-file')(sequelize, DataTypes);
 db.fileCategory = require('./file-category')(sequelize, DataTypes);
 
 db.sqlze = sequelize;
-
-db.user.afterCreate((user, options) => {
+var userConfigs = async(user) => {
     if (!['manager', 'admin'].includes(user.Role)) {
-        db.favorite.create({
+        await db.favorite.create({
+            Name: user.Name,
+            UserId: user.Id
+        });
+        await db.recent.create({
             Name: user.Name,
             UserId: user.Id
         });
     }
+}
+
+db.user.afterCreate((user, options) => {
+    userConfigs(user);
 });
 
 db.user.afterCreate((user, options) => {
     if (!['manager', 'admin'].includes(user.Role)) {
-        db.recent.create({
-            Name: user.Name,
-            UserId: user.Id
-        });
+
     }
 });
 
@@ -72,8 +76,9 @@ db.folder.belongsTo(db.directory);
 db.file.belongsTo(db.directory);
 db.file.belongsTo(db.folder);
 
-db.user.hasOne(db.favorite);
-db.user.hasOne(db.recent);
+db.user.hasOne(db.favorite, { onDelete: 'cascade' });
+db.user.hasOne(db.recent, { onDelete: 'cascade' });
+
 db.folder.hasMany(db.file);
 
 db.init = async() => {

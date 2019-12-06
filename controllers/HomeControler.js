@@ -3,7 +3,8 @@ const db = require('../models');
 
 const mypassport = require('../passport_config')(passport);
 
-exports.index = (req, res) => {
+var processIndex = async(req, res) => {
+    let favorite = await req.user.getFavorite() || { Id: "" };
     let isFile = /video|content/ig.test(req.url);
 
     let isManga = req.url.includes("manga");
@@ -48,6 +49,8 @@ exports.index = (req, res) => {
                 }
             }, { FolderId: foldersId }]
         }
+
+        query.attributes.include[1] = [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" + favorite.Id + "')"), "isFav"];
     } else {
         query.where = {
             Name: {
@@ -57,41 +60,46 @@ exports.index = (req, res) => {
 
         if (isFile) {
             query.where.Type = isManga ? "Manga" : "Video";
-            query.attributes.include[1] = [db.sqlze.literal('(Select FileId from FavoriteFiles where FileId == FILE.Id)'), "isFav"];
-
+            query.attributes.include[1] = [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" + favorite.Id + "')"), "isFav"];
         }
     }
 
-    tempDb.findAndCountAll(query).then(items => {
-        var totalPages = Math.ceil(items.count / itemsPerPage);
-        let view = req.query.partial ? "home/partial-items-view" : "home/index.pug";
+    let items = await tempDb.findAndCountAll(query);
+    console.log(items[0])
+    var totalPages = Math.ceil(items.count / itemsPerPage);
+    let view = req.query.partial ? "home/partial-items-view" : "home/index.pug";
 
-        res.render(view, {
-            title: "Home Server",
-            items,
-            pagedatas: {
-                currentPage,
-                itemsPerPage,
-                totalPages,
-                search: search,
-                action,
-                csrfToken: req.csrfToken(),
-                step: (screenw < 1900 ? 7 : 9)
-            },
-            isFile
-        }, (err, html) => {
-            if (err) console.log(err);
+    return res.render(view, {
+        title: "Home Server",
+        items,
+        pagedatas: {
+            currentPage,
+            itemsPerPage,
+            totalPages,
+            search: search,
+            action,
+            csrfToken: req.csrfToken(),
+            step: (screenw < 1900 ? 7 : 9)
+        },
+        isFile
+    }, (err, html) => {
+        if (err) console.log(err);
 
-            if (req.query.partial) {
-                res.send({ url: req.url, data: html });
+        if (req.query.partial) {
+            res.send({ url: req.url, data: html });
 
-            } else {
-                res.send(html);
-            }
-        });
+        } else {
+            res.send(html);
+        }
+    });
+}
+
+exports.index = (req, res) => {
+    processIndex(req, res).then((result) => {
+        return result;
     }).catch(err => {
         console.log(err)
-        res.status(500).send('Internal Server Error');
+        return res.status(500).send('Internal Server Error');
     });
 }
 

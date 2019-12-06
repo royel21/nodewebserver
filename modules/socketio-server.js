@@ -18,9 +18,11 @@ module.exports = (server, app) => {
             socket.on("scan-dir", folders.diskScaner);
 
             socket.on('re-scan', folders.reScan);
-        }
 
-        socket.on('loadzip-image', (data) => mloader.loadZipImages(data, socket, app.locals.user));
+            socket.on('update-last-page', mloader.updatePos);
+
+            socket.on('loadzip-image', (data) => mloader.loadZipImages(data, socket, app.locals.user));
+        }
 
         socket.on('disconnect', (client) => {
             mloader.removeZip(socket.id);

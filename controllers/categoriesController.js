@@ -2,7 +2,7 @@ const db = require('../models');
 
 getCategoryFiles = async(data) => {
     files = await db.file.findAndCountAll({
-        atributtes: ['Id', 'Name', 'NameNormalize'],
+        atributtes: ['Id', 'Name'],
         offset: data.begin,
         limit: data.itemsPerPage,
         where: {

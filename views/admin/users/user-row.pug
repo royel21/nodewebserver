@@ -8,4 +8,4 @@ tr(id=""+ user.Id)
         span= user.Name
     td= roles[user.Role]
     td= user.State
-    td= moment(user.CreatedAt).format("LLL")
+    td= moment(user.CreatedAt).locale("es").format("LLL")

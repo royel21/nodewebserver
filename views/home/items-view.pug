@@ -20,7 +20,9 @@ mixin items-view(items, pagedatas, isFile)
                                 if pagedatas.action.includes("/favorites")
                                     span.item-del.far.fa-trash-alt
                                 else
-                                    span.item-fav.fa-star(class=""+(item.dataValues.isFav ? " text-warning fas" : " far"))
+                                    if pagedatas.action.includes("/recents")
+                                        span.item-del.far.fa-trash-alt
+                                    span.item-fav.fa-star(class=""+(item.dataValues.isFav ? "text-warning fas" : "far"))
                             else
                                 span.float-right.fas.fa-folder
                         .item-cover

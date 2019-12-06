@@ -17,6 +17,8 @@ module.exports = (passport) => {
             } else {
                 done(new Error('Wrong user Id.'))
             }
+        }).catch(err => {
+            console.log(err);
         })
     });
 
@@ -24,7 +26,7 @@ module.exports = (passport) => {
         usernameField: 'username',
         passwordField: 'password',
         passReqToCallback: true
-    }, function (req, username, password, done) {
+    }, function(req, username, password, done) {
         if (username == null || username == "") {
             req.flash('userError', 'Id de usuario vacio');
             return done(null, false);

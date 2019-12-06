@@ -1,20 +1,23 @@
 const db = require('../models');
 
-var getFavoriteFiles = async (user, data) => {
+var getFavoriteFiles = async(user, data) => {
     let fav = await user.getFavorite();
-    files = await db.file.findAndCountAll({
-        atributtes: ['Id', 'Name'],
-        order: ['Name'],
-        offset: data.begin,
-        limit: data.itemsPerPage,
-        where: {
-            [db.Op.and]: [{
-                Name: {
-                    [db.Op.like]: "%" + data.search + "%"
-                }
-            }, db.sqlze.literal(`File.Id IN (Select FileId from FavoriteFiles where FavoriteId = '${fav.Id}')`)]
-        }
-    });
+    let files = { count: 0, rows: [] };
+    if (fav) {
+        files = await db.file.findAndCountAll({
+            atributtes: ['Id', 'Name'],
+            order: ['Name'],
+            offset: data.begin,
+            limit: data.itemsPerPage,
+            where: {
+                [db.Op.and]: [{
+                    Name: {
+                        [db.Op.like]: "%" + data.search + "%"
+                    }
+                }, db.sqlze.literal(`File.Id IN (Select FileId from FavoriteFiles where FavoriteId = '${fav.Id}')`)]
+            }
+        });
+    }
     return files;
 }
 
@@ -64,11 +67,12 @@ exports.postSearch = (req, res) => {
     res.redirect(`/favorites/1/${itemsPerPage}/${search}?partial=true`);
 }
 
-var addFav = async (user, id) => {
+var addFav = async(user, id) => {
     let fav = await user.getFavorite();
     if (fav) {
         let file = await db.favoriteFile.findOrCreate({ where: { FileId: id, FavoriteId: fav.Id } });
-        if (file[0].isNewRecord) return true;
+        console.log(file[1])
+        if (file[1]) return true;
     }
     return false;
 }
@@ -81,11 +85,11 @@ exports.postFavorite = (req, res) => {
     });
 }
 
-var removeFile = async (user, id) => {
+var removeFile = async(user, id) => {
     let fav = await user.getFavorite();
     if (fav) {
         let file = await db.file.findOne({ where: { Id: id } });
-        if(file){
+        if (file) {
             let result = await fav.removeFile(file);
             return true;
         }

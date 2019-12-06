@@ -302,6 +302,9 @@ $('body').on('click', '.items .item-fav', (e)=>{
     console.log(e.target, item.id);
     $.post('/favorites/addfav',{id: item.id, _csrf: $('#search-form input[name=_csrf]').val()}, (resp) => {
         console.log(resp);
+        if(resp.result){
+            $(e.target).toggleClass('text-warning');
+        }
     });
     e.preventDefault();
     e.stopPropagation();

@@ -10,7 +10,7 @@ var addRecent = async(user, id) => {
     if (recent) {
         let file = await db.recentFile.findOrCreate({ where: { FileId: id, RecentId: recent.Id } });
         if (!file[0].isNewRecord) {
-            file[0].update({LastRead: new Date() });
+            file[0].update({ LastRead: new Date() });
         }
     }
     return false;
@@ -22,6 +22,16 @@ module.exports.removeZip = (id) => {
 
 module.exports.setSocket = (_db) => {
     db = _db;
+}
+
+module.exports.updatePos = (data) => {
+    db.file.findOne({ where: { Id: data.id } }).then(file => {
+        if (file) {
+            file.update({ CurrentPos: data.page });
+        }
+    }).catch(err => {
+        console.log(err);
+    });
 }
 
 module.exports.loadZipImages = (data, socket, currentUser) => {
@@ -60,8 +70,8 @@ module.exports.loadZipImages = (data, socket, currentUser) => {
         }
         socket.emit('m-finish', { last: true });
     } else {
-        
-        if(users[socket.id]){
+
+        if (users[socket.id]) {
 
         }
 
@@ -87,7 +97,7 @@ module.exports.loadZipImages = (data, socket, currentUser) => {
                         user.entries = entries;
                         user.zip = zip;
 
-                        socket.emit('m-info', { total: entries.length, name: file.Name });
+                        socket.emit('m-info', { total: entries.length, name: file.Name, page: file.CurrentPos });
 
                         for (let i = data.page < 0 ? 0 : data.page; i < (data.page + data.pagetoload) && i < entries.length; i++) {
                             socket.emit('loaded-zipedimage', {
