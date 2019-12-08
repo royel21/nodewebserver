@@ -1,8 +1,10 @@
 var express = require('express');
 var router = express.Router();
-var homeController = require('../controllers/HomeControler');
-var favController = require('../controllers/favoritesController');
-var recentController = require('../controllers/recentsController');
+var homeController = require('../controllers/home/HomeControler');
+var favController = require('../controllers/home/favoritesController');
+var recentController = require('../controllers/home/recentsController');
+var categoriesController = require('../controllers/home/categoriesController');
+
 
 router.get("/", recentController.recent);
 
@@ -23,10 +25,12 @@ router.post("/videos/search", homeController.postSearch);
 router.post("/mangas/search", homeController.postSearch);
 router.post("/folder-content/:folder/search", homeController.postSearch);
 
-
 router.get("/favorites/:page?/:items?/:search?", favController.favorite);
 router.post("/favorites/addfav", favController.postFavorite);
 router.post("/favorites/remove", favController.postRemoveFile);
 router.post("/favorites/search", favController.postSearch);
+
+router.get("/categories/:cat?/:page?/:items?/:search?", categoriesController.categories);
+router.post("/categories/search", categoriesController.postSearch);
 
 module.exports = router;

@@ -1,10 +1,10 @@
 const passport = require('passport');
-const db = require('../models');
+const db = require('../../models');
 
-const mypassport = require('../passport_config')(passport);
+const mypassport = require('../../passport_config')(passport);
 
 var processIndex = async(req, res) => {
-    let favorite = await req.user.getFavorite() || { Id: "" };
+    console.time('s');
     let isFile = /video|content/ig.test(req.url);
 
     let isManga = req.url.includes("manga");
@@ -14,14 +14,14 @@ var processIndex = async(req, res) => {
     let tempDb = isFile ? db.file : db.folder;
     //Screen config
     let screenw = parseInt(req.cookies['screen-w']);
-    let itemsPerPage = req.params.items || req.query.items || (screenw < 1900 ? 21 : 27);
+    let itemsPerPage = parseInt(req.params.items || req.query.items) || req.itemsPerPage;
     //parameters
     let foldersId = req.params.folder;
     if (!db.folder.findOne({ where: { Id: foldersId } })) {
         foldersId = null;
     }
 
-    let currentPage = req.params.page || 1;
+    let currentPage = parseInt(req.params.page) || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
     let search = req.params.search || "";
     //query
@@ -35,37 +35,26 @@ var processIndex = async(req, res) => {
                 [db.sqlze.fn('REPLACE', db.sqlze.col("Name"), '[', '0'), 'N']
             ]
         },
-    }
-
-    let action = isManga ? "/mangas/" : isFile ? "/videos/" : "/folders/";
-
-    if (foldersId) {
-
-        action = "/folder-content/" + foldersId + "/"
-        query.where = {
-            [db.Op.and]: [{
-                Name: {
-                    [db.Op.like]: "%" + search + "%"
-                }
-            }, { FolderId: foldersId }]
-        }
-
-        query.attributes.include[1] = [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" + favorite.Id + "')"), "isFav"];
-    } else {
-        query.where = {
+        where: {
             Name: {
                 [db.Op.like]: "%" + search + "%"
             }
         }
+    }
+    let action = isManga ? "/mangas/" : isFile ? "/videos/" : "/folders/";
 
-        if (isFile) {
+    if (isFile || foldersId) {
+        query.attributes.include[1] = [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" + req.user.Favorite.Id + "')"), "isFav"];
+        query.attributes.include[2] = [db.sqlze.literal("(Select LastPos from RecentFiles where FileId == File.Id and RecentId == '" + req.user.Recent.Id + "')"), "CurrentPos"];
+        if (foldersId) {
+            action = "/folder-content/" + foldersId + "/"
+            query.where.FolderId = foldersId;
+        } else {
             query.where.Type = isManga ? "Manga" : "Video";
-            query.attributes.include[1] = [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" + favorite.Id + "')"), "isFav"];
         }
     }
-
     let items = await tempDb.findAndCountAll(query);
-    console.log(items[0])
+    console.timeEnd('s');
     var totalPages = Math.ceil(items.count / itemsPerPage);
     let view = req.query.partial ? "home/partial-items-view" : "home/index.pug";
 
@@ -79,7 +68,7 @@ var processIndex = async(req, res) => {
             search: search,
             action,
             csrfToken: req.csrfToken(),
-            step: (screenw < 1900 ? 7 : 9)
+            step: (screenw < 1900 ? 7 : 8)
         },
         isFile
     }, (err, html) => {
@@ -104,7 +93,7 @@ exports.index = (req, res) => {
 }
 
 exports.postSearch = (req, res) => {
-    let itemsPerPage = req.body.items;
+    let itemsPerPage = parseInt(req.body.items) || 1;
     let search = req.body.search || "";
 
     let folderId = req.params.folder;

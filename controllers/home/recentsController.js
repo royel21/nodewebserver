@@ -1,30 +1,33 @@
-const db = require('../models');
+const db = require('../../models');
 
-var getRecentFiles = async (user, data) => {
-    let favorite = await user.getFavorite() || { Id: "" };
+var getRecentFiles = async(user, data) => {
     console.time("rc");
-    let recent = await user.getRecent();
 
     let files = { count: 0, rows: [] };
-    if (recent) {
-        files.rows = await recent.getFiles({
-            attributes: ['Id', 'Name', 'DirectoryId', 'Type', [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" + favorite.Id + "')"), "isFav"]],
-            joinTableAttributes: ['LastRead'],
-            order: [
-                [db.sqlze.literal("RecentFile.LastRead"), 'DESC']
-            ],
-            offset: data.begin,
-            limit: data.itemsPerPage,
-            where: {
-                [db.Op.and]: [{
-                    Name: {
-                        [db.Op.like]: "%" + data.search + "%"
-                    }
-                }]
-            }
-        });
-        files.count = await db.recentFile.count({ where: { RecentId: recent.Id } });
-    }
+
+    if (user.Role.includes('admin')) return files;
+
+    let recent = await user.getRecent();
+    files.rows = await recent.getFiles({
+        attributes: [
+            'Id', 'Name', 'DirectoryId', 'Type', 'Duration', [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" + user.Favorite.Id + "')"), "isFav"],
+            [db.sqlze.literal("RecentFiles.LastPos"), 'CurrentPos']
+        ],
+        joinTableAttributes: ['LastRead', 'LastPos'],
+        order: [
+            [db.sqlze.literal("RecentFiles.LastRead"), 'DESC']
+        ],
+        offset: data.begin,
+        limit: data.itemsPerPage,
+        where: {
+            [db.Op.and]: [{
+                Name: {
+                    [db.Op.like]: "%" + data.search + "%"
+                }
+            }]
+        }
+    });
+    files.count = await db.recentFile.count({ where: { RecentId: recent.Id } });
     console.timeEnd("rc");
     return files;
 }
@@ -32,8 +35,8 @@ var getRecentFiles = async (user, data) => {
 exports.recent = (req, res) => {
 
     let screenw = parseInt(req.cookies['screen-w']);
-    let itemsPerPage = req.params.items || req.query.items || (screenw < 1900 ? 21 : 27);
-    let currentPage = req.params.page || 1;
+    let itemsPerPage = parseInt(req.params.items || req.query.items) || req.itemsPerPage;
+    let currentPage = parseInt(req.params.page) || 1;
     let begin = ((currentPage - 1) * itemsPerPage) || 0;
     let search = req.params.search || "";
 
@@ -50,7 +53,7 @@ exports.recent = (req, res) => {
                 search: search,
                 action: '/recents/',
                 csrfToken: req.csrfToken(),
-                step: (screenw < 1900 ? 7 : 9)
+                step: (screenw < 1900 ? 7 : 8)
             },
             isFile: true
         }, (err, html) => {
@@ -69,14 +72,14 @@ exports.recent = (req, res) => {
 }
 
 exports.postSearch = (req, res) => {
-    let itemsPerPage = req.body.items;
+    let itemsPerPage = parseInt(req.body.items) || 1;
     let search = req.body.search || "";
 
     res.redirect(`/recents/1/${itemsPerPage}/${search}?partial=true`);
 }
 
 
-var removeFile = async (user, id) => {
+var removeFile = async(user, id) => {
     let file = await db.file.findOne({ where: { Id: id } });
     if (file) {
         await user.Recent.removeFile(file);

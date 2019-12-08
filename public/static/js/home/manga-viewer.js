@@ -8,8 +8,6 @@ const mSlider = document.getElementById('m-range');
 
 var disconnected = false;
 
-var mangaIds = {};
-
 Array.prototype.IndexOfUndefined = function(from) {
     var i = from;
     while (i++) {
@@ -57,9 +55,6 @@ var mangaConfig = {
     }
 }
 
-var mId = "";
-var mPage = 0;
-
 var mTotalPages = 0;
 var mImages = [];
 var mLoading = false;
@@ -95,9 +90,9 @@ var createElements = (count) => {
 }
 
 
-var loadNewImages = (fromPage, pagetoload = 20) => {
+var loadNewImages = (page, pagetoload = 20) => {
     mLoading = true;
-    socket.emit('loadzip-image', { id: mId, page: fromPage, pagetoload });
+    socket.emit('loadzip-image', { id: currentFile.id, page: page, pagetoload });
 }
 
 var fullScreen = (e) => {
@@ -105,24 +100,20 @@ var fullScreen = (e) => {
 }
 
 var updatePageNumber = () => {
-    $('.page-number').text(mPage + 1);
-    $('#page-total').text(mTotalPages);
-    mangaIds[mId].page = mPage;
-    mSlider.value = mPage;
-    pimages[mPage].scrollIntoView();
-    mSlider.style.setProperty('--val', +mPage);
-    $('#img-viewer .page-number').text((mPage + 1) + " - " + mTotalPages);
+    mSlider.value = currentFile.pos;
+    pimages[currentFile.pos].scrollIntoView();
+    mSlider.style.setProperty('--val', +currentFile.pos);
+    $('#'+currentFile.id+' .item-progress, #img-viewer .item-progress').text((currentFile.pos + 1) + "/" + mTotalPages);
 };
 
 
 socket.on("m-info", (data) => {
+    currentFile.pos = data.page;
     createElements(data.total);
     mTotalPages = data.total;
     mSlider.max = data.total - 1;
-    mangaIds[mId].total = data.total;
     mSlider.style.setProperty('--max', +(data.total - 1));
     updatePageNumber();
-
 });
 
 socket.on('m-finish', (data) => {
@@ -131,7 +122,7 @@ socket.on('m-finish', (data) => {
 
 socket.on("loaded-zipedimage", (data) => {
     //console.log(data);
-    if (data.page === mPage) {
+    if (data.page === currentFile.pos) {
         currentImg.src = 'data:img/jpeg;base64, ' + data.img;
         $(mangaViewer).fadeIn(300, (e) => {
             mangaViewer.focus();
@@ -159,6 +150,9 @@ var mclose = () => {
         stopClock();
     });
     $('#img-preview img').each((i, el) => { el.src = "" });
+     if(currentFile.pos > 0){
+        socket.emit('add-or-update-recent', {id: currentFile.id, pos: currentFile.pos});
+    }
 }
 
 closeMViewer.onclick = mclose;
@@ -167,23 +161,21 @@ $('.btn-fullscr-m').click(fullScreen);
 
 
 var openManga = (item) => {
-    mId = item.id;
-    let m = mangaIds[mId];
-    if (m) {
-        mPage = m.page;
-        mTotalPages = m.total;
-    } else {
-        mangaIds[mId] = { id: mId, page: 0, total: 0 };
-        mPage = 0;
+
+    if(currentFile.id !== item.Id){
+         socket.emit('add-or-update-recent', currentFile);
     }
+
+    currentFile.id = item.id;
+
 
     $('#img-preview img').each((i, el) => { el.src = "" });
 
-    $('#manga-name').text($("#" + mId).text());
+    $('#manga-name').text($("#" + currentFile.id).text());
     let src = item.getElementsByTagName('img')[0].src;
     mImageView.src = src;
     mloadingAnimation.style.display = "flex";
-    loadNewImages(mPage - 5, 20);
+    loadNewImages(0, 20);
 
     if (window.innerWidth < 600) {
         startClock();
@@ -203,23 +195,23 @@ mSlider.onchange = (e) => {
         let img = pimages[val].src;
 
         mImageView.src = img ? img : mImageView.src;
-        mPage = val;
+        currentFile.pos = val;
     }
     updatePageNumber();
     mSlider.style.setProperty('--val', +mSlider.value);
 }
 
 var nextImg = () => {
-    if (mPage < mTotalPages - 1) {
-        let timg = pimages[mPage + 1].src;
+    if (currentFile.pos < mTotalPages - 1) {
+        let timg = pimages[currentFile.pos + 1].src;
         if (timg.includes('data:')) {
             mImageView.src = timg;
-            mPage++;
+            currentFile.pos++;
         }
 
-        if (pimages[mPage + 10] && !pimages[mPage + 10].src.includes('data:') && !mLoading) {
+        if (pimages[currentFile.pos + 10] && !pimages[currentFile.pos + 10].src.includes('data:') && !mLoading) {
 
-            loadNewImages(pimages.IndexOfUndefined(mPage) - 1, 10);
+            loadNewImages(pimages.IndexOfUndefined(currentFile.pos) - 1, 10);
         }
         updatePageNumber();
     } else {
@@ -228,14 +220,14 @@ var nextImg = () => {
 }
 
 var prevImg = () => {
-    if (mPage > 0 && !mLoading) {
-        let img = pimages[mPage - 1].src;
+    if (currentFile.pos > 0 && !mLoading) {
+        let img = pimages[currentFile.pos - 1].src;
         if (img.includes('data:')) {
             mImageView.src = img;
-            mPage--;
+            currentFile.pos--;
         } else {
-            mPage--;
-            loadNewImages(mPage - 2, 1);
+            currentFile.pos--;
+            loadNewImages(currentFile.pos - 2, 1);
         }
         updatePageNumber();
     } else {
@@ -244,7 +236,7 @@ var prevImg = () => {
 }
 
 var nextManga = () => {
-    let next = $('#' + mId).next()[0];
+    let next = $('#' + currentFile.id).next()[0];
     if (next && !mLoading) {
         processFile(next);
         selectItem($('.items').index(next));
@@ -252,7 +244,7 @@ var nextManga = () => {
 }
 
 var prevManga = () => {
-    let prev = $('#' + mId).prev()[0];
+    let prev = $('#' + currentFile.id).prev()[0];
     if (prev && !mLoading) {
         processFile(prev);
         selectItem($('.items').index(prev));
@@ -327,12 +319,6 @@ var areaEvents = {
 $('#manga-area-control').on('click', '.area', (e) => {
     areaEvents[e.target.id]();
 });
-$(() => {
-    let mangas = localStorage.getObject('mangas');
-    if (mangas) {
-        mangaIds = mangas;
-    }
-});
 
 /********************************Range*****************************/
 
@@ -380,7 +366,7 @@ var lazyLoad = () => {
         scrTout = setTimeout(() => {
             if (!mLoading) {
                 mLoading = true;
-                socket.emit('loadzip-image', { id: mId, range: inView });
+                socket.emit('loadzip-image', { id: currentFile.id, range: inView });
             }
             clearTimeout(scrTout);
             scrTout = null;

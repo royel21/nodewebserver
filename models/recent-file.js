@@ -1,13 +1,17 @@
 module.exports = (sequelize, DataTypes) => {
 
-    const RecentFile = sequelize.define('RecentFile', {
-        Id:{
+    const RecentFile = sequelize.define('RecentFiles', {
+        Id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true
         },
         LastRead: {
             type: DataTypes.DATE
+        },
+        LastPos: {
+            type: DataTypes.FLOAT(8, 2).UNSIGNED,
+            defaultValue: 0
         }
     }, {
         timestamps: false,
@@ -22,6 +26,6 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
     });
-    
+
     return RecentFile;
 }

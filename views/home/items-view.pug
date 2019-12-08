@@ -1,9 +1,9 @@
-mixin items-view(items, pagedatas, isFile)
+mixin items-view(items, pagedatas, isFile, categories)
     #container    
         #controls
-            if pagedatas.action.includes('content')    
-                span#back
-                    i.far.fa-arrow-alt-circle-left
+            if categories
+                include ../share/categories
+                +categories(categories, pagedatas)
             include ../share/search
             +search(pagedatas, pagedatas.action+"search", "search-form")
 
@@ -17,6 +17,7 @@ mixin items-view(items, pagedatas, isFile)
                         .item-btns
                             if item.Type
                                 span.item-play.far.fa-play-circle
+                                span.item-progress= ((item.dataValues.CurrentPos+1) || 1)+"/"+item.Duration 
                                 if pagedatas.action.includes("/favorites")
                                     span.item-del.far.fa-trash-alt
                                 else

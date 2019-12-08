@@ -1,4 +1,3 @@
-
 const path = require('path');
 const os = require("os");
 const fs = require("fs-extra");
@@ -8,11 +7,11 @@ var ListFilesR;
 var ListFilesRO;
 var ListDrivesInfo;
 
-var WinExplore = { };
+var WinExplore = {};
 
 if (os.platform().includes("win32")) {
     WinExplore = require("./build/Release/win_explorer");
-    
+
     var drive = [
         "Unknown Drive type", "Drive is invalid",
         "Removable Drive", "Hard Disk",
@@ -25,34 +24,33 @@ if (os.platform().includes("win32")) {
     }
 
 } else if (os.platform().includes("linux")) {
-    
-WinExplore.ListFiles = (dir) => {
-    var foundFiles = fs.readdirSync(dir);
-    var tempFiles = [];
-    var i = 0;
-    for(let f of foundFiles)
-    {
-        if(['$'].includes(f[0]) || f.includes("System Volume Information")) continue;
 
-        let data = fs.statSync(path.join(dir,f));
-        tempFiles[i] = { 
-            isDirectory: false,
-            FileName: f,
-            Size: data.size,
-            isHidden: f[0] == '.',
-            extension: ""
+    WinExplore.ListFiles = (dir) => {
+        var foundFiles = fs.readdirSync(dir);
+        var tempFiles = [];
+        var i = 0;
+        for (let f of foundFiles) {
+            if (['$'].includes(f[0]) || f.includes("System Volume Information")) continue;
+
+            let data = fs.statSync(path.join(dir, f));
+            tempFiles[i] = {
+                isDirectory: false,
+                FileName: f,
+                Size: data.size,
+                isHidden: f[0] == '.',
+                extension: ""
+            }
+
+            if (data.isDirectory()) {
+                tempFiles[i].isDirectory = true
+            } else {
+                tempFiles[i].extension = f.split('.').pop()
+            }
+            i++;
         }
 
-        if(data.isDirectory()){
-            tempFiles[i].isDirectory = true 
-        }else{
-            tempFiles[i].extension = f.split('.').pop()
-        }
-        i++;
-    }
-    
-    return tempFiles;
-};
+        return tempFiles;
+    };
 }
 
 sortFiles = (a, b) => {
@@ -61,21 +59,20 @@ sortFiles = (a, b) => {
     return a1.localeCompare(b1);
 };
 
-ListFiles = (dir, filters, options) =>{
+ListFiles = (dir, filters, options) => {
     let opts = {
         hidden: !options.hidden ? options.hidden : true,
         file: !options.file ? options.file : true,
         directory: !options.directory ? options.directory : true
     };
-    
+
     var d = path.resolve(dir);
     var files = WinExplore.ListFiles(d, options.oneFile).sort(sortFiles);
 
     const checkFiles = (f) => {
-        if (f.isHidden)
-        {
-            if(!opts.hidden) return false;
-        } 
+        if (f.isHidden) {
+            if (!opts.hidden) return false;
+        }
 
         if (!f.isDirectory === opts.file) return true;
         if (f.isDirectory === opts.directory) return true;

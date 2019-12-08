@@ -5,6 +5,9 @@ mixin pagination(total, data)
     -let search = data.search
     -let step = data.step || 6
     -let page = 2;
+    -let searchAction = data.action
+    if data.action === '/categories/'
+        -data.action += data.cat+"/"
     if totalPages > 1 
         div#pager
             ul.pagination(data-action=data.action)
@@ -13,6 +16,8 @@ mixin pagination(total, data)
                         input(type="hidden" name="_csrf" value=""+ data.csrfToken)
                         input(type="hidden" name="search" value=""+ search)
                         input(type="hidden" name="items" value=itemsPerPage)
+                        if data.cat
+                            input(type="hidden" name="cat" value=data.cat)
                         select#page-select.form-control(name="page")
                             -for(let i = 1; i < totalPages+1; i++)
                                 option(value=""+i selected=(currentPage == i ? true : false))= i
@@ -60,10 +65,12 @@ mixin pagination(total, data)
                             i.fa.fa-angle-double-right
     if !noItems
         #itemsPerPage(data-itemsperpage=itemsPerPage)
-            form#items-form(action=data.action+"search" method="POST" onchange="submitItemAndSearchForm(this)")
+            form#items-form(action=searchAction+"search" method="POST" onchange="submitItemAndSearchForm(this)")
                 input(type="hidden" name="_csrf" value=""+ data.csrfToken)
                 input(type="hidden" name="page" value="1")
                 input(type="hidden" name="search" value=""+ search)
+                if data.cat
+                    input(type="hidden" name="cat" value=data.cat)
                 #items.input-group
                     .input-group-prepend
                         label.input-group-text(for="items" value="") Items

@@ -17,6 +17,10 @@ mixin navbar(user, url)
                 a.nav-link(href="/videos" class=""+(url.includes('videos') ? "active" : ""))
                     i.fas.fa-film
                     span  All Videos
+            li.nav-item
+                a.nav-link(href="/categories" class=""+(url.includes('categories') ? "active" : ""))
+                    i.fas.fa-tags
+                    span  Categories
         ul.navbar-nav.bg-dark
             if !['manager', 'admin'].includes(user.Role)
                 li.nav-item

@@ -82,6 +82,14 @@ var config = {
     }
 }
 
+window.onbeforeunload = (e) => {
+    if (config) {
+        local.setObject('config', config);
+        local.setItem('selectedIndex', selectedIndex);
+        socket.emit('add-or-update-recent', currentFile);
+    }
+}
+
 const selectItem = (index) => {
     selectedIndex = index;
     var nextEl = $('.items').get(index);
@@ -125,7 +133,7 @@ processFile = (item) => {
         $('#video-viewer').addClass('d-none');
         openManga(item);
     }
-    socket.emit('add-recent', item.id);
+    
     if(location.href === '/' || location.href.includes('/recents'))
         $('#files-list').prepend(item);
     mediaContainer.focus();

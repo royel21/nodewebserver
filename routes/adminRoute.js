@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const usersController = require('../controllers/usersController');
-const filesController = require('../controllers/filesController');
-const helperController = require('../controllers/helperController');
-const categoriesController = require('../controllers/categoriesController');
-const directoriesController = require('../controllers/directoriesController');
-const foldersController = require('../controllers/foldersController');
+const usersController = require('../controllers/admin/usersController');
+const filesController = require('../controllers/admin/filesController');
+const helperController = require('../controllers/admin/helperController');
+const categoriesController = require('../controllers/admin/categoriesController');
+const directoriesController = require('../controllers/admin/directoriesController');
+const foldersController = require('../controllers/admin/foldersController');
 
 router.get("/", usersController.index);
 router.get("/users", usersController.users);

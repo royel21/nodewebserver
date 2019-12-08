@@ -72,7 +72,7 @@ PopulateDB = async(folder, files, fd) => {
                         }]
                     }
                 });
-                
+
                 if (found.length === 0 && vfound.length === 0) {
                     tempFiles.push({
                         Id,
@@ -83,7 +83,7 @@ PopulateDB = async(folder, files, fd) => {
                         FolderId: fd ? fd.Id : null,
                         Size: f.Size
                     });
-                } 
+                }
 
             } else {
                 let folder = await createCover(f.FileName, f.Files);
@@ -110,7 +110,7 @@ scanOneDir = async(data) => {
     let folder;
     if (fis.length > 0)
         folder = await createCover(data.dir, fis);
-        
+
     await PopulateDB(data.dir, fis, folder);
 
     data.folders = folderCovers;
@@ -122,9 +122,9 @@ process.on("message", (data) => {
     worker.on('close', () => {
         process.exit();
     });
-    
+
     scanOneDir(data).catch(err => {
-        console.log(err);
+        console.log("", err);
         process.exit();
     });
 });

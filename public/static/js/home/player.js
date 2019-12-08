@@ -16,24 +16,6 @@ $('.btn-fullscr').click((e) => {
     setfullscreen(videoViewer)
 });
 
-updaterecentVideos = () => {
-    let tempM = config.recentVideos.removeBy(currentFile, "id");
-    if (tempM != undefined) currentFile.current = tempM.current;
-    config.recentVideos.unshift(currentFile);
-    if (config.recentVideos.length > config.recentVideoMax) {
-        config.recentVideos.pop();
-    }
-}
-
-window.onbeforeunload = (e) => {
-    if (config) {
-        local.setObject('config', config);
-        local.setItem('selectedIndex', selectedIndex);
-        updaterecentVideos();
-    }
-    localStorage.setObject('mangas', mangaIds);
-}
-
 if (local.hasObject('config')) {
     var oldConfig = local.getObject('config');
     for (var key in config) {
@@ -61,7 +43,7 @@ const configPlayer = () => {
     player.volume = config.volume;
 
     player.muted = btnMuted.checked = config.isMuted;
-    player.currentTime = currentFile.current;
+    player.currentTime = currentFile.pos;
     if (!config.paused) pauseOrPlay();
     $('.loading').css({ display: 'none' });
 
@@ -83,7 +65,7 @@ Slider.oninput = (value) => {
 }
 
 const closePlayer = (e) => {
-    updaterecentVideos();
+    socket.emit('add-or-update-recent', currentFile);
 
     if (document.fullscreenElement && !document.fullscreenElement.tagName.includes('BODY')) {
         setfullscreen(videoViewer);
@@ -189,7 +171,7 @@ player.ontimeupdate = (e) => {
     if (update && Slider) {
         Slider.value = Math.floor(player.currentTime);
         $vTotalTime.text(formatTime(player.currentTime) + "/" + vDuration);
-        currentFile.current = player.currentTime;
+        currentFile.pos = player.currentTime;
     }
 }
 
@@ -285,10 +267,13 @@ player.onended = function () {
 
 const playVideo = (el) => {
     if (el) {
+
         update = false;
-        let id = el.id;
-        currentFile = { id, current: 0 }
-        updaterecentVideos();
+        if(currentFile.id !== item.Id){
+            socket.emit('add-or-update-recent', currentFile);
+        }
+        currentFile.id = el.id;
+
        $(videoViewer).fadeIn(()=>{ videoViewer.focus(); });
 
         $('.loading').css({ display: 'flex' });

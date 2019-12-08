@@ -15,7 +15,7 @@ if (os.platform().includes("linux")) {
 
 var vCover;
 
-const getScreenShot = async (video, toPath, duration) => {
+const getScreenShot = async(video, toPath, duration) => {
     let pos = (duration * 0.237).toFixed(2);
     let cmd = ffmpeg + ` -ss ${pos} -i "${video}" -y -vframes 1 -q:v 0 -vf scale=240:-1 "${toPath}"`
     return await new Promise((resolve, reject) => {
@@ -29,36 +29,36 @@ const getScreenShot = async (video, toPath, duration) => {
     });
 }
 
-const getVideoDuration = async (video) => {
-    return execFileSync(ffprobe, ['-i', video, '-show_entries', 'format=duration', '-v', 'quiet', '-of', 'csv=p=0'],
-        { timeout: 1000 * 60 });
+const getVideoDuration = async(video) => {
+    return execFileSync(ffprobe, ['-i', video, '-show_entries', 'format=duration', '-v', 'quiet', '-of', 'csv=p=0'], { timeout: 1000 * 60 });
 }
 
-const myworker = async (id) => {
-    let files = await db.file.findAll({ where: { DirectoryId: id } });
+const myworker = async(id) => {
+    let files = await db.file.findAll({ where: { DirectoryId: id, Duration: 0 } });
 
     for (let f of files) {
         let coverPath = path.join(vCover, f.Id + ".jpg");
 
-        if (fs.existsSync(coverPath)) continue;
+        if (fs.existsSync(coverPath) && f.Duration < 1) continue;
 
         let fullPath = path.join(f.FullPath, f.Name);
 
         if (f.Type.includes("Manga")) {
-            
+
             if (/zip/ig.test(f.Name)) {
-                await thumbnails.ZipCover(fullPath, coverPath);
+                let total = await thumbnails.ZipCover(fullPath, coverPath);
+                await f.update({ Duration: total });
             } else if (/rar/ig.test(f.filePath)) {
                 await thumbnails.RarCover(fullPath, coverPath);
             }
-            
+
         } else {
             let duration = 0;
             try {
                 let tempVal = await getVideoDuration(fullPath);
                 if (isNaN(tempVal)) continue;
                 duration = parseFloat(tempVal);
-                if (f.Duration < 1) {
+                if (f.Duration > 1) {
                     await f.update({ Duration: duration });
                 }
             } catch (err) {
@@ -94,7 +94,7 @@ process.on("message", (data) => {
     });
 });
 
-var foldersThumbNails = async (folders) => {
+var foldersThumbNails = async(folders) => {
     for (let s of folders) {
         try {
             if (!s.isManga) {

@@ -1,8 +1,8 @@
-const db = require('../models');
+const db = require('../../models');
 const fs = require('fs-extra');
 
 if (!fs.existsSync('./public/covers/folders')) fs.mkdirs('./public/covers/folders');
-loadFolders = async(req, res) => {
+var loadFolders = async(req, res) => {
     let itemsPerPage = req.query.screenW < 1900 ? 16 : 19;
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);

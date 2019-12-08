@@ -45,13 +45,13 @@ module.exports.ZipCover = (file, coverP) => {
             });
 
             if (firstImg == undefined) {
-                resolve(false);
+                resolve(0);
                 zip.close();
             } else {
                 sharp(zip.entryDataSync(firstImg)).jpeg({
                     quality: 80
                 }).resize(240).toFile(coverP, (error) => {
-                    resolve(coverP);
+                    resolve(entries.length);
                     zip.close();
                 });
             }

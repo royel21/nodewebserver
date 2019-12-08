@@ -46,7 +46,7 @@ app.locals.moment = require('moment');
 app.locals.roles = { user: "Usurario", manager: "Manager", admin: "Administrador" };
 app.locals.fs = require("fs");
 
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
 
     app.locals.env = process.env.NODE_ENV;
     app.locals.url = req.url;
@@ -55,6 +55,7 @@ app.use(function (req, res, next) {
         return res.redirect('/login');
     } else {
         app.locals.user = req.user;
+        req.itemsPerPage = parseInt(req.cookies['screen-w']) < 1900 ? 21 : 24;
 
         if (req.url.includes('/admin') && !['manager', 'admin'].includes(req.user.Role)) {
             return res.redirect('/');
@@ -69,13 +70,13 @@ app.use("/", home);
 app.use("/videoplayer", vplayer);
 app.use('/admin', admin);
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
     next(createError(404));
 });
 
 // error handler
 
-app.use(function (err, req, res, next) {
+app.use(function(err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -90,7 +91,7 @@ app.use(function (err, req, res, next) {
 const port = 4664;
 
 db.init().then(() => {
-    let server = app.listen(port, function () {
+    let server = app.listen(port, function() {
         console.log('Node server is running.. at http://localhost:' + port);
     });
 

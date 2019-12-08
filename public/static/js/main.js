@@ -61,6 +61,19 @@ const choosePage = (el) => {
     }
 }
 
+const chooseCategory = (el) =>{
+    let title = document.title;
+    if (el.tagName == "FORM") {
+        let cat = $(el).find('option[value='+el.elements["cat"].value+']').text();
+        let url = '/categories/' + cat +'/';
+        console.log(url)
+        if(!isAndroid){
+            window.history.pushState(title, title, url.replace('//', '/'));
+        }
+        loadPartialPage(url);
+    }
+}
+
 const submitItemAndSearchForm = (e) => {
     let form;
 
@@ -130,6 +143,10 @@ $('.navbar ul .nav-link:not(#login)').click((e)=>{
             }
             case "Favorites":{
                 loadPartialPage("/favorites");
+                break;
+            }
+            case "Categories":{
+                loadPartialPage("/categories");
                 break;
             }
         }

@@ -12,8 +12,8 @@ module.exports = (server, app) => {
 
         folders.setSocket(io, socket, db);
         mloader.setSocket(db);
-
-        if (app.locals.user) {
+        let user = app.locals.user;
+        if (user) {
 
             socket.on('load-disks', folders.diskLoader);
 
@@ -21,11 +21,9 @@ module.exports = (server, app) => {
 
             socket.on('re-scan', folders.reScan);
 
-            socket.on('update-last-page', mloader.updatePos);
+            socket.on('loadzip-image', (data) => mloader.loadZipImages(data, socket, user));
 
-            socket.on('loadzip-image', (data) => mloader.loadZipImages(data, socket, app.locals.user));
-
-            socket.on('add-recent', (id) => { recent.updateRecent(app.locals.user, id) });
+            socket.on('add-or-update-recent', (data) => { recent.updateRecent(data, user) });
         }
 
         socket.on('disconnect', (client) => {

@@ -1,4 +1,4 @@
-let db = require('../models');
+let db = require('../../models');
 
 exports.index = (req, res) => {
     res.redirect('/admin/users');
@@ -115,7 +115,7 @@ const updateUser = (req, res) => {
                 return res.send({ state: "error", data: "No puede actualizar usuario en uso" });
             }
 
-            let pass = req.body.password === '' ? user_found.Password : db.generateHash(req.body.password);
+            let pass = req.body.password === '' ? user_found.Password : req.body.password;
 
             user_found.update({
                 Name: req.body.username,

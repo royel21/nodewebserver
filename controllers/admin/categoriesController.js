@@ -1,7 +1,7 @@
-const db = require('../models');
+const db = require('../../models');
 
-getCategoryFiles = async(data) => {
-    files = await db.file.findAndCountAll({
+var getCategoryFiles = async(data) => {
+    return await db.file.findAndCountAll({
         atributtes: ['Id', 'Name'],
         offset: data.begin,
         limit: data.itemsPerPage,
@@ -13,10 +13,9 @@ getCategoryFiles = async(data) => {
             }, db.sqlze.literal(`File.Id ${data.not} IN (Select FileId from FileCategories where CategoryId = '${data.caId}')`)]
         }
     });
-    return files;
 }
 
-loadCategories = async(req, res) => {
+var loadCategories = async(req, res) => {
     let itemsPerPage = req.query.screenW < 1900 ? 16 : 19;
     let cat;
     let cId = "";
@@ -114,7 +113,7 @@ exports.itemsList = (req, res) => {
     });
 }
 
-const loadFiles = async(req, res) => {
+var loadFiles = async(req, res) => {
     let itemsPerPage = req.query.screenW < 1900 ? 16 : 19;
     let currentPage = req.query.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
@@ -157,7 +156,7 @@ exports.addFiles = (req, res) => {
     let fileId = req.body.fileId || null;
     let search = req.body.search || "";
     let condition = {
-        order: ['NameNormalize'],
+        order: ['Name'],
         attributes: ['Id'],
         where: fileId ? { Id: fileId } : {
             Name: {
@@ -179,17 +178,23 @@ exports.addFiles = (req, res) => {
     });
 }
 
-exports.removeFile = (req, res) => {
+exports.removeFile = async(req, res) => {
     let catId = req.body.itemId;
-    let vId = req.body.fileId || null;
-    db.file.findOne({ where: { Id: vId } }).then(file => {
-        db.category.findOne({ where: { Id: catId } }).then(cat => {
-            cat.removeFile(file).then(result => {
-                res.send({ state: "Ok" });
-            })
-        });
-    }).catch(err => {
-        console.log(err);
-        res.send({ state: "error", msg: err });
-    });
+    let fId = req.body.fileId || null;
+    let result = await db.fileCategory.destroy({ where: { FileId: fId, CategoryId: catId } });
+    if (result > 0) {
+        return res.send({ status: "Ok" });
+    } else {
+        return res.send({ status: "error", msg: 'Could not remove file ' });
+    }
+    // db.file.findOne({ where: { Id: vId } }).then(file => {
+    //     db.category.findOne({ where: { Id: catId } }).then(cat => {
+    //         cat.removeFile(file).then(result => {
+    //             res.send({ state: "Ok" });
+    //         })
+    //     });
+    // }).catch(err => {
+    //     console.log(err);
+    //     res.send({ state: "error", msg: err });
+    // });
 }

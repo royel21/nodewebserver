@@ -10,10 +10,6 @@ module.exports = (sequelize, DataTypes) => {
         Name: {
             type: DataTypes.STRING(150)
         },
-        CurrentPos: {
-            type: DataTypes.FLOAT(8, 2).UNSIGNED,
-            defaultValue: 0
-        },
         Duration: {
             type: DataTypes.FLOAT(8, 2).UNSIGNED,
             defaultValue: 0

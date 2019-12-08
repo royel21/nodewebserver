@@ -104,6 +104,7 @@
 
 .list-group-item .v-name{
     white-space: nowrap;
+    user-select: text;
 }
 
 #items-container .list-group-item span i{

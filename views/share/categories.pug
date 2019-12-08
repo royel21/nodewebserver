@@ -1,0 +1,14 @@
+mixin categories(categories, data)
+    -let currentPage = parseInt(data.currentPage)
+    -let totalPages = parseInt(data.totalPages)
+    -let itemsPerPage = parseInt(data.itemsPerPage)
+    -let search = data.search
+    #cat-selector
+        form#select-category(action=data.action+"search" method="POST" onchange="" + (!noItems ? "chooseCategory(this)" : ""))
+            input(type="hidden" name="_csrf" value=""+ data.csrfToken)
+            input(type="hidden" name="search" value=""+ search)
+            input(type="hidden" name="items" value=itemsPerPage)
+            input(type="hidden" name="page" value=currentPage)
+            select#cat-select.form-control(name="cat")
+                -for(let cat of categories)
+                    option(value=""+cat.Id selected=(cat.Name == data.cat ? true : false))= cat.Name

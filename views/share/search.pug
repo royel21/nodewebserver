@@ -4,6 +4,8 @@ mixin search(data, action, formId)
             input(type="hidden" name="_csrf" value=""+ data.csrfToken)
             input(type="hidden" name="page" value=""+ data.currentPage)
             input(type="hidden" name="items" value=""+ data.itemsPerPage)
+            if data.cat
+                input(type="hidden" name="cat" value=data.cat)
             .input-group
                 .input-group-prepend
                     button.btn-search.input-group-text(type="submit")

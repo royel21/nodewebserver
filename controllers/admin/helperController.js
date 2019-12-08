@@ -1,4 +1,4 @@
-const db = require('../models');
+const db = require('../../models');
 const fs = require('fs-extra');
 const sharp = require('sharp')
 
@@ -26,14 +26,14 @@ exports.modal = (req, res) => {
 
 }
 
-const createCover = (req, item) => {
-    const files = req.files;
+var createCover = (req, item) => {
+    var files = req.files;
     if (files && files.cover) {
         sharp(files.cover.data).resize(200).toFile(coverPath + `${item.Id}.jpg`);
     }
 }
 
-createItem = (req, res) => {
+var createItem = (req, res) => {
     const isFolder = req.url.includes('folders')
 
     const name = req.body.name;
@@ -50,7 +50,7 @@ createItem = (req, res) => {
     });
 }
 
-editItem = (req, res) => {
+var editItem = (req, res) => {
     const isFolder = req.url.includes('folders')
 
     const name = req.body.name;

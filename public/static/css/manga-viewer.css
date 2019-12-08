@@ -103,10 +103,19 @@ body #img-preview::-webkit-scrollbar {
     padding-top: 10px;
 }
 
-#img-viewer .page-number {
+#manga-viewer .item-progress {
+    display: inline-block;
+    padding: 8px 6px;
+    border-radius: 50%;
     position: absolute;
+    left: 45%;
+    bottom: -41px;
+    z-index: 1002;
+}
+
+#manga-viewer:-webkit-full-screen .item-progress{
+    background-color: rgba(0,0,0,.7);
     bottom: 5px;
-    left: 42%;
 }
 
 #manga-viewer #img-viewer {
@@ -449,6 +458,10 @@ body #img-preview::-webkit-scrollbar {
     #img-preview img {
         width: 120px;
         pointer-events: none;
+    }
+     #manga-viewer .item-progress {
+        bottom: 4px;
+        left: 40%;
     }
 }
 

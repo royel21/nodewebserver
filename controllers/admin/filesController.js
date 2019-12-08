@@ -1,8 +1,8 @@
-let db = require('../models');
+let db = require('../../models');
 const { fork } = require('child_process');
 const path = require('path');
 const fs = require('fs-extra')
-const { NormalizeName } = require('../Utils/StringUtil')
+const { NormalizeName } = require('../../Utils/StringUtil')
 
 exports.files = (req, res) => {
     let itemsPerPage = req.params.items || req.query.items || 12;

@@ -166,10 +166,10 @@ var loadFoldersConfig = () => {
 
         let postUrl = action + 'delete-' + (isItem ? 'item' : 'file');
         let li = e.target.closest('li');
-        let id = li.id;
-        //let liItem = $('#items-list li.active')[0];
 
-        $.post(postUrl, { itemId: li.id, fileId: id, _csrf }, (resp) => {
+        let liItem = $('#items-list .content-list li.active')[0];
+
+        $.post(postUrl, { itemId: liItem.id, fileId: li.id, _csrf }, (resp) => {
             
             if (resp.status === "Ok") {
                 
@@ -188,6 +188,10 @@ var loadFoldersConfig = () => {
                                 li.remove();
                             })
                         }
+                        $(li).fadeOut('fast', () => {
+                                li.remove();
+                             loadFiles({ page: vPage });
+                        });
                     }
                 });
             }

@@ -2,6 +2,7 @@
     display: flex;
     flex-wrap: wrap;
     min-height: 100%;
+    padding-bottom: 70px;
 }
 
 .items {
@@ -14,19 +15,31 @@
 
 .item-video {
     text-align: center;
-    width: 190px;
-    height: 230px;
+    width: 225px;
+    height: 300px;
     padding: 5px;
     background-color: rgba(52, 58, 64, 0.99);
     border-radius: 5px;
     cursor: pointer;
-    /* margin: 2px; */
     overflow: hidden;
 }
 
+.item-progress{
+
+pointer-events: none;
+}
+
+.items .item-progress{
+    position: relative;
+    display: inline-block;
+    font-size: 15px;
+    top: -12px;
+}
+
 .item-btns {
+    position: relative;
     font-size: 1.7em;
-    min-height: 23px;
+    height: 26px;
     z-index: 999;
 }
 
@@ -49,13 +62,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 150px;
+    height: 220px;
     clear: both;
 }
 
 .item-cover img {
-    max-width: 150px;
-    max-height: 150px;
+    display: block;
+    max-width: 180px;
+    max-height: 220px;
     pointer-events: none;
     position: relative;
 }
@@ -77,7 +91,7 @@
 .item-name {
     position: relative;
     text-align: center;
-    pointer-events: none;
+    user-select: text;
 }
 
 .item-video:hover>.item-name {
@@ -96,6 +110,16 @@
     box-shadow: 0 0 10px;
     overflow: initial;
 }
+.item-name:hover,
+.item-video:hover>.item-name{
+    display: inline-block;
+    border-radius: 10px;
+    border: 1px solid beige;
+    background-color: black;
+    z-index: 1000;
+    padding: 0 5px;
+    top: 5px;
+}
 
 #back {
     position: absolute;
@@ -103,8 +127,18 @@
     margin-left: 5px;
 }
 
-#back+.search-container {
+#back+.search-container{
     margin-left: 42px;
+}
+#cat-selector{
+    position: relative;
+    top: 7px;
+    left: 5px;
+    display: inline-block;
+}
+#cat-selector #cat-select{
+    height: 33px;
+    width: 95px;
 }
 
 @media all and (max-width: 650px) {
@@ -123,23 +157,27 @@
     #back+.search-container {
         margin-left: 0px;
     }
+    #cat-selector{
+        position: initial;
+    }
 }
 
-@media all and (max-width: 450px) {
+@media (max-width: 450px) {
     .item-video {
-        width: 150px;
-        height: 160px;
+        width: 165px;
+        height: 200px;
     }
     #content {
         min-height: 0;
         height: calc(100% - 40px);
-        padding-bottom: 5px;
+        padding-bottom: 40px;
     }
     .items img {
-        height: 75px;
+        max-width: 120px;
+        max-height: 105px;
     }
     .item-cover {
-        height: 75px;
+        height: 110px;
         margin: 4px 0;
     }
     .item-btns .item-fav,

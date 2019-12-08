@@ -13,17 +13,7 @@ module.exports.setSocket = (_db) => {
     db = _db;
 }
 
-module.exports.updatePos = (data) => {
-    db.file.findOne({ where: { Id: data.id } }).then(file => {
-        if (file) {
-            file.update({ CurrentPos: data.page });
-        }
-    }).catch(err => {
-        console.log(err);
-    });
-}
-
-module.exports.loadZipImages = (data, socket, currentUser) => {
+module.exports.loadZipImages = async(data, socket, currentUser) => {
     //get last user or create
     let user = users[socket.id] ? users[socket.id] : users[socket.id] = { lastId: "", zip: {}, entries: [] };
 
@@ -61,7 +51,10 @@ module.exports.loadZipImages = (data, socket, currentUser) => {
     } else {
 
         user.lastId = data.id;
-        db.file.findOne({ where: { Id: user.lastId } }).then(file => {
+        db.file.findOne({
+            attributes: ['FullPath', 'Name', [db.sqlze.literal("(Select LastPos from RecentFiles where FileId == File.Id and RecentId == '" + currentUser.Recent.Id + "')"), "CurrentPos"]],
+            where: { Id: user.lastId }
+        }).then(file => {
             if (file) {
                 let filePath = path.resolve(file.FullPath, file.Name);
                 if (fs.existsSync(filePath)) {
@@ -69,6 +62,7 @@ module.exports.loadZipImages = (data, socket, currentUser) => {
                         file: path.resolve(file.FullPath, file.Name),
                         storeEntries: true
                     });
+                    let page = file.dataValues.CurrentPos - 5;
 
                     zip.on('ready', () => {
 
@@ -78,10 +72,9 @@ module.exports.loadZipImages = (data, socket, currentUser) => {
 
                         user.entries = entries;
                         user.zip = zip;
+                        socket.emit('m-info', { total: entries.length, name: file.Name, page: file.dataValues.CurrentPos || 0 });
 
-                        socket.emit('m-info', { total: entries.length, name: file.Name, page: file.CurrentPos });
-
-                        for (let i = data.page < 0 ? 0 : data.page; i < (data.page + data.pagetoload) && i < entries.length; i++) {
+                        for (let i = page < 0 ? 0 : page; i < (page + data.pagetoload) && i < entries.length; i++) {
                             socket.emit('loaded-zipedimage', {
                                 page: i,
                                 img: zip.entryDataSync(entries[i]).toString('base64')
