@@ -1,11 +1,11 @@
-tr(id=""+ user.Id)
+tr(id=""+ newUser.Id)
     td.text-primary
         span.show-form
             i.fas.fa-edit.fa-2x
         span.show-delete(data-action="/admin/user-delete")
             i.ml-2.text-danger.fas.fa-trash-alt.fa-2x
     td
-        span= user.Name
-    td= roles[user.Role]
-    td= user.State
-    td= moment(user.CreatedAt).locale("es").format("LLL")
+        span= newUser.Name
+    td= roles[newUser.Role]
+    td= newUser.State
+    td= moment(newUser.CreatedAt).locale("es").format("LLL")

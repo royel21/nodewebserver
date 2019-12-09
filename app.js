@@ -55,7 +55,7 @@ app.use(function(req, res, next) {
         return res.redirect('/login');
     } else {
         app.locals.user = req.user;
-        req.itemsPerPage = parseInt(req.cookies['screen-w']) < 1900 ? 21 : 24;
+        req.itemsPerPage = parseInt(req.cookies['screen-w']) < 1900 ? 21 : 27;
 
         if (req.url.includes('/admin') && !['manager', 'admin'].includes(req.user.Role)) {
             return res.redirect('/');

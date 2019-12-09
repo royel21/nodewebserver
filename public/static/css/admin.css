@@ -59,7 +59,6 @@
 }
 
 .table tr td:nth-child(2):hover{
-    overflow: auto;
 }
 
 .table tr td:nth-child(2) span{

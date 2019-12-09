@@ -19,6 +19,10 @@
     padding: 10px;
 }
 
+#modal-header h3{
+    user-select: none;
+}
+
 #modal label{
     width: 100px;
 }
@@ -29,6 +33,7 @@
     border-radius: 5px 5px 0 0;
 }
 #modal .text-area-head label{
+    user-select: none;
     margin: 0;
 }
 

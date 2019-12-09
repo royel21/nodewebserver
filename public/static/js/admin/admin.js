@@ -89,15 +89,15 @@ $(document).on('submit', '#create-edit', (e) => {
     let formData = $(e.target).serializeArray();
 
     $.post($form.attr('action'), formData, (resp) => {
-
-        switch (resp.state) {
+        console.log(resp)
+        switch (resp.status) {
             case "error": {
                 $('#errors').append($('<span>').text(resp.data));
                 break;
             }
             case "update": {
-                $('#' + $('input[name="id"]').val()).replaceWith($(resp.data));
-                confirm(resp.action + " " + resp.name + " Actualizado Con Exito", 'text-success');
+                $('#' + resp.Id+ ' .name').text(resp.Name);
+                confirm(resp.action + " " + resp.Name + " Actualizado Con Exito", 'text-success');
                 break;
             }
             case "create": {
@@ -105,7 +105,7 @@ $(document).on('submit', '#create-edit', (e) => {
                 if ($('tbody tr').length < (items || 10)) {
                     $('tbody').append(resp.data);
                 }
-                confirm(resp.action + " " + resp.name + " Agregado Con Exito", 'text-success');
+                confirm(resp.action + " " + resp.Name + " Agregado Con Exito", 'text-success');
                 break;
             }
         }

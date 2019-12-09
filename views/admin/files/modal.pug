@@ -1,6 +1,6 @@
 #modal-header.text-center
     h3= modalTitle
-form#update-file(method="post" action="/admin/files/update")
+form#create-edit(method="post" action="/admin/files/update")
     input(type="hidden" name="id" value=""+ (file.Id ? file.Id :  ""))
     input(type="hidden" name="_csrf" value=""+ csrfToken)
     #errors.text-danger.text-center

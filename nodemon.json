@@ -7,7 +7,8 @@
         "gulpfile.js",
         "public/*",
         "test.html",
-        "files.db"
+        "files.db",
+        "countfiles.js"
     ],
     "env": {
         "NODE_ENV": "development"

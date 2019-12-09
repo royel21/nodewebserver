@@ -23,13 +23,10 @@ var loadCategories = async(req, res) => {
     let categories = await db.category.findAll();
 
     let items = { count: 0, rows: [] };
-
     if (categories.length > 0) {
         let cat = categories.find((c) => { return c.Name.includes(currentCat) });
 
-        items.count = await db.fileCategory.count({ where: { CategoryId: cat.Id } });
-
-        items.rows = await cat.getFiles({
+        items = await db.file.findAndCountAll({
             attributes: {
                 include: [
                     'Id', 'Name', 'DirectoryId', 'Type', 'Duration', [db.sqlze.literal("REPLACE(Name, '[','0')"), 'N'],
@@ -37,11 +34,14 @@ var loadCategories = async(req, res) => {
                     [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" + user.Favorite.Id + "')"), "isFav"]
                 ]
             },
-            order: [
-                [db.sqlze.col('N')]
-            ],
-            offset: begin || 1,
-            limit: itemsPerPage || items.rows.length,
+            include: [{
+                model: db.category,
+                where: {
+                    Id: cat.Id
+                }
+            }],
+            offset: begin,
+            limit: itemsPerPage,
             where: {
                 [db.Op.and]: [{
                     Name: {
@@ -66,7 +66,7 @@ var loadCategories = async(req, res) => {
             search: search,
             action: "/categories/",
             csrfToken: req.csrfToken(),
-            step: (req.query.screenW < 1900 ? 7 : 8),
+            step: (req.query.screenW < 1900 ? 7 : 9),
             cat: currentCat
         },
         isFile: true,

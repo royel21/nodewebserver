@@ -174,3 +174,9 @@ hideForm = () => {
 }
 
 $(document).on("click", ".close-modal", hideForm);
+
+$('body').on('mousedown', '#modal-container', (e)=>{
+    if(e.target.id.includes('modal-container')){
+        hideForm();
+    }
+});

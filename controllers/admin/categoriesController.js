@@ -187,14 +187,4 @@ exports.removeFile = async(req, res) => {
     } else {
         return res.send({ status: "error", msg: 'Could not remove file ' });
     }
-    // db.file.findOne({ where: { Id: vId } }).then(file => {
-    //     db.category.findOne({ where: { Id: catId } }).then(cat => {
-    //         cat.removeFile(file).then(result => {
-    //             res.send({ state: "Ok" });
-    //         })
-    //     });
-    // }).catch(err => {
-    //     console.log(err);
-    //     res.send({ state: "error", msg: err });
-    // });
 }

@@ -53,7 +53,7 @@ exports.favorite = (req, res) => {
                 search: search,
                 action: '/favorites/',
                 csrfToken: req.csrfToken(),
-                step: (screenw < 1900 ? 7 : 8)
+                step: (screenw < 1900 ? 7 : 9)
             },
             isFile: true
         }, (err, html) => {

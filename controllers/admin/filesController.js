@@ -51,7 +51,7 @@ exports.files = (req, res) => {
 
 exports.postSearch = (req, res) => {
     let itemsPerPage = req.body.items || 12;
-    let currentPage = req.body.page || 1;
+    let currentPage = 1;
     let val = req.body.search || "";
     res.redirect(`/admin/files/${currentPage}/${itemsPerPage}/${val}?partial=true`)
 }
@@ -87,11 +87,15 @@ exports.fileModalPost = (req, res) => {
     if (Id && Name && Name.length > 0) {
         db.file.findOne({ where: { Id } }).then(file => {
             let originalFile = path.join(file.FullPath, file.Name);
-            file.update({ Name, Description, NameNormalize: NormalizeName(Name) }).then((result) => {
+            file.update({ Name, Description }).then((result) => {
                 let toFile = path.join(file.FullPath, Name);
                 console.log(originalFile, toFile);
-                fs.move(originalFile, toFile);
-                res.send({ state: "ok", Id, Name });
+                try {
+                    fs.moveSync(originalFile, toFile);
+                } catch (err) {
+                    console.log(err)
+                }
+                res.send({ action: "File", status: "update", Id, Name });
             });
         }).catch(err => {
             console.log(err)
@@ -108,7 +112,8 @@ exports.deleteFile = (req, res) => {
         db.file.findOne({ where: { Id: id } }).then(file => {
             file.destroy().then(() => {
                 fs.removeSync(path.join('./public/covers', 'folder-' + file.DirectoryId, file.Id + ".jpg"));
-                res.send({ state: "ok", msg: "File Borrado" });
+                fs.removeSync(path.join(file.FullPath, file.Name));
+                res.send({ status: "Ok", msg: "File Borrado" });
             });
         }).catch(err => {
             console.log(err)

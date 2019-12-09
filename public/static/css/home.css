@@ -15,8 +15,8 @@
 
 .item-video {
     text-align: center;
-    width: 225px;
-    height: 300px;
+    width: 200px;
+    height: 240px;
     padding: 5px;
     background-color: rgba(52, 58, 64, 0.99);
     border-radius: 5px;
@@ -62,14 +62,14 @@ pointer-events: none;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 220px;
+    height: 180px;
     clear: both;
 }
 
 .item-cover img {
     display: block;
-    max-width: 180px;
-    max-height: 220px;
+    max-width: 190px;
+    max-height: 180px;
     pointer-events: none;
     position: relative;
 }

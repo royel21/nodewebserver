@@ -189,7 +189,7 @@ exports.removeFile = (req, res) => {
     db.file.update({ FolderId: null }, { where: { Id } }).then(result => {
         console.log('result:', result);
 
-        res.send({ state: "Ok", Id });
+        res.send({ status: "Ok", Id });
 
     }).catch(err => {
         if (err) console.log(err);

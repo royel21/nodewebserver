@@ -77,14 +77,7 @@ exports.user_modal = (req, res) => {
     });
 }
 
-const sendPostResponse = (res, action, state, user) => {
-    return res.render("admin/users/user-row", { user }, (err, html) => {
-        if (err) console.log(err);
-        res.send({ action, state, name: user.Name, data: html });
-    });
-}
-
-const createUser = (req, res) => {
+const createUser = async(req, res) => {
 
     if (!req.body.username) {
         return res.send({ err: "Nombre no puede estar vacio" });
@@ -92,54 +85,58 @@ const createUser = (req, res) => {
         return res.send({ err: "password no puede estar vacio" })
     }
 
-    db.user.create({
+    let newUser = await db.user.create({
         Name: req.body.username,
         Password: req.body.password,
         Role: req.body.role,
         CreatedAt: new Date()
-    }).then(newUser => {
-        sendPostResponse(res, "Usuario", "create", newUser);
-    }).catch(err => {
-        res.send({ state: "error", data: "Nombre de usuario en uso" });
-    });
+    })
+    if (newUser) {
+        console.log(newUser)
+        return res.render("admin/users/user-row", { newUser }, (err, html) => {
+            if (err) console.log(err);
+            res.send({ action: "User", status: "create", Id: newUser.Id, Name: newUser.Name, data: html });
+        });
+    }
 }
 
-const updateUser = (req, res) => {
+const updateUser = async(req, res) => {
 
-    db.user.findOne({
-        where: { Id: req.body.id }
-    }).then(user_found => {
-        if (user_found) {
+    let user_found = await db.user.findOne({ where: { Id: req.body.id } });
 
-            if (req.user.Name === user_found.Name) {
-                return res.send({ state: "error", data: "No puede actualizar usuario en uso" });
-            }
+    if (user_found) {
 
-            let pass = req.body.password === '' ? user_found.Password : req.body.password;
-
-            user_found.update({
-                Name: req.body.username,
-                Role: req.body.role,
-                State: req.body.state,
-                Password: pass
-            }).then(updatedUser => {
-                return sendPostResponse(res, "Usuario", "update", updatedUser);
-            });
-        } else {
-            return res.send({ state: "error", data: "Usuario no encontrado" });
+        if (req.user.Name === user_found.Name) {
+            return res.send({ status: "error", data: "No puede actualizar usuario en uso" });
         }
-    }).catch(err => {
-        if (err) console.log(err);
-        return res.send({ state: "error", data: "Error Interno del servidor" });
-    });
+
+        let pass = req.body.password === '' ? user_found.Password : req.body.password;
+
+        let updatedUser = await user_found.update({
+            Name: req.body.username,
+            Role: req.body.role,
+            State: req.body.state,
+            Password: pass
+        });
+
+        if (updateUser) {
+            return res.send({ action: "User", status: "update", Id: updatedUser.Id, Name: updatedUser.Name });
+        }
+    }
+    return res.send({ status: "error", data: "Usuario no encontrado" });
 }
 
 exports.userModalPost = (req, res) => {
+    let result;
     if (req.body.id === '') {
-        createUser(req, res);
+        result = createUser(req, res);
     } else {
-        updateUser(req, res);
+        result = updateUser(req, res);
     }
+    result.catch(err => {
+        console.log(err)
+        res.send({ status: "error", data: "Nombre de usuario en uso" });
+    });
 }
 
 var deleteUser = async(Id, res) => {
