@@ -93,34 +93,6 @@ db.init = async() => {
             Role: "admin"
         });
     }
-    // if (await db.category.findOne({ where: { Name: "Aventuras" } }) == null) {
-    //     let categories = [{
-    //         Name: "Aventuras"
-    //     }, {
-    //         Name: "Acción"
-    //     }, {
-    //         Name: "Ciencia Ficción"
-    //     }, {
-    //         Name: "Animación"
-    //     }, {
-    //         Name: "Artes Marciales‎"
-    //     }, {
-    //         Name: "Histórico"
-    //     }, {
-    //         Name: "Guerras"
-    //     }, {
-    //         Name: "Misterio"
-    //     }, {
-    //         Name: "Infantiles"
-    //     }, {
-    //         Name: "Documentales"
-    //     }, {
-    //         Name: "Dramas"
-    //     }, {
-    //         Name: "Fantasia"
-    //     }];
-    //     await db.category.bulkCreate(categories)
-    // }
 }
 
 module.exports = db;

@@ -68,7 +68,7 @@ var processIndex = async(req, res) => {
             search: search,
             action,
             csrfToken: req.csrfToken(),
-            step: (screenw < 1900 ? 7 : 9)
+            step: req.step
         },
         isFile
     }, (err, html) => {

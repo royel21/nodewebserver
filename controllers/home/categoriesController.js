@@ -15,7 +15,6 @@ var loadCategories = async(req, res) => {
     let user = req.user;
 
     let search = req.params.search || "";
-    let screenw = parseInt(req.cookies['screen-w']);
     let itemsPerPage = parseInt(req.params.items || req.query.items) || req.itemsPerPage;
     let currentPage = parseInt(req.params.page) || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
@@ -40,6 +39,7 @@ var loadCategories = async(req, res) => {
                     Id: cat.Id
                 }
             }],
+            order: [db.sqlze.col('N')],
             offset: begin,
             limit: itemsPerPage,
             where: {
@@ -66,7 +66,7 @@ var loadCategories = async(req, res) => {
             search: search,
             action: "/categories/",
             csrfToken: req.csrfToken(),
-            step: (req.query.screenW < 1900 ? 7 : 9),
+            step: req.step,
             cat: currentCat
         },
         isFile: true,

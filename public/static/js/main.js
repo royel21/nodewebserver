@@ -1,7 +1,7 @@
 var isAndroid = /(android)/i.test(navigator.userAgent);
-if (isAndroid) {
-    window.history.pushState({}, "Log In", window.location.href);
-}
+// if (isAndroid) {
+//     window.history.pushState({}, "Log In", window.location.href);
+// }
 var socket;
 
 let lastUrl;
@@ -50,14 +50,36 @@ $('body').on('click', '#table-controls .page-item, #controls .page-item', (e) =>
         loadPartialPage(url);
 });
 
+$('body').on('click', '#next-list-page, #prev-list-page', (e)=>{
+    let data = document.getElementById('current-page').dataset;
+    let currentPage = parseInt(data.page);
+    let total = parseInt(data.total);
+    
+    if(e.target.closest('span').id === 'next-list-page'){
+        currentPage += 1;
+    }else{
+       currentPage -= 1;
+    }
+
+    if(currentPage === 0 || currentPage === total+1) return;
+    
+
+    let path = location.pathname.split(/\/\d*\//)[0]+ '/';
+    console.log(path)
+    let url = path + currentPage + "/" + $('input[name=items]').val() + "/" + $('input[name=search]').val();
+    loadPartialPage(url);
+    window.history.pushState(document.title, document.title, url);
+});
+
 const choosePage = (el) => {
     let title = document.title;
     if (el.tagName == "FORM") {
         let path = location.pathname.split(/\/\d*\//)[0] + "/";
         console.log(path)
         let url = path + el.elements["page"].value + "/" + el.elements["items"].value + "/" + el.elements["search"].value;
+        
         if (!isAndroid) {
-            window.history.pushState(title, title, url.replace('//', '/'));
+            window.history.pushState(document.title, document.title, url.replace('//', '/'));
         }
         loadPartialPage(url);
     }
@@ -67,11 +89,9 @@ const chooseCategory = (el) => {
     let title = document.title;
     if (el.tagName == "FORM") {
         let cat = $(el).find('option[value=' + el.elements["cat"].value + ']').text();
-        let url = '/categories/' + cat + '/';
+        let url = '/categories/' + cat;
         console.log(url)
-        if (!isAndroid) {
-            window.history.pushState(title, title, url.replace('//', '/'));
-        }
+        window.history.pushState(title, title, url.replace('//', '/'));
         loadPartialPage(url);
     }
 }
@@ -90,10 +110,8 @@ const submitItemAndSearchForm = (e) => {
     $.post(url, $(form).serialize(), (resp) => {
 
         $('#container').replaceWith(resp.data);
-        if (!isAndroid) {
-            let title = document.title;
-            window.history.pushState(title, title, resp.url.replace('?partial=true', ''));
-        }
+        let title = document.title;
+        window.history.pushState(title, title, resp.url.replace('?partial=true', ''));
 
     });
 }
@@ -118,46 +136,19 @@ $('#full-screen').on('click', (e) => {
 
 $('#login').on('click', (e) => {
     window.history.pushState({}, "Log In", "/login");
+    history.go(-(history.length - 1));
 });
 
 $('.navbar ul .nav-link:not(#login)').click((e) => {
     if (isAndroid) {
         $('.navbar ul .active').removeClass('active');
         $(e.target.closest('.nav-link')).addClass('active');
-        let text = e.target.closest('.nav-item').textContent;
-
-        switch (text.trim()) {
-            case "Recents":
-                {
-                    loadPartialPage("/");
-                    break;
-                }
-            case "Folders":
-                {
-                    loadPartialPage("/folders");
-                    break;
-                }
-            case "Mangas":
-                {
-                    loadPartialPage("/mangas");
-                    break;
-                }
-            case "All Videos":
-                {
-                    loadPartialPage("/videos");
-                    break;
-                }
-            case "Favorites":
-                {
-                    loadPartialPage("/favorites");
-                    break;
-                }
-            case "Categories":
-                {
-                    loadPartialPage("/categories");
-                    break;
-                }
-        }
+        
+        let text = e.target.closest('.nav-item').textContent;    
+        let url = e.target.closest('a').href;
+       loadPartialPage(url);
+       window.history.pushState(text, text, url);
+       console.log(url)
         e.preventDefault();
     }
 });
@@ -191,21 +182,6 @@ $('body').on('mousedown', '#modal-container', (e) => {
 var lastPage;
 if (isAndroid) {
 
-//     $(()=>{
-//         let url = local.getItem('lastUrl');
-//         if (url) {
-//             loadPartialPage(url);
-//         }
-//     });
-//     window.onblur = (e) =>{
-//          socket.emit('add-or-update-recent', currentFile);
-//          console.log("blur")
-//     }
-//     window.onfocus = (e) =>{
-//          socket.emit('add-or-update-recent', currentFile);
-//          console.log("focus")
-//     }
-//     console.log('android');
     setInterval((e)=>{
         if(lastPage !== currentFile.pos)
         {

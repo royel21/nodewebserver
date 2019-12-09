@@ -10,7 +10,14 @@ mixin pagination(total, data)
         -data.action += data.cat+"/"
     if totalPages > 1 
         div#pager
-            ul.pagination(data-action=data.action)
+            #android-pager.input-group
+                .input-group-text
+                    span#prev-list-page
+                        i.fas.fa-chevron-circle-left
+                    span#current-page(data-page=currentPage data-total=totalPages)= currentPage+"/"+totalPages
+                    span#next-list-page
+                        i.fas.fa-chevron-circle-right   
+            ul#norm-os.pagination(data-action=data.action)
                 li.page-item
                     form#select-page(action=data.action+"search" method="POST" onchange="" + (!noItems ? "choosePage(this)" : ""))
                         input(type="hidden" name="_csrf" value=""+ data.csrfToken)

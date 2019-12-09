@@ -1,6 +1,6 @@
 #modal-header.text-center
     h3= modalTitle
-form#create-edit(method="post" action="/admin/folders/modal-post")
+form#item-create-edit(method="post" action="/admin/folders/modal-post")
     input(type="hidden" name="id" value=""+ (item ? item.Id :  ""))
     input(type="hidden" name="_csrf" value=""+ csrfToken)
     #errors.text-danger.text-center

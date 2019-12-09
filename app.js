@@ -54,9 +54,10 @@ app.use(function(req, res, next) {
     if (!req.user && req.url !== '/login') {
         return res.redirect('/login');
     } else {
+        let screenw = parseInt(req.cookies['screen-w']);
         app.locals.user = req.user;
-        req.itemsPerPage = parseInt(req.cookies['screen-w']) < 1900 ? 21 : 27;
-
+        req.itemsPerPage = screenw < 1900 ? 21 : 27;
+        req.step = screenw < 1900 ? 7 : 9;
         if (req.url.includes('/admin') && !['manager', 'admin'].includes(req.user.Role)) {
             return res.redirect('/');
         }
@@ -95,7 +96,7 @@ db.init().then(() => {
         console.log('Node server is running.. at http://localhost:' + port);
     });
 
-    require('./modules/socketio-server')(server, app);
+    return require('./modules/socketio-server')(server, app);
 });
 
 console.log(process.env.NODE_ENV)

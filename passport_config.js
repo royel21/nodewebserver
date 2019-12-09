@@ -21,8 +21,10 @@ module.exports = (passport) => {
             } else {
                 done(new Error('Wrong user Id.'))
             }
+            return user;
         }).catch(err => {
             console.log(err);
+            return err;
         })
     });
 
@@ -61,9 +63,10 @@ module.exports = (passport) => {
                 req.flash('userError', 'Usuario no autorizado');
                 return done(null, false);
             }
-
+            return user;
         }).catch(err => {
             done(err, false);
+            return err;
         });
     }))
 }
