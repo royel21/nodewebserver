@@ -1,3 +1,5 @@
+const https = require('https');
+const fs = require('fs-extra')
 const createError = require('http-errors');
 const express = require('express');
 const cors = require('cors');
@@ -92,9 +94,13 @@ app.use(function(err, req, res, next) {
 const port = 4664;
 
 db.init().then(() => {
-    let server = app.listen(port, function() {
-        console.log('Node server is running.. at http://localhost:' + port);
-    });
+    let server = https.createServer({
+            key: fs.readFileSync('./cert/server.key'),
+            cert: fs.readFileSync('./cert/server.cert')
+        }, app)
+        .listen(4664);
+
+    console.log('Node server is running.. at https://localhost:' + port);
 
     return require('./modules/socketio-server')(server, app);
 });
