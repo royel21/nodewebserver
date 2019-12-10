@@ -13,3 +13,4 @@ local_modules/rcunrar/build
 public/covers
 *.db
 test.html
+cert/*

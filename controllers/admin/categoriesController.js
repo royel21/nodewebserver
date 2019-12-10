@@ -3,6 +3,7 @@ const db = require('../../models');
 var getCategoryFiles = async(data) => {
     return await db.file.findAndCountAll({
         atributtes: ['Id', 'Name'],
+        order:['Name'],
         offset: data.begin,
         limit: data.itemsPerPage,
         where: {

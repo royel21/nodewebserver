@@ -164,6 +164,8 @@ var openManga = (item) => {
 
     if(currentFile.id !== item.Id){
          socket.emit('add-or-update-recent', currentFile);
+    }else{
+        return false;
     }
 
     currentFile.id = item.id;
@@ -180,6 +182,7 @@ var openManga = (item) => {
     if (window.innerWidth < 600) {
         startClock();
     }
+    return true;
 }
 mSlider.oninput = (e) => {
     let val = parseInt(mSlider.value);
@@ -240,6 +243,12 @@ var nextManga = () => {
     if (next && !mLoading) {
         processFile(next);
         selectItem($('.items').index(next));
+    }else if(currentPage < totalPage){
+        loadPartialPage(genUrl(currentPage+1), ()=>{
+
+            processFile($('.items').get(0));
+            selectItem(0);
+        });
     }
 }
 
@@ -248,6 +257,12 @@ var prevManga = () => {
     if (prev && !mLoading) {
         processFile(prev);
         selectItem($('.items').index(prev));
+    }else if(currentPage > 1){
+        loadPartialPage(genUrl(currentPage-1), ()=>{
+
+            processFile($('.items').get(0));
+            selectItem(0);
+        });
     }
 };
 

@@ -1,11 +1,11 @@
 const contentScroll = document.getElementById('content');
 const mediaContainer = document.getElementById('media-container');
-const calCol = () => colNum = Math.floor((window.innerWidth - 15) / ($('.items').eq(0).width()));
+const calCol = () => colNum = Math.floor($('#files-list').width() / $('.items').eq(0).width());
 
 var page = 1;
 var selectedIndex = local.getItem('selectedIndex') || 0;
-var totalPage = 0;
-var currentPage = 1;
+var totalPage;
+var currentPage;
 
 const UP = 38;
 const DOWN = 40;
@@ -90,6 +90,13 @@ window.onbeforeunload = (e) => {
     }
 }
 
+
+const calPages = () => {
+    let data = document.getElementById('container').dataset;
+    currentPage = parseInt(data.page);
+    totalPage = parseInt(data.total);
+}
+
 const selectItem = (index) => {
     selectedIndex = index;
     var nextEl = $('.items').get(index);
@@ -117,9 +124,10 @@ const selectItem = (index) => {
     return nextEl;
 }
 
-const calPages = () => {
-    currentPage = parseInt($('#pager .active').text()) || 1;
-    totalPage = Math.ceil(parseInt($('.badge').text()) / parseInt($('#item').val())) || 1;
+const genUrl = (page) =>{
+    currentPage = page;
+    let path = location.pathname.split(/\/\d*\//)[0]+ '/';
+    return  path + page + "/" + $('input[name=items]').val() + "/" + $('input[name=search]').val();
 }
 
 processFile = (item) => {
@@ -139,13 +147,37 @@ processFile = (item) => {
     mediaContainer.focus();
 }
 
+const chooseCategory = (el) => {
+    let title = document.title;
+    if (el.tagName == "FORM") {
+        let cat = $(el).find('option[value=' + el.elements["cat"].value + ']').text();
+        let url = '/categories/' + cat;
+        console.log(url)
+        window.history.pushState(title, title, url.replace('//', '/'));
+        loadPartialPage(url);
+    }
+}
+
+$('body').on('click', '#next-list-page, #prev-list-page', (e)=>{
+    let page = currentPage;
+    if(e.target.closest('span').id === 'next-list-page'){
+        page++;
+    }else{
+       page--;
+    }
+
+    if(page === 0 || page === totalPage+1) return;
+    
+    let url = genUrl(page);
+    loadPartialPage(url);
+    window.history.pushState(document.title, document.title, url);
+});
 $('body').on('click', '.items .fa-play-circle', (e) => {
     processFile(e.target.closest('.items'));
 });
 
 $('body').on('keydown', '.items-list', (e) => {
     calCol();
-    calPages();
 
     let totalitem = $('.items').length;
     let title = document.title;
@@ -171,18 +203,18 @@ $('body').on('keydown', '.items-list', (e) => {
             }
         case LEFT:
             {
+                if (selectedIndex > 0) {
+                    selectItem(selectedIndex - 1);
+                }else
+                if (currentPage > 1 || e.ctrlKey && currentPage > 1 ) {
 
-                if (e.ctrlKey && currentPage > 1) {
-
-                    let url = $('#pager .active').prev().find('a').attr('href');
+                    let url = genUrl(currentPage-1);
                     window.history.pushState(title, title, url);
                     loadPartialPage(url, () => {
                         selectItem($('.items').length - 1);
                     });
                 }
-                else if (selectedIndex > 0) {
-                    selectItem(selectedIndex - 1);
-                }
+                
                 wasProcesed = true;
                 break;
             }
@@ -199,8 +231,10 @@ $('body').on('keydown', '.items-list', (e) => {
             }
         case RIGHT:
             {
-
-                if (e.ctrlKey && currentPage < totalPage) {
+                if (selectedIndex < totalitem - 1) {
+                    selectItem(selectedIndex + 1);
+                }else
+                if (currentPage < totalPage || e.ctrlKey && currentPage < totalPage) {
 
                     let url = $('#pager .active').next().find('a').attr('href');
                     window.history.pushState(title, title, url);
@@ -208,9 +242,7 @@ $('body').on('keydown', '.items-list', (e) => {
                         selectItem(0);
                     });
                 }
-                else if (selectedIndex < totalitem - 1) {
-                    selectItem(selectedIndex + 1);
-                }
+                
                 wasProcesed = true;
                 break;
             }
@@ -305,6 +337,7 @@ $('#content').on('click', '#scroll-up', (e) => {
 });
 
 $(() => {
+    calPages();
     selectItem(selectedIndex);
 });
 

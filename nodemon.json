@@ -8,7 +8,8 @@
         "public/*",
         "test.html",
         "files.db",
-        "countfiles.js"
+        "countfiles.js",
+        "cert/*"
     ],
     "env": {
         "NODE_ENV": "development"

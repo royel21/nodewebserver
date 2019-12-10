@@ -1,12 +1,14 @@
 mixin items-view(items, pagedatas, isFile, categories)
-    #container    
+    #container(data-page=pagedatas.currentPage data-total=pagedatas.totalPages)    
         #controls
             if categories
                 include ../share/categories
                 +categories(categories, pagedatas)
-            include ../share/search
-            +search(pagedatas, pagedatas.action+"search", "search-form")
-
+            
+            if pagedatas.totalPages > 1 
+                include ../share/search
+                +search(pagedatas, pagedatas.action+"search", "search-form")
+            
             include ../share/pagination
             +pagination(items.count, pagedatas)
                 

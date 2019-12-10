@@ -52,6 +52,7 @@ app.use(function(req, res, next) {
 
     app.locals.env = process.env.NODE_ENV;
     app.locals.url = req.url;
+    app.locals.isAndroid = req.get('User-Agent').includes('Android');
 
     if (!req.user && req.url !== '/login') {
         return res.redirect('/login');

@@ -8,10 +8,12 @@ let lastUrl;
 
 const loadPartialPage = async(url, cb) => {
     if (!url) return;
+    
     local.setItem('lasturl', url);
     $.get(url, { partial: true }, (resp) => {
         if (resp.data) {
             $('#container').replaceWith(resp.data);
+            calPages();
             if (cb) cb();
         } else {
             location.href = '/login';
@@ -50,26 +52,6 @@ $('body').on('click', '#table-controls .page-item, #controls .page-item', (e) =>
         loadPartialPage(url);
 });
 
-$('body').on('click', '#next-list-page, #prev-list-page', (e)=>{
-    let data = document.getElementById('current-page').dataset;
-    let currentPage = parseInt(data.page);
-    let total = parseInt(data.total);
-    
-    if(e.target.closest('span').id === 'next-list-page'){
-        currentPage += 1;
-    }else{
-       currentPage -= 1;
-    }
-
-    if(currentPage === 0 || currentPage === total+1) return;
-    
-
-    let path = location.pathname.split(/\/\d*\//)[0]+ '/';
-    console.log(path)
-    let url = path + currentPage + "/" + $('input[name=items]').val() + "/" + $('input[name=search]').val();
-    loadPartialPage(url);
-    window.history.pushState(document.title, document.title, url);
-});
 
 const choosePage = (el) => {
     let title = document.title;
@@ -81,17 +63,6 @@ const choosePage = (el) => {
         if (!isAndroid) {
             window.history.pushState(document.title, document.title, url.replace('//', '/'));
         }
-        loadPartialPage(url);
-    }
-}
-
-const chooseCategory = (el) => {
-    let title = document.title;
-    if (el.tagName == "FORM") {
-        let cat = $(el).find('option[value=' + el.elements["cat"].value + ']').text();
-        let url = '/categories/' + cat;
-        console.log(url)
-        window.history.pushState(title, title, url.replace('//', '/'));
         loadPartialPage(url);
     }
 }

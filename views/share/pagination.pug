@@ -10,67 +10,69 @@ mixin pagination(total, data)
         -data.action += data.cat+"/"
     if totalPages > 1 
         div#pager
-            #android-pager.input-group
-                .input-group-text
-                    span#prev-list-page
-                        i.fas.fa-chevron-circle-left
-                    span#current-page(data-page=currentPage data-total=totalPages)= currentPage+"/"+totalPages
-                    span#next-list-page
-                        i.fas.fa-chevron-circle-right   
-            ul#norm-os.pagination(data-action=data.action)
-                li.page-item
-                    form#select-page(action=data.action+"search" method="POST" onchange="" + (!noItems ? "choosePage(this)" : ""))
-                        input(type="hidden" name="_csrf" value=""+ data.csrfToken)
-                        input(type="hidden" name="search" value=""+ search)
-                        input(type="hidden" name="items" value=itemsPerPage)
-                        if data.cat
-                            input(type="hidden" name="cat" value=data.cat)
-                        select#page-select.form-control(name="page")
-                            -for(let i = 1; i < totalPages+1; i++)
-                                option(value=""+i selected=(currentPage == i ? true : false))= i
-                
-                if currentPage == 1
-                    li.page-item.disabled
-                        a.page-link
-                            i.fa.fa-angle-double-left
-                    li.page-item.disabled
-                        a.page-link
-                            i.fa.fa-angle-left
-                else
+            if isAndroid
+                #android-pager.input-group
+                    .input-group-text
+                        span#prev-list-page
+                            i.fas.fa-chevron-circle-left
+                        span#current-page= currentPage+"/"+totalPages
+                        span#next-list-page
+                            i.fas.fa-chevron-circle-right 
+            else  
+                ul#norm-os.pagination(data-action=data.action)
                     li.page-item
-                        a.page-link(href=data.action+1+"/"+itemsPerPage+"/"+search)
-                            i.fa.fa-angle-double-left
-                    li.page-item
-                        a.page-link(href=data.action+(currentPage-1)+"/"+itemsPerPage+"/"+search)
-                            i.fa.fa-angle-left
+                        form#select-page(action=data.action+"search" method="POST" onchange="" + (!noItems ? "choosePage(this)" : ""))
+                            input(type="hidden" name="_csrf" value=""+ data.csrfToken)
+                            input(type="hidden" name="search" value=""+ search)
+                            input(type="hidden" name="items" value=itemsPerPage)
+                            if data.cat
+                                input(type="hidden" name="cat" value=data.cat)
+                            select#page-select.form-control(name="page")
+                                -for(let i = 1; i < totalPages+1; i++)
+                                    option(value=""+i selected=(currentPage == i ? true : false))= i
                     
-                -for (let i = currentPage - page; i <= currentPage - 1; i++)
-                    -if (i > 0)
+                    if currentPage == 1
+                        li.page-item.disabled
+                            a.page-link
+                                i.fa.fa-angle-double-left
+                        li.page-item.disabled
+                            a.page-link
+                                i.fa.fa-angle-left
+                    else
                         li.page-item
-                            a.page-link(href=data.action+i+"/"+itemsPerPage+"/"+search)= i
-                li.page-item.active
-                    a.page-link= currentPage
+                            a.page-link(href=data.action+1+"/"+itemsPerPage+"/"+search)
+                                i.fa.fa-angle-double-left
+                        li.page-item
+                            a.page-link(href=data.action+(currentPage-1)+"/"+itemsPerPage+"/"+search)
+                                i.fa.fa-angle-left
+                        
+                    -for (let i = currentPage - page; i <= currentPage - 1; i++)
+                        -if (i > 0)
+                            li.page-item
+                                a.page-link(href=data.action+i+"/"+itemsPerPage+"/"+search)= i
+                    li.page-item.active
+                        a.page-link= currentPage
 
-                -for (let i = currentPage + 1; i <= currentPage + page; i++)
-                    -if (i < parseInt(totalPages)+1)
+                    -for (let i = currentPage + 1; i <= currentPage + page; i++)
+                        -if (i < parseInt(totalPages)+1)
+                            li.page-item
+                                a.page-link(href=data.action+i+"/"+itemsPerPage+"/"+search)= i
+                    
+                    if currentPage == totalPages
+                        li.page-item.disabled
+                            a.page-link
+                                i.fa.fa-angle-right
+                        li.page-item.disabled
+                            a.page-link
+                                i.fa.fa-angle-double-right
+                    else
                         li.page-item
-                            a.page-link(href=data.action+i+"/"+itemsPerPage+"/"+search)= i
-                
-                if currentPage == totalPages
-                    li.page-item.disabled
-                        a.page-link
-                            i.fa.fa-angle-right
-                    li.page-item.disabled
-                        a.page-link
-                            i.fa.fa-angle-double-right
-                else
-                    li.page-item
-                        a.page-link(href=data.action+(parseInt(currentPage)+1)+"/"+itemsPerPage+"/"+search)
-                            i.fa.fa-angle-right
-                    li.page-item
-                        a.page-link(href=data.action+totalPages+"/"+itemsPerPage+"/"+search)
-                            i.fa.fa-angle-double-right
-    if !noItems
+                            a.page-link(href=data.action+(parseInt(currentPage)+1)+"/"+itemsPerPage+"/"+search)
+                                i.fa.fa-angle-right
+                        li.page-item
+                            a.page-link(href=data.action+totalPages+"/"+itemsPerPage+"/"+search)
+                                i.fa.fa-angle-double-right
+    if !noItems && totalPages > 1
         #itemsPerPage(data-itemsperpage=itemsPerPage)
             form#items-form(action=searchAction+"search" method="POST" onchange="submitItemAndSearchForm(this)")
                 input(type="hidden" name="_csrf" value=""+ data.csrfToken)

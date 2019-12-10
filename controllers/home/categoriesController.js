@@ -19,7 +19,7 @@ var loadCategories = async(req, res) => {
     let currentPage = parseInt(req.params.page) || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
 
-    let categories = await db.category.findAll();
+    let categories = await db.category.findAll({order: ['Name']});
 
     let items = { count: 0, rows: [] };
     if (categories.length > 0) {

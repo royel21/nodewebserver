@@ -302,6 +302,11 @@ body{
  #android-pager{
      display: none;
  }
+ 
+ #controls:empty{
+     display: none;
+ }
+
 @media all and (max-width: 450px){
     
     #controls{
