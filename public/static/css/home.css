@@ -6,11 +6,14 @@
 }
 
 .items {
+    position: relative;
     border-radius: 5px;
     outline: none;
     background-color: transparent;
     user-select: none;
     padding: 5px;
+    width: 200px;
+    height: 250px;
 }
 
 .item-video {
@@ -40,7 +43,7 @@ pointer-events: none;
     position: relative;
     font-size: 1.7em;
     height: 26px;
-    z-index: 999;
+    z-index: 1;
 }
 
 .item-del {
@@ -105,20 +108,20 @@ pointer-events: none;
 }
 
 .item-video:hover {
+    position: absolute;
+    height: fit-content;
     outline: none;
-    background-color: rgba(0, 123, 255, 0.1) !important;
+    background-color: rgba(40, 122, 255, 0.6) !important;
     box-shadow: 0 0 10px;
     overflow: initial;
+    z-index: 2;
 }
 .item-name:hover,
 .item-video:hover>.item-name{
     display: inline-block;
-    border-radius: 10px;
-    border: 1px solid beige;
-    background-color: black;
     z-index: 1000;
-    padding: 0 5px;
     top: 5px;
+    line-height: 1.5;
 }
 
 #back {

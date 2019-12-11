@@ -1,23 +1,29 @@
 const db = require('../../models');
 
-var getRecentFiles = async(user, data) => {
+var getRecentFiles = async (user, data) => {
     console.time("rc");
 
     let files = { count: 0, rows: [] };
 
     if (user.Role.includes('admin')) return files;
 
-    files.rows = await user.Recent.getFiles({
-        attributes: [
-            'Id', 'Name', 'DirectoryId', 'Type', 'Duration', [db.sqlze.literal(
-                "(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" + user.Favorite
-                .Id + "')"), "isFav"],
-            [db.sqlze.literal("RecentFiles.LastPos"), 'CurrentPos']
-        ],
-        joinTableAttributes: ['LastRead', 'LastPos'],
+    files = await db.file.findAndCountAll({
+        attributes: {
+            include: [
+                [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '"+user.Favorite.Id+"')"), "isFav"],
+                [db.sqlze.literal("(Select LastPos from RecentFiles where FileId == File.Id and RecentId == '"+user.Recent.Id+"')"), "CurrentPos"],
+                [db.sqlze.literal("(Select LastRead from RecentFiles where FileId == File.Id and RecentId == '"+user.Recent.Id+"')"), "LastRead"]
+            ]
+        },
         order: [
-            [db.sqlze.literal("RecentFiles.LastRead"), 'DESC']
+            [db.sqlze.literal("LastRead"), 'DESC']
         ],
+        include: [{
+            model: db.recent,
+            where: {
+                Id: user.Recent.Id
+            }
+        }],
         offset: data.begin,
         limit: data.itemsPerPage,
         where: {
@@ -28,7 +34,6 @@ var getRecentFiles = async(user, data) => {
             }]
         }
     });
-    files.count = await db.recentFile.count({ where: { RecentId: user.Recent.Id } });
     console.timeEnd("rc");
     return files;
 }
@@ -79,7 +84,7 @@ exports.postSearch = (req, res) => {
 }
 
 
-var removeFile = async(user, id) => {
+var removeFile = async (user, id) => {
     let file = await db.file.findOne({ where: { Id: id } });
     if (file) {
         await user.Recent.removeFile(file);

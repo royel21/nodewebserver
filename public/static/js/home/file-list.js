@@ -124,13 +124,6 @@ const selectItem = (index) => {
     return nextEl;
 }
 
-const genUrl = (page) =>{
-    currentPage = page;
-    let path = location.pathname.split(/\/\d*\//)[0]+ '/';
-    if(path === '//') path = '/recents/'
-    return  path + page + "/" + $('input[name=items]').val() + "/" + $('input[name=search]').val();
-}
-
 processFile = (item) => {
 
     if (item.dataset.type.includes("Video")) {
@@ -154,7 +147,6 @@ const chooseCategory = (el) => {
         let cat = $(el).find('option[value=' + el.elements["cat"].value + ']').text();
         let url = '/categories/' + cat;
         console.log(url)
-        window.history.pushState(title, title, url.replace('//', '/'));
         loadPartialPage(url);
     }
 }
@@ -171,7 +163,6 @@ $('body').on('click', '#next-list-page, #prev-list-page', (e)=>{
     
     let url = genUrl(page);
     loadPartialPage(url);
-    window.history.pushState(document.title, document.title, url);
 });
 $('body').on('click', '.items .fa-play-circle', (e) => {
     processFile(e.target.closest('.items'));
@@ -181,7 +172,6 @@ $('body').on('keydown', '.items-list', (e) => {
     calCol();
 
     let totalitem = $('.items').length;
-    let title = document.title;
     var wasProcesed = false;
     switch (e.keyCode) {
         case ENTER:
@@ -191,7 +181,6 @@ $('body').on('keydown', '.items-list', (e) => {
                     processFile(item);
                 } else {
                     let url = "/folder-content/" + item.id;
-                    window.history.pushState(title, title, url);
                     lastIndex = selectedIndex;
                     local.setItem('folder', item.id);
                     config.folder.folderIndex = selectedIndex;
@@ -210,7 +199,6 @@ $('body').on('keydown', '.items-list', (e) => {
                 if (currentPage > 1 || e.ctrlKey && currentPage > 1 ) {
 
                     let url = genUrl(currentPage-1);
-                    window.history.pushState(title, title, url);
                     loadPartialPage(url, () => {
                         selectItem($('.items').length - 1);
                     });
@@ -238,7 +226,6 @@ $('body').on('keydown', '.items-list', (e) => {
                 if (currentPage < totalPage || e.ctrlKey && currentPage < totalPage) {
 
                     let url = $('#pager .active').next().find('a').attr('href');
-                    window.history.pushState(title, title, url);
                     loadPartialPage(url, () => {
                         selectItem(0);
                     });
@@ -277,7 +264,6 @@ $('body').on('click', '.items', (e) => {
         timeOut = setTimeout(() => {
             if (dblclick > 1 && lastItem.id === item.id) {
                 lastItem.id = item.id;
-                let title = document.title;
 
                 if (item.dataset.type) {
                     processFile(item);
@@ -286,7 +272,6 @@ $('body').on('click', '.items', (e) => {
                     config.folder.folderIndex = selectedIndex;
 
                     let url = "/folder-content/" + item.id;
-                    window.history.pushState(title, title, url);
 
                     lastIndex = selectedIndex;
                     local.setItem('folder', item.id);
@@ -312,8 +297,6 @@ $(window).bind('popstate', (event) => {
 });
 
 var goBack = () => {
-    let title = "Home";
-    window.history.pushState(title, title, config.folder.lastfolder);
     local.setItem('folder', false);
     loadPartialPage(config.folder.lastfolder, () => {
         selectItem(config.folder.folderIndex);

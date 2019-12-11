@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var homeController = require('../controllers/home/HomeControler');
+var homeController = require('../controllers/home/homeControler');
 var favController = require('../controllers/home/favoritesController');
 var recentController = require('../controllers/home/recentsController');
 var categoriesController = require('../controllers/home/categoriesController');

@@ -44,21 +44,24 @@
 // loli - cat - bzy7w
 const db = require('./models/index');
 
-var query = async() => {
+var query = async () => {
     console.time("s");
     let files = await db.file.findAndCountAll({
         attributes: {
             include: [
-                'Id', 'Name', 'DirectoryId', 'Type', 'Duration', [db.sqlze.literal("REPLACE(Name, '[','0')"), 'N'],
-                [db.sqlze.literal("(Select LastPos from RecentFiles where FileId == File.Id and RecentId == 'pjwhn')"), "CurrentPos"],
-                [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '0w1sk')"), "isFav"]
+                [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == 'b1d0p')"), "isFav"],
+                [db.sqlze.literal("(Select LastPos from RecentFiles where FileId == File.Id and RecentId == 'rsh0o')"), "CurrentPos"],
+                [db.sqlze.literal("(Select LastRead from RecentFiles where FileId == File.Id and RecentId == 'rsh0o')"), "LastRead"]
             ]
         },
         include: [{
-            model: db.category,
+            model: db.recent,
             where: {
-                Id: "bzy7w"
-            }
+                Id: "rsh0o"
+            },
+            order: [
+                [db.sqlze.literal("Recents.RecentFiles.LastRead"), 'DESC']
+            ]
         }],
         offset: 0,
         limit: 27,
@@ -75,5 +78,5 @@ var query = async() => {
 }
 
 query().then((result) => {
-    console.log(result.count, result.rows.length);
+    console.log(result.count, result.rows[0]);
 });

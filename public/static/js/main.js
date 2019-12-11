@@ -8,12 +8,18 @@ let lastUrl;
 
 const loadPartialPage = async(url, cb) => {
     if (!url) return;
-    
-    local.setItem('lasturl', url);
+
+    let text = $('.navbar ul .active').text(); 
+    window.history.pushState(text, text, url.replace('//', '/'));
+
     $.get(url, { partial: true }, (resp) => {
         if (resp.data) {
             $('#container').replaceWith(resp.data);
-            calPages();
+
+            if(!location.pathname.includes('/admin')){
+                local.setItem('lasturl', url);
+                calPages();
+            }
             if (cb) cb();
         } else {
             location.href = '/login';
@@ -36,12 +42,14 @@ $(window).on('popstate', function(e) {
     }
 });
 
-$('body').on('click', '#table-controls .page-item, #controls .page-item', (e) => {
+$('body').on('click', '#table-controls .page-item a, #controls .page-item a', (e) => {
     e.preventDefault();
-    let title = document.title;
-    let url = e.target.tagName == 'I' ? e.target.closest('a').href : e.target.href;
-    if (!isAndroid) {
-        window.history.pushState(title, title, url);
+    
+    let url;
+    if(location.pathname.includes('/admin')){
+       url =  e.target.tagName == 'I' ? e.target.closest('a').href : e.target.href;
+    }else{
+        url = genUrl(e.target.closest('li').dataset.page)
     }
 
     if (!location.href.includes("admin")) {
@@ -53,18 +61,19 @@ $('body').on('click', '#table-controls .page-item, #controls .page-item', (e) =>
 });
 
 
+const genUrl = (page) =>{
+    currentPage = page;
+    let path = location.pathname.split(/\/\d*\//)[0]+ '/';
+    if(path === '//') path = '/recents/'
+    return  path + page + "/" + $('input[name=items]').val() + "/" + $('input[name=search]').val();
+}
+
 const choosePage = (el) => {
     let title = document.title;
-    if (el.tagName == "FORM") {
-        let path = location.pathname.split(/\/\d*\//)[0] + "/";
-        console.log(path)
-        let url = path + el.elements["page"].value + "/" + el.elements["items"].value + "/" + el.elements["search"].value;
-        
-        if (!isAndroid) {
-            window.history.pushState(document.title, document.title, url.replace('//', '/'));
-        }
-        loadPartialPage(url);
-    }
+    let page = document.querySelector('select[name=page]').value;
+    let url = genUrl(page);
+    console.log(page)
+    loadPartialPage(url);
 }
 
 const submitItemAndSearchForm = (e) => {

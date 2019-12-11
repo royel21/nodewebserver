@@ -5,7 +5,7 @@ mixin items-view(items, pagedatas, isFile, categories)
                 include ../share/categories
                 +categories(categories, pagedatas)
             
-            if pagedatas.totalPages > 1 || pagedatas.search
+            if pagedatas.totalPages > 0 || pagedatas.search
                 include ../share/search
                 +search(pagedatas, pagedatas.action+"search", "search-form")
             

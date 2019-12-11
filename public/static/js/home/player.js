@@ -10,7 +10,6 @@ var hour = false;
 var vDuration;
 var Slider = null;
 var update = false;
-var currentVideoId = "";
 
 $('.btn-fullscr').click((e) => {
     setfullscreen(videoViewer)
@@ -279,22 +278,21 @@ const playVideo = (el) => {
         $('.loading').css({ display: 'flex' });
 
         $('#video-name').text($(el).text());
-        currentVideoId = id;
-        player.src = "/videoplayer/video/" + id;
+        player.src = "/videoplayer/video/" + currentFile.id;
         selectedIndex = $('.items').index(el);
     }
 }
 
 
 $("#video-viewer .fa-arrow-alt-circle-right").click((e) => {
-    let next = $('#' + currentVideoId).next()[0];
+    let next = $('#' + currentFile.id).next()[0];
     if (next) {
         processFile(next)
     }
 });
 
 $("#video-viewer .fa-arrow-alt-circle-left").click((e) => {
-    let prev = $('#' + currentVideoId).prev()[0];
+    let prev = $('#' + currentFile.id).prev()[0];
     if (prev) {
         processFile(prev);
     }
@@ -357,7 +355,7 @@ var playerKeyDown = (e) => {
             case keys.nextfile.keycode:
                 {
                     if (e.ctrlKey == keys.nextfile.isctrl) {
-                        let next = $('#' + currentVideoId).next()[0];
+                        let next = $('#' + currentFile.id).next()[0];
                         if (next) {
                             playVideo(next)
                         }
@@ -367,7 +365,7 @@ var playerKeyDown = (e) => {
             case keys.previousfile.keycode:
                 {
                     if (e.ctrlKey == keys.previousfile.isctrl) {
-                        let prev = $('#' + currentVideoId).prev()[0];
+                        let prev = $('#' + currentFile.id).prev()[0];
                         if (prev) {
                             playVideo(prev);
                         }
