@@ -1,6 +1,6 @@
 const contentScroll = document.getElementById('content');
 const mediaContainer = document.getElementById('media-container');
-const calCol = () => colNum = Math.floor($('#files-list').width() / $('.items').eq(0).width());
+const calCol = () => colNum = Math.floor($('#files-list').width() / $('.items').get(0).offsetWidth);
 
 var page = 1;
 var selectedIndex = local.getItem('selectedIndex') || 0;
@@ -127,6 +127,7 @@ const selectItem = (index) => {
 const genUrl = (page) =>{
     currentPage = page;
     let path = location.pathname.split(/\/\d*\//)[0]+ '/';
+    if(path === '//') path = '/recents/'
     return  path + page + "/" + $('input[name=items]').val() + "/" + $('input[name=search]').val();
 }
 

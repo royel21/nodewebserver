@@ -260,8 +260,8 @@ var prevManga = () => {
     }else if(currentPage > 1){
         loadPartialPage(genUrl(currentPage-1), ()=>{
 
-            processFile($('.items').get(0));
-            selectItem(0);
+            processFile($('.items').get($('.items').length-1));
+            selectItem($('.items').length-1);
         });
     }
 };

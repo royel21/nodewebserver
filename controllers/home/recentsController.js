@@ -7,10 +7,11 @@ var getRecentFiles = async(user, data) => {
 
     if (user.Role.includes('admin')) return files;
 
-    let recent = await user.getRecent();
-    files.rows = await recent.getFiles({
+    files.rows = await user.Recent.getFiles({
         attributes: [
-            'Id', 'Name', 'DirectoryId', 'Type', 'Duration', [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" + user.Favorite.Id + "')"), "isFav"],
+            'Id', 'Name', 'DirectoryId', 'Type', 'Duration', [db.sqlze.literal(
+                "(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" + user.Favorite
+                .Id + "')"), "isFav"],
             [db.sqlze.literal("RecentFiles.LastPos"), 'CurrentPos']
         ],
         joinTableAttributes: ['LastRead', 'LastPos'],
@@ -27,14 +28,13 @@ var getRecentFiles = async(user, data) => {
             }]
         }
     });
-    files.count = await db.recentFile.count({ where: { RecentId: recent.Id } });
+    files.count = await db.recentFile.count({ where: { RecentId: user.Recent.Id } });
     console.timeEnd("rc");
     return files;
 }
 
 exports.recent = (req, res) => {
 
-    let screenw = parseInt(req.cookies['screen-w']);
     let itemsPerPage = parseInt(req.params.items || req.query.items) || req.itemsPerPage;
     let currentPage = parseInt(req.params.page) || 1;
     let begin = ((currentPage - 1) * itemsPerPage) || 0;
