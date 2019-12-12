@@ -28,18 +28,20 @@ const loadPartialPage = async(url, cb) => {
 }
 
 $(window).on('popstate', function(e) {
-    if (!isAndroid) {
-        let url = document.location.href;
-        document.title = e.state;
-        $('.sidenav a').removeClass("active");
-        $(`.sidenav .nav-link:contains("${e.state}")`).addClass('active');
-        loadPartialPage(url, () => {
-            if ($('#folders-list')[0]) selectItem(lastIndex);
-        });
-    } else {
-        e.preventDefault();
-        window.history.pushState(null, '', '');
-    }
+        selectedIndex = 0;
+//     if (!isAndroid) {
+//         let url = document.location.href;
+//         document.title = e.state;
+//         $('.sidenav a').removeClass("active");
+//         $(`.sidenav .nav-link:contains("${e.state}")`).addClass('active');
+//         loadPartialPage(url, () => {
+//             if ($('#folders-list')[0]) selectItem(lastIndex);
+//         });
+//     } else {
+//         e.preventDefault();
+//         window.history.pushState(null, '', '');
+//     }
+location.reload(); 
 });
 
 $('body').on('click', '#table-controls .page-item a, #controls .page-item a', (e) => {
