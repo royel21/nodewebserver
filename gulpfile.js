@@ -15,7 +15,7 @@ var adminPath = './public/static/js/admin/';
 gulp.task('login-css', function() {
     return gulp.src(
             [
-                csslib,
+                './public/static/lib/css/bootstrap.min.css',
                 homecss + 'index.css',
                 homecss + 'login.css'
             ])

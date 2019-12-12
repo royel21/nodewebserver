@@ -1,4 +1,5 @@
 const https = require('https');
+const spdy = require('spdy');
 const fs = require('fs-extra')
 const createError = require('http-errors');
 const express = require('express');
@@ -52,7 +53,7 @@ app.use(function(req, res, next) {
 
     app.locals.env = process.env.NODE_ENV;
     app.locals.url = req.url;
-    app.locals.isAndroid = req.get('User-Agent').includes('Android');
+    app.locals.isAndroid = /(Android)|(iphone)/ig.test(req.get('User-Agent'));
 
     if (!req.user && req.url !== '/login') {
         return res.redirect('/login');

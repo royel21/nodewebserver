@@ -5,6 +5,7 @@ exports.index = (req, res) => {
 }
 
 exports.users = (req, res) => {
+    console.time('admin-user')
     let itemsPerPage = req.params.items || req.query.items || 12;
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
@@ -42,6 +43,7 @@ exports.users = (req, res) => {
             } else {
                 res.send(html);
             }
+            console.timeEnd('admin-user')
         });
 
     }).catch(err => {

@@ -378,3 +378,21 @@ body{
         padding-bottom: 70px;
     }
 }
+
+@media (max-width: 400px) {
+    #menu{
+        padding: .1rem .05rem;
+    }
+    #menu .nav-link i{
+        font-size: 25px;
+    }
+    .search-container{
+        max-width: 140px;
+    }
+     #search-form .form-control{
+        max-width: 100px;
+    }
+    #search-form .form-control{
+        max-width: 100px;
+    }
+}

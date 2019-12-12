@@ -5,6 +5,7 @@ const fs = require('fs-extra')
 const { NormalizeName } = require('../../Utils/StringUtil')
 
 exports.files = (req, res) => {
+    console.time('admin-files')
     let itemsPerPage = req.params.items || req.query.items || 12;
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
@@ -42,6 +43,7 @@ exports.files = (req, res) => {
             } else {
                 res.send(html);
             }
+            console.timeEnd('admin-files')
         });
     }).catch(err => {
         if (err) console.log(err);

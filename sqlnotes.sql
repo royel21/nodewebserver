@@ -22,47 +22,63 @@
 -- SELECT Name, ROW_NUMBER() OVER(Name) as n, COUNT(*) c FROM files GROUP BY Name HAVING c > 1;
 SELECT
   `File`.*,
-  `Recents`.`Id` AS `Recents.Id`,
-  `Recents`.`Name` AS `Recents.Name`,
-  `Recents`.`UserId` AS `Recents.UserId`,
-  `Recents->RecentFiles`.`Id` AS `Recents.RecentFiles.Id`,
-  `Recents->RecentFiles`.`LastRead` AS `Recents.RecentFiles.LastRead`,
-  `Recents->RecentFiles`.`LastPos` AS `Recents.RecentFiles.LastPos`,
-  `Recents->RecentFiles`.`RecentId` AS `Recents.RecentFiles.RecentId`,
-  `Recents->RecentFiles`.`FileId` AS `Recents.RecentFiles.FileId`
+  `Categories`.`Id` AS `Categories.Id`,
+  `Categories->FileCategory`.`Id` AS `Categories.FileCategory.Id`,
+  `Categories->FileCategory`.`CategoryId` AS `Categories.FileCategory.CategoryId`,
+  `Categories->FileCategory`.`FileId` AS `Categories.FileCategory.FileId`
 FROM (
     SELECT
       `File`.`Id`,
       `File`.`Name`,
-      `File`.`Duration`,
       `File`.`FullPath`,
       `File`.`Type`,
-      `File`.`Size`,
-      `File`.`CreatedAt`,
       `File`.`DirectoryId`,
-      `File`.`FolderId`,
-      `File`.`Id`,
-      `File`.`Name`,
-      `File`.`DirectoryId`,
-      `File`.`Type`,
-      `File`.`Duration`
+      REPLACE(Name, '[', '0') AS `N`,
+      (
+        Select
+          FileId
+        from FavoriteFiles
+        where
+          FileId == File.Id
+          and FavoriteId == 'b1d0p'
+      ) AS `isFav`,
+      (
+        Select
+          LastPos
+        from RecentFiles
+        where
+          FileId == File.Id
+          and RecentId == 'rsh0o'
+      ) AS `CurrentPos`,
+      (
+        Select
+          LastRead
+        from RecentFiles
+        where
+          FileId == File.Id
+          and RecentId == 'rsh0o'
+      ) AS `LastRead`
     FROM `Files` AS `File`
     WHERE
-      (`File`.`Name` LIKE '%%')
+      `File`.`Name` LIKE '%%'
       AND (
         SELECT
-          `RecentFiles`.`Id`
-        FROM `RecentFiles` AS `RecentFiles`
-        INNER JOIN `Recents` AS `Recent` ON `RecentFiles`.`RecentId` = `Recent`.`Id`
-          AND `Recent`.`Id` = 'rsh0o'
+          `FileCategory`.`Id`
+        FROM `FileCategories` AS `FileCategory`
+        INNER JOIN `Categories` AS `Category` ON `FileCategory`.`CategoryId` = `Category`.`Id`
+          AND `Category`.`Id` = 'tna2g'
         WHERE
-          (`File`.`Id` = `RecentFiles`.`FileId`)
+          (`File`.`Id` = `FileCategory`.`FileId`)
         LIMIT
           1
       ) IS NOT NULL
+    ORDER BY
+      `N`
     LIMIT
-      0, 27
+      0, 21
   ) AS `File`
-INNER JOIN `RecentFiles` AS `Recents->RecentFiles` ON `File`.`Id` = `Recents->RecentFiles`.`FileId`
-INNER JOIN `Recents` AS `Recents` ON `Recents`.`Id` = `Recents->RecentFiles`.`RecentId`
-  AND `Recents`.`Id` = 'rsh0o';
+INNER JOIN `FileCategories` AS `Categories->FileCategory` ON `File`.`Id` = `Categories->FileCategory`.`FileId`
+INNER JOIN `Categories` AS `Categories` ON `Categories`.`Id` = `Categories->FileCategory`.`CategoryId`
+  AND `Categories`.`Id` = 'tna2g'
+ORDER BY
+  `N`;

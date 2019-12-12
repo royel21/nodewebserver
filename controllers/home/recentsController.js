@@ -1,7 +1,8 @@
 const db = require('../../models');
+const helper = require('./file-helper');
 
 var getRecentFiles = async (user, data) => {
-    console.time("rc");
+    
 
     let files = { count: 0, rows: [] };
 
@@ -34,7 +35,7 @@ var getRecentFiles = async (user, data) => {
             }]
         }
     });
-    console.timeEnd("rc");
+    
     return files;
 }
 
@@ -45,7 +46,12 @@ exports.recent = (req, res) => {
     let begin = ((currentPage - 1) * itemsPerPage) || 0;
     let search = req.params.search || "";
 
-    getRecentFiles(req.user, { begin, itemsPerPage, search }).then(items => {
+    let order = [
+        [db.sqlze.literal("LastRead"), 'DESC']
+    ]
+
+    console.time("rec")
+    helper.getFiles(req.user, { id: req.user.Recent.Id ,begin, itemsPerPage, search }, db.recent, order).then(items => {
         var totalPages = Math.ceil(items.count / itemsPerPage);
         let view = req.query.partial ? "home/partial-items-view" : "home/index.pug";
         res.render(view, {
@@ -70,6 +76,7 @@ exports.recent = (req, res) => {
                 res.send(html);
             }
         });
+            console.timeEnd("rec")
         return null;
     }).catch(err => {
         console.log('fav-error', err);

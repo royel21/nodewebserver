@@ -68,10 +68,12 @@ var loadCategories = async(req, res) => {
         } else {
             res.send(html);
         }
+        console.timeEnd('admin-cat')
     });
 }
 
 exports.categories = (req, res) => {
+    console.time('admin-cat')
     loadCategories(req, res).catch(err => {
         if (err) console.log(err);
         res.status(500).send('Internal Server Error');

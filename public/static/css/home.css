@@ -166,8 +166,12 @@ pointer-events: none;
 }
 
 @media (max-width: 450px) {
+    .items{
+        width: 170px;
+        height: 210px;
+    }
     .item-video {
-        width: 165px;
+        width: 160px;
         height: 200px;
     }
     #content {
@@ -187,4 +191,11 @@ pointer-events: none;
     .item-btns .item-del {
         font-size: 18px;
     }
+}
+@media (max-width: 400px){
+    #cat-selector #cat-select{
+        height: 33px;
+        width: 95px;
+    }
+    
 }

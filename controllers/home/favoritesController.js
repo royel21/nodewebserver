@@ -1,22 +1,30 @@
 const db = require('../../models');
+const helper = require('./file-helper');
 
-var getFavoriteFiles = async(user, data) => {
+var getFavoriteFiles = async (user, data) => {
 
     console.time("rc");
     files = { count: 0, rows: [] };
     if (user.Role.includes('admin')) return files;
 
-    let favorite = await user.getFavorite();
-    files.rows = await favorite.getFiles({
+    files = await db.file.findAndCountAll({
         attributes: {
             include: [
-                'Id', 'Name', 'DirectoryId', 'Type', 'Duration', [db.sqlze.literal("REPLACE(Name, '[','0')"), 'N'],
-                [db.sqlze.literal("(Select LastPos from RecentFiles where FileId == File.Id and RecentId == '" + user.Recent.Id + "')"), "CurrentPos"]
+                [db.sqlze.literal("REPLACE(Name, '[','0')"), 'N'],
+                [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" + user.Favorite.Id + "')"), "isFav"],
+                [db.sqlze.literal("(Select LastPos from RecentFiles where FileId == File.Id and RecentId == '" + user.Recent.Id + "')"), "CurrentPos"],
+                [db.sqlze.literal("(Select LastRead from RecentFiles where FileId == File.Id and RecentId == '" + user.Recent.Id + "')"), "LastRead"]
             ]
         },
         order: [
             [db.sqlze.col('N')]
         ],
+        include: [{
+            model: db.favorite,
+            where: {
+                Id: user.Favorite.Id
+            }
+        }],
         offset: data.begin,
         limit: data.itemsPerPage,
         where: {
@@ -27,20 +35,22 @@ var getFavoriteFiles = async(user, data) => {
             }]
         }
     });
-    files.count = await db.favoriteFile.count({ where: { FavoriteId: favorite.Id } });
     console.timeEnd("rc");
     return files;
 }
 
 exports.favorite = (req, res) => {
-
-    let screenw = parseInt(req.cookies['screen-w']);
+    console.time("fav")
     let itemsPerPage = req.params.items || req.query.items || req.itemsPerPage;
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage) || 0;
     let search = req.params.search || "";
-
-    getFavoriteFiles(req.user, { begin, itemsPerPage, search }).then(items => {
+    let order = [
+        [db.sqlze.col('N')]
+    ]
+    helper.getFiles(req.user, {
+        id: req.user.Favorite.Id, begin, itemsPerPage, search
+    }, db.favorite, order).then(items => {
         var totalPages = Math.ceil(items.count / itemsPerPage);
         let view = req.query.partial ? "home/partial-items-view" : "home/index.pug";
         res.render(view, {
@@ -64,6 +74,7 @@ exports.favorite = (req, res) => {
             } else {
                 res.send(html);
             }
+            console.timeEnd("fav")
         });
 
     }).catch(err => {
@@ -89,7 +100,7 @@ exports.postFavorite = (req, res) => {
     });
 }
 
-var removeFile = async(user, id) => {
+var removeFile = async (user, id) => {
     let file = await db.file.findOne({ where: { Id: id } });
     if (file) {
         await user.Favorite.removeFile(file);

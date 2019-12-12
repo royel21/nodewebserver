@@ -14,18 +14,18 @@ mixin items-view(items, pagedatas, isFile, categories)
                 
         .items-list(id=(isFile ? "files-list" : "folders-list"))
             each item in items.rows
-                .items(tabindex="0" id=item.Id, data-duration=item.Duration data-type=(isFile ? item.Type : ""))
+                .items(tabindex="0" id=item.Id, data-type=(isFile ? item.Type : ""))
                     .item-video
                         .item-btns
                             if item.Type
                                 span.item-play.far.fa-play-circle
-                                span.item-progress= ((item.dataValues.CurrentPos+1) || 1)+"/"+item.Duration 
+                                span.item-progress= ((item.CurrentPos+1) || 1)+"/"+item.Duration 
                                 if pagedatas.action.includes("/favorites")
                                     span.item-del.far.fa-trash-alt
                                 else
                                     if pagedatas.action.includes("/recents")
                                         span.item-del.far.fa-trash-alt
-                                    span.item-fav.fa-star(class=""+(item.dataValues.isFav ? "text-warning fas" : "far"))
+                                    span.item-fav.fa-star(class=""+(item.isFav ? "text-warning fas" : "far"))
                             else
                                 span.float-right.fas.fa-folder
                         .item-cover

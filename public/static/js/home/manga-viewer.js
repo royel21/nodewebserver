@@ -239,29 +239,33 @@ var prevImg = () => {
 }
 
 var nextManga = () => {
+    if(mLoading) return;
+
     let next = $('#' + currentFile.id).next()[0];
-    if (next && !mLoading) {
+    if (next) {
         processFile(next);
         selectItem($('.items').index(next));
     }else if(currentPage < totalPage){
+        mLoading = true;
         loadPartialPage(genUrl(currentPage+1), ()=>{
-
-            processFile($('.items').get(0));
             selectItem(0);
+            processFile($('.items').get(0));
         });
     }
 }
 
 var prevManga = () => {
+     if(mLoading) return;
+     
     let prev = $('#' + currentFile.id).prev()[0];
-    if (prev && !mLoading) {
+    if (prev) {
         processFile(prev);
         selectItem($('.items').index(prev));
     }else if(currentPage > 1){
+        mLoading = true;
         loadPartialPage(genUrl(currentPage-1), ()=>{
-
-            processFile($('.items').get($('.items').length-1));
             selectItem($('.items').length-1);
+            processFile($('.items').get($('.items').length-1));
         });
     }
 };

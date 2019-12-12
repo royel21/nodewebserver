@@ -1,7 +1,8 @@
 const db = require('../../models');
+const helper = require('./file-helper');
 
 var loadCategories = async(req, res) => {
-    console.time('s');
+    console.time("cat")
     let currentCat = await req.params.cat;
 
     if (!currentCat) {
@@ -11,8 +12,6 @@ var loadCategories = async(req, res) => {
             return res.redirect('/categories/' + firstCat.Name + partial);
         }
     }
-
-    let user = req.user;
 
     let search = req.params.search || "";
     let itemsPerPage = parseInt(req.params.items || req.query.items) || req.itemsPerPage;
@@ -24,38 +23,39 @@ var loadCategories = async(req, res) => {
     let items = { count: 0, rows: [] };
     if (categories.length > 0) {
         let cat = categories.find((c) => { return c.Name.includes(currentCat) });
-
-        items = await db.file.findAndCountAll({
-            attributes: {
-                include: [
-                    'Id', 'Name', 'DirectoryId', 'Type', 'Duration', [db.sqlze.literal("REPLACE(Name, '[','0')"), 'N'],
-                    [db.sqlze.literal("(Select LastPos from RecentFiles where FileId == File.Id and RecentId == '" + user.Recent.Id + "')"), "CurrentPos"],
-                    [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" + user.Favorite.Id + "')"), "isFav"]
-                ]
-            },
-            include: [{
-                model: db.category,
-                where: {
-                    Id: cat.Id
-                }
-            }],
-            order: [db.sqlze.col('N')],
-            offset: begin,
-            limit: itemsPerPage,
-            where: {
-                [db.Op.and]: [{
-                    Name: {
-                        [db.Op.like]: "%" + search + "%"
-                    }
-                }]
-            }
-        });
+        let order = [db.sqlze.col('N')]
+        items = await helper.getFiles(req.user, {id: cat.Id, begin, itemsPerPage, search}, db.category, order);
+        // let user = req.user;
+        // items = await db.file.findAndCountAll({
+        //     attributes: {
+        //         include: [
+        //             'Id', 'Name', 'DirectoryId', 'Type', 'Duration', [db.sqlze.literal("REPLACE(Name, '[','0')"), 'N'],
+        //             [db.sqlze.literal("(Select LastPos from RecentFiles where FileId == File.Id and RecentId == '" + user.Recent.Id + "')"), "CurrentPos"],
+        //             [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" + user.Favorite.Id + "')"), "isFav"]
+        //         ]
+        //     },
+        //     include: [{
+        //         model: db.category,
+        //         where: {
+        //             Id: cat.Id
+        //         }
+        //     }],
+        //     order: [db.sqlze.col('N')],
+        //     offset: begin,
+        //     limit: itemsPerPage,
+        //     where: {
+        //         [db.Op.and]: [{
+        //             Name: {
+        //                 [db.Op.like]: "%" + search + "%"
+        //             }
+        //         }]
+        //     }
+        // });
     }
 
     let totalPages = Math.ceil(items.count / itemsPerPage);
     let view = req.query.partial ? "home/partial-items-view" : "home/index.pug";
 
-    console.timeEnd('s');
     return res.render(view, {
         title: "Home Server",
         items,
@@ -80,6 +80,7 @@ var loadCategories = async(req, res) => {
         } else {
             res.send(html);
         }
+        console.timeEnd("cat")
     });
 }
 

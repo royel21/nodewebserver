@@ -1,4 +1,4 @@
-var isAndroid = /(android)/i.test(navigator.userAgent);
+var isAndroid = /(android)|(iphone)/i.test(navigator.userAgent);
 // if (isAndroid) {
 //     window.history.pushState({}, "Log In", window.location.href);
 // }

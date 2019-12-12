@@ -59,10 +59,12 @@ var loadFolders = async(req, res) => {
         } else {
             res.send(html);
         }
+        console.timeEnd('admin-folder')
     });
 }
 
 exports.folders = (req, res) => {
+    console.time('admin-folder')
     loadFolders(req, res).catch(err => {
         if (err) console.log(err);
         res.status(500).send('Internal Server Error');

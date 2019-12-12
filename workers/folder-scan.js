@@ -36,7 +36,7 @@ createCover = async(dir, files) => {
 
             if (img) {
 
-                await sharp(path.join(dir, img.FileName)).resize({ height: 200 }).toFile(FolderCover);
+                await sharp(path.join(dir, img.FileName)).jpeg({ quality: 75 }).resize({ height: 160 }).toFile(FolderCover);
 
             } else {
                 folderCovers.push({
