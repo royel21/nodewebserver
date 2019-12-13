@@ -9,7 +9,9 @@
         "test.html",
         "files.db",
         "countfiles.js",
-        "cert/*"
+        "cert/*",
+        "files.db-journal",
+        "public/*/**"
     ],
     "env": {
         "NODE_ENV": "development"

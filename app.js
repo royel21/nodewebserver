@@ -1,5 +1,4 @@
-const https = require('https');
-const spdy = require('spdy');
+const https = require('http');
 const fs = require('fs-extra')
 const createError = require('http-errors');
 const express = require('express');
@@ -96,10 +95,12 @@ app.use(function(err, req, res, next) {
 const port = 4664;
 
 db.init().then(() => {
-    let server = https.createServer({
-            key: fs.readFileSync('./cert/server.key'),
-            cert: fs.readFileSync('./cert/server.cert')
-        }, app)
+    let server = https.createServer(
+            // {
+            //     key: fs.readFileSync('./cert/server.key'),
+            //     cert: fs.readFileSync('./cert/server.cert')
+            // }, 
+            app)
         .listen(4664);
 
     console.log('Node server is running.. at https://localhost:' + port);
