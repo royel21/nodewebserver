@@ -139,6 +139,8 @@ processFile = (item) => {
     if(location.href === '/' || location.href.includes('/recents'))
         $('#files-list').prepend(item);
     mediaContainer.focus();
+    //Select current file
+    selectItem($('.items').index(item));
 }
 
 const chooseCategory = (el) => {
@@ -164,7 +166,7 @@ $('body').on('click', '#next-list-page, #prev-list-page', (e)=>{
     let url = genUrl(page);
     loadPartialPage(url);
 });
-$('body').on('click', '.items .fa-play-circle', (e) => {
+$('body').on('click', '.items .item-play', (e) => {
     processFile(e.target.closest('.items'));
 });
 

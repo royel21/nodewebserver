@@ -18,7 +18,10 @@ mixin items-view(items, pagedatas, isFile, categories)
                     .item-video
                         .item-btns
                             if item.Type
-                                span.item-play.far.fa-play-circle
+                                if item.Type.includes('Manga')
+                                    span.item-play.fas.fa-book-open
+                                else
+                                    span.item-play.far.fa-play-circle
                                 span.item-progress= ((item.CurrentPos+1) || 1)+"/"+item.Duration 
                                 if pagedatas.action.includes("/favorites")
                                     span.item-del.far.fa-trash-alt

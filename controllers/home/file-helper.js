@@ -5,8 +5,6 @@ exports.getFiles = async (user, data, model, order) => {
 
     let files = { count: 0, rows: [] };
 
-    if (user.Role.includes('admin')) return files;
-
     files = await db.file.findAndCountAll({
         attributes: {
             include: [
