@@ -1,12 +1,17 @@
-const mangaViewer = document.getElementById('manga-viewer');
+
+const ElById = (id) => document.getElementById(id); 
+
+const mangaViewer = ElById('manga-viewer');
 const mImageView = mangaViewer.querySelector('#myimg');
-const closeMViewer = document.getElementById('close-manga-modal');
-const currentImg = document.getElementById('myimg');
-const mloadingAnimation = document.getElementById('m-loading');
-const imgpreview = document.getElementById('img-preview');
-const mSlider = document.getElementById('m-range');
+const closeMViewer = ElById('close-manga-modal');
+const currentImg = ElById('myimg');
+const mloadingAnimation = ElById('m-loading');
+const imgpreview = ElById('img-preview');
+const mSlider = ElById('m-range');
+const mName = ElById('manga-name');
 
 var disconnected = false;
+
 
 Array.prototype.IndexOfUndefined = function(from) {
     var i = from;
@@ -15,6 +20,10 @@ Array.prototype.IndexOfUndefined = function(from) {
             return i;
         }
     }
+}
+
+const getItemIndex = (item) =>{
+    return [...document.querySelectorAll('.items')].indexOf(item);
 }
 
 var map = (val, min, max) => { return (val - min) / (max - min) }
@@ -173,7 +182,7 @@ var openManga = (item) => {
 
     $('#img-preview img').each((i, el) => { el.src = "" });
 
-    $('#manga-name').text($("#" + currentFile.id).text());
+    mName.textContent = item.textContent;
     let src = item.getElementsByTagName('img')[0].src;
     mImageView.src = src;
     mloadingAnimation.style.display = "flex";
@@ -241,13 +250,13 @@ var prevImg = () => {
 var nextManga = () => {
     if(mLoading) return;
 
-    let next = $('#' + currentFile.id).next()[0];
-    if (next) {
-        selectItem($('.items').index(next));
+    let item = ElById(currentFile.id).nextSibling;
+    if (item) {
+        processFile(item);
     }else if(currentPage < totalPage){
         mLoading = true;
         loadPartialPage(genUrl(currentPage+1), ()=>{
-            processFile($('.items').get(0));
+            processFile(document.querySelector('.items:last-child'));
         });
     }
 }
@@ -255,14 +264,13 @@ var nextManga = () => {
 var prevManga = () => {
      if(mLoading) return;
 
-    let prev = $('#' + currentFile.id).prev()[0];
-    if (prev) {
-        processFile(prev);
+    let item = ElById(currentFile.id).previousSibling;
+    if (item) {
+        processFile(item);
     }else if(currentPage > 1){
         mLoading = true;
         loadPartialPage(genUrl(currentPage-1), ()=>{
-            let $items = $('.items');
-            processFile($items.get($items.length-1));
+            processFile(document.querySelector('.items:last-child'));
         });
     }
 };

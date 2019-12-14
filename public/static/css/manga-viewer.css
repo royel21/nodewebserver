@@ -115,7 +115,10 @@ body #img-preview::-webkit-scrollbar {
 
 #manga-viewer:-webkit-full-screen .item-progress{
     background-color: rgba(0,0,0,.7);
-    bottom: 5px;
+    bottom: 10px;
+    left: 225px;
+    border-radius: 5px;
+    padding: 4px 10px;
 }
 
 #manga-viewer #img-viewer {
