@@ -3,7 +3,7 @@ const mediaContainer = document.getElementById('media-container');
 const calCol = () => colNum = Math.floor($('#files-list').width() / $('.items').get(0).offsetWidth);
 
 var page = 1;
-var selectedIndex = local.getItem('selectedIndex') || 0;
+var selectedIndex = parseInt(local.getItem('selectedIndex')) || 0;
 var totalPage;
 var currentPage;
 
@@ -90,6 +90,11 @@ window.onbeforeunload = (e) => {
     }
 }
 
+const getElByIndex = (index) => [...document.querySelectorAll('.items')][index];
+
+const getItemIndex = (item) => {
+    return [...document.querySelectorAll('.items')].indexOf(item);
+}
 
 const calPages = () => {
     let data = document.getElementById('container').dataset;
@@ -99,7 +104,7 @@ const calPages = () => {
 
 const selectItem = (index) => {
     selectedIndex = index;
-    var nextEl = $('.items').get(index);
+    var nextEl = getElByIndex(index);
     if (nextEl != undefined) {
         var scroll = contentScroll.scrollTop,
             elofft = nextEl.offsetTop;
@@ -126,21 +131,49 @@ const selectItem = (index) => {
 
 processFile = (item) => {
 
-    if (item.dataset.type.includes("Video")) {
-        $('#manga-viewer').addClass('d-none');
-        $('#video-viewer').removeClass('d-none');
-        playVideo(item);
-    } else {
-        $('#manga-viewer').removeClass('d-none');
-        $('#video-viewer').addClass('d-none');
-        openManga(item);
+    lastItem.id = item.id;
+
+    switch (item.dataset.type) {
+        case "Manga":
+            {
+                $('#manga-viewer').removeClass('d-none');
+                $('#video-viewer').addClass('d-none');
+                openManga(item);
+
+                mediaContainer.focus();
+                break;
+            }
+        case "Video":
+            {
+                $('#manga-viewer').addClass('d-none');
+                $('#video-viewer').removeClass('d-none');
+                playVideo(item);
+
+                mediaContainer.focus();
+                break;
+            }
+        default:
+            {
+                config.folder.lastfolder = window.location.pathname;
+                config.folder.folderIndex = selectedIndex;
+
+
+                lastIndex = selectedIndex;
+                local.setItem('folder', item.id);
+                let url = "/folder-content/" + item.id;
+
+                loadPartialPage(url, () => {
+                    selectItem(0);
+                });
+            }
     }
-    
-    if(location.href === '/' || location.href.includes('/recents'))
+
+
+    if (location.href === '/' || location.href.includes('/recents'))
         $('#files-list').prepend(item);
-    mediaContainer.focus();
     //Select current file
-    selectItem($('.items').index(item));
+    selectItem(getItemIndex(item));
+
 }
 
 const chooseCategory = (el) => {
@@ -153,18 +186,25 @@ const chooseCategory = (el) => {
     }
 }
 
-$('body').on('click', '#next-list-page, #prev-list-page', (e)=>{
+$('body').on('click', '#next-list-page, #prev-list-page', (e) => {
+    let action = e.target.closest('span').id;
     let page = currentPage;
-    if(e.target.closest('span').id === 'next-list-page'){
+    if (action === 'next-list-page') {
         page++;
-    }else{
-       page--;
+    } else {
+        page--;
     }
 
-    if(page === 0 || page === totalPage+1) return;
-    
+    if (page === 0 || page === totalPage + 1) return;
+
     let url = genUrl(page);
-    loadPartialPage(url);
+    loadPartialPage(url, ()=>{
+        if (action === 'next-list-page') {
+           selectItem(0);
+        } else {
+           selectItem($('.items').length-1);
+        }
+    });
 });
 $('body').on('click', '.items .item-play', (e) => {
     processFile(e.target.closest('.items'));
@@ -178,18 +218,8 @@ $('body').on('keydown', '.items-list', (e) => {
     switch (e.keyCode) {
         case ENTER:
             {
-                let item = e.target.closest('.items')
-                if (item.dataset.type) {
-                    processFile(item);
-                } else {
-                    let url = "/folder-content/" + item.id;
-                    lastIndex = selectedIndex;
-                    local.setItem('folder', item.id);
-                    config.folder.folderIndex = selectedIndex;
-                    loadPartialPage(url, () => {
-                        selectItem(0);
-                    });
-                }
+                let item = e.target.closest('.items');
+                processFile(item);
                 wasProcesed = true;
                 break;
             }
@@ -197,15 +227,15 @@ $('body').on('keydown', '.items-list', (e) => {
             {
                 if (selectedIndex > 0) {
                     selectItem(selectedIndex - 1);
-                }else
-                if (currentPage > 1 || e.ctrlKey && currentPage > 1 ) {
+                } else
+                if (currentPage > 1 || e.ctrlKey && currentPage > 1) {
 
-                    let url = genUrl(currentPage-1);
+                    let url = genUrl(currentPage - 1);
                     loadPartialPage(url, () => {
                         selectItem($('.items').length - 1);
                     });
                 }
-                
+
                 wasProcesed = true;
                 break;
             }
@@ -214,9 +244,9 @@ $('body').on('keydown', '.items-list', (e) => {
                 if (e.ctrlKey) {
                     goBack();
                 } else
-                    if (selectedIndex - colNum >= 0) {
-                        selectItem(selectedIndex - colNum);
-                    }
+                if (selectedIndex - colNum >= 0) {
+                    selectItem(selectedIndex - colNum);
+                }
                 wasProcesed = true;
                 break;
             }
@@ -224,7 +254,7 @@ $('body').on('keydown', '.items-list', (e) => {
             {
                 if (selectedIndex < totalitem - 1) {
                     selectItem(selectedIndex + 1);
-                }else
+                } else
                 if (currentPage < totalPage || e.ctrlKey && currentPage < totalPage) {
 
                     let url = $('#pager .active').next().find('a').attr('href');
@@ -232,7 +262,7 @@ $('body').on('keydown', '.items-list', (e) => {
                         selectItem(0);
                     });
                 }
-                
+
                 wasProcesed = true;
                 break;
             }
@@ -265,30 +295,15 @@ $('body').on('click', '.items', (e) => {
     if (!timeOut) {
         timeOut = setTimeout(() => {
             if (dblclick > 1 && lastItem.id === item.id) {
-                lastItem.id = item.id;
-
-                if (item.dataset.type) {
-                    processFile(item);
-                } else {
-                    config.folder.lastfolder = window.location.pathname;
-                    config.folder.folderIndex = selectedIndex;
-
-                    let url = "/folder-content/" + item.id;
-
-                    lastIndex = selectedIndex;
-                    local.setItem('folder', item.id);
-                    loadPartialPage(url, () => {
-                        selectItem(0);
-                    });
-                }
+                processFile(item);
             }
-            
+
             dblclick = 0;
             clearTimeout(timeOut);
             timeOut = null;
         }, 300);
     }
-    selectItem($('.items').index(item));
+    selectItem(getItemIndex(item));
     lastItem.id = item.id;
 });
 
@@ -308,14 +323,22 @@ var goBack = () => {
 $('body').on('click', '#back', () => {
     goBack();
 });
+var lastScroll;
 
 $('#content').scroll((e) => {
     let distance = $('#content').scrollTop();
-    if (distance > 500) {
-        $('#scroll-up').removeClass('d-none');
-    } else {
-        $('#scroll-up').addClass('d-none');
-    }
+//     if (distance > 500) {
+//         $('#scroll-up').removeClass('d-none');
+//     } else {
+//         $('#scroll-up').addClass('d-none');
+//     }
+
+//     if(lastScroll < distance){
+//        $('#controls').addClass('d-none');
+//     }else{
+//        $('#controls').removeClass('d-none');
+//     }
+//     lastScroll = distance;
 });
 
 $('#content').on('click', '#scroll-up', (e) => {
@@ -328,12 +351,12 @@ $(() => {
 });
 
 
-$('body').on('click', '.items .item-fav', (e)=>{
+$('body').on('click', '.items .item-fav', (e) => {
     let item = e.target.classList[0] === "items" ? e.target : e.target.closest('.items');
     console.log(e.target, item.id);
-    $.post('/favorites/addfav',{id: item.id, _csrf: $('#search-form input[name=_csrf]').val()}, (resp) => {
+    $.post('/favorites/addfav', { id: item.id, _csrf: $('#search-form input[name=_csrf]').val() }, (resp) => {
         console.log(resp);
-        if(resp.result){
+        if (resp.result) {
             $(e.target).toggleClass('text-warning far fas');
         }
     });
@@ -342,13 +365,13 @@ $('body').on('click', '.items .item-fav', (e)=>{
 
 });
 
-$('body').on('click', '.items .item-del', (e)=>{
+$('body').on('click', '.items .item-del', (e) => {
     let item = e.target.classList[0] === "items" ? e.target : e.target.closest('.items');
-    let action = location.href.includes('favorites') ? '/favorites/remove' : '/recents/remove' ;
-    $.post(action, {id: item.id, _csrf: $('#search-form input[name=_csrf]').val()}, (resp) => {
+    let action = location.href.includes('favorites') ? '/favorites/remove' : '/recents/remove';
+    $.post(action, { id: item.id, _csrf: $('#search-form input[name=_csrf]').val() }, (resp) => {
         console.log(resp);
-        if(resp.result)
-            $(item).fadeOut(()=>{ item.remove(); });
+        if (resp.result)
+            $(item).fadeOut(() => { item.remove(); });
     });
 
     e.preventDefault();
@@ -360,4 +383,3 @@ document.onkeydown = (e) => {
     playerKeyDown(e);
     mangaVewerKeyDown(e);
 }
-

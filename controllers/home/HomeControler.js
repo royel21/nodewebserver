@@ -3,7 +3,7 @@ const db = require('../../models');
 
 const mypassport = require('../../passport_config')(passport);
 
-var processIndex = async (req, res) => {
+var processIndex = async(req, res) => {
     console.time('home');
     let isFile = /video|content/ig.test(req.url);
 
@@ -44,8 +44,13 @@ var processIndex = async (req, res) => {
     let action = isManga ? "/mangas/" : isFile ? "/videos/" : "/folders/";
 
     if (isFile || foldersId) {
-        query.attributes.include[1] = [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" + req.user.Favorite.Id + "')"), "isFav"];
-        query.attributes.include[2] = [db.sqlze.literal("(Select LastPos from RecentFiles where FileId == File.Id and RecentId == '" + req.user.Recent.Id + "')"), "CurrentPos"];
+        query.attributes.include[1] = [db.sqlze.literal(
+            "(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" + req.user.Favorite.Id +
+            "')"), "isFav"];
+        query.attributes.include[2] = [db.sqlze.literal(
+                "(Select LastPos from RecentFiles where FileId == File.Id and RecentId == '" + req.user.Recent.Id + "')"),
+            "CurrentPos"
+        ];
         if (foldersId) {
             action = "/folder-content/" + foldersId + "/"
             query.where.FolderId = foldersId;
@@ -188,7 +193,8 @@ exports.postSearch = (req, res) => {
     let url = `/folders/1/${itemsPerPage}/${search}?partial=true`;
 
     if (/video|content|manga/ig.test(req.url)) {
-        url = (folderId ? `/folder-content/${folderId}` : /mangas/ig.test(req.url) ? "/mangas" : '/videos') + `/1/${itemsPerPage}/${search}?partial=true`;
+        url = (folderId ? `/folder-content/${folderId}` : /mangas/ig.test(req.url) ? "/mangas" : '/videos') +
+            `/1/${itemsPerPage}/${search}?partial=true`;
     }
 
     res.redirect(url);

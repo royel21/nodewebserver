@@ -1,8 +1,8 @@
 const db = require('../../models');
 const helper = require('./file-helper');
 
-var getRecentFiles = async (user, data) => {
-    
+var getRecentFiles = async(user, data) => {
+
 
     let files = { count: 0, rows: [] };
 
@@ -11,9 +11,12 @@ var getRecentFiles = async (user, data) => {
     files = await db.file.findAndCountAll({
         attributes: {
             include: [
-                [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '"+user.Favorite.Id+"')"), "isFav"],
-                [db.sqlze.literal("(Select LastPos from RecentFiles where FileId == File.Id and RecentId == '"+user.Recent.Id+"')"), "CurrentPos"],
-                [db.sqlze.literal("(Select LastRead from RecentFiles where FileId == File.Id and RecentId == '"+user.Recent.Id+"')"), "LastRead"]
+                [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" +
+                    user.Favorite.Id + "')"), "isFav"],
+                [db.sqlze.literal("(Select LastPos from RecentFiles where FileId == File.Id and RecentId == '" +
+                    user.Recent.Id + "')"), "CurrentPos"],
+                [db.sqlze.literal("(Select LastRead from RecentFiles where FileId == File.Id and RecentId == '" +
+                    user.Recent.Id + "')"), "LastRead"]
             ]
         },
         order: [
@@ -35,7 +38,7 @@ var getRecentFiles = async (user, data) => {
             }]
         }
     });
-    
+
     return files;
 }
 
@@ -51,7 +54,7 @@ exports.recent = (req, res) => {
     ]
 
     console.time("rec")
-    helper.getFiles(req.user, { id: req.user.Recent.Id ,begin, itemsPerPage, search }, db.recent, order).then(items => {
+    helper.getFiles(req.user, { id: req.user.Recent.Id, begin, itemsPerPage, search }, db.recent, order).then(items => {
         var totalPages = Math.ceil(items.count / itemsPerPage);
         let view = req.query.partial ? "home/partial-items-view" : "home/index.pug";
         res.render(view, {
@@ -76,7 +79,7 @@ exports.recent = (req, res) => {
                 res.send(html);
             }
         });
-            console.timeEnd("rec")
+        console.timeEnd("rec")
         return null;
     }).catch(err => {
         console.log('fav-error', err);
@@ -91,7 +94,7 @@ exports.postSearch = (req, res) => {
 }
 
 
-var removeFile = async (user, id) => {
+var removeFile = async(user, id) => {
     let file = await db.file.findOne({ where: { Id: id } });
     if (file) {
         await user.Recent.removeFile(file);

@@ -1,5 +1,4 @@
-
-const ElById = (id) => document.getElementById(id); 
+const ElById = (id) => document.getElementById(id);
 
 const mangaViewer = ElById('manga-viewer');
 const mImageView = mangaViewer.querySelector('#myimg');
@@ -22,12 +21,11 @@ Array.prototype.IndexOfUndefined = function(from) {
     }
 }
 
-const getItemIndex = (item) =>{
-    return [...document.querySelectorAll('.items')].indexOf(item);
-}
-
 var map = (val, min, max) => { return (val - min) / (max - min) }
-var mapNum = (val, in_min, in_max, out_min, out_max) => { return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min; }
+var mapNum = (val, in_min, in_max, out_min, out_max) => {
+    return (val - in_min) * (out_max - out_min) / (in_max - in_min) +
+        out_min;
+}
 
 var mangaConfig = {
     keys: {
@@ -112,7 +110,7 @@ var updatePageNumber = () => {
     mSlider.value = currentFile.pos;
     pimages[currentFile.pos].scrollIntoView();
     mSlider.style.setProperty('--val', +currentFile.pos);
-    $('#'+currentFile.id+' .item-progress, #img-viewer .item-progress').text((currentFile.pos + 1) + "/" + mTotalPages);
+    $('#' + currentFile.id + ' .item-progress, #img-viewer .item-progress').text((currentFile.pos + 1) + "/" + mTotalPages);
 };
 
 
@@ -146,7 +144,7 @@ socket.on("loaded-zipedimage", (data) => {
 
 socket.on('disconnect', error => {
     console.log(error);
-    if(error.includes('transport')){
+    if (error.includes('transport')) {
         location.href = '/login';
     }
 });
@@ -156,11 +154,12 @@ var mclose = () => {
         if (document.fullscreenElement) {
             fullScreen();
         }
-        stopClock();
+        selectItem(selectedIndex);
     });
+    stopClock();
     $('#img-preview img').each((i, el) => { el.src = "" });
-     if(currentFile.pos > 0){
-        socket.emit('add-or-update-recent', {id: currentFile.id, pos: currentFile.pos});
+    if (currentFile.pos > 0) {
+        socket.emit('add-or-update-recent', { id: currentFile.id, pos: currentFile.pos });
     }
 }
 
@@ -171,9 +170,9 @@ $('.btn-fullscr-m').click(fullScreen);
 
 var openManga = (item) => {
 
-    if(currentFile.id !== item.Id){
-         socket.emit('add-or-update-recent', currentFile);
-    }else{
+    if (currentFile.id !== item.Id) {
+        socket.emit('add-or-update-recent', currentFile);
+    } else {
         return false;
     }
 
@@ -248,28 +247,28 @@ var prevImg = () => {
 }
 
 var nextManga = () => {
-    if(mLoading) return;
+    if (mLoading) return;
 
     let item = ElById(currentFile.id).nextSibling;
     if (item) {
         processFile(item);
-    }else if(currentPage < totalPage){
+    } else if (currentPage < totalPage) {
         mLoading = true;
-        loadPartialPage(genUrl(currentPage+1), ()=>{
+        loadPartialPage(genUrl(currentPage + 1), () => {
             processFile(document.querySelector('.items:last-child'));
         });
     }
 }
 
 var prevManga = () => {
-     if(mLoading) return;
+    if (mLoading) return;
 
     let item = ElById(currentFile.id).previousSibling;
     if (item) {
         processFile(item);
-    }else if(currentPage > 1){
+    } else if (currentPage > 1) {
         mLoading = true;
-        loadPartialPage(genUrl(currentPage-1), ()=>{
+        loadPartialPage(genUrl(currentPage - 1), () => {
             processFile(document.querySelector('.items:last-child'));
         });
     }

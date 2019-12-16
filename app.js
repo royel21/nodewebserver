@@ -59,7 +59,8 @@ app.use(function(req, res, next) {
     } else {
         let screenw = parseInt(req.cookies['screen-w']);
         app.locals.user = req.user;
-        req.itemsPerPage = screenw < 1900 ? 21 : 27;
+        req.itemsPerPage = app.locals.isAndroid ? 22 : screenw < 1900 ? 21 : 27;
+
         req.step = screenw < 1900 ? 7 : 9;
         if (req.url.includes('/admin') && !['manager', 'admin'].includes(req.user.Role)) {
             return res.redirect('/');

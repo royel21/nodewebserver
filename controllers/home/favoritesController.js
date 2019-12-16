@@ -1,7 +1,7 @@
 const db = require('../../models');
 const helper = require('./file-helper');
 
-var getFavoriteFiles = async (user, data) => {
+var getFavoriteFiles = async(user, data) => {
 
     console.time("rc");
     files = { count: 0, rows: [] };
@@ -11,9 +11,12 @@ var getFavoriteFiles = async (user, data) => {
         attributes: {
             include: [
                 [db.sqlze.literal("REPLACE(Name, '[','0')"), 'N'],
-                [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" + user.Favorite.Id + "')"), "isFav"],
-                [db.sqlze.literal("(Select LastPos from RecentFiles where FileId == File.Id and RecentId == '" + user.Recent.Id + "')"), "CurrentPos"],
-                [db.sqlze.literal("(Select LastRead from RecentFiles where FileId == File.Id and RecentId == '" + user.Recent.Id + "')"), "LastRead"]
+                [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" +
+                    user.Favorite.Id + "')"), "isFav"],
+                [db.sqlze.literal("(Select LastPos from RecentFiles where FileId == File.Id and RecentId == '" +
+                    user.Recent.Id + "')"), "CurrentPos"],
+                [db.sqlze.literal("(Select LastRead from RecentFiles where FileId == File.Id and RecentId == '" +
+                    user.Recent.Id + "')"), "LastRead"]
             ]
         },
         order: [
@@ -49,7 +52,10 @@ exports.favorite = (req, res) => {
         [db.sqlze.col('N')]
     ]
     helper.getFiles(req.user, {
-        id: req.user.Favorite.Id, begin, itemsPerPage, search
+        id: req.user.Favorite.Id,
+        begin,
+        itemsPerPage,
+        search
     }, db.favorite, order).then(items => {
         var totalPages = Math.ceil(items.count / itemsPerPage);
         let view = req.query.partial ? "home/partial-items-view" : "home/index.pug";
@@ -100,7 +106,7 @@ exports.postFavorite = (req, res) => {
     });
 }
 
-var removeFile = async (user, id) => {
+var removeFile = async(user, id) => {
     let file = await db.file.findOne({ where: { Id: id } });
     if (file) {
         await user.Favorite.removeFile(file);

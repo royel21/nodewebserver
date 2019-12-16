@@ -1,8 +1,15 @@
+#controls{
+    position: fixed;
+    left: 0;
+    right: 15px;
+    bottom: 0;
+}
+
 .items-list {
     display: flex;
     flex-wrap: wrap;
     min-height: 100%;
-    padding-bottom: 70px;
+    padding-bottom: 10px;
 }
 
 .items {
@@ -114,12 +121,12 @@ pointer-events: none;
     background-color: rgba(0, 18, 62, 0.95) !important;
     box-shadow: 0 0 10px;
     overflow: initial;
-    z-index: 2;
+    z-index: 999;
 }
 .item-name:hover,
 .item-video:hover>.item-name{
     display: inline-block;
-    z-index: 1000;
+    z-index: 999;
     top: 5px;
     line-height: 1.5;
 }
@@ -177,7 +184,7 @@ pointer-events: none;
     #content {
         min-height: 0;
         height: calc(100% - 40px);
-        padding-bottom: 40px;
+        padding-bottom: 46px;
     }
     .items img {
         max-width: 120px;

@@ -18,13 +18,13 @@ var loadCategories = async(req, res) => {
     let currentPage = parseInt(req.params.page) || 1;
     let begin = ((currentPage - 1) * itemsPerPage);
 
-    let categories = await db.category.findAll({order: ['Name']});
+    let categories = await db.category.findAll({ order: ['Name'] });
 
     let items = { count: 0, rows: [] };
     if (categories.length > 0) {
         let cat = categories.find((c) => { return c.Name.includes(currentCat) });
         let order = [db.sqlze.col('N')]
-        items = await helper.getFiles(req.user, {id: cat.Id, begin, itemsPerPage, search}, db.category, order);
+        items = await helper.getFiles(req.user, { id: cat.Id, begin, itemsPerPage, search }, db.category, order);
         // let user = req.user;
         // items = await db.file.findAndCountAll({
         //     attributes: {
