@@ -171,4 +171,8 @@ if (isAndroid) {
             socket.emit('add-or-update-recent', currentFile);
         }
     }, 30000);
+
+    if(document.body.offsetHeight < 750){
+        $('#files-list').css({paddingBottom: 60});
+    }
 }

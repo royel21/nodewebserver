@@ -314,7 +314,9 @@ body{
  }
 
 @media all and (max-width: 450px){
-    
+     ::-webkit-scrollbar {
+        display: none;
+    }
     #controls{
         display: flex;
         justify-content: space-between;

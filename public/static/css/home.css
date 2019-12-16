@@ -1,8 +1,7 @@
 #controls{
-    position: fixed;
-    left: 0;
-    right: 15px;
-    bottom: 0;
+    position: sticky;
+    top: 0;
+    width: 100%;
 }
 
 .items-list {
@@ -170,12 +169,15 @@ pointer-events: none;
     #cat-selector{
         position: initial;
     }
+    .items-list {
+    justify-content: center;
+    }
 }
 
 @media (max-width: 450px) {
     .items{
-        width: 170px;
-        height: 210px;
+        width: 180px;
+        height: 220px;
     }
     .item-video {
         width: 160px;

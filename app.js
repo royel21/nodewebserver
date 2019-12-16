@@ -104,7 +104,7 @@ db.init().then(() => {
             app)
         .listen(4664);
 
-    console.log('Node server is running.. at https://localhost:' + port);
+    console.log('Node server is running.. at http://localhost:' + port);
 
     return require('./modules/socketio-server')(server, app);
 });
