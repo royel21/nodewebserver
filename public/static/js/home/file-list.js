@@ -383,3 +383,27 @@ document.onkeydown = (e) => {
     playerKeyDown(e);
     mangaVewerKeyDown(e);
 }
+
+$('body',).on('click','#current-page', function() {
+    let numberOfPages = $('#container').data('total');
+    this.textContent = "";
+    var $input = $(`<input type="number" value=${currentPage}
+                     style="width:50px; padding:0; font-size:15px; color: black;" min=1 
+                     max=${numberOfPages}>`) .appendTo($(this)).focus();
+
+    $input.on('focusout', (e) => {
+        $('#current-page').text(currentPage + '/' + numberOfPages);
+    });
+    $input.on('keyup', (event) => {
+        if (event.keyCode === 13) {
+            currentPage = parseInt($input.val());
+
+            if (currentPage > numberOfPages) {
+                currentPage = numberOfPages;
+            }
+            $input = null;
+            loadPartialPage(genUrl(currentPage));
+        }
+    });
+    $input.focus();
+});

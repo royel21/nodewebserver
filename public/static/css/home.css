@@ -18,14 +18,14 @@
     background-color: transparent;
     user-select: none;
     padding: 5px;
-    width: 200px;
-    height: 250px;
+    width: 210px;
+    height: 260px;
 }
 
 .item-video {
     text-align: center;
-    width: 190px;
-    height: 240px;
+    width: 200px;
+    height: 250px;
     padding: 5px;
     background-color: rgba(52, 58, 64, 0.99);
     border-radius: 5px;
@@ -33,9 +33,14 @@
     overflow: hidden;
 }
 
-.item-progress{
+.item-video img:hover{
+    max-width: initial;
+    max-height: initial;
+    pointer-events: all;
+}
 
-pointer-events: none;
+.item-progress{
+    pointer-events: none;
 }
 
 .items .item-progress{
@@ -68,18 +73,20 @@ pointer-events: none;
 }
 
 .item-cover {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 180px;
+    height: 195px;
     clear: both;
+    overflow: hidden;
 }
 
 .item-cover img {
     display: block;
     max-width: 190px;
     max-height: 180px;
-    pointer-events: none;
+    pointer-events: all;
     position: relative;
 }
 
@@ -115,6 +122,7 @@ pointer-events: none;
 
 .item-video:hover {
     position: absolute;
+    /* bottom: 0px; */
     height: fit-content;
     outline: none;
     background-color: rgba(0, 18, 62, 0.95) !important;
