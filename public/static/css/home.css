@@ -18,13 +18,13 @@
     background-color: transparent;
     user-select: none;
     padding: 5px;
-    width: 210px;
+    width: 200px;
     height: 260px;
 }
 
 .item-video {
     text-align: center;
-    width: 200px;
+    width: 190px;
     height: 250px;
     padding: 5px;
     background-color: rgba(52, 58, 64, 0.99);
