@@ -42,41 +42,68 @@
 // fv 0w1sk
 // rc pjwhn
 // loli - cat - bzy7w
-const db = require('./models/index');
+// const db = require('./models/index');
 
-var query = async () => {
-    console.time("s");
-    let files = await db.file.findAndCountAll({
-        attributes: {
-            include: [
-                [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == 'b1d0p')"), "isFav"],
-                [db.sqlze.literal("(Select LastPos from RecentFiles where FileId == File.Id and RecentId == 'rsh0o')"), "CurrentPos"],
-                [db.sqlze.literal("(Select LastRead from RecentFiles where FileId == File.Id and RecentId == 'rsh0o')"), "LastRead"]
-            ]
-        },
-        include: [{
-            model: db.recent,
-            where: {
-                Id: "rsh0o"
-            },
-            order: [
-                [db.sqlze.literal("Recents.RecentFiles.LastRead"), 'DESC']
-            ]
-        }],
-        offset: 0,
-        limit: 27,
-        where: {
-            [db.Op.and]: [{
-                Name: {
-                    [db.Op.like]: "%" + "" + "%"
-                }
-            }]
+// var query = async () => {
+//     console.time("s");
+//     let files = await db.file.findAndCountAll({
+//         attributes: {
+//             include: [
+//                 [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == 'b1d0p')"), "isFav"],
+//                 [db.sqlze.literal("(Select LastPos from RecentFiles where FileId == File.Id and RecentId == 'rsh0o')"), "CurrentPos"],
+//                 [db.sqlze.literal("(Select LastRead from RecentFiles where FileId == File.Id and RecentId == 'rsh0o')"), "LastRead"]
+//             ]
+//         },
+//         include: [{
+//             model: db.recent,
+//             where: {
+//                 Id: "rsh0o"
+//             },
+//             order: [
+//                 [db.sqlze.literal("Recents.RecentFiles.LastRead"), 'DESC']
+//             ]
+//         }],
+//         offset: 0,
+//         limit: 27,
+//         where: {
+//             [db.Op.and]: [{
+//                 Name: {
+//                     [db.Op.like]: "%" + "" + "%"
+//                 }
+//             }]
+//         }
+//     });
+//     console.timeEnd("s");
+//     return files;
+// }
+
+// query().then((result) => {
+//     console.log(result.count, result.rows[0]);
+// });
+const moment = require('moment')
+const winex = require('win-explorer');
+const files = winex.ListFilesRO('E:\\Temp\\Hmangas');
+const db = require('./models/index');
+const fs = require('fs-extra')
+const path = require('path')
+
+const updateDate = async(tfs) => {
+
+
+    for (let f of tfs) {
+        if (!f.isDirectory) {
+            // console.log(new Date(f.LastModified))
+            let found = await db.file.findOne({ where: { Name: f.FileName } });
+            if (found) {
+                // await found.update({ CreatedAt: f.LastModified });
+                // console.log(found.CreatedAt, fs.statSync(path.join(found.FullPath, f.FileName)));
+                // console.log(f.LastModified, moment(f.LastModified).toDate(), f.FileName)
+            }
+        } else {
+            updateDate(f.Files);
         }
-    });
-    console.timeEnd("s");
-    return files;
+    }
+
 }
 
-query().then((result) => {
-    console.log(result.count, result.rows[0]);
-});
+updateDate(files);

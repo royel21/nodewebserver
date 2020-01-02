@@ -25,6 +25,14 @@ var processIndex = async(req, res) => {
     let begin = ((currentPage - 1) * itemsPerPage);
     let search = req.params.search || "";
     //query
+    let searchs = [];
+    for (let s of search.split('|')) {
+        searchs.push({
+            Name: {
+                [db.Op.like]: "%" + s + "%"
+            }
+        });
+    }
 
     let query = {
         order: db.sqlze.col('N'),
@@ -36,9 +44,7 @@ var processIndex = async(req, res) => {
             ]
         },
         where: {
-            Name: {
-                [db.Op.like]: "%" + search + "%"
-            }
+            [db.Op.or]: searchs
         }
     }
     let action = isManga ? "/mangas/" : isFile ? "/videos/" : "/folders/";
@@ -57,6 +63,9 @@ var processIndex = async(req, res) => {
         } else {
             query.where.Type = isManga ? "Manga" : "Video";
         }
+        query.order = [
+            ["CreatedAt", 'DESC']
+        ];
     }
     let items = await tempDb.findAndCountAll(query);
     items.rows = items.rows.map(f => {

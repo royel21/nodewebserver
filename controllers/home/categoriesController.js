@@ -25,32 +25,6 @@ var loadCategories = async(req, res) => {
         let cat = categories.find((c) => { return c.Name.includes(currentCat) });
         let order = [db.sqlze.col('N')]
         items = await helper.getFiles(req.user, { id: cat.Id, begin, itemsPerPage, search }, db.category, order);
-        // let user = req.user;
-        // items = await db.file.findAndCountAll({
-        //     attributes: {
-        //         include: [
-        //             'Id', 'Name', 'DirectoryId', 'Type', 'Duration', [db.sqlze.literal("REPLACE(Name, '[','0')"), 'N'],
-        //             [db.sqlze.literal("(Select LastPos from RecentFiles where FileId == File.Id and RecentId == '" + user.Recent.Id + "')"), "CurrentPos"],
-        //             [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" + user.Favorite.Id + "')"), "isFav"]
-        //         ]
-        //     },
-        //     include: [{
-        //         model: db.category,
-        //         where: {
-        //             Id: cat.Id
-        //         }
-        //     }],
-        //     order: [db.sqlze.col('N')],
-        //     offset: begin,
-        //     limit: itemsPerPage,
-        //     where: {
-        //         [db.Op.and]: [{
-        //             Name: {
-        //                 [db.Op.like]: "%" + search + "%"
-        //             }
-        //         }]
-        //     }
-        // });
     }
 
     let totalPages = Math.ceil(items.count / itemsPerPage);

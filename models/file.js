@@ -34,14 +34,7 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         timestamps: false,
         hooks: {
-            beforeCreate: (file, options) => {
-                file.CreatedAt = new Date();
-            },
-            beforeBulkCreate: (file, options) => {
-                file.forEach((file) => {
-                    file.CreatedAt = new Date();
-                });
-            }
+
         }
     });
 

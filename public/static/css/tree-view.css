@@ -1,6 +1,7 @@
 #paths{
     height: calc(100% - 58px);
     margin-bottom: 0;
+    padding-top: 20px;
 }
 
 #tree-container{

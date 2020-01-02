@@ -1,47 +1,6 @@
 const db = require('../../models');
 const helper = require('./file-helper');
 
-var getRecentFiles = async(user, data) => {
-
-
-    let files = { count: 0, rows: [] };
-
-    if (user.Role.includes('admin')) return files;
-
-    files = await db.file.findAndCountAll({
-        attributes: {
-            include: [
-                [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" +
-                    user.Favorite.Id + "')"), "isFav"],
-                [db.sqlze.literal("(Select LastPos from RecentFiles where FileId == File.Id and RecentId == '" +
-                    user.Recent.Id + "')"), "CurrentPos"],
-                [db.sqlze.literal("(Select LastRead from RecentFiles where FileId == File.Id and RecentId == '" +
-                    user.Recent.Id + "')"), "LastRead"]
-            ]
-        },
-        order: [
-            [db.sqlze.literal("LastRead"), 'DESC']
-        ],
-        include: [{
-            model: db.recent,
-            where: {
-                Id: user.Recent.Id
-            }
-        }],
-        offset: data.begin,
-        limit: data.itemsPerPage,
-        where: {
-            [db.Op.and]: [{
-                Name: {
-                    [db.Op.like]: "%" + data.search + "%"
-                }
-            }]
-        }
-    });
-
-    return files;
-}
-
 exports.recent = (req, res) => {
 
     let itemsPerPage = parseInt(req.params.items || req.query.items) || req.itemsPerPage;

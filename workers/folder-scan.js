@@ -81,7 +81,8 @@ PopulateDB = async(folder, files, fd) => {
                         Type: /rar|zip/ig.test(f.extension) ? "Manga" : "Video",
                         DirectoryId,
                         FolderId: fd ? fd.Id : null,
-                        Size: f.Size
+                        Size: f.Size,
+                        CreatedAt: f.LastModified
                     });
                 }
 

@@ -12,7 +12,9 @@ exports.files = (req, res) => {
     let val = req.params.search || "";
 
     db.file.findAndCountAll({
-        order: ['Name'],
+        order: [
+            "Name"
+        ],
         offset: begin,
         limit: itemsPerPage,
         where: {

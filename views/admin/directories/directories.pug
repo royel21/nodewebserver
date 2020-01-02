@@ -11,7 +11,9 @@ mixin directories(directories, pagedatas)
                     .fas.fa-hdd
 
         ul#paths.list-group.text-dark.font-weight-bold(data-csrf=pagedatas.csrfToken)
-            li.list-group-item No hay Directorios Agregados
+            li.list-group-item No Directories
+            if directories.length > 0
+                li.list-group-item.text-center Directories
             each d in directories
                 li.list-group-item(id=d.Id)
                     span
@@ -24,4 +26,4 @@ mixin directories(directories, pagedatas)
             .card.text-dark
                 .text-center.text-light
                 #disks
-                    h2 Espere Por favor.               
+                    h2 Please Wait.               
