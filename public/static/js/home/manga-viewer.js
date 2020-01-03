@@ -255,7 +255,7 @@ var nextManga = () => {
     } else if (currentPage < totalPage) {
         mLoading = true;
         loadPartialPage(genUrl(currentPage + 1), () => {
-            processFile(document.querySelector('.items:last-child'));
+            processFile(document.querySelector('.items:first-child'));
         });
     }
 }
@@ -269,6 +269,7 @@ var prevManga = () => {
     } else if (currentPage > 1) {
         mLoading = true;
         loadPartialPage(genUrl(currentPage - 1), () => {
+            
             processFile(document.querySelector('.items:last-child'));
         });
     }
