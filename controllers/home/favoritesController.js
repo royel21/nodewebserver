@@ -1,68 +1,28 @@
 const db = require('../../models');
 const helper = require('./file-helper');
 
-var getFavoriteFiles = async(user, data) => {
-
-    console.time("rc");
-    files = { count: 0, rows: [] };
-    if (user.Role.includes('admin')) return files;
-
-    files = await db.file.findAndCountAll({
-        attributes: {
-            include: [
-                [db.sqlze.literal("REPLACE(Name, '[','0')"), 'N'],
-                [db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" +
-                    user.Favorite.Id + "')"), "isFav"],
-                [db.sqlze.literal("(Select LastPos from RecentFiles where FileId == File.Id and RecentId == '" +
-                    user.Recent.Id + "')"), "CurrentPos"],
-                [db.sqlze.literal("(Select LastRead from RecentFiles where FileId == File.Id and RecentId == '" +
-                    user.Recent.Id + "')"), "LastRead"]
-            ]
-        },
-        order: [
-            [db.sqlze.col('N')]
-        ],
-        include: [{
-            model: db.favorite,
-            where: {
-                Id: user.Favorite.Id
-            }
-        }],
-        offset: data.begin,
-        limit: data.itemsPerPage,
-        where: {
-            [db.Op.and]: [{
-                Name: {
-                    [db.Op.like]: "%" + data.search + "%"
-                }
-            }]
-        }
-    });
-    console.timeEnd("rc");
-    return files;
-}
 
 exports.favorite = (req, res) => {
     console.time("fav")
+    let orderby = req.params.orderby || "nu";
     let itemsPerPage = req.params.items || req.query.items || req.itemsPerPage;
     let currentPage = req.params.page || 1;
     let begin = ((currentPage - 1) * itemsPerPage) || 0;
     let search = req.params.search || "";
-    let order = [
-        [db.sqlze.col('N')]
-    ]
+
     helper.getFiles(req.user, {
         id: req.user.Favorite.Id,
         begin,
         itemsPerPage,
         search
-    }, db.favorite, order).then(items => {
+    }, db.favorite, helper.getOrderBy(orderby)).then(items => {
         var totalPages = Math.ceil(items.count / itemsPerPage);
         let view = req.query.partial ? "home/partial-items-view" : "home/index.pug";
         res.render(view, {
             title: "Home Server",
             items,
             pagedatas: {
+                orderby,
                 currentPage,
                 itemsPerPage,
                 totalPages,
@@ -89,10 +49,11 @@ exports.favorite = (req, res) => {
 }
 
 exports.postSearch = (req, res) => {
+    let orderby = req.body.orderby || "nu";
     let itemsPerPage = parseInt(req.body.items) || 1;
     let search = req.body.search || "";
 
-    res.redirect(`/favorites/1/${itemsPerPage}/${search}?partial=true`);
+    res.redirect(`/favorites/${orderby}/1/${itemsPerPage}/${search}?partial=true`);
 }
 
 exports.postFavorite = (req, res) => {

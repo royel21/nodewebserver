@@ -9,6 +9,7 @@ mixin categories(categories, data)
             input(type="hidden" name="search" value=""+ search)
             input(type="hidden" name="items" value=itemsPerPage)
             input(type="hidden" name="page" value=currentPage)
+            input(type="hidden" name="orderby" value=""+ data.orderby)
             select#cat-select.form-control(name="cat")
                 -for(let cat of categories)
                     option(value=""+cat.Id selected=(cat.Name == data.cat ? true : false))= cat.Name

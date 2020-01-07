@@ -78,6 +78,7 @@ mixin pagination(total, data)
                 input(type="hidden" name="_csrf" value=""+ data.csrfToken)
                 input(type="hidden" name="page" value="1")
                 input(type="hidden" name="search" value=""+ search)
+                input(type="hidden" name="orderby" value=""+ data.orderby)
                 if data.cat
                     input(type="hidden" name="cat" value=data.cat)
                 #items.input-group

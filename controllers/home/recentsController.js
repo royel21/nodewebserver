@@ -2,7 +2,6 @@ const db = require('../../models');
 const helper = require('./file-helper');
 
 exports.recent = (req, res) => {
-
     let itemsPerPage = parseInt(req.params.items || req.query.items) || req.itemsPerPage;
     let currentPage = parseInt(req.params.page) || 1;
     let begin = ((currentPage - 1) * itemsPerPage) || 0;
@@ -20,6 +19,7 @@ exports.recent = (req, res) => {
             title: "Home Server",
             items,
             pagedatas: {
+                orderby: "",
                 currentPage,
                 itemsPerPage,
                 totalPages,

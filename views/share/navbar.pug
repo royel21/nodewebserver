@@ -6,25 +6,25 @@ mixin navbar(user, url)
                     i.fas.fa-clipboard-list
                     span  Recents 
             li.nav-item
-                a.nav-link(href="/folders" class=""+(url.includes('/folders') || url.includes('folder-content') ? "active" : ""))
+                a.nav-link(href="/folders/nu/" class=""+(url.includes('/folders') || url.includes('folder-content') ? "active" : ""))
                     i.fas.fa-folder
                     span  Folders 
             li.nav-item
-                a.nav-link(href="/mangas" class=""+(url === '/mangas' || url.includes('mangas') ? "active" : "")) 
+                a.nav-link(href="/mangas/nu/" class=""+(url === '/mangas' || url.includes('mangas') ? "active" : "")) 
                     i.fas.fa-book
                     span  Mangas
             li.nav-item
-                a.nav-link(href="/videos" class=""+(url.includes('videos') ? "active" : ""))
+                a.nav-link(href="/videos/nu/" class=""+(url.includes('videos') ? "active" : ""))
                     i.fas.fa-film
                     span  All Videos
             li.nav-item
-                a.nav-link(href="/categories" class=""+(url.includes('categories') ? "active" : ""))
+                a.nav-link(href="/categories/nu/" class=""+(url.includes('categories') ? "active" : ""))
                     i.fas.fa-tags
                     span  Categories
         ul.navbar-nav.bg-dark
             if !['manager', 'admin'].includes(user.Role)
                 li.nav-item
-                    a.nav-link(href="/favorites" class=""+( url.includes('favorites') ? "active" : ""))
+                    a.nav-link(href="/favorites/nu/" class=""+( url.includes('favorites') ? "active" : ""))
                         i.fas.fa-heart
                         span  Favorites
             li.nav-item

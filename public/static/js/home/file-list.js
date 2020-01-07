@@ -156,11 +156,12 @@ processFile = (item) => {
             {
                 config.folder.lastfolder = window.location.pathname;
                 config.folder.folderIndex = selectedIndex;
+                let orderby = $('#order-select').val();
 
 
                 lastIndex = selectedIndex;
                 local.setItem('folder', item.id);
-                let url = "/folder-content/" + item.id;
+                let url = "/folder-content/" + orderby + '/' + item.id;
 
                 loadPartialPage(url, () => {
                     selectItem(0);
@@ -178,9 +179,10 @@ processFile = (item) => {
 
 const chooseCategory = (el) => {
     let title = document.title;
+    let orderby = $('#order-select').val();
     if (el.tagName == "FORM") {
         let cat = $(el).find('option[value=' + el.elements["cat"].value + ']').text();
-        let url = '/categories/' + cat;
+        let url = '/categories/' + orderby +'/' + cat ;
         console.log(url)
         loadPartialPage(url);
     }
@@ -406,4 +408,10 @@ $('body',).on('click','#current-page', function() {
         }
     });
     $input.focus();
+});
+
+
+$('body').on('change', '#order-select', e=>{
+    local.setItem('orderby', e.target.value);
+    loadPartialPage(genUrl($('#container').data('page')));
 });

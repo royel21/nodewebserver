@@ -1,7 +1,34 @@
 const db = require('../../models');
 
-exports.getFiles = async(user, data, model, order) => {
+const getOrderBy = (orderby) => {
+    let order = [];
+    switch (orderby) {
+        case 'nd':
+            {
+                order.push([db.sqlze.col('N'), 'DESC']);
+                break;
+            }
+        case 'du':
+            {
+                order.push(["CreatedAt", 'DESC']);
+                break;
+            }
+        case 'dd':
+            {
+                order.push(["CreatedAt", 'ASC']);
+                break;
+            }
+        default:
+            {
+                order.push(db.sqlze.col('N'));
+            }
+    }
+    return order;
+}
 
+exports.getOrderBy = getOrderBy;
+
+exports.getFiles = async(user, data, model, order) => {
     let files = { count: 0, rows: [] };
     let searchs = [];
     for (let s of data.search.split('|')) {

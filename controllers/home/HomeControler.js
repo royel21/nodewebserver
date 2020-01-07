@@ -1,10 +1,12 @@
 const passport = require('passport');
 const db = require('../../models');
+const { getOrderBy } = require('./file-helper');
 
 const mypassport = require('../../passport_config')(passport);
 
 var processIndex = async(req, res) => {
     console.time('home');
+    let orderby = req.params.orderby || "nu";
     let isFile = /video|content/ig.test(req.url);
 
     let isManga = req.url.includes("manga");
@@ -47,7 +49,7 @@ var processIndex = async(req, res) => {
             [db.Op.or]: searchs
         }
     }
-    let action = isManga ? "/mangas/" : isFile ? "/videos/" : "/folders/";
+    let action = isManga ? `/mangas/${orderby}/` : isFile ? `/videos/${orderby}/` : `/folders/${orderby}/`;
 
     if (isFile || foldersId) {
         query.attributes.include[1] = [db.sqlze.literal(
@@ -58,14 +60,12 @@ var processIndex = async(req, res) => {
             "CurrentPos"
         ];
         if (foldersId) {
-            action = "/folder-content/" + foldersId + "/"
+            action = `/folder-content/${orderby}/${foldersId}/`
             query.where.FolderId = foldersId;
         } else {
             query.where.Type = isManga ? "Manga" : "Video";
         }
-        query.order = [
-            ["CreatedAt", 'DESC']
-        ];
+        query.order = getOrderBy(orderby);
     }
     let items = await tempDb.findAndCountAll(query);
     items.rows = items.rows.map(f => {
@@ -78,6 +78,7 @@ var processIndex = async(req, res) => {
         title: "Home Server",
         items,
         pagedatas: {
+            orderby,
             currentPage,
             itemsPerPage,
             totalPages,
@@ -112,15 +113,16 @@ exports.index = (req, res) => {
 exports.postSearch = (req, res) => {
     let itemsPerPage = parseInt(req.body.items) || 1;
     let search = req.body.search || "";
+    let orderby = req.body.orderby || "nu";
 
     let folderId = req.params.folder;
-    let url = `/folders/1/${itemsPerPage}/${search}?partial=true`;
+    let url = `/folders/${orderby}/1/${itemsPerPage}/${search}?partial=true`;
 
     if (/video|content|manga/ig.test(req.url)) {
-        url = (folderId ? `/folder-content/${folderId}` : /mangas/ig.test(req.url) ? "/mangas" : '/videos') +
-            `/1/${itemsPerPage}/${search}?partial=true`;
+        url = (folderId ? `/folder-content/${orderby}/${folderId}` : /mangas/ig.test(req.url) ? `/mangas/${orderby}` :
+            `/videos/${orderby}`) + `/1/${itemsPerPage}/${search}?partial=true`;
     }
-
+    console.log(url)
     res.redirect(url);
 }
 

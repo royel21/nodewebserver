@@ -4,12 +4,13 @@ const helper = require('./file-helper');
 var loadCategories = async(req, res) => {
     console.time("cat")
     let currentCat = await req.params.cat;
+    let orderby = req.params.orderby || "nu";
 
     if (!currentCat) {
         let firstCat = await db.category.findOne({ order: ['Name'] });
         if (firstCat) {
             let partial = req.query.partial ? '?partial=true' : "";
-            return res.redirect('/categories/' + firstCat.Name + partial);
+            return res.redirect(`/categories/${orderby}/${firstCat.Name}` + partial);
         }
     }
 
@@ -23,8 +24,9 @@ var loadCategories = async(req, res) => {
     let items = { count: 0, rows: [] };
     if (categories.length > 0) {
         let cat = categories.find((c) => { return c.Name.includes(currentCat) });
-        let order = [db.sqlze.col('N')]
-        items = await helper.getFiles(req.user, { id: cat.Id, begin, itemsPerPage, search }, db.category, order);
+
+        items = await helper.getFiles(req.user, { id: cat.Id, begin, itemsPerPage, search }, db.category, helper.getOrderBy(
+            orderby));
     }
 
     let totalPages = Math.ceil(items.count / itemsPerPage);
@@ -34,11 +36,12 @@ var loadCategories = async(req, res) => {
         title: "Home Server",
         items,
         pagedatas: {
+            orderby,
             currentPage,
             itemsPerPage,
             totalPages,
             search: search,
-            action: "/categories/",
+            action: `/categories/${orderby}/${currentCat}/`,
             csrfToken: req.csrfToken(),
             step: req.step,
             cat: currentCat
@@ -67,9 +70,10 @@ exports.categories = (req, res) => {
 
 exports.postSearch = (req, res) => {
     let itemsPerPage = parseInt(req.body.items) || 1;
+    let orderby = req.params.orderby || "nu";
     let search = req.body.search || "";
     let cat = req.body.cat;
-    let url = '/categories/';
+    let url = `/categories/${orderby}/`;
 
     if (cat) {
         return res.redirect(url + `${cat}/1/${itemsPerPage}/${search}?partial=true`);

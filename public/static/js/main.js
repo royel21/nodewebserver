@@ -46,13 +46,8 @@ location.reload();
 
 $('body').on('click', '#table-controls .page-item a, #controls .page-item a', (e) => {
     e.preventDefault();
-    
-    let url;
-    if(location.pathname.includes('/admin')){
-       url =  e.target.tagName == 'I' ? e.target.closest('a').href : e.target.href;
-    }else{
-        url = genUrl(e.target.closest('li').dataset.page)
-    }
+   
+    let url = e.target.tagName == 'I' ? e.target.closest('a').pathname : e.target.pathname;
 
     if (!location.href.includes("admin")) {
         loadPartialPage(url, cb = () => {
@@ -64,9 +59,24 @@ $('body').on('click', '#table-controls .page-item a, #controls .page-item a', (e
 
 
 const genUrl = (page) =>{
+    let orderby = local.getItem('orderby') || $('#order-select').val();
     currentPage = page;
     let path = location.pathname.split(/\/\d*\//)[0]+ '/';
-    if(path === '//') path = '/recents/'
+    if(path === '//') {
+        path = '/recents/';
+    }else if(!path.includes('recent')){
+        let datapath = [];
+        if(path.includes('folder-content') || path.includes('categories')){
+            datapath = path.split('/').slice(1, 4);
+        }else{
+            datapath = path.split('/').slice(1, 3);
+        }
+
+        datapath[1] = orderby;
+        path = '/'+ datapath.join('/') + '/';
+
+    }
+    
     return  path + page + "/" + $('input[name=items]').val() + "/" + $('input[name=search]').val();
 }
 
@@ -90,11 +100,9 @@ const submitItemAndSearchForm = (e) => {
 
     let url = $(form).attr('action');
     $.post(url, $(form).serialize(), (resp) => {
-
         $('#container').replaceWith(resp.data);
         let title = document.title;
         window.history.pushState(title, title, resp.url.replace('?partial=true', ''));
-
     });
 }
 
