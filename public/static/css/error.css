@@ -1,0 +1,10 @@
+#content{
+    margin: 0 auto;
+    width: 1080px;
+    height: 100%;
+    padding-top: 25px;
+}
+
+#modal{
+    display: none;
+}

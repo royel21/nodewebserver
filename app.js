@@ -84,13 +84,17 @@ app.use(function(req, res, next) {
 app.use(function(err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;
+    res.locals.url = req.url;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
     // render the error page
     //res.status(err.status || 500);
     if (!req.url.includes('covers') && !req.url.includes('.map')) {
         console.log("some errors:", req.url, err.message);
     }
-    return res.render('error');
+    if (process.env.NODE_ENV) {
+        return res.render('error-dev');
+    } else
+        return res.render('error');
 });
 
 const port = 4664;

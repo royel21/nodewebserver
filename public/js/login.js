@@ -1,1 +1,1 @@
-window.onload=(o=>{document.querySelector("#screenw").value=window.screen.width,window.history.pushState({},"Log In","/login"),window.onpopstate=function(o){history.go(-(history.length-1))}});
+window.onload=(o=>{document.querySelector("#screenw").value=window.screen.width,document.querySelector("#screenh").value=document.body.offsetHeight,window.history.pushState({},"Log In","/login"),window.history.pushState({},"Log In","/login"),window.onpopstate=function(o){history.go(-(history.length-1))}});

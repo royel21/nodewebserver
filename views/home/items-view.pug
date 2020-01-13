@@ -39,7 +39,7 @@ mixin items-view(items, pagedatas, isFile, categories)
                 .input-group
                     .input-group-prepend
                         label.input-group-text(for="items" value="") Order By
-                    select#order-select.form-control(name="orderby")
+                    select#order-select.fa.form-control(name="orderby")
                         option(value="nu" selected=pagedatas.orderby.includes('nu')) &#xf15d; Name
                         option(value="nd" selected=pagedatas.orderby.includes('nd')) &#xf15e; Name
                         option(value="du" selected=pagedatas.orderby.includes('du')) &#xf162; Date

@@ -114,6 +114,18 @@ gulp.task('clean', () => {
     return del(['./public/css/*.css', './public/js/*.js'])
 });
 
+gulp.task('error-css', function() {
+    return gulp.src(
+            [
+                './public/static/lib/css/bootstrap.min.css',
+                homecss + 'index.css',
+                homecss + 'error.css'
+            ])
+        .pipe(concat('error.css'))
+        .pipe(cleanCss())
+        .pipe(gulp.dest('public/css/'));
+});
+
 gulp.task('default',
     gulp.series(
         'clean',
@@ -122,5 +134,6 @@ gulp.task('default',
         'login-css',
         'login-js',
         'admin-css',
-        'admin-js'
+        'admin-js',
+        'error-css'
     ));

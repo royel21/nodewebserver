@@ -8,6 +8,7 @@ let lastUrl;
 
 const loadPartialPage = async(url, cb) => {
     if (!url) return;
+    console.trace(url)
 
     let text = $('.navbar ul .active').text(); 
     window.history.pushState(text, text, url.replace('//', '/'));
@@ -41,7 +42,8 @@ $(window).on('popstate', function(e) {
 //         e.preventDefault();
 //         window.history.pushState(null, '', '');
 //     }
-location.reload(); 
+console.log(e)
+    location.reload(); 
 });
 
 $('body').on('click', '#table-controls .page-item a, #controls .page-item a', (e) => {
@@ -135,7 +137,7 @@ $('.navbar ul .nav-link:not(#login)').click((e) => {
         $(e.target.closest('.nav-link')).addClass('active');
         
         let text = e.target.closest('.nav-item').textContent;    
-        let url = e.target.closest('a').href;
+        let url = e.target.closest('a').pathname;
        loadPartialPage(url);
        window.history.pushState(text, text, url);
        console.log(url)

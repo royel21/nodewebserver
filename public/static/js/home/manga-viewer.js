@@ -161,6 +161,7 @@ var mclose = () => {
     if (currentFile.pos > 0) {
         socket.emit('add-or-update-recent', { id: currentFile.id, pos: currentFile.pos });
     }
+    currentFile.id = "";
 }
 
 closeMViewer.onclick = mclose;
@@ -169,12 +170,12 @@ $('.btn-fullscr-m').click(fullScreen);
 
 
 var openManga = (item) => {
-
-    if (currentFile.id !== item.Id) {
+    
+    if (currentFile.id !== item.id) {
         socket.emit('add-or-update-recent', currentFile);
-    } else {
+    }else if($('#manga-viewer').css('display') !== 'none'){
         return false;
-    }
+    } 
 
     currentFile.id = item.id;
 

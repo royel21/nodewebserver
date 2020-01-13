@@ -166,9 +166,8 @@
 }
 #order-select,
 #ordering option{
-    font-weight: bold;
-    font-family: Arial, Font Awesome\ 5 Free;
     color: black;
+    font-weight: 700;
 }
 
 @media all and (max-width: 650px) {

@@ -1,0 +1,10 @@
+extends share/layout
+block css
+  link(rel="stylesheet" href="/static/css/error.css" type="text/css")
+
+block content
+  .text-left
+    button.btn.btn-primary( onclick="location.href = '/'") Go Back
+  h1= error.status + " - " + message
+  h3= "URL: "+ url
+  pre.text-light #{error.stack}

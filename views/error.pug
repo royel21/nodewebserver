@@ -1,10 +1,9 @@
 extends share/layout
 block css
-  link(rel="stylesheet" href="/css/series.css" type="text/css")
+  link(rel="stylesheet" href="/css/error.css" type="text/css")
 
 block content
   .text-left
-    button.btn.btn-primary( onclick="history.back()") Go Back
-  h1= message
-  h2= error.status
-  pre.text-light #{error.stack}
+    button.btn.btn-primary( onclick="location.href = '/'") Go Back
+  h1= "Are You Lose?"
+  h3= `Url ${url} is not on this server`

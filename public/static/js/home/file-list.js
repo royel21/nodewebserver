@@ -259,7 +259,7 @@ $('body').on('keydown', '.items-list', (e) => {
                 } else
                 if (currentPage < totalPage || e.ctrlKey && currentPage < totalPage) {
 
-                    let url = $('#pager .active').next().find('a').attr('href');
+                    let url = genUrl(currentPage + 1);
                     loadPartialPage(url, () => {
                         selectItem(0);
                     });
