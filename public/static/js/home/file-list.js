@@ -387,31 +387,47 @@ document.onkeydown = (e) => {
 }
 
 $('body',).on('click','#current-page', function() {
-    let numberOfPages = $('#container').data('total');
-    this.textContent = "";
-    var $input = $(`<input type="number" value=${currentPage}
-                     style="width:50px; padding:0; font-size:15px; color: black;" min=1 
-                     max=${numberOfPages}>`) .appendTo($(this)).focus();
+    if(!$('#current-page input')[0]){
+        let numberOfPages = $('#container').data('total');
+        this.textContent = "";
+        var $input = $(`<input type="text" value=${currentPage} class="form-control"
+                         style="width:50px; padding: 0 0 0 4px; font-size:15px; color: black;" min=1 
+                         max=${numberOfPages}>`) .appendTo($(this)).focus();
 
-    $input.on('focusout', (e) => {
-        $('#current-page').text(currentPage + '/' + numberOfPages);
-    });
-    $input.on('keyup', (event) => {
-        if (event.keyCode === 13) {
-            currentPage = parseInt($input.val());
+        $input.on('focusout', (e) => {
+            $('#current-page').text(currentPage + '/' + numberOfPages);
+        });
+        $input.on('keyup', (event) => {
+            if (event.keyCode === 13) {
+                currentPage = parseInt($input.val());
 
-            if (currentPage > numberOfPages) {
-                currentPage = numberOfPages;
+                if (currentPage > numberOfPages) {
+                    currentPage = numberOfPages;
+                }
+                $input = null;
+                loadPartialPage(genUrl(currentPage));
             }
-            $input = null;
-            loadPartialPage(genUrl(currentPage));
-        }
-    });
-    $input.focus();
+        });
+        $input[0].setSelectionRange($input.val().length, $input.val().length);
+        $input.focus();
+    }
 });
 
 
 $('body').on('change', '#order-select', e=>{
     local.setItem('orderby', e.target.value);
     loadPartialPage(genUrl($('#container').data('page')));
+});
+
+
+function handleBrowserState(isActive){
+   socket.emit('add-or-update-recent', {msg: "focus", state: isActive });
+   console.log({msg: "focus", state: isActive });
+}
+window.addEventListener("focus", handleBrowserState.bind(true));
+window.addEventListener("blur", handleBrowserState.bind(false));
+
+
+addEventListener("resume", (e) =>{
+    handleBrowserState(true); 
 });
