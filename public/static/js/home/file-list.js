@@ -431,3 +431,8 @@ window.addEventListener("blur", handleBrowserState.bind(false));
 addEventListener("resume", (e) =>{
     handleBrowserState(true); 
 });
+
+$('#container').on('click', '.item-btns .fa-folder', (e)=>{
+   let item = e.target.closest('.items'); 
+   processFile(item);
+});

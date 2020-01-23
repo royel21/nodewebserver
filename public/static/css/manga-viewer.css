@@ -463,8 +463,10 @@ body #img-preview::-webkit-scrollbar {
         pointer-events: none;
     }
      #manga-viewer .item-progress {
-        bottom: 4px;
-        left: 40%;
+        
+bottom: 4px;
+        
+left: 40%;
     }
 }
 

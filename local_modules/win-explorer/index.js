@@ -60,15 +60,15 @@ sortFiles = (a, b) => {
 };
 
 ListFiles = (dir, filters, options) => {
-    let opts = {
+    let opts = options ? {
         hidden: !options.hidden ? options.hidden : true,
         file: !options.file ? options.file : true,
-        directory: !options.directory ? options.directory : true
-    };
+        directory: !options.directory ? options.directory : true,
+        oneFile: options.oneFile
+    } : {};
 
     var d = path.resolve(dir);
-    var files = WinExplore.ListFiles(d, options.oneFile).sort(sortFiles);
-
+    var files = WinExplore.ListFiles(d, opts.oneFile || false).sort(sortFiles);
     const checkFiles = (f) => {
         if (f.isHidden) {
             if (!opts.hidden) return false;
@@ -79,7 +79,7 @@ ListFiles = (dir, filters, options) => {
         return false;
     }
 
-    if (filters !== undefined && filters.length > 0) {
+    if (filters) {
         return files.filter(v => {
             if (filters.includes(v.extension.toLowerCase())) {
                 return checkFiles(f);
@@ -88,7 +88,7 @@ ListFiles = (dir, filters, options) => {
             }
         });
     } else {
-        return files.filter(f => checkFiles(f));
+        return files;
     }
 }
 
