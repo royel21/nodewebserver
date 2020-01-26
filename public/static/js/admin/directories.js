@@ -6,7 +6,7 @@ var loadDirectories = () => {
             let path = e.target.closest('ul').dataset.path;
 
             $.post('/admin/directories/folder-content', {
-                path, folder: dir,
+                path, folder: dir.trim(),
                 _csrf: $("#paths").data('csrf')
             }, (resp) => {
 
@@ -18,7 +18,7 @@ var loadDirectories = () => {
     });
 
     $('#container').on('click', '#tree-container .dir', (e) => {
-        let dir = e.target.textContent;
+        let dir = e.target.textContent.trim();
         let path = e.target.closest('ul').dataset.path;
         socket.emit('scan-dir', { path, folder: dir });
     });
@@ -62,7 +62,7 @@ var loadDirectories = () => {
     }
 
     $('#tab-directory input[type="radio"]').change((e) => {
-        $('#paths').toggleClass('d-none');
+        $('#directories').toggleClass('d-none');
         $('#tree-container').toggleClass('d-none');
 
         if (e.target.id.includes('disk')) {

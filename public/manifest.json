@@ -1,4 +1,16 @@
 {
-    "name": "Local Media App",
-    "display": "fullscreen"
+    "name": "Media Web App",
+    "short_name": "Home Media Web App",
+    "display": "standalone",
+    "icons":[
+        {
+           "src": "/images/home.png",
+           "type":"image/png",
+           "sizes":"256x256"
+        }
+        
+    ],
+    "start_url": "/",
+    "background_color": "#000000",
+    "theme_color": "#000000"
 }

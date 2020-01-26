@@ -1,8 +1,9 @@
 #tree-title 
-    i.fas.fa-hdd.mr-2
-    span Disks
+    span.fas.fa-sitemap  PC
 ul.tree-view
     each disk in disks
         li.tree-item
-            span.dir= disk
+            span.dir
+                i.fa.fa-hdd
+                =" "+disk
             span.caret &#x25B6;

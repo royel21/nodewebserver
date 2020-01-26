@@ -87,23 +87,25 @@ const db = require('./models/index');
 const fs = require('fs-extra')
 const path = require('path')
 
-const updateDate = async(tfs) => {
+// const updateDate = async(tfs) => {
 
 
-    for (let f of tfs) {
-        if (!f.isDirectory) {
-            // console.log(new Date(f.LastModified))
-            let found = await db.file.findOne({ where: { Name: f.FileName } });
-            if (found) {
-                // await found.update({ CreatedAt: f.LastModified });
-                // console.log(found.CreatedAt, fs.statSync(path.join(found.FullPath, f.FileName)));
-                // console.log(f.LastModified, moment(f.LastModified).toDate(), f.FileName)
-            }
-        } else {
-            updateDate(f.Files);
-        }
-    }
+//     for (let f of tfs) {
+//         if (!f.isDirectory) {
+//             // console.log(new Date(f.LastModified))
+//             let found = await db.file.findOne({ where: { Name: f.FileName } });
+//             if (found) {
+//                 // await found.update({ CreatedAt: f.LastModified });
+//                 // console.log(found.CreatedAt, fs.statSync(path.join(found.FullPath, f.FileName)));
+//                 // console.log(f.LastModified, moment(f.LastModified).toDate(), f.FileName)
+//             }
+//         } else {
+//             updateDate(f.Files);
+//         }
+//     }
 
-}
+// }
 
-updateDate(files);
+// updateDate(files);
+
+console.log(winex.ListFiles("H:\\", [], { hidden: true, file: false, directory: true }));

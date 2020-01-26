@@ -42,7 +42,7 @@ const configPlayer = () => {
     player.volume = config.volume;
 
     player.muted = btnMuted.checked = config.isMuted;
-    player.currentTime = currentFile.pos;
+    player.currentTime = currentFile.currentPos || 0;
     if (!config.paused) pauseOrPlay();
     $('.loading').css({ display: 'none' });
 
@@ -170,7 +170,7 @@ player.ontimeupdate = (e) => {
     if (update && Slider) {
         Slider.value = Math.floor(player.currentTime);
         $vTotalTime.text(formatTime(player.currentTime) + "/" + vDuration);
-        currentFile.pos = player.currentTime;
+        currentFile.currentPos = player.currentTime;
     }
 }
 

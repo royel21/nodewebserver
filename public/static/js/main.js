@@ -1,23 +1,31 @@
 var isAndroid = /(android)|(iphone)/i.test(navigator.userAgent);
-// if (isAndroid) {
-//     window.history.pushState({}, "Log In", window.location.href);
-// }
 var socket;
 
 let lastUrl;
 
+var pageHistory = {
+    recents: "",
+    folders: "",
+    mangas: "",
+    videos: "",
+    favorities: "",
+    administrator: ""
+}
+
 const loadPartialPage = async(url, cb) => {
     if (!url) return;
-    console.trace(url)
 
-    let text = $('.navbar ul .active').text(); 
+    let text = $('.navbar input:checked').next().text().trim();
+    document.title = text;
     window.history.pushState(text, text, url.replace('//', '/'));
+
+    pageHistory[$('#menu input:checked')[0].id] = url;
 
     $.get(url, { partial: true }, (resp) => {
         if (resp.data) {
             $('#container').replaceWith(resp.data);
 
-            if(!location.pathname.includes('/admin')){
+            if (!location.pathname.includes('/admin')) {
                 local.setItem('lasturl', url);
                 calPages();
             }
@@ -29,26 +37,13 @@ const loadPartialPage = async(url, cb) => {
 }
 
 $(window).on('popstate', function(e) {
-        selectedIndex = 0;
-//     if (!isAndroid) {
-//         let url = document.location.href;
-//         document.title = e.state;
-//         $('.sidenav a').removeClass("active");
-//         $(`.sidenav .nav-link:contains("${e.state}")`).addClass('active');
-//         loadPartialPage(url, () => {
-//             if ($('#folders-list')[0]) selectItem(lastIndex);
-//         });
-//     } else {
-//         e.preventDefault();
-//         window.history.pushState(null, '', '');
-//     }
-console.log(e)
-    location.reload(); 
+    selectedIndex = 0;
+    location.reload();
 });
 
 $('body').on('click', '#table-controls .page-item a, #controls .page-item a', (e) => {
     e.preventDefault();
-   
+
     let url = e.target.tagName == 'I' ? e.target.closest('a').pathname : e.target.pathname;
 
     if (!location.href.includes("admin")) {
@@ -60,30 +55,29 @@ $('body').on('click', '#table-controls .page-item a, #controls .page-item a', (e
 });
 
 
-const genUrl = (page) =>{
+const genUrl = (page) => {
     let orderby = local.getItem('orderby') || $('#order-select').val();
     currentPage = page;
-    let path = location.pathname.split(/\/\d*\//)[0]+ '/';
-    if(path === '//') {
+    let path = location.pathname.split(/\/\d*\//)[0] + '/';
+    if (path === '//') {
         path = '/recents/';
-    }else if(!path.includes('recent')){
+    } else if (!path.includes('recent')) {
         let datapath = [];
-        if(path.includes('folder-content') || path.includes('categories')){
+        if (path.includes('folder-content') || path.includes('categories')) {
             datapath = path.split('/').slice(1, 4);
-        }else{
+        } else {
             datapath = path.split('/').slice(1, 3);
         }
 
         datapath[1] = orderby;
-        path = '/'+ datapath.join('/') + '/';
+        path = '/' + datapath.join('/') + '/';
 
     }
-    
-    return  path + page + "/" + $('input[name=items]').val() + "/" + $('input[name=search]').val();
+
+    return path + page + "/" + $('input[name=items]').val() + "/" + $('input[name=search]').val();
 }
 
 const choosePage = (el) => {
-    let title = document.title;
     let page = document.querySelector('select[name=page]').value;
     let url = genUrl(page);
     console.log(page)
@@ -105,6 +99,7 @@ const submitItemAndSearchForm = (e) => {
         $('#container').replaceWith(resp.data);
         let title = document.title;
         window.history.pushState(title, title, resp.url.replace('?partial=true', ''));
+        pageHistory[$('#menu input:checked')[0].id] = resp.url.replace('?partial=true', '');
     });
 }
 
@@ -131,18 +126,15 @@ $('#login').on('click', (e) => {
     history.go(-(history.length - 1));
 });
 
-$('.navbar ul .nav-link:not(#login)').click((e) => {
-    if (isAndroid) {
-        $('.navbar ul .active').removeClass('active');
-        $(e.target.closest('.nav-link')).addClass('active');
-        
-        let text = e.target.closest('.nav-item').textContent;    
-        let url = e.target.closest('a').pathname;
-       loadPartialPage(url);
-       window.history.pushState(text, text, url);
-       console.log(url)
-        e.preventDefault();
+$('.navbar input[type=radio]').change((e) => {
+    let url = pageHistory[e.target.id] || e.target.value;
+    if(location.pathname.includes('admin')){
+        return location.href = url;
     }
+    
+    if (!url.includes('admin'))
+        loadPartialPage(url);
+
 });
 /********************************************modal********************/
 
@@ -174,15 +166,29 @@ $('body').on('mousedown', '#modal-container', (e) => {
 var lastPage;
 if (isAndroid) {
 
-    setInterval((e)=>{
-        if(lastPage !== currentFile.pos)
-        {
+    setInterval((e) => {
+        if (lastPage !== currentFile.pos) {
             lastPage = currentFile.pos;
             socket.emit('add-or-update-recent', currentFile);
         }
     }, 30000);
 
-    if(document.body.offsetHeight < 750){
-        $('#files-list').css({paddingBottom: 60});
+    if (document.body.offsetHeight < 750) {
+        $('#files-list').css({ paddingBottom: 60 });
     }
 }
+
+$(() => {
+    let phistory = local.getObject('history');
+    if (phistory) {
+       pageHistory = phistory;
+    }
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then((result) => {
+                console.log('worker registed');
+            }).catch(err => {
+                console.log('worker not registed');
+            });
+    }
+});

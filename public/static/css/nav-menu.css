@@ -7,14 +7,33 @@
     z-index: 1000;
     display: flex;
     justify-content: space-between;
+    padding: 0;
 }
+
 #menu i.fa-user-cog,
 #menu i.fa-user{
     margin-right: 8px;
     color: #007bff;
 }
 
-#menu .active{
+#menu input[type="radio"]{
+    display: none;
+}
+
+#menu label{
+    margin: 0 4px;
+    padding: 8px 5px;
+    cursor: pointer;
+}
+
+#menu #admin + label,
+#menu #favorities + label{
+    position: relative;
+    top: 3px;
+}
+
+#menu input[type="radio"]:checked + .nav-link {
+    color: white;
     border-bottom: 1px solid;
 }
 
@@ -55,6 +74,14 @@
     display: none;
 }
 
+#menu .nav-item{
+    padding: 0;
+}
+
+#menu .nav-item:last-child{
+    padding-right: 5px;
+}
+
 @media screen and (max-width: 600px) {
 
     #menu .nav-link span{
@@ -77,5 +104,16 @@
     }
     .navbar-nav:last-child .nav-item:not(:first-child):not(:last-child){
         display: none;
+    }
+
+    #menu #admin + label,
+    #menu #favorities + label{
+        position: relative;
+        top: -1px;
+    }
+
+    #menu #login{
+        position: relative;
+        top: 3px;
     }
 }

@@ -148,9 +148,6 @@
     cursor: pointer;
 }
 
-#tree-title{
-    font-size: 2rem;
-}
 
 @media screen and (min-width: 980px) {
     .table-responsive-md, .table-responsive-sm {

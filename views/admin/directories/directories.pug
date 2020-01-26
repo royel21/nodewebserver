@@ -9,20 +9,21 @@ mixin directories(directories, pagedatas)
                 input#tab-directory-disk(type="radio" name="tabs")
                 label.nav-link(for="tab-directory-disk")
                     .fas.fa-hdd
-
-        ul#paths.list-group.text-dark.font-weight-bold(data-csrf=pagedatas.csrfToken)
-            li.list-group-item No Directories
-            if directories.length > 0
-                li.list-group-item.text-center Directories
-            each d in directories
-                li.list-group-item(id=d.Id)
-                    span
-                        i(class="text-primary fas fa-sync "+(d.IsLoading ? "fa-spin" : ""))
-                    span.delete-path
-                        i.ml-2.text-danger.fas.fa-trash-alt
-                    span.ml-2= d.FullPath
+        #directories
+            span.dir-header.fa.fa-folder  Directories
+            ul#paths.list-group.text-dark.font-weight-bold(data-csrf=pagedatas.csrfToken)
+                if directories.length > 0
+                    li.list-group-item.text-center Directories
+                each d in directories
+                    li.list-group-item(id=d.Id)
+                        span
+                            i(class="text-primary fas fa-sync "+(d.IsLoading ? "fa-spin" : ""))
+                        span.delete-path
+                            i.ml-2.text-danger.fas.fa-trash-alt
+                        span.ml-2= d.FullPath
 
         #tree-container.d-none
+            .dir-header.fas.fa-desktop  Home
             .card.text-dark
                 .text-center.text-light
                 #disks

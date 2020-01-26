@@ -2,41 +2,56 @@ mixin navbar(user, url)
     nav#menu.navbar.navbar-expand-sm.navbar-dark.bg-dark
         ul.navbar-nav.bg-dark
             li.nav-item
-                a.nav-link(href="/" class=""+(url === '/' || url.includes('recents') ? "active" : ""))
+                input#recents(type="radio", name="menu-group" value="/" checked=(url === '/' || url.includes('recents')))
+                label.nav-link(for="recents")
+                    //- a.nav-link(href="/")
                     i.fas.fa-clipboard-list
                     span  Recents 
             li.nav-item
-                a.nav-link(href="/folders/nu/" class=""+(url.includes('/folders') || url.includes('folder-content') ? "active" : ""))
+                input#folders(type="radio", name="menu-group" value="/folders/nu/" checked=(url.includes('/folders') || url.includes('folder-content')))
+                label.nav-link(for="folders")
+                    //- a.nav-link(href="/folders/nu/")
                     i.fas.fa-folder
                     span  Folders 
             li.nav-item
-                a.nav-link(href="/mangas/nu/" class=""+(url === '/mangas' || url.includes('mangas') ? "active" : "")) 
+                input#mangas(type="radio", name="menu-group" value="/mangas/nu/" checked=(url === '/mangas' || url.includes('mangas')))
+                label.nav-link(for="mangas")
+                    //- a.nav-link(href="/mangas/nu/") 
                     i.fas.fa-book
                     span  Mangas
             li.nav-item
-                a.nav-link(href="/videos/nu/" class=""+(url.includes('videos') ? "active" : ""))
+                input#videos(type="radio", name="menu-group" value="/videos/nu/" checked=url.includes('videos'))
+                label.nav-link(for="videos")
+                    //- a.nav-link(href="/videos/nu/")
                     i.fas.fa-film
                     span  All Videos
             li.nav-item
-                a.nav-link(href="/categories/nu/" class=""+(url.includes('categories') ? "active" : ""))
+                input#categories(type="radio", name="menu-group" value="/categories/nu/" checked=url.includes('categories'))
+                label.nav-link(for="categories")
+                    //- a.nav-link(href="/categories/nu/")
                     i.fas.fa-tags
                     span  Categories
         ul.navbar-nav.bg-dark
             if !['manager', 'admin'].includes(user.Role)
                 li.nav-item
-                    a.nav-link(href="/favorites/nu/" class=""+( url.includes('favorites') ? "active" : ""))
+                    input#favorities(type="radio", name="menu-group" value="/favorites/nu/" checked=url.includes('favorites'))
+                    label.nav-link(for="favorities")
+                        //- a.nav-link(href="/favorites/nu/" )
                         i.fas.fa-heart
                         span  Favorites
             li.nav-item
                 if ['manager', 'admin'].includes(user.Role)
-                    a.nav-link(href="/admin" class=""+(url.includes('admin') ? "active" : ""))
+                    input#admin(type="radio", name="menu-group" value="/admin" checked=(url.includes('admin')))
+                    a.nav-link(href="/admin")
                         i.fas.fa-user-cog.f-2x
                         span= " "+user.Name
                 else
-                    span.nav-link(class=""+(url.includes('admin') ? "active" : ""))
+                    span.nav-link
                         i.fas.fa-user.f-2x
-                        span= " "+user.Name
-                if(user)
-                    li.nav-item
-                        a#login.nav-link(href="/logout") Logout
+                        span=user.Name
+            if(user)
+                li.nav-item
+                    a#login.nav-link(href="/logout")
+                        i.fa.fa-sign-out-alt
+                        span  Logout
             

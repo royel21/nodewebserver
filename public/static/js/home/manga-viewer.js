@@ -7,7 +7,7 @@ const currentImg = ElById('myimg');
 const mloadingAnimation = ElById('m-loading');
 const imgpreview = ElById('img-preview');
 const mSlider = ElById('m-range');
-const mName = ElById('manga-name');
+const $mName = $('.manga-name');
 
 var disconnected = false;
 
@@ -96,7 +96,6 @@ var createElements = (count) => {
     lazyLoad();
 }
 
-
 var loadNewImages = (page, pagetoload = 20) => {
     mLoading = true;
     socket.emit('loadzip-image', { id: currentFile.id, page: page, pagetoload });
@@ -182,7 +181,7 @@ var openManga = (item) => {
 
     $('#img-preview img').each((i, el) => { el.src = "" });
 
-    mName.textContent = item.textContent;
+    $mName.text(item.querySelector('.item-name').textContent);
     let src = item.getElementsByTagName('img')[0].src;
     mImageView.src = src;
     mloadingAnimation.style.display = "flex";
@@ -191,6 +190,7 @@ var openManga = (item) => {
     if (window.innerWidth < 600) {
         startClock();
     }
+    $('#manga-name').css({ opacity: 1 }); 
     return true;
 }
 mSlider.oninput = (e) => {
@@ -215,6 +215,7 @@ mSlider.onchange = (e) => {
 
 var nextImg = () => {
     if (currentFile.pos < mTotalPages - 1) {
+        $('#manga-name').css({ opacity: 1 }); 
         let timg = pimages[currentFile.pos + 1].src;
         if (timg.includes('data:')) {
             mImageView.src = timg;
@@ -233,6 +234,7 @@ var nextImg = () => {
 
 var prevImg = () => {
     if (currentFile.pos > 0 && !mLoading) {
+        $('#manga-name').css({ opacity: 1 }); 
         let img = pimages[currentFile.pos - 1].src;
         if (img.includes('data:')) {
             mImageView.src = img;
@@ -413,4 +415,8 @@ $(imgpreview).on('click', '.pimgs', (e) => {
     mSlider.value = index;
     $(mSlider).trigger('change');
     $(mSlider).trigger('input');
+});
+
+$('#manga-name').on('webkitTransitionEnd transitionend', (e)=>{
+   $('#manga-name').css({ opacity: 0 }); 
 });

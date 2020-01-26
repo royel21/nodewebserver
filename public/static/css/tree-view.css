@@ -1,7 +1,6 @@
 #paths{
     height: calc(100% - 58px);
     margin-bottom: 0;
-    padding-top: 20px;
 }
 
 #tree-container{
@@ -51,13 +50,49 @@ ul,
 .tree-item .dir:active{
     color: lightblue;
 }
-.tree-item .dir:hover:after{
-    content: 'Add';
+
+.tree-item .dir:hover:before{
+    content: " ";
     position: absolute;
-    right: -54px;
-    color: #007bff;
+    top: 6.5px;
+    right: -18px;
+    width: 10px;
+    height: 10px;
+    background-color: #ff922b;
+    transform: rotate(130deg);
+    z-index: 0;
+}
+
+.tree-item .dir:hover:after{
+    content: 'Click To Add';
+    position: absolute;
+    right: -111px;
+    top: -2px;
+    color: white;
+    width: max-content;
+    font-size: 15px;
+    padding: 3px 4px;
+    border-radius: 5px;
+    background-color: #ff922b;
+    z-index: 3;
 }
 
 #tab-directory .nav-link .fas{
     font-size: 30px;
+}
+
+#tree-title{
+    font-size: 2rem;
+}
+#tree-container,
+#directories{
+    position: relative;
+}
+
+.dir-header{
+    position: absolute;
+    top: -34px;
+    right: 50%;
+    font-size: 24px;
+    pointer-events: none;
 }

@@ -86,6 +86,7 @@ window.onbeforeunload = (e) => {
     if (config) {
         local.setObject('config', config);
         local.setItem('selectedIndex', selectedIndex);
+        local.setObject('history', pageHistory);
         socket.emit('add-or-update-recent', currentFile);
     }
 }
@@ -182,7 +183,7 @@ const chooseCategory = (el) => {
     let orderby = $('#order-select').val();
     if (el.tagName == "FORM") {
         let cat = $(el).find('option[value=' + el.elements["cat"].value + ']').text();
-        let url = '/categories/' + orderby +'/' + cat ;
+        let url = '/categories/' + orderby + '/' + cat;
         console.log(url)
         loadPartialPage(url);
     }
@@ -200,15 +201,15 @@ $('body').on('click', '#next-list-page, #prev-list-page', (e) => {
     if (page === 0 || page === totalPage + 1) return;
 
     let url = genUrl(page);
-    loadPartialPage(url, ()=>{
+    loadPartialPage(url, () => {
         if (action === 'next-list-page') {
-           selectItem(0);
+            selectItem(0);
         } else {
-           selectItem($('.items').length-1);
+            selectItem($('.items').length - 1);
         }
     });
 });
-$('body').on('click', '.items .item-play', (e) => {
+$('body').on('click', '.items .item-play, .item .fa-folder', (e) => {
     processFile(e.target.closest('.items'));
 });
 
@@ -329,18 +330,18 @@ var lastScroll;
 
 $('#content').scroll((e) => {
     let distance = $('#content').scrollTop();
-//     if (distance > 500) {
-//         $('#scroll-up').removeClass('d-none');
-//     } else {
-//         $('#scroll-up').addClass('d-none');
-//     }
+    //     if (distance > 500) {
+    //         $('#scroll-up').removeClass('d-none');
+    //     } else {
+    //         $('#scroll-up').addClass('d-none');
+    //     }
 
-//     if(lastScroll < distance){
-//        $('#controls').addClass('d-none');
-//     }else{
-//        $('#controls').removeClass('d-none');
-//     }
-//     lastScroll = distance;
+    //     if(lastScroll < distance){
+    //        $('#controls').addClass('d-none');
+    //     }else{
+    //        $('#controls').removeClass('d-none');
+    //     }
+    //     lastScroll = distance;
 });
 
 $('#content').on('click', '#scroll-up', (e) => {
@@ -386,13 +387,15 @@ document.onkeydown = (e) => {
     mangaVewerKeyDown(e);
 }
 
-$('body',).on('click','#current-page', function() {
-    if(!$('#current-page input')[0]){
+$('body', ).on('click', '#current-page', function() {
+    if (!$('#current-page input')[0]) {
         let numberOfPages = $('#container').data('total');
         this.textContent = "";
-        var $input = $(`<input type="text" value=${currentPage} class="form-control"
+        var $input = $(
+            `<input type="text" value=${currentPage} class="form-control"
                          style="width:50px; padding: 0 0 0 4px; font-size:15px; color: black;" min=1 
-                         max=${numberOfPages}>`) .appendTo($(this)).focus();
+                         max=${numberOfPages}>`
+        ).appendTo($(this)).focus();
 
         $input.on('focusout', (e) => {
             $('#current-page').text(currentPage + '/' + numberOfPages);
@@ -414,25 +417,25 @@ $('body',).on('click','#current-page', function() {
 });
 
 
-$('body').on('change', '#order-select', e=>{
+$('body').on('change', '#order-select', e => {
     local.setItem('orderby', e.target.value);
     loadPartialPage(genUrl($('#container').data('page')));
 });
 
 
-function handleBrowserState(isActive){
-   socket.emit('add-or-update-recent', {msg: "focus", state: isActive });
-   console.log({msg: "focus", state: isActive });
+function handleBrowserState(isActive) {
+    socket.emit('add-or-update-recent', { msg: "focus", state: isActive });
+    console.log({ msg: "focus", state: isActive });
 }
 window.addEventListener("focus", handleBrowserState.bind(true));
 window.addEventListener("blur", handleBrowserState.bind(false));
 
 
-addEventListener("resume", (e) =>{
-    handleBrowserState(true); 
+addEventListener("resume", (e) => {
+    handleBrowserState(true);
 });
 
-$('#container').on('click', '.item-btns .fa-folder', (e)=>{
-   let item = e.target.closest('.items'); 
-   processFile(item);
+$('body').on('click', '#content .item-btns .fa-folder', (e) => {
+    let item = e.target.closest('.items');
+    processFile(item);
 });

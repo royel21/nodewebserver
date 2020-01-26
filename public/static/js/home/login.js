@@ -4,6 +4,6 @@ window.onload = (e) =>{
     window.history.pushState({},"Log In", "/login");
     window.history.pushState({},"Log In", "/login");
     window.onpopstate = function(e){
-       history.go(-(history.length - 1));
+       history.go(-(history.length - 2));
     }
 }
