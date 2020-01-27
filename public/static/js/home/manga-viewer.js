@@ -169,12 +169,13 @@ $('.btn-fullscr-m').click(fullScreen);
 
 
 var openManga = (item) => {
-    
+    $('#manga-name').css({ opacity: 0 });
+
     if (currentFile.id !== item.id) {
         socket.emit('add-or-update-recent', currentFile);
-    }else if($('#manga-viewer').css('display') !== 'none'){
+    } else if ($('#manga-viewer').css('display') !== 'none') {
         return false;
-    } 
+    }
 
     currentFile.id = item.id;
 
@@ -190,7 +191,7 @@ var openManga = (item) => {
     if (window.innerWidth < 600) {
         startClock();
     }
-    $('#manga-name').css({ opacity: 1 }); 
+
     return true;
 }
 mSlider.oninput = (e) => {
@@ -215,7 +216,7 @@ mSlider.onchange = (e) => {
 
 var nextImg = () => {
     if (currentFile.pos < mTotalPages - 1) {
-        $('#manga-name').css({ opacity: 1 }); 
+        $('#manga-name').css({ opacity: 1 });
         let timg = pimages[currentFile.pos + 1].src;
         if (timg.includes('data:')) {
             mImageView.src = timg;
@@ -234,7 +235,7 @@ var nextImg = () => {
 
 var prevImg = () => {
     if (currentFile.pos > 0 && !mLoading) {
-        $('#manga-name').css({ opacity: 1 }); 
+        $('#manga-name').css({ opacity: 1 });
         let img = pimages[currentFile.pos - 1].src;
         if (img.includes('data:')) {
             mImageView.src = img;
@@ -272,7 +273,7 @@ var prevManga = () => {
     } else if (currentPage > 1) {
         mLoading = true;
         loadPartialPage(genUrl(currentPage - 1), () => {
-            
+
             processFile(document.querySelector('.items:last-child'));
         });
     }
@@ -417,6 +418,6 @@ $(imgpreview).on('click', '.pimgs', (e) => {
     $(mSlider).trigger('input');
 });
 
-$('#manga-name').on('webkitTransitionEnd transitionend', (e)=>{
-   $('#manga-name').css({ opacity: 0 }); 
+$('#manga-name').on('webkitTransitionEnd transitionend', (e) => {
+    $('#manga-name').css({ opacity: 0 });
 });

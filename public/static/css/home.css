@@ -46,8 +46,10 @@
 .items .item-progress{
     position: relative;
     display: inline-block;
-    font-size: 15px;
-    top: -12px;
+    font-size: 14px;
+    top: -10px;
+    font-family: monospace;
+    font-weight: 700;
 }
 
 .item-btns {

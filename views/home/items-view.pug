@@ -20,9 +20,10 @@ mixin items-view(items, pagedatas, isFile, categories)
                             if item.Type
                                 if item.Type.includes('Manga')
                                     span.item-play.fas.fa-book-open
+                                    span.item-progress= ((item.CurrentPos+1) || 1)+"/"+item.Duration 
                                 else
                                     span.item-play.far.fa-play-circle
-                                span.item-progress= ((item.CurrentPos+1) || 1)+"/"+item.Duration 
+                                    span.item-progress= formatTime(item.CurrentPos) +"/"+formatTime(item.Duration)
                                 if pagedatas.action.includes("/favorites")
                                     span.item-del.far.fa-trash-alt
                                 else
@@ -33,7 +34,7 @@ mixin items-view(items, pagedatas, isFile, categories)
                                 span.float-right.fas.fa-folder
                         .item-cover
                             img.fa(draggable="false" src="/covers/"+ (isFile ? 'files/folder-'+item.DirectoryId+'/' : 'folders/')+item.Id+'.jpg' alt="Loading Image - Reload")
-                        .item-name= item.Name.replace(/.mp4|.mkv|.avi|webm|ogg/ig, '')
+                        .item-name= item.Name
         if !pagedatas.action.includes('recent')
             #ordering
                 .input-group

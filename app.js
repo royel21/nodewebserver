@@ -10,8 +10,8 @@ const flash = require('connect-flash');
 const bodyParser = require('body-parser');
 const csrf = require('csurf');
 const fileUpload = require('express-fileupload');
-
 const db = require('./models');
+const { formatTime } = require('./modules/timeUtil')
 
 //Routes
 const home = require("./routes/homeRoute");
@@ -47,6 +47,7 @@ app.use(flash());
 app.locals.moment = require('moment');
 app.locals.roles = { user: "Usurario", manager: "Manager", admin: "Administrador" };
 app.locals.fs = require("fs");
+app.locals.formatTime = formatTime;
 
 app.use(function(req, res, next) {
 

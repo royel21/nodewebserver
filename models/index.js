@@ -60,13 +60,13 @@ db.user.afterCreate((user, options) => {
 });
 
 db.category.belongsToMany(db.file, { through: { model: db.fileCategory } });
-db.file.belongsToMany(db.category, { through: { model: db.fileCategory } });
+db.file.belongsToMany(db.category, { through: { model: db.fileCategory, onDelete: 'cascade' } });
 
 db.favorite.belongsToMany(db.file, { through: { model: db.favoriteFile } });
-db.file.belongsToMany(db.favorite, { through: { model: db.favoriteFile } });
+db.file.belongsToMany(db.favorite, { through: { model: db.favoriteFile, onDelete: 'cascade' } });
 
 db.recent.belongsToMany(db.file, { through: { model: db.recentFile } });
-db.file.belongsToMany(db.recent, { through: { model: db.recentFile } });
+db.file.belongsToMany(db.recent, { through: { model: db.recentFile, onDelete: 'cascade' } });
 
 db.directory.hasMany(db.file, { onDelete: 'cascade' });
 db.directory.hasMany(db.folder, { onDelete: 'cascade' });

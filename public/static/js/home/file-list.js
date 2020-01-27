@@ -127,6 +127,7 @@ const selectItem = (index) => {
     }
     $('.items').removeClass('active');
     $(nextEl).addClass('active');
+    setSelectedItemInPage(index);
     return nextEl;
 }
 

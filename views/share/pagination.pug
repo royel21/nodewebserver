@@ -18,31 +18,32 @@ mixin pagination(total, data)
                         span#current-page= currentPage+"/"+totalPages
                         span#next-list-page
                             i.fas.fa-chevron-circle-right 
-            else  
+            else 
                 ul#norm-os.pagination(data-action=data.action)
-                    li.page-item
-                        form#select-page(action=data.action+"search" method="POST" onchange="" + (!noItems ? "choosePage(this)" : ""))
-                            input(type="hidden" name="_csrf" value=""+ data.csrfToken)
-                            input(type="hidden" name="search" value=""+ search)
-                            input(type="hidden" name="items" value=itemsPerPage)
-                            if data.cat
-                                input(type="hidden" name="cat" value=data.cat)
+                    li.page-item(data-title="Jump To Page").popup-msg
                             select#page-select.form-control(name="page")
                                 -for(let i = 1; i < totalPages+1; i++)
                                     option(value=""+i selected=(currentPage == i ? true : false))= i
-                    
+                    if !noItems && totalPages > 0                
+                        li.page-item(data-title="Item Per Page").popup-msg
+                            select#itemperpage.page-link(name="items")
+                                -let selected = false
+                                -for(let i = step; i < total; i += step)
+                                    option(value=""+i selected=(itemsPerPage === i ? true : false))= i
+                                    -if(itemsPerPage === i) selected = true
+                                option(value=""+total selected=!selected)= total
                     if currentPage == 1
-                        li.page-item.disabled
+                        li.page-item.disabled(data-title="First Page").popup-msg
                             a.page-link
                                 i.fa.fa-angle-double-left
-                        li.page-item.disabled
+                        li.page-item.disabled(data-title="Previous Page").popup-msg
                             a.page-link
                                 i.fa.fa-angle-left
                     else
-                        li.page-item(data-page=1)
+                        li.page-item(data-page=1 data-title="First Page").popup-msg
                             a.page-link(href=data.action+1+"/"+itemsPerPage+"/"+search)
                                 i.fa.fa-angle-double-left
-                        li.page-item(data-page=currentPage-1)
+                        li.page-item(data-page=currentPage-1 data-title="Previous Page").popup-msg
                             a.page-link(href=data.action+(currentPage-1)+"/"+itemsPerPage+"/"+search)
                                 i.fa.fa-angle-left
                         
@@ -59,35 +60,20 @@ mixin pagination(total, data)
                                 a.page-link(href=data.action+i+"/"+itemsPerPage+"/"+search)= i
                     
                     if currentPage == totalPages
-                        li.page-item.disabled
+                        li.page-item.disabled(data-title="Next Page").popup-msg
                             a.page-link
                                 i.fa.fa-angle-right
-                        li.page-item.disabled
+                        li.page-item.disabled(data-title="Last Page").popup-msg
                             a.page-link
                                 i.fa.fa-angle-double-right
                     else
-                        li.page-item(data-page=parseInt(currentPage)+1)
+                        li.page-item(data-page=parseInt(currentPage)+1 data-title="Next Page").popup-msg
                             a.page-link(href=data.action+(parseInt(currentPage)+1)+"/"+itemsPerPage+"/"+search)
                                 i.fa.fa-angle-right
-                        li.page-item(data-page=totalPages)
+                        li.page-item(data-page=totalPages data-title="Last Page").popup-msg
                             a.page-link(href=data.action+totalPages+"/"+itemsPerPage+"/"+search)
                                 i.fa.fa-angle-double-right
     if !noItems && totalPages > 0
         #itemsPerPage(data-itemsperpage=itemsPerPage)
-            form#items-form(action=searchAction+"search" method="POST" onchange="submitItemAndSearchForm(this)")
-                input(type="hidden" name="_csrf" value=""+ data.csrfToken)
-                input(type="hidden" name="page" value="1")
-                input(type="hidden" name="search" value=""+ search)
-                input(type="hidden" name="orderby" value=""+ data.orderby)
-                if data.cat
-                    input(type="hidden" name="cat" value=data.cat)
-                #items.input-group
-                    .input-group-prepend
-                        label.input-group-text(for="items" value="") Items
-                    select#item.form-control(name="items")
-                        -let selected = false
-                        -for(let i = step; i < total; i += step)
-                            option(value=""+i selected=(itemsPerPage === i ? true : false))= i
-                            -if(itemsPerPage === i) selected = true
-                        option(value=""+total selected=!selected)= total
-            span.badge.badge-primary= total
+            
+            span.badge.badge-primary.popup-msg(data-title="Files Found")= total

@@ -43,19 +43,24 @@ exports.folderContent = (req, res) => {
 
 exports.deletePath = (req, res) => {
     let id = req.body.id;
-    db.directory.destroy({ where: { Id: id } }).then(deletePath => {
-        if (deletePath > 0) {
-            let coverPath = path.resolve('./public', 'covers', 'files', 'folder-' + id);
-            if (fs.existsSync(coverPath)) {
-                const worker = fork('./workers/delete-worker.js');
-                worker.send(coverPath);
+    db.file.destroy({ where: { DirectoryId: id } }).then(() => {
+        db.directory.destroy({ where: { Id: id } }).then(deletePath => {
+            if (deletePath > 0) {
+                let coverPath = path.resolve('./public', 'covers', 'files', 'folder-' + id);
+                if (fs.existsSync(coverPath)) {
+                    const worker = fork('./workers/delete-worker.js');
+                    worker.send(coverPath);
+                }
+                res.send("ok");;
+            } else {
+                res.send("error");
             }
-            res.send("ok");;
-        } else {
+        }).catch(err => {
+            if (err) console.log(err);
             res.send("error");
-        }
+        });
     }).catch(err => {
         if (err) console.log(err);
         res.send("error");
-    });
+    });;
 }

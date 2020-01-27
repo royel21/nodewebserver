@@ -26,9 +26,9 @@ router.post("/mangas/:orderby/search", homeController.postSearch);
 router.post("/folder-content/:orderby/:folder/search", homeController.postSearch);
 
 router.get("/favorites/:orderby/:page?/:items?/:search?", favController.favorite);
-router.post("/favorites/:orderby/addfav", favController.postFavorite);
-router.post("/favorites/:orderby/remove", favController.postRemoveFile);
-router.post("/favorites/:orderby/search", favController.postSearch);
+router.post("/favorites/search", favController.postSearch);
+router.post("/favorites/remove", favController.postRemoveFile);
+router.post("/favorites/addfav", favController.postFavorite);
 
 router.get("/categories/:orderby/:cat?/:page?/:items?/:search?", categoriesController.categories);
 router.post("/categories/:orderby/:cat/search", categoriesController.postSearch);

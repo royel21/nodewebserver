@@ -4,12 +4,17 @@ var socket;
 let lastUrl;
 
 var pageHistory = {
-    recents: "",
-    folders: "",
-    mangas: "",
-    videos: "",
-    favorities: "",
-    administrator: ""
+    recents: { pathname: "", selectedIndex: 0 },
+    folders: { pathname: "", selectedIndex: 0 },
+    mangas: { pathname: "", selectedIndex: 0 },
+    videos: { pathname: "", selectedIndex: 0 },
+    categories: { pathname: "", selectedIndex: 0 },
+    favorities: { pathname: "", selectedIndex: 0 },
+    administrator: { pathname: "", selectedIndex: 0 }
+}
+
+const setSelectedItemInPage = (index) => {
+    pageHistory[$('#menu input:checked')[0].id].selectedIndex = index;
 }
 
 const loadPartialPage = async(url, cb) => {
@@ -18,8 +23,8 @@ const loadPartialPage = async(url, cb) => {
     let text = $('.navbar input:checked').next().text().trim();
     document.title = text;
     window.history.pushState(text, text, url.replace('//', '/'));
-
-    pageHistory[$('#menu input:checked')[0].id] = url;
+    if (!location.pathname.includes('admin'))
+        pageHistory[$('#menu input:checked')[0].id].pathname = url;
 
     $.get(url, { partial: true }, (resp) => {
         if (resp.data) {
@@ -31,7 +36,7 @@ const loadPartialPage = async(url, cb) => {
             }
             if (cb) cb();
         } else {
-            location.href = '/login';
+            //location.href = '/login';
         }
     });
 }
@@ -57,8 +62,11 @@ $('body').on('click', '#table-controls .page-item a, #controls .page-item a', (e
 
 const genUrl = (page) => {
     let orderby = local.getItem('orderby') || $('#order-select').val();
+    let iperpage =  document.querySelector('select[name=items]').value;
+    let search = $('input[name=search]').val();
     currentPage = page;
     let path = location.pathname.split(/\/\d*\//)[0] + '/';
+    
     if (path === '//') {
         path = '/recents/';
     } else if (!path.includes('recent')) {
@@ -70,19 +78,18 @@ const genUrl = (page) => {
         }
 
         datapath[1] = orderby;
-        path = '/' + datapath.join('/') + '/';
+        path = '/' + datapath.join('/');
 
     }
 
-    return path + page + "/" + $('input[name=items]').val() + "/" + $('input[name=search]').val();
+    return `${path}/${page}/${iperpage}/${search}`;
 }
 
-const choosePage = (el) => {
+$('#content').on('change','#controls #itemperpage, #controls #page-select', (el) => {
     let page = document.querySelector('select[name=page]').value;
     let url = genUrl(page);
-    console.log(page)
     loadPartialPage(url);
-}
+});
 
 const submitItemAndSearchForm = (e) => {
     let form;
@@ -96,10 +103,13 @@ const submitItemAndSearchForm = (e) => {
 
     let url = $(form).attr('action');
     $.post(url, $(form).serialize(), (resp) => {
-        $('#container').replaceWith(resp.data);
-        let title = document.title;
-        window.history.pushState(title, title, resp.url.replace('?partial=true', ''));
-        pageHistory[$('#menu input:checked')[0].id] = resp.url.replace('?partial=true', '');
+        if (resp.data) {
+            $('#container').replaceWith(resp.data);
+            let title = document.title;
+            window.history.pushState(title, title, resp.url.replace('?partial=true', ''));
+            if (!location.pathname.includes('admin'))
+                pageHistory[$('#menu input:checked')[0].id].pathname = resp.url.replace('?partial=true', '');
+        }
     });
 }
 
@@ -127,13 +137,15 @@ $('#login').on('click', (e) => {
 });
 
 $('.navbar input[type=radio]').change((e) => {
-    let url = pageHistory[e.target.id] || e.target.value;
-    if(location.pathname.includes('admin')){
+    let url = pageHistory[e.target.id].pathname || e.target.value;
+    if (location.pathname.includes('admin')) {
         return location.href = url;
     }
-    
+
     if (!url.includes('admin'))
-        loadPartialPage(url);
+        loadPartialPage(url, () => {
+            selectItem(pageHistory[e.target.id].selectedIndex);
+        });
 
 });
 /********************************************modal********************/
@@ -181,8 +193,9 @@ if (isAndroid) {
 $(() => {
     let phistory = local.getObject('history');
     if (phistory) {
-       pageHistory = phistory;
+        pageHistory = phistory;
     }
+
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/service-worker.js')
             .then((result) => {

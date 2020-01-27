@@ -40,18 +40,18 @@ Array.prototype.removeBy = function(obj, by) {
 }
 
 
-formatTime = (time) => {
+const formatTime = (time) => {
     var h = Math.floor(time / 3600);
     var min = Math.floor((time / 3600 - h) * 60);
     var sec = Math.floor(time % 60);
-    return (h == 0 ? "" : String(h).padStart(2, "0") + ':') +
+    return (h == 0 ? "" : h + ':') +
         String(min).padStart(2, "0") + ':' + String(sec).padStart(2, "0");
 }
 
 
 var clockTimer;
 var $clock = $('.clock');
-startClock = () => {
+const startClock = () => {
     $clock.fadeIn();
     $clock.text(new Date().toLocaleTimeString('en-US'));
 
@@ -60,7 +60,7 @@ startClock = () => {
     }, 1000);
 }
 
-stopClock = () => {
+const stopClock = () => {
     $clock.fadeOut();
     clearInterval(clockTimer);
     $clock.text('');
@@ -68,32 +68,33 @@ stopClock = () => {
 
 var lastEl;
 
-setfullscreen = (element) => {
-        try {
-            if (lastEl && element.tagName !== 'BODY') {
-                if (document.fullscreenElement.tagName === 'BODY') {
-                    document.exitFullscreen().then(() => {
-                        element.requestFullscreen().catch(err => {});
-                    }).catch(err => {});
-                } else {
-                    document.exitFullscreen().then(() => {
-                        lastEl.requestFullscreen().catch(err => {});
-                    }).catch(err => {});
-                }
-            } else {
-                if (!document.fullscreenElement) {
+const setfullscreen = (element) => {
+    try {
+        if (lastEl && element.tagName !== 'BODY') {
+            if (document.fullscreenElement.tagName === 'BODY') {
+                document.exitFullscreen().then(() => {
                     element.requestFullscreen().catch(err => {});
-                    if (element.tagName === 'BODY') lastEl = element;
-                    startClock();
-                } else {
-                    document.exitFullscreen().catch(err => {});
-                    lastEl = null;
-                    stopClock();
-                }
+                }).catch(err => {});
+            } else {
+                document.exitFullscreen().then(() => {
+                    lastEl.requestFullscreen().catch(err => {});
+                }).catch(err => {});
             }
-
-            $('.fa-expand-arrows-alt').attr('data-title', document.webkitIsFullScreen ? "Pantalla Completa" : "Salir Pantalla Completa");
-        } catch (err) {
-            console.log(err)
+        } else {
+            if (!document.fullscreenElement) {
+                element.requestFullscreen().catch(err => {});
+                if (element.tagName === 'BODY') lastEl = element;
+                startClock();
+            } else {
+                document.exitFullscreen().catch(err => {});
+                lastEl = null;
+                stopClock();
+            }
         }
+
+        $('.fa-expand-arrows-alt').attr('data-title', document.webkitIsFullScreen ? "Pantalla Completa" :
+            "Salir Pantalla Completa");
+    } catch (err) {
+        console.log(err)
+    }
 }

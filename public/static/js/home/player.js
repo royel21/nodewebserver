@@ -42,7 +42,7 @@ const configPlayer = () => {
     player.volume = config.volume;
 
     player.muted = btnMuted.checked = config.isMuted;
-    player.currentTime = currentFile.currentPos || 0;
+    player.currentTime = currentFile.pos || 0;
     if (!config.paused) pauseOrPlay();
     $('.loading').css({ display: 'none' });
 
@@ -169,8 +169,10 @@ player.onplay = player.onpause = hideFooter;
 player.ontimeupdate = (e) => {
     if (update && Slider) {
         Slider.value = Math.floor(player.currentTime);
-        $vTotalTime.text(formatTime(player.currentTime) + "/" + vDuration);
-        currentFile.currentPos = player.currentTime;
+        let current = formatTime(player.currentTime) + "/" + vDuration;
+        $vTotalTime.text( current);
+        $('#'+currentFile.id+" .item-progress").text(current);
+        currentFile.pos = player.currentTime;
     }
 }
 
@@ -202,7 +204,6 @@ player.ontouchstart = player.onmousedown = (e) => {
     if (e.type.includes('touch')) {
         point.X = e.touches[0].clientX;
         point.Y = e.touches[0].clientY;
-        console.log("touchStart")
     }
 }
 
@@ -212,35 +213,29 @@ player.ontouchend = player.ontouchcancel = player.onmouseup = player.onpointerca
     if ((new Date() - pressStart) < 200) {
         pauseOrPlay();
     }
-    console.log("touchEnd cancel");
 }
 
 player.ontouchmove = (e) => {
     e.preventDefault();
     let touch = e.touches[0];
-    console.log("touchMove");
     if (detectTap) {
         let offset = 2;
         let diffY = touch.clientY - point.Y;
         if (diffY < -offset) {
-            console.log("Up: " + diffY);
             volcontrol.value = player.volume + 0.05;
             player.volume = volcontrol.value;
         }
 
         if (diffY > offset) {
-            console.log("Down: " + (touch.clientY - point.Y));
             volcontrol.value -= 0.05;
             player.volume = volcontrol.value;
         }
         let diffX = touch.clientX - point.X;
         if (diffX > offset) {
-            console.log("right: " + diffX);
             player.currentTime += 2;
         }
 
         if (diffX < -offset) {
-            console.log("letf: " + (touch.clientX - point.X));
             player.currentTime -= 2;
         }
         point.X = touch.clientX;
@@ -268,7 +263,7 @@ const playVideo = (el) => {
     if (el) {
 
         update = false;
-        if(currentFile.id !== item.Id){
+        if(currentFile.id !== el.id){
             socket.emit('add-or-update-recent', currentFile);
         }
         currentFile.id = el.id;
@@ -277,7 +272,7 @@ const playVideo = (el) => {
 
         $('.loading').css({ display: 'flex' });
 
-        $('#video-name').text($(el).text());
+        $('#video-name').text($(el.querySelector('.item-name')).text());
         player.src = "/videoplayer/video/" + currentFile.id;
         selectedIndex = $('.items').index(el);
     }
@@ -301,7 +296,6 @@ $("#video-viewer .fa-arrow-alt-circle-left").click((e) => {
 var playerKeyDown = (e) => {
     if ($(videoViewer).is(':visible')) {
         var keys = config.playerkey;
-        console.log(e.keyCode);
         switch (e.keyCode) {
             case keys.fullscreen.keycode:
                 {
@@ -386,7 +380,7 @@ var playerKeyDown = (e) => {
 }
 $(document).on('webkitfullscreenchange fullscreenchange', function (e) {
 
-    if (videoViewer.style.display === "block") {
+    if (!$(videoViewer).hasClass('d-none')) {
         if (document.fullscreenElement === videoViewer && isAndroid) {
             screen.orientation.lock('landscape');
         } else {

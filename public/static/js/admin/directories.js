@@ -6,7 +6,8 @@ var loadDirectories = () => {
             let path = e.target.closest('ul').dataset.path;
 
             $.post('/admin/directories/folder-content', {
-                path, folder: dir.trim(),
+                path,
+                folder: dir.trim(),
                 _csrf: $("#paths").data('csrf')
             }, (resp) => {
 

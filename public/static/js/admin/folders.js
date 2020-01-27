@@ -5,7 +5,7 @@ var loadFoldersConfig = () => {
     let _csrf;
     let getCurPage;
     let isAllFile;
-    
+
     //load files for current admin page
     _csrf = $('#container').data('csrf');
     isAllFile = () => {
@@ -16,29 +16,29 @@ var loadFoldersConfig = () => {
     //load files list
     loadFiles = (data) => {
 
-        data.isAllFiles = isAllFile();
+            data.isAllFiles = isAllFile();
 
-        let selecteditem = $('.list .content-list .active')[0];
-        data.id = selecteditem ? selecteditem.id : "";
+            let selecteditem = $('.list .content-list .active')[0];
+            data.id = selecteditem ? selecteditem.id : "";
 
-        let url = getAction() + 'file-list';
+            let url = getAction() + 'file-list';
 
-        $.get(url, data, (resp, status) => {
-            $('#file-list').replaceWith(resp);
-            $('#total-files').text("Total - " + $('#file-list').data('total'));
-        });
-    }
-    //load items list
+            $.get(url, data, (resp, status) => {
+                $('#file-list').replaceWith(resp);
+                $('#total-files').text("Total - " + $('#file-list').data('total'));
+            });
+        }
+        //load items list
     loadItemList = (data, cb) => {
-        let url = getAction() + 'items-list';
+            let url = getAction() + 'items-list';
 
-        data.search = $('#items-list .search-input').val();
-        $.get(url, data, (resp, status) => {
-            $('#items-list').replaceWith(resp);
-            if (cb) cb();
-        });
-    }
-    // load page base on target pager
+            data.search = $('#items-list .search-input').val();
+            $.get(url, data, (resp, status) => {
+                $('#items-list').replaceWith(resp);
+                if (cb) cb();
+            });
+        }
+        // load page base on target pager
     loadFromPager = (element, data) => {
         if (element.closest('.list').id.includes('file-list')) {
             data.search = $('#file-list .search-input').val();
@@ -63,7 +63,7 @@ var loadFoldersConfig = () => {
             data: formData,
             contentType: false,
             processData: false,
-            success: function (resp) {
+            success: function(resp) {
                 if (resp.err) {
                     console.log(resp.message);
                 } else {
@@ -113,7 +113,7 @@ var loadFoldersConfig = () => {
         }
     });
     // select page from pager
-    $('#items-container').on('change', '#select-page', (e) => {
+    $('#items-container').on('change', '#page-select', (e) => {
         let data = { page: e.target.value };
         loadFromPager(e.target, data)
     });
@@ -170,9 +170,9 @@ var loadFoldersConfig = () => {
         let liItem = $('#items-list .content-list li.active')[0];
 
         $.post(postUrl, { itemId: liItem.id, fileId: li.id, _csrf }, (resp) => {
-            
+
             if (resp.status === "Ok") {
-                
+
                 $(li).fadeOut('fast', (e) => {
                     let vPage = getCurPage('files');
 
@@ -189,8 +189,8 @@ var loadFoldersConfig = () => {
                             })
                         }
                         $(li).fadeOut('fast', () => {
-                                li.remove();
-                             loadFiles({ page: vPage });
+                            li.remove();
+                            loadFiles({ page: vPage });
                         });
                     }
                 });
@@ -198,4 +198,3 @@ var loadFoldersConfig = () => {
         });
     });
 }
-

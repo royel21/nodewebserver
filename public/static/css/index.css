@@ -81,6 +81,13 @@ body{
     min-width: 50px;
     max-width: 75px;
 }
+#itemperpage{
+    height: 32px;
+    font-size: 1rem;
+    line-height: 1.5;
+    font-weight: 700;
+    width: 75px;
+}
 
 #pager-select[option]{
   color: #007bff;
@@ -94,7 +101,7 @@ body{
     max-width: 225px;
     z-index: 1000;
     color: white;
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: rgba(0, 0, 255, 0.9);
     padding: 5px 10px;
     border-radius: 10px;
     font-size: 14px;
@@ -112,7 +119,7 @@ body{
     top: -6px;
     right: calc(100% / 2 - 6px);
     transform: rotate(45deg);
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: inherit;
 }
 
 #popup.popup-top:after {
@@ -207,6 +214,7 @@ body{
 .search-container .input-group .search-input{
     position: relative;
     border-radius: 0px 5px 5px 0px;
+    height: 32px;
 }
 
 .search-container span .fa-times-circle{

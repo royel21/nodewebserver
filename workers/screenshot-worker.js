@@ -30,7 +30,10 @@ const getScreenShot = async(video, toPath, duration) => {
 }
 
 const getVideoDuration = async(video) => {
-    return execFileSync(ffprobe, ['-i', video, '-show_entries', 'format=duration', '-v', 'quiet', '-of', 'csv=p=0'], { timeout: 1000 * 60 });
+    return execFileSync(ffprobe, ['-i', video, '-show_entries', 'format=duration', '-v', 'quiet', '-of', 'csv=p=0'], {
+        timeout: 1000 *
+            60
+    });
 }
 
 const myworker = async(id) => {
@@ -53,13 +56,13 @@ const myworker = async(id) => {
             }
 
         } else {
-            let duration = 0;
+            let Duration = 0;
             try {
                 let tempVal = await getVideoDuration(fullPath);
                 if (isNaN(tempVal)) continue;
-                duration = parseFloat(tempVal);
-                if (f.Duration > 1) {
-                    await f.update({ Duration: duration });
+                Duration = parseFloat(tempVal);
+                if (f.Duration === 0) {
+                    await f.update({ Duration });
                 }
             } catch (err) {
                 console.log("Err:", err)
@@ -67,7 +70,7 @@ const myworker = async(id) => {
             }
 
             try {
-                await getScreenShot(fullPath, coverPath, duration);
+                await getScreenShot(fullPath, coverPath, Duration);
 
             } catch (err) {
                 console.log(err);

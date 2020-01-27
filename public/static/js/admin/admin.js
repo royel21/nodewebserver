@@ -1,9 +1,8 @@
-
 socket = io();
 
 socket.on('disconnect', error => {
     console.log(error);
-    if(error.includes('transport')){
+    if (error.includes('transport')) {
         location.href = '/login';
     }
 });
@@ -11,21 +10,25 @@ socket.on('disconnect', error => {
 var loadFunctions = (page) => {
     switch (page) {
         case "Categories":
-        case "Folders": {
-            loadFoldersConfig();
-            break;
-        }
-        case "Files": {
-            loadFilesConfig();
-            break;
-        }
-        case "Directories": {
-            loadDirectories();
-            break;
-        }
-        default: {
+        case "Folders":
+            {
+                loadFoldersConfig();
+                break;
+            }
+        case "Files":
+            {
+                loadFilesConfig();
+                break;
+            }
+        case "Directories":
+            {
+                loadDirectories();
+                break;
+            }
+        default:
+            {
 
-        }
+            }
     }
 }
 
@@ -58,9 +61,9 @@ $(document).on("click", ".show-form", (e) => {
     console.log(uid, action)
     $.get(action + "modal", { uid }, (resp) => {
         $('#modal').empty().append(resp);
-        $('#modal-container').fadeIn("fast", ()=>{
+        $('#modal-container').fadeIn("fast", () => {
             $('#modal').fadeIn("fast");
-            $('#modal-container').css({display: "flex"});
+            $('#modal-container').css({ display: "flex" });
         });
     });
 });
@@ -72,12 +75,12 @@ $('body').on('click', 'tbody .fa-trash-alt', (e) => {
     console.log($tr.attr('id'), name)
     $.post($('#container').data('action') + 'delete', { id: $tr.attr('id'), _csrf: $('#container').data('csrf') }, (resp) => {
         if (resp.status === "Ok") {
-            
+
             $tr.fadeOut("fast", () => {
                 $tr.remove();
                 confirm(resp.msg, "text-success");
             });
-        }else{
+        } else {
             confirm(resp.msg, "text-danger");
         }
     });
@@ -91,23 +94,26 @@ $(document).on('submit', '#create-edit', (e) => {
     $.post($form.attr('action'), formData, (resp) => {
         console.log(resp)
         switch (resp.status) {
-            case "error": {
-                $('#errors').append($('<span>').text(resp.data));
-                break;
-            }
-            case "update": {
-                $('#' + resp.Id+ ' .name').text(resp.Name);
-                confirm(resp.action + " " + resp.Name + " Actualizado Con Exito", 'text-success');
-                break;
-            }
-            case "create": {
-                let items = $('#itemsPerPage').data('itemsperpage');
-                if ($('tbody tr').length < (items || 10)) {
-                    $('tbody').append(resp.data);
+            case "error":
+                {
+                    $('#errors').append($('<span>').text(resp.data));
+                    break;
                 }
-                confirm(resp.action + " " + resp.Name + " Agregado Con Exito", 'text-success');
-                break;
-            }
+            case "update":
+                {
+                    $('#' + resp.Id + ' .name').text(resp.Name);
+                    confirm(resp.action + " " + resp.Name + " Actualizado Con Exito", 'text-success');
+                    break;
+                }
+            case "create":
+                {
+                    let items = $('#itemsPerPage').data('itemsperpage');
+                    if ($('tbody tr').length < (items || 10)) {
+                        $('tbody').append(resp.data);
+                    }
+                    confirm(resp.action + " " + resp.Name + " Agregado Con Exito", 'text-success');
+                    break;
+                }
         }
     });
 });
