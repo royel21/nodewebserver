@@ -1,7 +1,7 @@
 mixin items-view(items, pagedatas, isFile, categories)
     #container(data-page=pagedatas.currentPage data-total=pagedatas.totalPages)    
         #controls
-            if categories
+            if categories && categories.length > 0
                 include ../share/categories
                 +categories(categories, pagedatas)
             
