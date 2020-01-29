@@ -62,7 +62,8 @@ $('body').on('click', '#table-controls .page-item a, #controls .page-item a', (e
 
 const genUrl = (page) => {
     let orderby = local.getItem('orderby') || $('#order-select').val();
-    let iperpage =  document.querySelector('select[name=items]').value;
+    let item = document.querySelector('select[name=items]')
+    let iperpage =  item ? item.value : 27;
     let search = $('input[name=search]').val();
     currentPage = page;
     let path = location.pathname.split(/\/\d*\//)[0] + '/';

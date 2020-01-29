@@ -425,9 +425,9 @@ $('body').on('change', '#order-select', e => {
 
 
 function handleBrowserState(isActive) {
-    socket.emit('add-or-update-recent', { msg: "focus", state: isActive });
-    console.log({ msg: "focus", state: isActive });
+   // socket.emit('add-or-update-recent', { msg: "focus", state: isActive });
 }
+
 window.addEventListener("focus", handleBrowserState.bind(true));
 window.addEventListener("blur", handleBrowserState.bind(false));
 
