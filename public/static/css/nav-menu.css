@@ -21,7 +21,7 @@
 }
 
 #menu label{
-    margin: 0 4px;
+    margin: 0;
     padding: 8px 5px;
     cursor: pointer;
 }
@@ -79,7 +79,7 @@
 }
 
 #menu .nav-item:last-child{
-    padding-right: 5px;
+    /* padding-right: 5px; */
 }
 
 @media screen and (max-width: 600px) {
