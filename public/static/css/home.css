@@ -193,6 +193,7 @@
     }
     .items-list {
     justify-content: center;
+    padding-bottom: 31px;
     }
 }
 

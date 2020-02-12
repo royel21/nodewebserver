@@ -130,7 +130,9 @@ exports.login = (req, res) => {
     if (req.user) {
         return res.redirect('/');
     } else
-        res.render("home/login.pug", { title: "Log in", csrfToken: req.csrfToken(), message: req.flash() });
+        db.user.findAll({ order: ['Name'] }).then(users => {
+            res.render("home/login.pug", { users, title: "Log in", csrfToken: req.csrfToken(), message: req.flash() });
+        });
 }
 
 exports.loginPost = (req, res, next) => {

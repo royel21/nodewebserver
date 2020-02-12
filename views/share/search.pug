@@ -1,4 +1,6 @@
 mixin search(data, action, formId)
+    if url.includes('folder-content')
+        span#goback.fas.fa-arrow-up
     .search-container
         form.d-inline-block.ml-2(id=formId action=action method="POST") 
             input(type="hidden" name="_csrf" value=""+ data.csrfToken)

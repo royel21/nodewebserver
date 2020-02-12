@@ -217,7 +217,9 @@ mSlider.onchange = (e) => {
 var nextImg = () => {
     if (currentFile.pos < mTotalPages - 1) {
         $('#manga-name').css({ opacity: 1 });
+        
         let timg = pimages[currentFile.pos + 1].src;
+        
         if (timg.includes('data:')) {
             mImageView.src = timg;
             currentFile.pos++;
@@ -235,8 +237,11 @@ var nextImg = () => {
 
 var prevImg = () => {
     if (currentFile.pos > 0 && !mLoading) {
+
         $('#manga-name').css({ opacity: 1 });
+
         let img = pimages[currentFile.pos - 1].src;
+        
         if (img.includes('data:')) {
             mImageView.src = img;
             currentFile.pos--;

@@ -311,12 +311,6 @@ $('body').on('click', '.items', (e) => {
     lastItem.id = item.id;
 });
 
-
-
-$(window).bind('popstate', (event) => {
-    selectItem(0);
-});
-
 var goBack = () => {
     local.setItem('folder', false);
     loadPartialPage(config.folder.lastfolder, () => {
@@ -324,9 +318,10 @@ var goBack = () => {
     });
 }
 
-$('body').on('click', '#back', () => {
+$('body').on('click', '#goback', () => {
     goBack();
 });
+
 var lastScroll;
 
 $('#content').scroll((e) => {

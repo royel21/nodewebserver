@@ -20,7 +20,9 @@ block content
                     div.input-group.my-2
                         .input-group-prepend
                             label.input-group-text(for="username") ID Usuario
-                        input#username.form-control(required="" name="username" value="")
+                        select#username.form-control(name="username" value="")
+                            each user in users
+                                option(value=user.Name)= user.Name
                     if message.userError
                         .alert.alert-danger.p-0.m-0= message.userError
                     .input-group.my-2

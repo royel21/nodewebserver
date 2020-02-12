@@ -28,6 +28,16 @@ body{
     overflow-y: auto;
 }
 
+#goback{
+    display: inline-block;
+    position: absolute;
+    top: 9px;
+    left: 5px;
+}
+#goback + div{
+    margin-left: 40px;
+}
+
 .card{
     border: 2px solid white;
     height: 100%;
