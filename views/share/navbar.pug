@@ -31,7 +31,6 @@ mixin navbar(user, url)
                     //- a.nav-link(href="/categories/nu/")
                     i.fas.fa-tags
                     span  Categories
-        ul.navbar-nav.bg-dark
             if !['manager', 'admin'].includes(user.Role)
                 li.nav-item
                     input#favorities(type="radio", name="menu-group" value="/favorites/nu/" checked=url.includes('favorites'))
@@ -39,6 +38,7 @@ mixin navbar(user, url)
                         //- a.nav-link(href="/favorites/nu/" )
                         i.fas.fa-heart
                         span  Favorites
+        ul.navbar-nav.bg-dark
             li.nav-item
                 if ['manager', 'admin'].includes(user.Role)
                     input#admin(type="radio", name="menu-group" value="/admin" checked=(url.includes('admin')))
