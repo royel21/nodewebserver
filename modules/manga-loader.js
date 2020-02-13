@@ -88,6 +88,8 @@ module.exports.loadZipImages = async(data, socket, currentUser) => {
                         socket.emit('loaded-zipedimage', { error: 'some error' });
                         console.log(err)
                     });
+                }else{
+                    socket.emit('manga-error', { error: 'File Not Found' });
                 }
             }
         });

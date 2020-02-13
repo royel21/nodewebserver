@@ -107,7 +107,7 @@ var fullScreen = (e) => {
 
 var updatePageNumber = () => {
     mSlider.value = currentFile.pos;
-    pimages[currentFile.pos].scrollIntoView();
+    if(pimages[currentFile.pos]) pimages[currentFile.pos].scrollIntoView();
     mSlider.style.setProperty('--val', +currentFile.pos);
     $('#' + currentFile.id + ' .item-progress, #img-viewer .item-progress').text((currentFile.pos + 1) + "/" + mTotalPages);
 };
@@ -130,15 +130,20 @@ socket.on("loaded-zipedimage", (data) => {
     //console.log(data);
     if (data.page === currentFile.pos) {
         currentImg.src = 'data:img/jpeg;base64, ' + data.img;
-        $(mangaViewer).fadeIn(300, (e) => {
-            mangaViewer.focus();
-        });
         mloadingAnimation.style.display = "none";
     }
 
     if (data.img) {
         pimages[data.page].src = 'data:img/jpeg;base64, ' + data.img;
     }
+});
+
+socket.on('manga-error', error => {
+    console.log(error);
+    mLoading = false;
+    mloadingAnimation.style.display = "none";
+    currentImg.src = "#";
+    currentImg.alt = error.error;
 });
 
 socket.on('disconnect', error => {
@@ -154,13 +159,16 @@ var mclose = () => {
             fullScreen();
         }
         selectItem(selectedIndex);
+        mangaViewer.style = "";
+        mangaViewer.classList.add('d-none')
     });
     stopClock();
     $('#img-preview img').each((i, el) => { el.src = "" });
     if (currentFile.pos > 0) {
         socket.emit('add-or-update-recent', { id: currentFile.id, pos: currentFile.pos });
     }
-    currentFile.id = "";
+    currentFile.id = ""; 
+    $('#manga-viewer').addClass('d-none');
 }
 
 closeMViewer.onclick = mclose;
@@ -197,7 +205,7 @@ var openManga = (item) => {
 mSlider.oninput = (e) => {
     let val = parseInt(mSlider.value);
     mSlider.style.setProperty('--val', +mSlider.value);
-    pimages[val].scrollIntoView();
+    if(pimages[val]) pimages[val].scrollIntoView();
 }
 
 mSlider.onchange = (e) => {
