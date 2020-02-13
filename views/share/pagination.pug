@@ -31,7 +31,9 @@ mixin pagination(total, data)
                                 -for(let i = step; i < total; i += step)
                                     option(value=""+i selected=(itemsPerPage === i ? true : false))= i
                                     -if(itemsPerPage === i) selected = true
-                                option(value=""+(total-1) selected=!selected)= total-1
+                                    -if(i > 500) break;
+                                -let t = total > 500 ? 500 : total - 1
+                                option(value=t selected=!selected)= t 
                     if currentPage == 1
                         li.page-item.disabled(data-title="First Page").popup-msg
                             a.page-link

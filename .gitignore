@@ -11,6 +11,8 @@ local_modules/rcunrar/.vscode
 local_modules/rcunrar/bin
 local_modules/rcunrar/build
 public/covers
+public/js
+public/css
 *.db
 test.html
 cert/*
