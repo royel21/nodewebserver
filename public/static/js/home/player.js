@@ -56,6 +56,14 @@ player.onloadedmetadata = function (e) {
     configPlayer();
 }
 
+player.onerror = (err) =>{
+    console.log(err);
+}
+
+player.addEventListener("contextmenu", (e) =>{
+    e.preventDefault();
+});
+
 volcontrol.value = config.volume;
 $('#video-viewer .fa-volume-up').attr('data-title', config.isMuted ? "Unmute" : "Mute");
 
@@ -257,7 +265,7 @@ player.onended = function () {
         }, 3000)
     }
 }
-
+var err2;
 
 const playVideo = (el) => {
     if (el) {
@@ -275,6 +283,11 @@ const playVideo = (el) => {
         $('#video-name').text($(el.querySelector('.item-name')).text());
         player.src = "/videoplayer/video/" + currentFile.id;
         selectedIndex = $('.items').index(el);
+        player.play().catch(err=>{
+            if(err.code === 9){
+                $('.loading-title').text('File Not Found Contat Admin');
+            }
+        });
     }
 }
 

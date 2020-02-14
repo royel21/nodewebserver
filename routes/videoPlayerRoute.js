@@ -17,6 +17,9 @@ router.get("/video/:fileid", (req, res) => {
         }
         var positions = range.replace(/bytes=/, "").split("-");
         var start = parseInt(positions[0], 10);
+        if(start === 0){
+          if(!fs.existsSync((file.FullPath, file.Name))) return res.sendStatus(404);
+        }
 
         // same code as accepted answer
         var end = positions[1] ? parseInt(positions[1], 10) : total - 1;
