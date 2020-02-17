@@ -244,7 +244,7 @@ var nextImg = () => {
 }
 
 var prevImg = () => {
-    if (currentFile.pos > 0 && !mLoading) {
+    if (currentFile.pos > 0) {
 
         $('#manga-name').css({ opacity: 1 });
 
@@ -253,7 +253,7 @@ var prevImg = () => {
         if (img.includes('data:')) {
             mImageView.src = img;
             currentFile.pos--;
-        } else {
+        } else if(!mLoading) {
             currentFile.pos--;
             loadNewImages(currentFile.pos - 2, 1);
         }

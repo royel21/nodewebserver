@@ -19,14 +19,16 @@ const setSelectedItemInPage = (index) => {
 
 const loadPartialPage = async(url, cb) => {
     if (!url) return;
+    
+    let tmpUrl = url.replace('//', '/');
 
     let text = $('.navbar input:checked').next().text().trim();
     document.title = text;
-    window.history.pushState(text, text, url.replace('//', '/'));
+    window.history.pushState(text, text, tmpUrl);
     if (!location.pathname.includes('admin'))
-        pageHistory[$('#menu input:checked')[0].id].pathname = url;
+        pageHistory[$('#menu input:checked')[0].id].pathname = tmpUrl;
 
-    $.get(url, { partial: true }, (resp) => {
+    $.get(tmpUrl, { partial: true }, (resp) => {
         if (resp.data) {
             $('#container').replaceWith(resp.data);
 
