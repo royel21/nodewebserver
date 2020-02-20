@@ -27,7 +27,7 @@ exports.favorite = (req, res) => {
                 itemsPerPage,
                 totalPages,
                 search: search,
-                action: '/favorites/',
+                action: `/favorites/${orderby}/`,
                 csrfToken: req.csrfToken(),
                 step: req.step
             },

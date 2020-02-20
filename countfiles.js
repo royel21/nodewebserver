@@ -42,8 +42,19 @@
 // fv 0w1sk
 // rc pjwhn
 // loli - cat - bzy7w
-// const db = require('./models/index');
+const fs = require('fs-extra');
+const path = require('path')
 
+const db = require('./models/index');
+const addFav = async() => {
+    let fas = fs.readJSONSync('./MyFav.json');
+    let fav = await db.favorite.findByPk('0w1sk');
+    let files = await db.file.findAll({ where: { Name: fas.files } });
+    console.log(files);
+    await fav.addFiles(files);
+}
+
+addFav();
 // var query = async () => {
 //     console.time("s");
 //     let files = await db.file.findAndCountAll({
@@ -80,12 +91,12 @@
 // query().then((result) => {
 //     console.log(result.count, result.rows[0]);
 // });
-const moment = require('moment')
-const winex = require('win-explorer');
-const files = winex.ListFilesRO('E:\\Temp\\Hmangas');
-const db = require('./models/index');
-const fs = require('fs-extra')
-const path = require('path')
+// const moment = require('moment')
+// const winex = require('win-explorer');
+// const files = winex.ListFilesRO('E:\\Temp\\Hmangas');
+// const db = require('./models/index');
+// const fs = require('fs-extra')
+// const path = require('path')
 
 // const updateDate = async(tfs) => {
 
@@ -108,4 +119,4 @@ const path = require('path')
 
 // updateDate(files);
 
-console.log(winex.ListFiles("H:\\", [], { hidden: true, file: false, directory: true }));
+// console.log(winex.ListFiles("H:\\", [], { hidden: true, file: false, directory: true }));
