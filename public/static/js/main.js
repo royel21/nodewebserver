@@ -22,14 +22,17 @@ const loadPartialPage = async(url, cb) => {
     
     let tmpUrl = url.replace('//', '/');
 
-    let text = $('.navbar input:checked').next().text().trim();
-    document.title = text;
-    window.history.pushState(text, text, tmpUrl);
-    if (!location.pathname.includes('admin'))
-        pageHistory[$('#menu input:checked')[0].id].pathname = tmpUrl;
 
     $.get(tmpUrl, { partial: true }, (resp) => {
         if (resp.data) {
+            
+            let text = $('.navbar input:checked').next().text().trim();
+            document.title = text;
+            window.history.replaceState(text, text, resp.url);
+
+            if (!location.pathname.includes('admin'))
+                pageHistory[$('#menu input:checked')[0].id].pathname = tmpUrl;
+
             $('#container').replaceWith(resp.data);
 
             if (!location.pathname.includes('/admin')) {
@@ -37,8 +40,6 @@ const loadPartialPage = async(url, cb) => {
                 calPages();
             }
             if (cb) cb();
-        } else {
-            //location.href = '/login';
         }
     });
 }
@@ -67,13 +68,16 @@ const genUrl = (page) => {
     let item = document.querySelector('select[name=items]')
     let iperpage =  item ? item.value : 27;
     let search = $('input[name=search]').val();
+
     currentPage = page;
+
     let path = location.pathname.split(/\/\d*\//)[0] + '/';
     
     if (path === '//') {
         path = '/recents/';
     } else if (!path.includes('recent')) {
         let datapath = [];
+
         if (path.includes('folder-content') || path.includes('categories')) {
             datapath = path.split('/').slice(1, 4);
         } else {
@@ -109,7 +113,7 @@ const submitItemAndSearchForm = (e) => {
         if (resp.data) {
             $('#container').replaceWith(resp.data);
             let title = document.title;
-            window.history.pushState(title, title, resp.url.replace('?partial=true', ''));
+            window.history.replaceState(title, title, resp.url.replace('?partial=true', ''));
             if (!location.pathname.includes('admin'))
                 pageHistory[$('#menu input:checked')[0].id].pathname = resp.url.replace('?partial=true', '');
         }
@@ -135,7 +139,7 @@ $('#full-screen').on('click', (e) => {
 });
 
 $('#login').on('click', (e) => {
-    window.history.pushState({}, "Log In", "/login");
+    window.history.replaceState({}, "Log In", "/login");
     history.go(-(history.length - 1));
 });
 

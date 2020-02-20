@@ -1,18 +1,10 @@
 const db = require('../../models');
 const helper = require('./file-helper');
 
-var loadCategories = async(req, res) => {
+var loadCategories = async (req, res) => {
     console.time("cat")
-    let currentCat = await req.params.cat;
+    let currentCat = req.params.cat;
     let orderby = req.params.orderby || "nu";
-
-    if (!currentCat) {
-        let firstCat = await db.category.findOne({ order: ['Name'] });
-        if (firstCat) {
-            let partial = req.query.partial ? '?partial=true' : "";
-            return res.redirect(`/categories/${orderby}/${firstCat.Name}` + partial);
-        }
-    }
 
     let search = req.params.search || "";
     let itemsPerPage = parseInt(req.params.items || req.query.items) || req.itemsPerPage;
@@ -23,10 +15,14 @@ var loadCategories = async(req, res) => {
 
     let items = { count: 0, rows: [] };
     if (categories.length > 0) {
-        let cat = categories.find((c) => { return c.Name.includes(currentCat) });
+        let cat = categories.find((c) => { return c.Name.includes(currentCat) }) || categories[0];
+        
+        items = await helper.getFiles(req.user,
+            { id: cat.Id, begin, itemsPerPage, search },
+            db.category, helper.getOrderBy(orderby)
+        );
 
-        items = await helper.getFiles(req.user, { id: cat.Id, begin, itemsPerPage, search }, db.category, helper.getOrderBy(
-            orderby));
+        currentCat = cat.Name;
     }
 
     let totalPages = Math.ceil(items.count / itemsPerPage);
@@ -44,7 +40,7 @@ var loadCategories = async(req, res) => {
             action: `/categories/${orderby}/${currentCat}/`,
             csrfToken: req.csrfToken(),
             step: req.step,
-            cat: currentCat
+            list: currentCat
         },
         isFile: true,
         categories
@@ -52,12 +48,11 @@ var loadCategories = async(req, res) => {
         if (err) console.log(err);
 
         if (req.query.partial) {
-            res.send({ url: req.url, data: html });
-
+            res.send({ url: `/categories/${orderby}/${currentCat}/`, data: html });
         } else {
             res.send(html);
         }
-        console.timeEnd("cat")
+        console.timeEnd("cat");
     });
 }
 

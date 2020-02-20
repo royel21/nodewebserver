@@ -92,7 +92,7 @@ var processIndex = async(req, res) => {
         if (err) console.log(err);
 
         if (req.query.partial) {
-            res.send({ url: req.url, data: html });
+            res.send({ url: req.url.replace('?partial=true', ''), data: html });
 
         } else {
             res.send(html);

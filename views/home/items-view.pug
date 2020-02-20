@@ -1,9 +1,10 @@
-mixin items-view(items, pagedatas, isFile, categories)
+mixin items-view(items, pagedatas, isFile, itemList)
     #container(data-page=pagedatas.currentPage data-total=pagedatas.totalPages)    
         #controls
             if categories && categories.length > 0
-                include ../share/categories
-                +categories(categories, pagedatas)
+                select#list-select.form-control(onchange="chooseList(this)")
+                    -for(let list of itemList)
+                        option(value=""+list.Id selected=(list.Name == pagedatas.list ? true : false))= list.Name
             
             if pagedatas.totalPages > 0 || pagedatas.search
                 include ../share/search
@@ -40,7 +41,7 @@ mixin items-view(items, pagedatas, isFile, categories)
                 .input-group
                     .input-group-prepend
                         label.input-group-text(for="items" value="") Order By
-                    select#order-select.fa.form-control(name="orderby")
+                    select#order-select.fa.form-control(name="orderby" onchange="selectOrder(this)")
                         option(value="nu" selected=pagedatas.orderby.includes('nu')) &#xf15d; Name
                         option(value="nd" selected=pagedatas.orderby.includes('nd')) &#xf15e; Name
                         option(value="du" selected=pagedatas.orderby.includes('du')) &#xf162; Date

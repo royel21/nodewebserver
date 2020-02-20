@@ -179,15 +179,18 @@ processFile = (item) => {
 
 }
 
-const chooseCategory = (el) => {
+const chooseList = (el) => {
     let title = document.title;
     let orderby = $('#order-select').val();
-    if (el.tagName == "FORM") {
-        let cat = $(el).find('option[value=' + el.elements["cat"].value + ']').text();
-        let url = '/categories/' + orderby + '/' + cat;
-        console.log(url)
+    if (el.tagName == "SELECT") {
+        let url = `/categories/${orderby}/${$('#list-select option:selected').text()}`;
         loadPartialPage(url);
     }
+}
+
+const selectOrder = (el) => {
+    local.setItem('orderby', el.value);
+    loadPartialPage(genUrl($('#container').data('page')));
 }
 
 $('body').on('click', '#next-list-page, #prev-list-page', (e) => {
@@ -347,6 +350,12 @@ $('#content').on('click', '#scroll-up', (e) => {
 $(() => {
     calPages();
     selectItem(selectedIndex);
+    let cat = $('#cat-select option:selected').text();
+    if(location.pathname.includes('categories') && !location.pathname.includes(cat)){
+        let text = document.title;
+        let url = location.pathname + `${cat}/`
+        history.replaceState(text, text, url);
+    }
 });
 
 
@@ -410,12 +419,6 @@ $('body', ).on('click', '#current-page', function() {
         $input[0].setSelectionRange($input.val().length, $input.val().length);
         $input.focus();
     }
-});
-
-
-$('body').on('change', '#order-select', e => {
-    local.setItem('orderby', e.target.value);
-    loadPartialPage(genUrl($('#container').data('page')));
 });
 
 
