@@ -42,19 +42,19 @@
 // fv 0w1sk
 // rc pjwhn
 // loli - cat - bzy7w
-const fs = require('fs-extra');
-const path = require('path')
+// const fs = require('fs-extra');
+// const path = require('path')
 
-const db = require('./models/index');
-const addFav = async() => {
-    let fas = fs.readJSONSync('./MyFav.json');
-    let fav = await db.favorite.findByPk('0w1sk');
-    let files = await db.file.findAll({ where: { Name: fas.files } });
-    console.log(files);
-    await fav.addFiles(files);
-}
+// const db = require('./models/index');
+// const addFav = async() => {
+//     let fas = fs.readJSONSync('./MyFav.json');
+//     let fav = await db.favorite.findByPk('0w1sk');
+//     let files = await db.file.findAll({ where: { Name: fas.files } });
+//     console.log(files);
+//     await fav.addFiles(files);
+// }
 
-addFav();
+// addFav();
 // var query = async () => {
 //     console.time("s");
 //     let files = await db.file.findAndCountAll({
@@ -116,7 +116,7 @@ const db = require('./models/index');
 db.sqlze.options.logging = true;
 const helper = require('./controllers/home/file-helper2');
 
-var query = async () => {
+var query = async() => {
 
 
 
@@ -132,32 +132,35 @@ var query = async () => {
     // });
     // let cat = await db.category.findOne();
     // console.log('\n\n\n');
-    let models = [
-        { model: db.recent, where: { Id: "7z4l9" } },
-        { model: db.favorite }
-    ]
-    let files = await helper.getFiles({ begin: 0, itemsPerPage: 500, search: "" }, models, "recent")
-    // let files = await db.file.findAndCountAll({
-    //     order: [[db.sqlze.literal("LastRead"), 'DESC']],
-    //     attributes:{
-    //         include:[
-    //             [db.sqlze.literal("REPLACE(File.Name, '[','0')"), 'N'],
-    //             [db.sqlze.literal("`Recents->RecentFiles`.`LastRead`"), 'LastRead'],
-    //             [db.sqlze.literal("`Recents->RecentFiles`.`LastPos`"), 'CurrentPos'],
-    //             [db.sqlze.literal("`Favorites`.`UserId`"), 'isFav']
-    //         ]
-    //     },
-    //     include: [
-    //         {
-    //             model:db.category,
-    //             where: {Name: "Flask"}
-    //         },
-    //         { model: db.recent },
-    //         { model: db.favorite}
-    //     ]
-    // });
+    // let models = [
+    //     { model: db.recent, where: { Id: "7z4l9" } },
+    //     { model: db.favorite }
+    // ]
+    // let files = await helper.getFiles({ begin: 0, itemsPerPage: 500, search: "" }, models, "recent")
+    //     // let files = await db.file.findAndCountAll({
+    //     //     order: [[db.sqlze.literal("LastRead"), 'DESC']],
+    //     //     attributes:{
+    //     //         include:[
+    //     //             [db.sqlze.literal("REPLACE(File.Name, '[','0')"), 'N'],
+    //     //             [db.sqlze.literal("`Recents->RecentFiles`.`LastRead`"), 'LastRead'],
+    //     //             [db.sqlze.literal("`Recents->RecentFiles`.`LastPos`"), 'CurrentPos'],
+    //     //             [db.sqlze.literal("`Favorites`.`UserId`"), 'isFav']
+    //     //         ]
+    //     //     },
+    //     //     include: [
+    //     //         {
+    //     //             model:db.category,
+    //     //             where: {Name: "Flask"}
+    //     //         },
+    //     //         { model: db.recent },
+    //     //         { model: db.favorite}
+    //     //     ]
+    //     // });
+    let user = await db.user.findAll({ where: { Name: ["Royel", 'Administrator'] }, include: { model: db.favorite } });
+    // let favs = (await user.getFavorites()).map((i) => i.Id);
 
-    console.log("Duol", files.rows[0]);
+    //console.log(favs.join(','));
+
     console.timeEnd("s");
 
 }

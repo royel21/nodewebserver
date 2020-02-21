@@ -45,10 +45,10 @@ var userConfigs = async(user) => {
             UserId: user.Id
         });
     }
-    await db.favorite.create({
-        Name: user.Name,
-        UserId: user.Id
-    });
+    // await db.favorite.create({
+    //     Name: user.Name,
+    //     UserId: user.Id
+    // });
     await db.recent.create({
         Name: user.Name,
         UserId: user.Id
@@ -76,7 +76,7 @@ db.folder.belongsTo(db.directory);
 db.file.belongsTo(db.directory);
 db.file.belongsTo(db.folder);
 
-db.user.hasOne(db.favorite, { onDelete: 'cascade' });
+db.user.hasMany(db.favorite, { onDelete: 'cascade' });
 db.user.hasOne(db.recent, { onDelete: 'cascade' });
 db.user.hasOne(db.userConfig, { onDelete: 'cascade' });
 

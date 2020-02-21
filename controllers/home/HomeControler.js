@@ -52,11 +52,15 @@ var processIndex = async(req, res) => {
     let action = isManga ? `/mangas/${orderby}/` : isFile ? `/videos/${orderby}/` : `/folders/${orderby}/`;
 
     if (isFile || foldersId) {
-        query.attributes.include[1] = [db.sqlze.literal(
-            "(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId == '" + req.user.Favorite.Id +
-            "')"), "isFav"];
-        query.attributes.include[2] = [db.sqlze.literal(
-                "(Select LastPos from RecentFiles where FileId == File.Id and RecentId == '" + req.user.Recent.Id + "')"),
+        let favs = (await req.user.getFavorites()).map((i) => i.Id);
+        query.attributes.include[1] = [
+            db.sqlze.literal("(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId IN ('" + favs.join(
+                "','") + "'))"),
+            "isFav"
+        ];
+        query.attributes.include[2] = [
+            db.sqlze.literal("(Select LastPos from RecentFiles where FileId == File.Id and RecentId == '" + req.user.Recent
+                .Id + "')"),
             "CurrentPos"
         ];
         if (foldersId) {

@@ -1,62 +1,102 @@
 const db = require('../../models');
 const helper = require('./file-helper');
 
+var loadFavorities = async(req, res) => {
+    console.time("cat")
+    let currentCat = req.params.cat;
+    let orderby = req.params.orderby || "nu";
+
+    let search = req.params.search || "";
+    let itemsPerPage = parseInt(req.params.items || req.query.items) || req.itemsPerPage;
+    let currentPage = parseInt(req.params.page) || 1;
+    let begin = ((currentPage - 1) * itemsPerPage);
+
+    let categories = await db.category.findAll({ order: ['Name'] });
+
+    let items = { count: 0, rows: [] };
+    if (categories.length > 0) {
+        let cat = categories.find((c) => { return c.Name.includes(currentCat) }) || categories[0];
+
+        items = await helper.getFiles(req.user, { id: cat.Id, begin, itemsPerPage, search },
+            db.category, helper.getOrderBy(orderby)
+        );
+
+        currentCat = cat.Name;
+    }
+
+    let totalPages = Math.ceil(items.count / itemsPerPage);
+    let view = req.query.partial ? "home/partial-items-view" : "home/index.pug";
+
+    return res.render(view, {
+        title: "Home Server",
+        items,
+        pagedatas: {
+            orderby,
+            currentPage,
+            itemsPerPage,
+            totalPages,
+            search: search,
+            action: `/categories/${orderby}/${currentCat}/`,
+            csrfToken: req.csrfToken(),
+            step: req.step,
+            list: currentCat
+        },
+        isFile: true,
+        categories
+    }, (err, html) => {
+        if (err) console.log(err);
+
+        if (req.query.partial) {
+            res.send({ url: `/categories/${orderby}/${currentCat}/`, data: html });
+        } else {
+            res.send(html);
+        }
+        console.timeEnd("cat");
+    });
+}
 
 exports.favorite = (req, res) => {
-    console.time("fav")
-    let orderby = req.params.orderby || "nu";
-    let itemsPerPage = req.params.items || req.query.items || req.itemsPerPage;
-    let currentPage = req.params.page || 1;
-    let begin = ((currentPage - 1) * itemsPerPage) || 0;
-    let search = req.params.search || "";
-
-    helper.getFiles(req.user, {
-        id: req.user.Favorite.Id,
-        begin,
-        itemsPerPage,
-        search
-    }, db.favorite, helper.getOrderBy(orderby)).then(items => {
-        var totalPages = Math.ceil(items.count / itemsPerPage);
-        let view = req.query.partial ? "home/partial-items-view" : "home/index.pug";
-        res.render(view, {
-            title: "Home Server",
-            items,
-            pagedatas: {
-                orderby,
-                currentPage,
-                itemsPerPage,
-                totalPages,
-                search: search,
-                action: `/favorites/${orderby}/`,
-                csrfToken: req.csrfToken(),
-                step: req.step
-            },
-            isFile: true
-        }, (err, html) => {
-            if (err) console.log(err);
-
-            if (req.query.partial) {
-                res.send({ url: req.url.replace('?partial=true', ''), data: html });
-            } else {
-                res.send(html);
-            }
-            console.timeEnd("fav")
-        });
-
-    }).catch(err => {
-        console.log('fav-error', err);
+    loadCategories(req, res).catch(err => {
+        if (err) console.log(err);
+        res.status(500).send('Internal Server Error');
     });
 }
 
 exports.postSearch = (req, res) => {
-    let orderby = req.body.orderby || "nu";
     let itemsPerPage = parseInt(req.body.items) || 1;
+    let orderby = req.params.orderby || "nu";
     let search = req.body.search || "";
+    let cat = req.body.cat;
+    let url = `/categories/${orderby}/`;
 
-    res.redirect(`/favorites/${orderby}/1/${itemsPerPage}/${search}?partial=true`);
+    if (cat) {
+        return res.redirect(url + `${cat}/1/${itemsPerPage}/${search}?partial=true`);
+    } else {
+        db.category.findOne({ order: ['Name'] }).then(category => {
+
+            if (category) {
+                url += category.Name + `/1/${itemsPerPage}/${search}?partial=true`;
+            }
+            console.log(url)
+            return res.redirect(url);
+        });
+    }
 }
 
+
 exports.postFavorite = (req, res) => {
+    db.favoriteFile.findOrCreate({
+        where: { FileId: req.body.id, FavoriteId: req.user.Favorite.Id }
+    }).then(file => {
+        return res.send({ result: file[1] ? true : false });
+    }).catch(err => {
+        console.log('fav-error', err);
+        return res.send({ result: false });
+    });
+}
+
+exports.postFavoriteFile = (req, res) => {
+
     db.favoriteFile.findOrCreate({
         where: { FileId: req.body.id, FavoriteId: req.user.Favorite.Id }
     }).then(file => {

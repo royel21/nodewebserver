@@ -18,10 +18,11 @@ const getOrderBy = (orderby) => {
                 order.push(["CreatedAt", 'ASC']);
                 break;
             }
-        case 'recent':{
-            order.push([db.sqlze.literal("LastRead"), 'DESC']);
-            break;
-        }
+        case 'recent':
+            {
+                order.push([db.sqlze.literal("LastRead"), 'DESC']);
+                break;
+            }
         default:
             {
                 order.push(db.sqlze.col('N'));
@@ -30,7 +31,7 @@ const getOrderBy = (orderby) => {
     return order;
 }
 
-exports.getFiles = async (data, models, order) => {
+exports.getFiles = async(data, models, order) => {
     let files = { count: 0, rows: [] };
     let searchs = [];
     for (let s of data.search.split('|')) {
@@ -42,18 +43,18 @@ exports.getFiles = async (data, models, order) => {
     }
 
     files = await db.file.findAndCountAll({
-        order: getOrderBy(order),
-        attributes:{
-            include:[
+        attributes: {
+            include: [
                 [db.sqlze.literal("REPLACE(File.Name, '[','0')"), 'N'],
                 [db.sqlze.literal("`Recents->RecentFiles`.`LastRead`"), 'LastRead'],
                 [db.sqlze.literal("`Recents->RecentFiles`.`LastPos`"), 'CurrentPos'],
                 [db.sqlze.literal("`Favorites`.`UserId`"), 'isFav']
             ]
         },
-        include: models,
         offset: data.begin,
         limit: data.itemsPerPage,
+        order: getOrderBy(order, data),
+        include: models,
         where: {
             [db.Op.or]: searchs
         }
