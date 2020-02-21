@@ -179,6 +179,27 @@ processFile = (item) => {
 
 }
 
+const submitSearch = () =>{
+    let url = genUrl(1);
+    loadPartialPage(url);
+}
+
+$('#content').on('keydown', '#home-search input', (e)=>{
+    if(e.keyCode === 13) submitSearch();
+});
+
+$('#content').on('click', '#home-search .clear-search, #home-search .btn-search', (e)=>{
+    let search = document.querySelector('#home-search input');
+    if(e.target.classList.contains('fa-times-circle')){
+
+        search.value = "";
+        submitSearch();
+    }else if(search.value !== ""){
+        submitSearch();
+    }
+
+});
+
 const chooseList = (el) => {
     let title = document.title;
     let orderby = $('#order-select').val();
@@ -361,22 +382,43 @@ $(() => {
 
 $('body').on('click', '.items .item-fav', (e) => {
     let item = e.target.classList[0] === "items" ? e.target : e.target.closest('.items');
-    console.log(e.target, item.id);
-    $.post('/favorites/addfav', { id: item.id, _csrf: $('#search-form input[name=_csrf]').val() }, (resp) => {
-        console.log(resp);
-        if (resp.result) {
-            $(e.target).toggleClass('text-warning far fas');
+    $.get('/favorites/favorites-list', (resp)=>{
+        if(resp){
+            let rows;
+            for(let val of resp){
+                rows = `<li id=${val.id}>${val.name}</li>`;
+            }
+            $('#fav-list ul').attr("id", item.id).empty().append($(rows));
+            
+            let left = item.offsetLeft + 128;
+            let top = item.offsetTop + 50;
+            $('#fav-list').css({left, top});
         }
     });
+
     e.preventDefault();
     e.stopPropagation();
 
 });
 
+$('body').on('click', '#fav-list li', (e) => {
+   let itemId = e.target.closest('ul').id;
+   let favId = e.target.id;
+    $.post('/favorites/addfav', { itemId,  favId, _csrf: $('.items-list').data('csrf') }, (resp) => {
+        console.log('addfav',resp)
+        if (resp.result) {
+            console.log(itemId, $('#'+itemId+ ' .item-fav')[0])
+            $('#'+itemId+ ' .item-fav').toggleClass('text-warning far fas');
+            $('#fav-list').css({left: -100, top: -100});
+        }
+    });
+});
+
 $('body').on('click', '.items .item-del', (e) => {
     let item = e.target.classList[0] === "items" ? e.target : e.target.closest('.items');
     let action = location.href.includes('favorites') ? '/favorites/remove' : '/recents/remove';
-    $.post(action, { id: item.id, _csrf: $('#search-form input[name=_csrf]').val() }, (resp) => {
+    let favId = $('#list-select select').val();
+    $.post(action, { itemId: item.id, favId, _csrf: $('.items-list').data('csrf') }, (resp) => {
         console.log(resp);
         if (resp.result)
             $(item).fadeOut(() => { item.remove(); });

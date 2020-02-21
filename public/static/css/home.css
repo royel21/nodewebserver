@@ -4,6 +4,75 @@
     width: 100%;
 }
 
+#content #home-search .btn-search,
+#content #home-search .search-input{
+    height: 32px;
+    outline: none;
+}
+
+#content #home-search .search-input{
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    width: 59px;
+    display: inline-block;
+    outline: none;
+}
+
+#content #home-search .input-group-prepend{
+    display: inline-block;
+}
+
+#content #fav-list ul{margin: 0;padding: 0;}
+
+#content #fav-list{
+    position: absolute;
+    z-index: 9999;
+    left: -108px;
+    top: -90px;
+    background-color: rgba(52, 58, 64, 0.99);
+    border-radius: 5px;
+    border: 1px solid;
+    min-width: 100px;
+    text-align: center;
+}
+
+#content #fav-list:after{
+    position: absolute;
+    top: -5px;
+    left: 42%;
+    content: " ";
+    background-color: rgba(52, 58, 64, 0.99);
+    border-left: 1px solid;
+    border-top: 1px solid;
+    height: 10px;
+    width: 10px;
+    transform: rotate(45deg);
+    z-index: 999;
+}
+
+#content #fav-list li{
+    list-style: none;
+    padding: 3px 10px;
+    border-bottom: 1px solid;
+    cursor: pointer;
+}
+
+#content #fav-list li:first-child{
+    border-radius: 5px 5px 0 0;
+}
+
+#content #fav-list li:last-child{
+    border-radius: 0 0 5px 5px;
+}
+
+#content #fav-list li:only-child{
+    border-radius: 5px;
+}
+
+#content #fav-list li:hover{
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
 .items-list {
     display: flex;
     flex-wrap: wrap;
@@ -156,8 +225,32 @@
     position: relative;
     top: 7px;
     left: 5px;
-    height: 33px;
-    width: 110px;
+    height: 32px;
+    width: fit-content;
+    padding: 0 5px;
+}
+#list-select select{
+    position: relative;
+    display: inline-block;
+    width: 73px;
+    height: 28px;
+    padding: 0.20rem;
+    font-size: 17px;
+    border: 0;
+    cursor: pointer;
+}
+#list-select select:focus{
+    box-shadow: none !important;
+}
+
+#remove-fav{
+    font-size: 18px;
+    margin-left: 4px;
+}
+
+#add-fav{
+    font-size: 20px;
+    margin-right: 4px;
 }
 
 #ordering{
@@ -223,7 +316,19 @@
     .item-btns .item-del {
         font-size: 18px;
     }
+    .search-container{
+        display: flex;
+        width: 160px;
+        height: 34px;
+        position: relative;
+        top: 7px;
+    }
+    .search-container span .fa-times-circle{
+        top: 8px;
+        font-size: 16px;
+    }
 }
+
 @media (max-width: 400px){
     #cat-selector #cat-select{
         height: 33px;

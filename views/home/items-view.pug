@@ -1,19 +1,31 @@
 mixin items-view(items, pagedatas, isFile, itemList)
     #container(data-page=pagedatas.currentPage data-total=pagedatas.totalPages)    
         #controls
-            if categories && categories.length > 0
-                select#list-select.form-control(onchange="chooseList(this)")
-                    -for(let list of itemList)
-                        option(value=""+list.Id selected=(list.Name == pagedatas.list ? true : false))= list.Name
+            if itemList && itemList.length > 0
+                #list-select.form-control
+                    if url.includes('favorite')
+                        span#add-fav
+                            i.fa.fa-plus-square
+                    select.form-control(onchange="chooseList(this)")
+                        -for(let list of itemList)
+                            option(value=""+list.Id selected=(list.Name == pagedatas.list ? true : false))= list.Name
+                    if url.includes('favorite')
+                        span#remove-fav
+                            i.fa.fa-trash-alt
             
             if pagedatas.totalPages > 0 || pagedatas.search
-                include ../share/search
-                +search(pagedatas, pagedatas.action+"search", "search-form")
+                #home-search.input-group.search-container
+                    .input-group-prepend
+                        button.btn-search.input-group-text
+                            i.fa.fa-search
+                    input.search-input.form-control(type="text" name="search" value=pagedatas.search placeholder="Search")
+                    span.clear-search
+                        i.fas.fa-times-circle
             
             include ../share/pagination
             +pagination(items.count, pagedatas)
                 
-        .items-list(id=(isFile ? "files-list" : "folders-list"))
+        .items-list(id=(isFile ? "files-list" : "folders-list"), data-csrf=pagedatas.csrfToken)
             each item in items.rows
                 .items(tabindex="0" id=item.Id, data-type=(isFile ? item.Type : ""))
                     .item-video

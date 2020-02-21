@@ -4,38 +4,32 @@ mixin navbar(user, url)
             li.nav-item
                 input#recents(type="radio", name="menu-group" value="/" checked=(url === '/' || url.includes('recents')))
                 label.nav-link(for="recents")
-                    //- a.nav-link(href="/")
                     i.fas.fa-clipboard-list
                     span  Recents 
             li.nav-item
                 input#folders(type="radio", name="menu-group" value="/folders/nu/" checked=(url.includes('/folders') || url.includes('folder-content')))
                 label.nav-link(for="folders")
-                    //- a.nav-link(href="/folders/nu/")
                     i.fas.fa-folder
                     span  Folders 
             li.nav-item
                 input#mangas(type="radio", name="menu-group" value="/mangas/nu/" checked=(url === '/mangas' || url.includes('mangas')))
                 label.nav-link(for="mangas")
-                    //- a.nav-link(href="/mangas/nu/") 
                     i.fas.fa-book
                     span  Mangas
             li.nav-item
                 input#videos(type="radio", name="menu-group" value="/videos/nu/" checked=url.includes('videos'))
                 label.nav-link(for="videos")
-                    //- a.nav-link(href="/videos/nu/")
                     i.fas.fa-film
                     span  All Videos
             li.nav-item
                 input#categories(type="radio", name="menu-group" value="/categories/nu/" checked=url.includes('categories'))
                 label.nav-link(for="categories")
-                    //- a.nav-link(href="/categories/nu/")
                     i.fas.fa-tags
                     span  Categories
             if !['manager', 'admin'].includes(user.Role)
                 li.nav-item
                     input#favorities(type="radio", name="menu-group" value="/favorites/nu/" checked=url.includes('favorites'))
                     label.nav-link(for="favorities")
-                        //- a.nav-link(href="/favorites/nu/" )
                         i.fas.fa-heart
                         span  Favorites
         ul.navbar-nav.bg-dark

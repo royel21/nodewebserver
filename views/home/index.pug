@@ -19,9 +19,14 @@ block content
     #media-container(tabindex="0")
         include ../videoplayer/player
         include ../home/manga-viewer
-        
+    #fav-list
+        ul
+            li(id="wasas") Royel
+            li(id="wasas") MyFav
+            li(id="wasas") MyFav2
+
     include ./items-view
-    +items-view(items, pagedatas, isFile, categories)
+    +items-view(items, pagedatas, isFile, itemList)
     
     span#scroll-up.d-none
         i.far.fa-arrow-alt-circle-up

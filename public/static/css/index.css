@@ -141,21 +141,8 @@ body{
     right: 0;
     display: flex;
     justify-content: space-between;
-    font-size: 2em;
     height: 50px;
     z-index: 1000;
-}
-
-#pager{
-    align-self: center;
-}
-
-.btn-search{
-    cursor: pointer;
-}
-
-.btn-search:active{
-    font-size: .9rem;
 }
 
 #items-form{
@@ -171,20 +158,20 @@ body{
     align-self: center;
 }
 
-#search-form .input-group-prepend,
-#search-form .form-control,
 #itemsPerPage .badge,
 #items select.form-control,
 #items .input-group-prepend{
     height: 34px;
 }
+
 #itemsPerPage .badge{
-    position: relative;
-    top: -4px;
-    font-size: 18px;
-    display: initial;
-    padding: 6px;
-    margin-left: 5px;
+    /* position: relative; */
+    /* top: -4px; */
+    font-size: 20px;
+    display: inline-block;
+    padding: 3px 6px;
+    /* margin-left: 5px; */
+    line-height: 1.5;
 }
 
 #items label{
@@ -192,13 +179,18 @@ body{
 }
 
 #itemsPerPage{
+    display: inline-block;
     position: relative;
-    left: -12px;
+    left: -6px;
+    top: 7px;
 }
 
 #pager{
     display: inline-block;
     align-self: center;
+    position: relative;
+    top: -2px;
+    right: 4px;
 }
 
 #pager a{
@@ -216,8 +208,10 @@ body{
 }
 
 .search-container{
+    position: relative;
+    top: 7px;
     display: flex;
-    align-items: center;
+    height: 32px;
     width: 200px;
 }
 
@@ -230,7 +224,7 @@ body{
 .search-container span .fa-times-circle{
     display: none;
     position: absolute;
-    top: 9px;
+    top: 7.5px;
     right: 5px;
     font-size: 20px;
     color: firebrick;
@@ -319,9 +313,6 @@ body{
     .search-container{
         width: 350px;
     }
-    #search-form{
-        width: 100%;
-    }
 }
  #android-pager{
      display: none;
@@ -338,28 +329,14 @@ body{
     #controls{
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        padding: 0 2px;
+        /* align-items: center; */
+        /* padding: 0 2px; */
     }
     
     #controls #back{
         display: none;
      }
-    .search-container{
-        display: inline-block;
-        width: 160px;
-        position: relative;
-        top: -5px;
-    }
-    #search-form{
-        margin: 0 !important;
-    }
-    #search-form .form-control{
-        max-width: 120px;
-    }
-    #search-form .btn-search{
-        max-width: 40px;
-    }
+    
    
     #back + .search-container{
         margin-left: 0px;
@@ -371,8 +348,6 @@ body{
     #android-pager{
         display: inline-block;
         padding: 0;
-        position: relative;
-        top: -6px;
     }
     #android-pager span:first-child,
     #android-pager span:last-child{
@@ -390,7 +365,7 @@ body{
         font-size: 20px
     }
     #android-pager .input-group-text{
-        height: 34px;
+        height: 32px;
         padding: 0 0.375rem;
     }
 }
@@ -401,20 +376,12 @@ body{
     }
 }
 
-@media (max-width: 400px) {
-    #menu{
-        padding: .1rem .05rem;
-    }
+@media (max-width: 450px) {
     #menu .nav-link i{
         font-size: 25px;
     }
     .search-container{
         max-width: 140px;
     }
-     #search-form .form-control{
-        max-width: 100px;
-    }
-    #search-form .form-control{
-        max-width: 100px;
-    }
+     
 }

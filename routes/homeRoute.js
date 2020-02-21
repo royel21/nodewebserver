@@ -25,12 +25,13 @@ router.post("/videos/:orderby/search", homeController.postSearch);
 router.post("/mangas/:orderby/search", homeController.postSearch);
 router.post("/folder-content/:orderby/:folder/search", homeController.postSearch);
 
-router.get("/favorites/:orderby/:page?/:items?/:search?", favController.favorite);
-router.post("/favorites/search", favController.postSearch);
+router.get("/favorites/favorites-list", favController.favoriteList);
+router.get("/favorites/:orderby/:list?/:page?/:items?/:search?", favController.favorite);
+router.post("/favorites/:orderby/:list/search", favController.postSearch);
 router.post("/favorites/remove", favController.postRemoveFile);
 router.post("/favorites/addfav", favController.postFavorite);
 
-router.get("/categories/:orderby/:cat?/:page?/:items?/:search?", categoriesController.categories);
-router.post("/categories/:orderby/:cat/search", categoriesController.postSearch);
+router.get("/categories/:orderby/:list?/:page?/:items?/:search?", categoriesController.categories);
+router.post("/categories/:orderby/:list/search", categoriesController.postSearch);
 
 module.exports = router;

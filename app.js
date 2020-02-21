@@ -50,7 +50,7 @@ app.locals.fs = require("fs");
 app.locals.formatTime = formatTime;
 
 app.use(function(req, res, next) {
-
+    console.log(req.url)
     app.locals.env = process.env.NODE_ENV;
     app.locals.url = req.url;
     app.locals.isAndroid = /(Android)|(iphone)/ig.test(req.get('User-Agent'));

@@ -39,14 +39,10 @@ exports.getFiles = async(user, data, model, order) => {
         });
     }
     let favs = (await user.getFavorites()).map((i) => i.Id);
-
-    files = await db.file.findAndCountAll({
+    let query  ={
         attributes: {
             include: [
                 [db.sqlze.literal("REPLACE(Name, '[','0')"), 'N'],
-                [db.sqlze.literal(
-                    "(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId IN ('" + favs.join(
-                        "','") + "'))"), "isFav"],
                 [db.sqlze.literal("(Select LastPos from RecentFiles where FileId == File.Id and RecentId == '" +
                     user.Recent.Id + "')"), "CurrentPos"],
                 [db.sqlze.literal("(Select LastRead from RecentFiles where FileId == File.Id and RecentId == '" +
@@ -65,7 +61,13 @@ exports.getFiles = async(user, data, model, order) => {
         where: {
             [db.Op.or]: searchs
         }
-    });
+    }
+    
+    if(model !== db.favorite) query.attributes.include.push([db.sqlze.literal(
+        "(Select FileId from FavoriteFiles where FileId == File.Id and FavoriteId IN ('" + favs.join(
+            "','") + "'))"), "isFav"]);
+
+    files = await db.file.findAndCountAll(query);
     files.rows = files.rows.map(f => {
         let d = f.dataValues;
         return {

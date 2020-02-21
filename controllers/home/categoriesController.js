@@ -3,7 +3,7 @@ const helper = require('./file-helper');
 
 var loadCategories = async (req, res) => {
     console.time("cat")
-    let currentCat = req.params.cat;
+    let currentCat = req.params.list;
     let orderby = req.params.orderby || "nu";
 
     let search = req.params.search || "";
@@ -43,7 +43,7 @@ var loadCategories = async (req, res) => {
             list: currentCat
         },
         isFile: true,
-        categories
+        itemList: categories
     }, (err, html) => {
         if (err) console.log(err);
 
@@ -67,7 +67,7 @@ exports.postSearch = (req, res) => {
     let itemsPerPage = parseInt(req.body.items) || 1;
     let orderby = req.params.orderby || "nu";
     let search = req.body.search || "";
-    let cat = req.body.cat;
+    let cat = req.body.list;
     let url = `/categories/${orderby}/`;
 
     if (cat) {

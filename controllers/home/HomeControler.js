@@ -126,7 +126,6 @@ exports.postSearch = (req, res) => {
         url = (folderId ? `/folder-content/${orderby}/${folderId}` : /mangas/ig.test(req.url) ? `/mangas/${orderby}` :
             `/videos/${orderby}`) + `/1/${itemsPerPage}/${search}?partial=true`;
     }
-    console.log(url)
     res.redirect(url);
 }
 
@@ -145,7 +144,6 @@ exports.loginPost = (req, res, next) => {
     }
     res.cookie('screen-w', req.body.screenw, options);
 
-    console.log(req.body)
     passport.authenticate('local', {
         successRedirect: '/',
         failureRedirect: "/login",

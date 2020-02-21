@@ -25,7 +25,7 @@ const loadPartialPage = async(url, cb) => {
 
     $.get(tmpUrl, { partial: true }, (resp) => {
         if (resp.data) {
-            
+
             let text = $('.navbar input:checked').next().text().trim();
             document.title = text;
             window.history.replaceState(text, text, resp.url);
@@ -78,7 +78,7 @@ const genUrl = (page) => {
     } else if (!path.includes('recent')) {
         let datapath = [];
 
-        if (path.includes('folder-content') || path.includes('categories')) {
+        if (path.includes('folder-content') || path.includes('categories') || path.includes('favorites')) {
             datapath = path.split('/').slice(1, 4);
         } else {
             datapath = path.split('/').slice(1, 3);
@@ -98,34 +98,11 @@ $('#content').on('change','#controls #itemperpage, #controls #page-select', (el)
     loadPartialPage(url);
 });
 
-const submitItemAndSearchForm = (e) => {
-    let form;
 
-    if (e.tagName == "FORM") {
-        form = e;
-    } else {
-        e.preventDefault();
-        form = e.target.closest('form');
-    }
-
-    let url = $(form).attr('action');
-    $.post(url, $(form).serialize(), (resp) => {
-        if (resp.data) {
-            $('#container').replaceWith(resp.data);
-            let title = document.title;
-            window.history.replaceState(title, title, resp.url.replace('?partial=true', ''));
-            if (!location.pathname.includes('admin'))
-                pageHistory[$('#menu input:checked')[0].id].pathname = resp.url.replace('?partial=true', '');
-        }
-    });
-}
-
-$('body').on('click', '#search-form .clear-search', (e) => {
-    $('#search-form .search-input').val('');
-    submitItemAndSearchForm(e.target.closest('form'));
-});
-
-$('body').on('submit', '#search-form', submitItemAndSearchForm);
+// $('body').on('click', '#search-form .clear-search', (e) => {
+//     $('#search-form .search-input').val('');
+//     submitItemAndSearchForm(e.target.closest('form'));
+// });
 
 $('#error-bottom .btn').click((e) => $('#error-container').fadeOut('fast'));
 

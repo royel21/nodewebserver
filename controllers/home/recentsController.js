@@ -64,7 +64,7 @@ var removeFile = async(user, id) => {
 
 exports.postRemoveFile = (req, res) => {
 
-    return removeFile(req.user, req.body.id).then((result) => {
+    return removeFile(req.user, req.body.itemId).then((result) => {
         return res.send({ result });
     }).catch(err => {
         console.log('fav-error', err);

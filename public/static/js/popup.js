@@ -6,6 +6,7 @@ popupHide = (e) => {
     }).text("");
     $popup.removeClass('popup-top');
     inEl = false;
+    $('#fav-list').css({left: -100, top: -100});
 }
 
 

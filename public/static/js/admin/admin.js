@@ -7,6 +7,31 @@ socket.on('disconnect', error => {
     }
 });
 
+const submitItemAndSearchForm = (e) => {
+    let form;
+
+    if (e.tagName == "FORM") {
+        form = e;
+    } else {
+        e.preventDefault();
+        form = e.target.closest('form');
+    }
+
+    let url = $(form).attr('action');
+    $.post(url, $(form).serialize(), (resp) => {
+        if (resp.data) {
+            $('#container').replaceWith(resp.data);
+            let title = document.title;
+            if (!location.pathname.includes('admin')){
+                pageHistory[$('#menu input:checked')[0].id].pathname = resp.url.replace('?partial=true', '');
+                window.history.replaceState(title, title, resp.url.replace('?partial=true', ''));
+            }
+        }
+    });
+}
+
+$('body').on('submit', '#search-form', submitItemAndSearchForm);
+
 var loadFunctions = (page) => {
     switch (page) {
         case "Categories":
