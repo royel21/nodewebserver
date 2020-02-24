@@ -13,6 +13,7 @@ exports.recent = (req, res) => {
 
     console.time("rec")
     helper.getFiles(req.user, { id: req.user.Recent.Id, begin, itemsPerPage, search }, db.recent, order).then(items => {
+        items.count = items.count > 100 ? 100 : items.count
         var totalPages = Math.ceil(items.count / itemsPerPage);
         let view = req.query.partial ? "home/partial-items-view" : "home/index.pug";
         res.render(view, {

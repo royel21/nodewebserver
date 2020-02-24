@@ -84,13 +84,7 @@ $(document).on("click", ".show-form", (e) => {
     let uid = tr ? tr.id : li ? li.id : "";
     let action = $('#container').data('action');
     console.log(uid, action)
-    $.get(action + "modal", { uid }, (resp) => {
-        $('#modal').empty().append(resp);
-        $('#modal-container').fadeIn("fast", () => {
-            $('#modal').fadeIn("fast");
-            $('#modal-container').css({ display: "flex" });
-        });
-    });
+    $.get(action + "modal", { uid }, showModal);
 });
 
 

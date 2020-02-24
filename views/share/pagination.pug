@@ -20,7 +20,7 @@ mixin pagination(total, data)
                             i.fas.fa-chevron-circle-right 
             else 
                 ul#norm-os.pagination(data-action=data.action)
-                    li.page-item(data-title="Jump To Page").popup-msg
+                    li.page-item(data-title="Page").popup-msg
                             select#page-select.form-control(name="page")
                                 -for(let i = 1; i < totalPages+1; i++)
                                     option(value=""+i selected=(currentPage == i ? true : false))= i
@@ -29,23 +29,23 @@ mixin pagination(total, data)
                             select#itemperpage.page-link(name="items")
                                 -let selected = false
                                 -for(let i = step; i < total; i += step)
+                                    -if(i > 500) break;
                                     option(value=""+i selected=(itemsPerPage === i ? true : false))= i
                                     -if(itemsPerPage === i) selected = true
-                                    -if(i > 500) break;
                                 -let t = total > 500 ? 500 : total - 1
                                 option(value=t selected=!selected)= t 
                     if currentPage == 1
-                        li.page-item.disabled(data-title="First Page").popup-msg
+                        li.page-item.disabled(data-title="First").popup-msg
                             a.page-link
                                 i.fa.fa-angle-double-left
-                        li.page-item.disabled(data-title="Previous Page").popup-msg
+                        li.page-item.disabled(data-title="Previous").popup-msg
                             a.page-link
                                 i.fa.fa-angle-left
                     else
-                        li.page-item(data-page=1 data-title="First Page").popup-msg
+                        li.page-item(data-page=1 data-title="First").popup-msg
                             a.page-link(href=data.action+1+"/"+itemsPerPage+"/"+search)
                                 i.fa.fa-angle-double-left
-                        li.page-item(data-page=currentPage-1 data-title="Previous Page").popup-msg
+                        li.page-item(data-page=currentPage-1 data-title="Previous").popup-msg
                             a.page-link(href=data.action+(currentPage-1)+"/"+itemsPerPage+"/"+search)
                                 i.fa.fa-angle-left
                         
@@ -62,17 +62,17 @@ mixin pagination(total, data)
                                 a.page-link(href=data.action+i+"/"+itemsPerPage+"/"+search)= i
                     
                     if currentPage == totalPages
-                        li.page-item.disabled(data-title="Next Page").popup-msg
+                        li.page-item.disabled(data-title="Next").popup-msg
                             a.page-link
                                 i.fa.fa-angle-right
-                        li.page-item.disabled(data-title="Last Page").popup-msg
+                        li.page-item.disabled(data-title="Last").popup-msg
                             a.page-link
                                 i.fa.fa-angle-double-right
                     else
-                        li.page-item(data-page=parseInt(currentPage)+1 data-title="Next Page").popup-msg
+                        li.page-item(data-page=parseInt(currentPage)+1 data-title="Next").popup-msg
                             a.page-link(href=data.action+(parseInt(currentPage)+1)+"/"+itemsPerPage+"/"+search)
                                 i.fa.fa-angle-right
-                        li.page-item(data-page=totalPages data-title="Last Page").popup-msg
+                        li.page-item(data-page=totalPages data-title="Last").popup-msg
                             a.page-link(href=data.action+totalPages+"/"+itemsPerPage+"/"+search)
                                 i.fa.fa-angle-double-right
     if !noItems && totalPages > 0

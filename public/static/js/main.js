@@ -28,7 +28,7 @@ const loadPartialPage = async(url, cb) => {
 
             let text = $('.navbar input:checked').next().text().trim();
             document.title = text;
-            window.history.replaceState(text, text, resp.url);
+            window.history.replaceState(text, text, tmpUrl);
 
             if (!location.pathname.includes('admin'))
                 pageHistory[$('#menu input:checked')[0].id].pathname = tmpUrl;
@@ -92,8 +92,8 @@ const genUrl = (page) => {
     return `${path}/${page}/${iperpage}/${search}`;
 }
 
-$('#content').on('change','#controls #itemperpage, #controls #page-select', (el) => {
-    let page = document.querySelector('select[name=page]').value;
+$('#content').on('change','#controls #itemperpage, #controls #page-select', (event) => {
+    let page = event.target.id.includes('itemperpage') ? 1 : $('select[name=page]').val();
     let url = genUrl(page);
     loadPartialPage(url);
 });
@@ -145,8 +145,17 @@ var confirm = (message, className) => {
         $('#modal').fadeIn("fast");
     });
 }
+const showModal = (modal) =>{
+    if(modal){
+        $('#modal').empty().append(modal);
+            $('#modal-container').fadeIn("fast", () => {
+                $('#modal').fadeIn("fast");
+                $('#modal-container').css({ display: "flex" });
+         });
+    }
+}
 
-hideForm = () => {
+const hideForm = () => {
     $('#modal-container').fadeOut("fast", () => {
         $('#modal').fadeOut("fast");
     });
@@ -183,9 +192,9 @@ $(() => {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/service-worker.js')
             .then((result) => {
-                console.log('worker registed');
+//                 console.log('worker registed');
             }).catch(err => {
-                console.log('worker not registed');
+//                 console.log('worker not registed');
             });
     }
 });

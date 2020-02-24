@@ -31,8 +31,9 @@ body{
 #goback{
     display: inline-block;
     position: absolute;
-    top: 9px;
-    left: 5px;
+    top: 4px;
+    left: 8px;
+    font-size: 25px;
 }
 #goback + div{
     margin-left: 40px;
@@ -82,21 +83,23 @@ body{
 
 #page-select{
     max-width: 100%;
-    height: 32px;
+    height: 30px;
     border-radius: .25rem 0rem 0rem .25rem;
     font-weight: bold;
+    padding: .305rem .6rem;
     color: #007bff;
+    font-size: 0.95rem;
 }
 #select-page{
     min-width: 50px;
     max-width: 75px;
 }
 #itemperpage{
-    height: 32px;
-    font-size: 1rem;
+    height: 30px;
+    font-size: 0.95rem;
     line-height: 1.5;
     font-weight: 700;
-    width: 75px;
+    width: 60px;
 }
 
 #pager-select[option]{
@@ -183,24 +186,26 @@ body{
     position: relative;
     left: -6px;
     top: 7px;
+    height: 30px;
 }
 
 #pager{
     display: inline-block;
     align-self: center;
     position: relative;
-    top: -2px;
+    top: -4px;
     right: 4px;
 }
 
 #pager a{
-    font-size: 24px;
-    height: 32px;
+    font-size: 18px;
+    height: 30px;
+    line-height: 1.75;
 }
 
 #pager .fa{
     font-weight: 600;
-    font-size: 22px;
+    font-size: 18px;
 }
 
 #pager .page-item:last-child .page-link{
@@ -211,7 +216,7 @@ body{
     position: relative;
     top: 7px;
     display: flex;
-    height: 32px;
+    height: 30px;
     width: 200px;
 }
 
@@ -365,7 +370,7 @@ body{
         font-size: 20px
     }
     #android-pager .input-group-text{
-        height: 32px;
+        height: 30px;
         padding: 0 0.375rem;
     }
 }

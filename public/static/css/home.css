@@ -4,9 +4,13 @@
     width: 100%;
 }
 
+#content #home-search .btn-search{
+    border-radius: 5px 0 0 5px;
+}
+
 #content #home-search .btn-search,
 #content #home-search .search-input{
-    height: 32px;
+    height: 30px;
     outline: none;
 }
 
@@ -20,6 +24,7 @@
 
 #content #home-search .input-group-prepend{
     display: inline-block;
+    height: 32px;
 }
 
 #content #fav-list ul{margin: 0;padding: 0;}
@@ -225,17 +230,20 @@
     position: relative;
     top: 7px;
     left: 5px;
-    height: 32px;
+    height: 28px;
     width: fit-content;
     padding: 0 5px;
+    border: none;
+    line-height: 1.7;
 }
 #list-select select{
     position: relative;
+    top: -1px;
     display: inline-block;
     width: 73px;
-    height: 28px;
+    height: 26px;
     padding: 0.20rem;
-    font-size: 17px;
+    font-size: 15px;
     border: 0;
     cursor: pointer;
 }
@@ -256,13 +264,21 @@
 #ordering{
     position: fixed;
     z-index: 999;
-    right: 25px;
-    bottom: 8px;
+    right: 20px;
+    bottom: 6px;
+    width: 124px;
 }
+#ordering label{
+    height: 25px;
+    padding: 5px;
+}
+
 #order-select,
 #ordering option{
     color: black;
     font-weight: 700;
+    padding: 1px;
+    height: 25px;
 }
 
 @media all and (max-width: 650px) {

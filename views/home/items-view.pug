@@ -4,7 +4,7 @@ mixin items-view(items, pagedatas, isFile, itemList)
             if itemList && itemList.length > 0
                 #list-select.form-control
                     if url.includes('favorite')
-                        span#add-fav
+                        span#create-fav
                             i.fa.fa-plus-square
                     select.form-control(onchange="chooseList(this)")
                         -for(let list of itemList)
@@ -15,6 +15,8 @@ mixin items-view(items, pagedatas, isFile, itemList)
             
             if pagedatas.totalPages > 0 || pagedatas.search
                 #home-search.input-group.search-container
+                    if url.includes('folder-content')
+                        span#goback.fas.fa-arrow-up
                     .input-group-prepend
                         button.btn-search.input-group-text
                             i.fa.fa-search
@@ -37,11 +39,10 @@ mixin items-view(items, pagedatas, isFile, itemList)
                                 else
                                     span.item-play.far.fa-play-circle
                                     span.item-progress= formatTime(item.CurrentPos) +"/"+formatTime(item.Duration)
+
                                 if pagedatas.action.includes("/favorites")
                                     span.item-del.far.fa-trash-alt
                                 else
-                                    if pagedatas.action.includes("/recents")
-                                        span.item-del.far.fa-trash-alt
                                     span.item-fav.fa-star(class=""+(item.isFav ? "text-warning fas" : "far"))
                             else
                                 span.float-right.fas.fa-folder
@@ -52,7 +53,7 @@ mixin items-view(items, pagedatas, isFile, itemList)
             #ordering
                 .input-group
                     .input-group-prepend
-                        label.input-group-text(for="items" value="") Order By
+                        label.input-group-text(for="items" value="") Sort
                     select#order-select.fa.form-control(name="orderby" onchange="selectOrder(this)")
                         option(value="nu" selected=pagedatas.orderby.includes('nu')) &#xf15d; Name
                         option(value="nd" selected=pagedatas.orderby.includes('nd')) &#xf15e; Name

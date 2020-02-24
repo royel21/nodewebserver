@@ -200,11 +200,38 @@ $('#content').on('click', '#home-search .clear-search, #home-search .btn-search'
 
 });
 
+$('#content').on('click', '#create-fav', (e)=> {
+    $.get('/favorites/create-edit-modal', showModal);
+});
+
+
+$('body').on('submit', '#fav-create-edit', (e)=>{
+    e.preventDefault();
+    
+    $.post('/favorites/create-edit', $(e.target).serialize(),(resp)=>{
+        if(resp){
+            loadPartialPage("/favorites/"+ $('#order-select').val());
+            hideForm();
+        }
+    });
+})
+
+$('#content').on('click', '#remove-fav', (e)=>{
+    let favId = $('#list-select select').val();
+    let _csrf = $('.items-list').data('csrf');
+    $.post('/favorites/remove', {favId, _csrf},  (resp)=>{
+        if(resp){
+            loadPartialPage("/favorites/"+ $('#order-select').val());
+            hideForm();
+        }
+    });
+});
+
 const chooseList = (el) => {
     let title = document.title;
     let orderby = $('#order-select').val();
     if (el.tagName == "SELECT") {
-        let url = `/categories/${orderby}/${$('#list-select option:selected').text()}`;
+        let url = `${location.pathname.split('/').slice(0, 3).join('/')}/${$('#list-select option:selected').text()}`;
         loadPartialPage(url);
     }
 }
@@ -234,6 +261,7 @@ $('body').on('click', '#next-list-page, #prev-list-page', (e) => {
         }
     });
 });
+
 $('body').on('click', '.items .item-play, .item .fa-folder', (e) => {
     processFile(e.target.closest('.items'));
 });
@@ -384,9 +412,9 @@ $('body').on('click', '.items .item-fav', (e) => {
     let item = e.target.classList[0] === "items" ? e.target : e.target.closest('.items');
     $.get('/favorites/favorites-list', (resp)=>{
         if(resp){
-            let rows;
+            let rows = "";
             for(let val of resp){
-                rows = `<li id=${val.id}>${val.name}</li>`;
+                rows += `<li id=${val.id}>${val.name}</li>`;
             }
             $('#fav-list ul').attr("id", item.id).empty().append($(rows));
             
@@ -404,7 +432,7 @@ $('body').on('click', '.items .item-fav', (e) => {
 $('body').on('click', '#fav-list li', (e) => {
    let itemId = e.target.closest('ul').id;
    let favId = e.target.id;
-    $.post('/favorites/addfav', { itemId,  favId, _csrf: $('.items-list').data('csrf') }, (resp) => {
+    $.post('/favorites/add-file', { itemId,  favId, _csrf: $('.items-list').data('csrf') }, (resp) => {
         console.log('addfav',resp)
         if (resp.result) {
             console.log(itemId, $('#'+itemId+ ' .item-fav')[0])
@@ -416,12 +444,17 @@ $('body').on('click', '#fav-list li', (e) => {
 
 $('body').on('click', '.items .item-del', (e) => {
     let item = e.target.classList[0] === "items" ? e.target : e.target.closest('.items');
-    let action = location.href.includes('favorites') ? '/favorites/remove' : '/recents/remove';
+    let action = location.href.includes('favorites') ? '/favorites/remove-file' : '/recents/remove-file';
     let favId = $('#list-select select').val();
     $.post(action, { itemId: item.id, favId, _csrf: $('.items-list').data('csrf') }, (resp) => {
-        console.log(resp);
-        if (resp.result)
-            $(item).fadeOut(() => { item.remove(); });
+        if (resp.result){
+            let page = $('#container').data('page');
+            if($('.items').length === 1 && page > 1){
+                page -= 1;
+            }
+            loadPartialPage(genUrl(page));
+        }
+            
     });
 
     e.preventDefault();

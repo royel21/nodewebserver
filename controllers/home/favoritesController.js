@@ -1,7 +1,7 @@
 const db = require('../../models');
 const helper = require('./file-helper');
 
-var loadFavorities = async (req, res) => {
+var loadFavorities = async(req, res) => {
     console.time("fav")
     let currentFav = req.params.list;
     let orderby = req.params.orderby || "nu";
@@ -84,16 +84,39 @@ exports.postSearch = (req, res) => {
 
 exports.favoriteList = (req, res) => {
     req.user.getFavorites({ order: ['Name'] }).then(favs => {
-
         let favorities = favs.map(f => { return { id: f.Id, name: f.Name } });
-        console.log(favorities)
         res.send(favorities);
     }).catch(err => {
         res.send({ result: false });
     });
 }
 
-exports.postFavorite = (req, res) => {
+exports.createEditModal = (req, res) => {
+    res.render('home/modal-create-fav', { fav: { Id: "", Name: "" }, csrfToken: req.csrfToken() });
+}
+
+exports.create = (req, res) => {
+    db.favorite.create({ Name: req.body.name, UserId: req.user.Id }).then(newFav => {
+        return res.send(newFav ? true : false);
+    }).catch(err => {
+        console.log('fav-error', err);
+        return res.send({ result: false });
+    });
+}
+
+exports.remove = (req, res) => {
+    let favId = req.body.favId;
+    db.favorite.destroy({ where: { Id: favId } })
+        .then(result => {
+            res.send({ result: (result > 0) });
+        }).catch(err => {
+            console.log(err)
+            res.send({ result: false });
+        });
+}
+
+exports.addFile = (req, res) => {
+
     db.favoriteFile.findOrCreate({
         where: { FileId: req.body.itemId, FavoriteId: req.body.favId }
     }).then(file => {
@@ -104,25 +127,13 @@ exports.postFavorite = (req, res) => {
     });
 }
 
-exports.postFavoriteFile = (req, res) => {
-
-    db.favoriteFile.findOrCreate({
-        where: { FileId: req.body.id, FavoriteId: req.user.Favorite.Id }
-    }).then(file => {
-        return res.send({ result: file[1] ? true : false });
-    }).catch(err => {
-        console.log('fav-error', err);
-        return res.send({ result: false });
-    });
-}
-
-exports.postRemoveFile = (req, res) => {
+exports.removeFile = (req, res) => {
     console.log(req.body)
     db.favoriteFile.destroy({
         where: { FileId: req.body.itemId, FavoriteId: req.body.favId }
     }).then(result => {
         console.log(result)
-       res.send({ result: (result > 0) });
+        res.send({ result: (result > 0) });
     }).catch(err => {
         res.send({ result: false });
         console.log('fav-error', err);

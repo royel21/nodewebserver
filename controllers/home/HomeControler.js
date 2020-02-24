@@ -37,7 +37,7 @@ var processIndex = async(req, res) => {
     }
 
     let query = {
-        order: db.sqlze.col('N'),
+        order: getOrderBy(orderby),
         offset: begin,
         limit: itemsPerPage,
         attributes: {
@@ -69,8 +69,8 @@ var processIndex = async(req, res) => {
         } else {
             query.where.Type = isManga ? "Manga" : "Video";
         }
-        query.order = getOrderBy(orderby);
     }
+
     let items = await tempDb.findAndCountAll(query);
     items.rows = items.rows.map(f => {
         return f.dataValues;
