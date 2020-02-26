@@ -52,7 +52,9 @@ module.exports.loadZipImages = async(data, socket, currentUser) => {
 
         user.lastId = data.id;
         db.file.findOne({
-            attributes: ['FullPath', 'Name', [db.sqlze.literal("(Select LastPos from RecentFiles where FileId == File.Id and RecentId == '" + currentUser.Recent.Id + "')"), "CurrentPos"]],
+            attributes: ['FullPath', 'Name', [db.sqlze.literal(
+                "(Select LastPos from RecentFiles where FileId == File.Id and RecentId == '" +
+                currentUser.Recent.Id + "')"), "CurrentPos"]],
             where: { Id: user.lastId }
         }).then(file => {
             if (file) {
@@ -72,7 +74,8 @@ module.exports.loadZipImages = async(data, socket, currentUser) => {
 
                         user.entries = entries;
                         user.zip = zip;
-                        socket.emit('m-info', { total: entries.length, name: file.Name, page: file.dataValues.CurrentPos || 0 });
+                        socket.emit('m-info', { total: entries.length, name: file.Name, page: file.dataValues
+                                .CurrentPos || 0 });
 
                         for (let i = page < 0 ? 0 : page; i < (page + data.pagetoload) && i < entries.length; i++) {
                             socket.emit('loaded-zipedimage', {
@@ -88,7 +91,7 @@ module.exports.loadZipImages = async(data, socket, currentUser) => {
                         socket.emit('loaded-zipedimage', { error: 'some error' });
                         console.log(err)
                     });
-                }else{
+                } else {
                     socket.emit('manga-error', { error: 'File Not Found' });
                 }
             }

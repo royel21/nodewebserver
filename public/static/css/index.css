@@ -229,7 +229,7 @@ body{
 .search-container span .fa-times-circle{
     display: none;
     position: absolute;
-    top: 7.5px;
+    top: 5px;
     right: 5px;
     font-size: 20px;
     color: firebrick;

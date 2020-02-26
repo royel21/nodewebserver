@@ -10,7 +10,7 @@ const mSlider = ElById('m-range');
 const $mName = $('.manga-name');
 
 var disconnected = false;
-
+let lastPos = 0; 
 
 Array.prototype.IndexOfUndefined = function(from) {
     var i = from;
@@ -167,7 +167,7 @@ var mclose = () => {
     if (currentFile.pos > 0) {
         socket.emit('add-or-update-recent', { id: currentFile.id, pos: currentFile.pos });
     }
-    currentFile.id = ""; 
+
     $('#manga-viewer').addClass('d-none');
 }
 
@@ -177,13 +177,14 @@ $('.btn-fullscr-m').click(fullScreen);
 
 
 var openManga = (item) => {
+    let pos = 0;
     $('#manga-name').css({ opacity: 0 });
 
     if (currentFile.id !== item.id) {
         socket.emit('add-or-update-recent', currentFile);
-    } else if ($('#manga-viewer').css('display') !== 'none') {
-        return false;
-    }
+    }else{
+        pos = (currentFile.pos - 2) > 0 ? (currentFile.pos - 2) : 0;
+    } 
 
     currentFile.id = item.id;
 
@@ -194,7 +195,7 @@ var openManga = (item) => {
     let src = item.getElementsByTagName('img')[0].src;
     mImageView.src = src;
     mloadingAnimation.style.display = "flex";
-    loadNewImages(0, 20);
+    loadNewImages(pos, 20);
 
     if (window.innerWidth < 600) {
         startClock();
