@@ -179,49 +179,49 @@ processFile = (item) => {
 
 }
 
-const submitSearch = () =>{
+const submitSearch = () => {
     let url = genUrl(1);
     loadPartialPage(url);
 }
 
-$('#content').on('keydown', '#home-search input', (e)=>{
-    if(e.keyCode === 13) submitSearch();
+$('#content').on('keydown', '#home-search input', (e) => {
+    if (e.keyCode === 13) submitSearch();
 });
 
-$('#content').on('click', '#home-search .clear-search, #home-search .btn-search', (e)=>{
+$('#content').on('click', '#home-search .clear-search, #home-search .btn-search', (e) => {
     let search = document.querySelector('#home-search input');
-    if(e.target.classList.contains('fa-times-circle')){
+    if (e.target.classList.contains('fa-times-circle')) {
 
         search.value = "";
         submitSearch();
-    }else if(search.value !== ""){
+    } else if (search.value !== "") {
         submitSearch();
     }
 
 });
 
-$('#content').on('click', '#create-fav', (e)=> {
+$('#content').on('click', '#create-fav', (e) => {
     $.get('/favorites/create-edit-modal', showModal);
 });
 
 
-$('body').on('submit', '#fav-create-edit', (e)=>{
+$('body').on('submit', '#fav-create-edit', (e) => {
     e.preventDefault();
-    
-    $.post('/favorites/create-edit', $(e.target).serialize(),(resp)=>{
-        if(resp){
-            loadPartialPage("/favorites/"+ $('#order-select').val());
+
+    $.post('/favorites/create-edit', $(e.target).serialize(), (resp) => {
+        if (resp) {
+            loadPartialPage("/favorites/" + $('#order-select').val());
             hideForm();
         }
     });
 })
 
-$('#content').on('click', '#remove-fav', (e)=>{
+$('#content').on('click', '#remove-fav', (e) => {
     let favId = $('#list-select select').val();
     let _csrf = $('.items-list').data('csrf');
-    $.post('/favorites/remove', {favId, _csrf},  (resp)=>{
-        if(resp){
-            loadPartialPage("/favorites/"+ $('#order-select').val());
+    $.post('/favorites/remove', { favId, _csrf }, (resp) => {
+        if (resp) {
+            loadPartialPage("/favorites/" + $('#order-select').val());
             hideForm();
         }
     });
@@ -396,31 +396,20 @@ $('#content').on('click', '#scroll-up', (e) => {
     $("#content").animate({ scrollTop: 0 }, "fast");
 });
 
-$(() => {
-    calPages();
-    selectItem(selectedIndex);
-    let cat = $('#cat-select option:selected').text();
-    if(location.pathname.includes('categories') && !location.pathname.includes(cat)){
-        let text = document.title;
-        let url = location.pathname + `${cat}/`
-        history.replaceState(text, text, url);
-    }
-});
-
 
 $('body').on('click', '.items .item-fav', (e) => {
     let item = e.target.classList[0] === "items" ? e.target : e.target.closest('.items');
-    $.get('/favorites/favorites-list', (resp)=>{
-        if(resp){
+    $.get('/favorites/favorites-list', (resp) => {
+        if (resp) {
             let rows = "";
-            for(let val of resp){
+            for (let val of resp) {
                 rows += `<li id=${val.id}>${val.name}</li>`;
             }
             $('#fav-list ul').attr("id", item.id).empty().append($(rows));
-            
+
             let left = item.offsetLeft + 128;
             let top = item.offsetTop + 50;
-            $('#fav-list').css({left, top});
+            $('#fav-list').css({ left, top });
         }
     });
 
@@ -430,14 +419,13 @@ $('body').on('click', '.items .item-fav', (e) => {
 });
 
 $('body').on('click', '#fav-list li', (e) => {
-   let itemId = e.target.closest('ul').id;
-   let favId = e.target.id;
-    $.post('/favorites/add-file', { itemId,  favId, _csrf: $('.items-list').data('csrf') }, (resp) => {
-        console.log('addfav',resp)
+    let itemId = e.target.closest('ul').id;
+    let favId = e.target.id;
+    $.post('/favorites/add-file', { itemId, favId, _csrf: $('.items-list').data('csrf') }, (resp) => {
+
         if (resp.result) {
-            console.log(itemId, $('#'+itemId+ ' .item-fav')[0])
-            $('#'+itemId+ ' .item-fav').toggleClass('text-warning far fas');
-            $('#fav-list').css({left: -100, top: -100});
+            $('#fav-list ul')[0].id = "";
+            $('#' + itemId + ' .item-fav').toggleClass('text-warning far fas');
         }
     });
 });
@@ -447,14 +435,14 @@ $('body').on('click', '.items .item-del', (e) => {
     let action = location.href.includes('favorites') ? '/favorites/remove-file' : '/recents/remove-file';
     let favId = $('#list-select select').val();
     $.post(action, { itemId: item.id, favId, _csrf: $('.items-list').data('csrf') }, (resp) => {
-        if (resp.result){
+        if (resp.result) {
             let page = $('#container').data('page');
-            if($('.items').length === 1 && page > 1){
+            if ($('.items').length === 1 && page > 1) {
                 page -= 1;
             }
             loadPartialPage(genUrl(page));
         }
-            
+
     });
 
     e.preventDefault();
@@ -497,19 +485,33 @@ $('body', ).on('click', '#current-page', function() {
 });
 
 
-function handleBrowserState(isActive) {
-   // socket.emit('add-or-update-recent', { msg: "focus", state: isActive });
-}
-
-window.addEventListener("focus", handleBrowserState.bind(true));
-window.addEventListener("blur", handleBrowserState.bind(false));
-
-
-addEventListener("resume", (e) => {
-    handleBrowserState(true);
-});
-
 $('body').on('click', '#content .item-btns .fa-folder', (e) => {
     let item = e.target.closest('.items');
     processFile(item);
 });
+
+
+$(() => {
+    calPages();
+    selectItem(selectedIndex);
+    let cat = $('#cat-select option:selected').text();
+    if (location.pathname.includes('categories') && !location.pathname.includes(cat)) {
+        let text = document.title;
+        let url = location.pathname + `${cat}/`
+        history.replaceState(text, text, url);
+    }
+
+    let lastUrl = local.getItem('lasturl');
+
+    if (lastUrl && lastUrl !== location.pathname) {
+        loadPartialPage(lastUrl, ()=>{
+            $('input[value="'+local.getItem('lasturl').split('/').slice(0,3).join('/')+'/"]')[0].checked = true;
+        });
+    }
+});
+
+if (isAndroid) {
+    document.addEventListener('visibilitychange', () => {
+        socket.emit('test', document.visibilityState);
+    });
+}

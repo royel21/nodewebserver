@@ -5,12 +5,16 @@ const mImageView = mangaViewer.querySelector('#myimg');
 const closeMViewer = ElById('close-manga-modal');
 const currentImg = ElById('myimg');
 const mloadingAnimation = ElById('m-loading');
-const imgpreview = ElById('img-preview');
 const mSlider = ElById('m-range');
 const $mName = $('.manga-name');
 
+const webtoon = ElById('webtoon');
+const imgpreview = ElById('img-preview');
+const webtoonContent = ElById('webtoon-content')
+
 var disconnected = false;
 let lastPos = 0; 
+var fullScreenChange = false;
 
 Array.prototype.IndexOfUndefined = function(from) {
     var i = from;
@@ -31,12 +35,12 @@ var mangaConfig = {
     keys: {
         nextManga: {
             name: "PageDown",
-            keycode: 34,
+            keycode: 77,
             isctrl: false
         },
         prevManga: {
             name: "PageDown",
-            keycode: 33,
+            keycode: 78,
             isctrl: false
         },
         nextPage: {
@@ -68,11 +72,16 @@ var mLoading = false;
 var pimages = [];
 
 var createElements = (count) => {
-    let total = imgpreview.querySelectorAll('img').length;
+
+    let imgContainer = webtoon.checked ? webtoonContent : imgpreview;
+
+    let total = imgContainer.querySelectorAll('img').length;
+
     if (total < count) {
         let c = document.createDocumentFragment();
         for (let i = total; i < count; i++) {
             var tdiv = document.createElement('div');
+            tdiv.classList.add("dimg");
             var tpage = document.createElement('div');
             var timgdiv = document.createElement('div');
             var timg = document.createElement('img');
@@ -85,14 +94,14 @@ var createElements = (count) => {
 
             c.appendChild(tdiv);
         }
-        imgpreview.appendChild(c);
+        imgContainer.appendChild(c);
     } else {
         for (let i = total - 1; i > count - 1; i--) {
-            imgpreview.childNodes[i].remove();
+            imgContainer.childNodes[i].remove();
         }
     }
 
-    pimages = Array.from(imgpreview.querySelectorAll('img'));
+    pimages = Array.from(imgContainer.querySelectorAll('img'));
     lazyLoad();
 }
 
@@ -102,14 +111,18 @@ var loadNewImages = (page, pagetoload = 20) => {
 }
 
 var fullScreen = (e) => {
-    setfullscreen(mangaViewer);
+    fullScreenChange = true;
+    if(!document.fullscreenElement){
+        startClock(); 
+    }
+    setfullscreen(mangaViewer);;
+
 }
 
 var updatePageNumber = () => {
     mSlider.value = currentFile.pos;
-    if(pimages[currentFile.pos]) pimages[currentFile.pos].scrollIntoView();
     mSlider.style.setProperty('--val', +currentFile.pos);
-    $('#' + currentFile.id + ' .item-progress, #img-viewer .item-progress').text((currentFile.pos + 1) + "/" + mTotalPages);
+    $('#' + currentFile.id + ' .item-progress, #manga-viewer .item-progress').text((currentFile.pos + 1) + "/" + mTotalPages);
 };
 
 
@@ -183,6 +196,7 @@ var openManga = (item) => {
     if (currentFile.id !== item.id) {
         socket.emit('add-or-update-recent', currentFile);
     }else{
+        currentFile.pos = parseInt(currentFile.pos);
         pos = (currentFile.pos - 2) > 0 ? (currentFile.pos - 2) : 0;
     } 
 
@@ -197,12 +211,29 @@ var openManga = (item) => {
     mloadingAnimation.style.display = "flex";
     loadNewImages(pos, 20);
 
-    if (window.innerWidth < 600) {
-        startClock();
-    }
-
     return true;
 }
+
+webtoon.onchange = (e) =>{
+    console.log(webtoon.checked);
+    let divs = mangaViewer.querySelectorAll('.dimg');
+
+    $('.dimg div:last-child').css({display: webtoon.checked ? "none" : "initial"});
+
+    if(webtoon.checked){
+       $(webtoonContent).append(divs);
+       $(webtoonContent).css({display: "block"});
+       $('#img-content').css({display: "none"});
+        if(pimages[currentFile.pos]) pimages[currentFile.pos].scrollIntoView();
+    }else{
+        $(imgpreview).append(divs);
+       $(webtoonContent).css({display: "none"});
+       $('#img-content').css({display: "flex"});
+        mImageView.src = pimages[currentFile.pos].src;
+    }
+}
+
+
 mSlider.oninput = (e) => {
     let val = parseInt(mSlider.value);
     mSlider.style.setProperty('--val', +mSlider.value);
@@ -230,7 +261,7 @@ var nextImg = () => {
         let timg = pimages[currentFile.pos + 1].src;
         
         if (timg.includes('data:')) {
-            mImageView.src = timg;
+            mImageView.src = timg; 
             currentFile.pos++;
         }
 
@@ -299,36 +330,44 @@ $('#btn-img-config').click((e) => {
 
 var mangaVewerKeyDown = (e) => {
     if ($(mangaViewer).is(':visible')) {
-        e.stopPropagation();
-        e.preventDefault();
         let keys = mangaConfig.keys;
-
+        let handle = false;
         switch (e.keyCode) {
             case keys.nextPage.keycode:
                 {
                     nextImg();
+                    handle = true;
                     break;
                 }
             case keys.prevPage.keycode:
                 {
                     prevImg();
+                    handle = true;
                     break;
                 }
             case keys.nextManga.keycode:
                 {
                     nextManga();
+                    handle = true;
                     break;
                 }
             case keys.prevManga.keycode:
                 {
                     prevManga();
+                    handle = true;
                     break;
                 }
             case keys.fullscreen.keycode:
                 {
                     fullScreen();
+                    handle = true;
                     break;
                 }
+        }
+
+        if(handle){
+            e.stopPropagation();
+            e.preventDefault();
         }
     }
 }
@@ -358,7 +397,7 @@ var areaEvents = {
         "area10": showCarusel
     }
     //Area Control
-$('#manga-area-control').on('click', '.area', (e) => {
+$('.manga-area-control').on('click', '.area', (e) => {
     areaEvents[e.target.id]();
 });
 
@@ -400,6 +439,12 @@ var lazyLoad = () => {
             let lazyThumb = entry.target.querySelector('img');
             if (entry.isIntersecting) {
                 if (!lazyThumb.src.includes('data:')) inView.push(pimages.indexOf(lazyThumb));
+                if(!fullScreenChange){
+                    currentFile.pos = pimages.indexOf(entry.target.querySelector('img'));
+                    updatePageNumber();
+                }else{
+                    fullScreenChange = false;
+                }
             }
         });
 

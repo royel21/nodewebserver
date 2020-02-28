@@ -19,7 +19,7 @@ const setSelectedItemInPage = (index) => {
 
 const loadPartialPage = async(url, cb) => {
     if (!url) return;
-    
+
     let tmpUrl = url.replace('//', '/');
 
 
@@ -66,13 +66,13 @@ $('body').on('click', '#table-controls .page-item a, #controls .page-item a', (e
 const genUrl = (page) => {
     let orderby = local.getItem('orderby') || $('#order-select').val();
     let item = document.querySelector('select[name=items]')
-    let iperpage =  item ? item.value : 27;
+    let iperpage = item ? item.value : 27;
     let search = $('input[name=search]').val();
 
     currentPage = page;
 
     let path = location.pathname.split(/\/\d*\//)[0] + '/';
-    
+
     if (path === '//') {
         path = '/recents/';
     } else if (!path.includes('recent')) {
@@ -92,7 +92,7 @@ const genUrl = (page) => {
     return `${path}/${page}/${iperpage}/${search}`;
 }
 
-$('#content').on('change','#controls #itemperpage, #controls #page-select', (event) => {
+$('#content').on('change', '#controls #itemperpage, #controls #page-select', (event) => {
     let page = event.target.id.includes('itemperpage') ? 1 : $('select[name=page]').val();
     let url = genUrl(page);
     loadPartialPage(url);
@@ -145,13 +145,13 @@ var confirm = (message, className) => {
         $('#modal').fadeIn("fast");
     });
 }
-const showModal = (modal) =>{
-    if(modal){
+const showModal = (modal) => {
+    if (modal) {
         $('#modal').empty().append(modal);
-            $('#modal-container').fadeIn("fast", () => {
-                $('#modal').fadeIn("fast");
-                $('#modal-container').css({ display: "flex" });
-         });
+        $('#modal-container').fadeIn("fast", () => {
+            $('#modal').fadeIn("fast");
+            $('#modal-container').css({ display: "flex" });
+        });
     }
 }
 
@@ -168,6 +168,7 @@ $('body').on('mousedown', '#modal-container', (e) => {
         hideForm();
     }
 });
+
 var lastPage;
 if (isAndroid) {
 
@@ -192,9 +193,9 @@ $(() => {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/service-worker.js')
             .then((result) => {
-//                 console.log('worker registed');
+                //                 console.log('worker registed');
             }).catch(err => {
-//                 console.log('worker not registed');
+                //                 console.log('worker not registed');
             });
     }
 });

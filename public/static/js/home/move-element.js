@@ -9,7 +9,7 @@ var isPressed = false;
 var zindex = 100;
 
 $('body').on('mousedown', '.move', (e) => {
-    if ($(e.target).hasClass('move')) {
+    if ($(e.target).hasClass('move') && !document.fullscreenElement) {
         modal = $(e.target).closest('.move-modal')[0];
         offset.x = e.clientX - modal.offsetLeft;
         offset.y = e.clientY - modal.offsetTop;

@@ -54,7 +54,7 @@ mixin items-view(items, pagedatas, isFile, itemList)
                 .input-group
                     .input-group-prepend
                         label.input-group-text(for="items" value="") Sort
-                    select#order-select.fa.form-control(name="orderby" onchange="selectOrder(this)")
+                    select#order-select.form-control(name="orderby" onchange="selectOrder(this)" style='font-family: "Font Awesome 5 Free", "sans-serif";')
                         option(value="nu" selected=pagedatas.orderby.includes('nu')) &#xf15d; Name
                         option(value="nd" selected=pagedatas.orderby.includes('nd')) &#xf15e; Name
                         option(value="du" selected=pagedatas.orderby.includes('du')) &#xf162; Date

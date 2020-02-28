@@ -24,6 +24,9 @@ module.exports = (server, app) => {
             socket.on('loadzip-image', (data) => mloader.loadZipImages(data, socket, user));
 
             socket.on('add-or-update-recent', (data) => { recent.updateRecent(data, user) });
+            socket.on('test', (data) => {
+                console.log(data);
+            })
         }
 
         socket.on('disconnect', (client) => {

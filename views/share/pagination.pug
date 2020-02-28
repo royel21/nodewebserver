@@ -8,7 +8,7 @@ mixin pagination(total, data)
     -let searchAction = data.action
     if data.action === '/categories/'
         -data.action += data.cat+"/"
-    if totalPages > 1 
+    if total > 7 
         div#pager
             if isAndroid
                 #android-pager.input-group
@@ -32,7 +32,7 @@ mixin pagination(total, data)
                                     -if(i > 500) break;
                                     option(value=""+i selected=(itemsPerPage === i ? true : false))= i
                                     -if(itemsPerPage === i) selected = true
-                                -let t = total > 500 ? 500 : total - 1
+                                -let t = total > 500 ? 500 : total
                                 option(value=t selected=!selected)= t 
                     if currentPage == 1
                         li.page-item.disabled(data-title="First").popup-msg
@@ -77,5 +77,4 @@ mixin pagination(total, data)
                                 i.fa.fa-angle-double-right
     if !noItems && totalPages > 0
         #itemsPerPage(data-itemsperpage=itemsPerPage)
-            
             span.badge.badge-primary.popup-msg(data-title="Total Files")= total

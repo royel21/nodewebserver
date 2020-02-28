@@ -1,7 +1,6 @@
 #manga-viewer.text-center.move-modal.resize.d-none(tabindex="0")
     #m-loading
         span.fa.fa-spin
-    span.clock
     #manga-name
         span.manga-name
     #m-caru
@@ -16,36 +15,51 @@
                     out#mr-out(for="mrange")
                     span#page-total
     #img-viewer
-        .m-progress
-            span.item-progress
-        #manga-area-control
-            #area-top
-                .area#area1
-                .area#area2
-                .area#area3
-            #area-center
-                .area#area4
-                .area#area5
-                .area#area6
-            #area-botton
-                .area#area7
-                .area#area8
-                .area#area9
-            .area#area10
         #img-content
+            .manga-area-control
+                #area-top
+                    .area#area1
+                    .area#area2
+                    .area#area3
+                #area-center
+                    .area#area4
+                    .area#area5
+                    .area#area6
+                #area-botton
+                    .area#area7
+                    .area#area8
+                    .area#area9
+                .area#area10
             #animate-image-1.center-img
                 img#myimg
             #animate-image-2.center-img
                 img#temp-img
-        #webtoon-content
+        #webtoon-content(tabindex="0")
+            .manga-area-control
+                #area-top
+                    .area#area1
+                    .area#area2
+                    .area#area3
+                #area-center
+                    .area#area4
+                    .area#area5
+                    .area#area6
+                #area-botton
+                    .area#area7
+                    .area#area8
+                    .area#area9
+                .area#area10
     .manga-control.footer.move
-        #webtoon-active.input-group
-            .input-group-prepend
-                input#webtoon.checked-box( type="checkbox" )
-                label#webtoon-check( for="webtoon" class="checked-mark select-style") WebToon
+        span#close-manga-modal
+            i.far.fa-times-circle
         span.btn-fullscr-m
             i.fas.fa-expand-arrows-alt.popup-msg(data-title="Pantalla Completa")
         span#btn-img-config
             i.fas.fa-cog.popup-msg(data-title="Pantalla Completa")
-        span#close-manga-modal
-            i.far.fa-times-circle
+        #webtoon-active.input-group
+            .input-group-prepend
+                input#webtoon.checked-box( type="checkbox" )
+                label#webtoon-check( for="webtoon" class="checked-mark select-style") WebToon
+        
+        span.item-progress
+        span.clock

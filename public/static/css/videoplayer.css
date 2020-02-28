@@ -16,7 +16,7 @@ video{
     padding: 0 6px
 }
 
-.move-modal:-webkit-full-screen .clock{
+.move-modal:-webkit-full-screen #video-viewer .clock{
     font-size: 20px;
     width: 150px;
 }
@@ -404,14 +404,14 @@ body .content {
        top: 5px;
        left: 0;
     }
-    .clock{
+    #video-viewer .clock{
         display: inline-block;
         bottom: initial;
         font-size: 14px;
         width: 140px;
         bottom: initial;
     }
-    .move-modal:-webkit-full-screen .clock{
+    .move-modal:-webkit-full-screen #video-viewer .clock{
         font-size: 16px;
         width: initial;
         bottom: initial;

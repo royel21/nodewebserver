@@ -53,11 +53,10 @@ var clockTimer;
 var $clock = $('.clock');
 const startClock = () => {
     $clock.fadeIn();
-    $clock.text(new Date().toLocaleTimeString('en-US'));
-
+    $clock.text(new Date().toLocaleTimeString().replace(/(.*)\D\d+/, '$1'));
     clockTimer = setInterval(() => {
-        $clock.text(new Date().toLocaleTimeString('en-US'));
-    }, 1000);
+        $clock.text(new Date().toLocaleTimeString().replace(/(.*)\D\d+/, '$1'));
+    }, 1000*60);
 }
 
 const stopClock = () => {

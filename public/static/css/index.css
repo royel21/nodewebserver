@@ -253,6 +253,10 @@ body{
     z-index: 10000;
 }
 
+.resize:-webkit-full-screen:after{
+    display: none;
+}
+
 .move{
     cursor: grab;
 }
@@ -260,6 +264,10 @@ body{
     cursor: grabbing;
 }
 
+
+:-webkit-full-screen .move{
+    cursor: initial;
+}
 
 #error-container{
     position: fixed;

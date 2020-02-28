@@ -114,7 +114,7 @@ exports.deleteFile = (req, res) => {
     let id = req.body.id;
     if (id) {
         db.file.findOne({ where: { Id: id } }).then(file => {
-            file.destroy().then(() => {
+            if (file) file.destroy().then(() => {
                 fs.removeSync(path.join('./public/covers', 'folder-' + file.DirectoryId, file.Id + ".jpg"));
                 fs.removeSync(path.join(file.FullPath, file.Name));
                 res.send({ status: "Ok", msg: "File Borrado" });

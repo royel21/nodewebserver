@@ -143,9 +143,9 @@ exports.loginPost = (req, res, next) => {
         maxAge: 1000 * 60 * 60 * 24, // would expire after 15 minutes
     }
     res.cookie('screen-w', req.body.screenw, options);
-
+    console.log(req.body)
     passport.authenticate('local', {
-        successRedirect: '/',
+        successRedirect: req.body.returnurl || '/',
         failureRedirect: "/login",
         failureFlash: true
     })(req, res, next);

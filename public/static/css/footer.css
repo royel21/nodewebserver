@@ -9,11 +9,6 @@
     z-index: 1000;
 }
 
-.footer>span {
-    position: fixed;
-    left: 5px;
-    bottom: 5px;
-}
 
 .img-toolbar {
     display: flex;
