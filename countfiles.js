@@ -112,15 +112,15 @@
 // fv 0w1sk
 // rc pjwhn
 // loli - cat - bzy7w
-const db = require('./models/index');
-db.sqlze.options.logging = true;
-const helper = require('./controllers/home/file-helper2');
+//const db = require('./models/index');
+//db.sqlze.options.logging = true;
+//const helper = require('./controllers/home/file-helper2');
 
 var query = async() => {
 
 
 
-    console.time("s");
+    // console.time("s");
     // let user = await db.user.findOne({
     //     where: {
     //         Name: 'Royel'
@@ -156,18 +156,18 @@ var query = async() => {
     //     //         { model: db.favorite}
     //     //     ]
     //     // });
-    let user = await db.user.findAll({ where: { Name: ["Royel", 'Administrator'] }, include: { model: db.favorite } });
+    // let user = await db.user.findAll({ where: { Name: ["Royel", 'Administrator'] }, include: { model: db.favorite } });
     // let favs = (await user.getFavorites()).map((i) => i.Id);
 
     //console.log(favs.join(','));
 
-    console.timeEnd("s");
+    // console.timeEnd("s");
 
 }
 
-query().then((result) => {
+// query().then((result) => {
 
-});
+// });
 // const moment = require('moment')
 // const winex = require('win-explorer');
 // const files = winex.ListFilesRO('E:\\Temp\\Hmangas');
@@ -220,8 +220,8 @@ query().then((result) => {
 //     console.log(result.count, result.rows[0]);
 // });
 // const moment = require('moment')
-// const winex = require('win-explorer');
-// const files = winex.ListFilesRO('E:\\Temp\\Hmangas');
+const winex = require('win-explorer');
+// const files = winex.ListFilesRO('E:\\Temp\\Hmangas', [], {One: true});
 // const db = require('./models/index');
 // const fs = require('fs-extra')
 // const path = require('path')
@@ -250,4 +250,12 @@ query().then((result) => {
 
 // updateDate(files);
 
-// console.log(winex.ListFiles("H:\\", [], { hidden: true, file: false, directory: true }));
+// console.log(winex.ListFiles("E:\\Temp\\Hmangas\\Doujin\\D.L\\[Digital Lover (Nakajima Yuka)] D.L. action 006 (Ukagaka).zip", {
+//     oneFile: true
+// }));
+const chokidar = require('chokidar')
+
+
+chokidar.watch('E:\\Temp\\Hmangas').on('all', (event, path) => {
+    console.log(event, path);
+});

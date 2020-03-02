@@ -13,7 +13,7 @@ mixin items-view(items, pagedatas, isFile, itemList)
                         span#remove-fav
                             i.fa.fa-trash-alt
             
-            if pagedatas.totalPages > 0 || pagedatas.search
+            if pagedatas.totalPages > 0 || pagedatas.search || url.includes('folder-content')
                 #home-search.input-group.search-container
                     if url.includes('folder-content')
                         span#goback.fas.fa-arrow-up

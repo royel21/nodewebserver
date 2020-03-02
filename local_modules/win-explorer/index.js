@@ -59,16 +59,18 @@ sortFiles = (a, b) => {
     return a1.localeCompare(b1);
 };
 
-ListFiles = (dir, filters, options) => {
+ListFiles = (dir, options) => {
+
+    var d = path.resolve(dir);
+    if (options.oneFile) return WinExplore.ListFiles(d, true);
+
     let opts = options ? {
         hidden: !options.hidden ? options.hidden : true,
         file: !options.file ? options.file : true,
         directory: !options.directory ? options.directory : true,
         oneFile: options.oneFile
     } : {};
-    var d = path.resolve(dir);
     var files = WinExplore.ListFiles(d, opts.oneFile || false).sort(sortFiles);
-
     const checkFiles = (f) => {
         if (f.isHidden) {
             if (!opts.hidden) return false;
@@ -78,10 +80,9 @@ ListFiles = (dir, filters, options) => {
         if (f.isDirectory === opts.directory) return true;
         return false;
     }
-
-    if (options.files && filters.length) {
+    if (options.file && options.filters.length) {
         return files.filter(v => {
-            if (filters.includes(v.extension.toLowerCase())) {
+            if (options.filters.includes(v.extension.toLowerCase())) {
                 return checkFiles(f);
             } else {
                 return false;

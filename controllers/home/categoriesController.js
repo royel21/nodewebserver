@@ -1,7 +1,7 @@
 const db = require('../../models');
 const helper = require('./file-helper');
 
-var loadCategories = async (req, res) => {
+var loadCategories = async(req, res) => {
     console.time("cat")
     let currentCat = req.params.list;
     let orderby = req.params.orderby || "nu";
@@ -16,9 +16,8 @@ var loadCategories = async (req, res) => {
     let items = { count: 0, rows: [] };
     if (categories.length > 0) {
         let cat = categories.find((c) => { return c.Name.includes(currentCat) }) || categories[0];
-        
-        items = await helper.getFiles(req.user,
-            { id: cat.Id, begin, itemsPerPage, search },
+
+        items = await helper.getFiles(req.user, { id: cat.Id, begin, itemsPerPage, search },
             db.category, helper.getOrderBy(orderby)
         );
 
@@ -58,7 +57,6 @@ var loadCategories = async (req, res) => {
 
 exports.categories = (req, res) => {
     loadCategories(req, res).catch(err => {
-        if (err) console.log(err);
         res.status(500).send('Internal Server Error');
     });
 }
@@ -78,7 +76,6 @@ exports.postSearch = (req, res) => {
             if (category) {
                 url += category.Name + `/1/${itemsPerPage}/${search}?partial=true`;
             }
-            console.log(url)
             return res.redirect(url);
         });
     }

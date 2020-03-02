@@ -1,7 +1,6 @@
 const contentScroll = document.getElementById('content');
 const mediaContainer = document.getElementById('media-container');
 const calCol = () => colNum = Math.floor($('#files-list').width() / $('.items').get(0).offsetWidth);
-
 var page = 1;
 var selectedIndex = parseInt(local.getItem('selectedIndex')) || 0;
 var totalPage;
@@ -505,13 +504,16 @@ $(() => {
 
     if (lastUrl && lastUrl !== location.pathname) {
         loadPartialPage(lastUrl, ()=>{
-            $('input[value="'+local.getItem('lasturl').split('/').slice(0,3).join('/')+'/"]')[0].checked = true;
+            let menuItem = $('input[value="'+local.getItem('lasturl').split('/').slice(0,3).join('/')+'/"]')[0];
+            menuItem.checked = true;
+            document.title = menuItem.textContent;
         });
     }
 });
 
-if (isAndroid) {
-    document.addEventListener('visibilitychange', () => {
-        socket.emit('test', document.visibilityState);
-    });
+
+document.onvisibilitychange = (e)=>{
+    if(document.visibilityState == "hidden"){
+        socket.emit('add-or-update-recent', currentFile);
+    } 
 }

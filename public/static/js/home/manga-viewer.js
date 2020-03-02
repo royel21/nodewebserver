@@ -231,6 +231,7 @@ webtoon.onchange = (e) =>{
        $('#img-content').css({display: "flex"});
         mImageView.src = pimages[currentFile.pos].src;
     }
+    lazyLoad();
 }
 
 
@@ -438,7 +439,9 @@ var lazyLoad = () => {
         entries.forEach((entry) => {
             let lazyThumb = entry.target.querySelector('img');
             if (entry.isIntersecting) {
+                console.log(entry.target)
                 if (!lazyThumb.src.includes('data:')) inView.push(pimages.indexOf(lazyThumb));
+
                 if(!fullScreenChange){
                     currentFile.pos = pimages.indexOf(entry.target.querySelector('img'));
                     updatePageNumber();
@@ -461,11 +464,12 @@ var lazyLoad = () => {
         }, 50);
 
     }, {
-        rootMargin: "600px",
-        threshold: 0.1
+        root: webtoon.checked ? webtoonContent : imgpreview,
+        rootMargin: window.innerHeight+"px",
+        threshold: 0
     });
 
-    imgpreview.childNodes.forEach((lazyImg) => {
+    document.querySelectorAll('.dimg').forEach((lazyImg) => {
         lazyImageObserver.observe(lazyImg);
     });
 }
