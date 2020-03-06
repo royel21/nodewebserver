@@ -2,33 +2,33 @@ mixin navbar(user, url)
     nav#menu.navbar.navbar-expand-sm.navbar-dark.bg-dark
         ul.navbar-nav.bg-dark
             li.nav-item
-                input#recents(type="radio", name="menu-group" value="/" checked=(url === '/' || url.includes('recents')))
+                input#recents(type="radio", name="menu-group" value="/" checked=(/\/$|\/recents/ig).test(url))
                 label.nav-link(for="recents")
                     i.fas.fa-clipboard-list
                     span  Recents 
             li.nav-item
-                input#folders(type="radio", name="menu-group" value="/folders/nu/" checked=(url.includes('/folders') || url.includes('folder-content')))
+                input#folders(type="radio", name="menu-group" value="/folders/nu/" checked=(/\/folder/ig).test(url))
                 label.nav-link(for="folders")
                     i.fas.fa-folder
                     span  Folders 
             li.nav-item
-                input#mangas(type="radio", name="menu-group" value="/mangas/nu/" checked=(url === '/mangas' || url.includes('mangas')))
+                input#mangas(type="radio", name="menu-group" value="/mangas/nu/" checked=(/\/mangas/ig).test(url))
                 label.nav-link(for="mangas")
                     i.fas.fa-book
                     span  Mangas
             li.nav-item
-                input#videos(type="radio", name="menu-group" value="/videos/nu/" checked=url.includes('videos'))
+                input#videos(type="radio", name="menu-group" value="/videos/nu/" checked=(/\/videos/ig).test(url))
                 label.nav-link(for="videos")
                     i.fas.fa-film
                     span  All Videos
             li.nav-item
-                input#categories(type="radio", name="menu-group" value="/categories/nu/" checked=url.includes('categories'))
+                input#categories(type="radio", name="menu-group" value="/categories/nu/" checked=(/\/categories/ig).test(url))
                 label.nav-link(for="categories")
                     i.fas.fa-tags
                     span  Categories
             if !['manager', 'admin'].includes(user.Role)
                 li.nav-item
-                    input#favorities(type="radio", name="menu-group" value="/favorites/nu/" checked=url.includes('favorites'))
+                    input#favorities(type="radio", name="menu-group" value="/favorites/nu/" checked=(/\/favorites/ig).test(url))
                     label.nav-link(for="favorities")
                         i.fas.fa-heart
                         span  Favorites
