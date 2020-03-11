@@ -24,7 +24,7 @@ body{
 #content{
     position: relative;
     min-height: calc(100% - 44px);
-    height: calc(100% - 44px);
+    height: calc(100% - 40px);
     overflow-y: auto;
 }
 
@@ -341,7 +341,6 @@ body{
     }
     #controls{
         display: flex;
-        justify-content: space-between;
         /* align-items: center; */
         /* padding: 0 2px; */
     }
@@ -370,7 +369,7 @@ body{
 
     #android-pager #current-page{
         position: relative;
-        top: 0px;
+        top: -1px;
         padding: 0 4px;
         width: 65px;
     }
@@ -394,7 +393,6 @@ body{
         font-size: 25px;
     }
     .search-container{
-        max-width: 140px;
     }
      
 }

@@ -49,6 +49,7 @@ mixin items-view(items, pagedatas, isFile, itemList)
                         .item-cover
                             img.fa(draggable="false" src="/covers/"+ (isFile ? 'files/folder-'+item.DirectoryId+'/' : 'folders/')+item.Id+'.jpg' alt="Loading Image - Reload")
                         .item-name= item.Name
+                        
         if !pagedatas.action.includes('recent')
             #ordering
                 .input-group

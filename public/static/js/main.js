@@ -25,10 +25,10 @@ const loadPartialPage = async(url, cb) => {
 
     $.get(tmpUrl, { partial: true }, (resp) => {
         if (resp.data) {
-
             let text = $('.navbar input:checked').next().text().trim();
             document.title = text;
             window.history.replaceState(text, text, tmpUrl);
+            console.log(text);
 
             if (!location.pathname.includes('admin'))
                 pageHistory[$('#menu input:checked')[0].id].pathname = tmpUrl;
