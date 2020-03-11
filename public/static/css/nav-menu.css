@@ -1,5 +1,4 @@
-
-#menu{
+#menu {
     position: sticky;
     top: 0;
     left: 0;
@@ -10,34 +9,32 @@
     padding: 0;
 }
 
-#menu i.fa-user-cog,
-#menu i.fa-user{
+#menu i.fa-user-cog, #menu i.fa-user {
     margin-right: 8px;
     color: #007bff;
 }
 
-#menu input[type="radio"]{
+#menu input[type="radio"] {
     display: none;
 }
 
-#menu label{
+#menu label {
     margin: 0;
     padding: 8px 5px;
     cursor: pointer;
 }
 
-#menu #admin + label,
-#menu #favorities + label{
+#menu #admin+label, #menu #favorities+label {
     position: relative;
     top: 3px;
 }
 
-#menu input[type="radio"]:checked + .nav-link {
+#menu input[type="radio"]:checked+.nav-link {
     color: white;
     border-bottom: 1px solid;
 }
 
-#nav-menu{
+#nav-menu {
     position: fixed;
     top: 0;
     left: 0;
@@ -45,8 +42,7 @@
     padding: .2rem .75rem;
 }
 
-#nav-menu input,
-#nav-menu button{
+#nav-menu input, #nav-menu button {
     font-size: 12px;
 }
 
@@ -64,55 +60,46 @@
     vertical-align: middle;
 }
 
-.navbar label{
+.navbar label {
     line-height: 1;
     padding: 0.2rem .2rem;
     margin: 5px 0;
 }
 
-.navbar #toggle-menu{
+.navbar #toggle-menu {
     display: none;
 }
 
-#menu .nav-item{
+#menu .nav-item {
     padding: 0;
 }
 
-
 @media screen and (max-width: 700px) {
-
-    #menu{
-        /* padding: .1rem .05rem; */
-    }
-    #menu .nav-link span{
+    #menu .nav-link span {
         display: none;
     }
-    #menu .nav-link i{
+    #menu .nav-link i {
         font-size: 28px;
         margin: 0 5px;
     }
-    #menu .navbar-nav{
+    #menu .navbar-nav {
         flex-direction: row;
     }
-
-    .nav-item .nav-link{
+    .nav-item .nav-link {
         display: inline-block;
         padding: 4px;
     }
-    #login{
+    #login {
         line-height: 1.9;
     }
-    .navbar-nav:last-child .nav-item:not(:first-child):not(:last-child){
+    .navbar-nav:last-child .nav-item:not(:first-child):not(:last-child) {
         display: none;
     }
-
-    #menu #admin + label,
-    #menu #favorities + label{
+    #menu #admin+label, #menu #favorities+label {
         position: relative;
         top: -1px;
     }
-
-    #menu #login{
+    #menu #login {
         position: relative;
         top: 3px;
     }
