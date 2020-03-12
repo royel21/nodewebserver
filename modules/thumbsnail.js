@@ -1,31 +1,30 @@
 const StreamZip = require('node-stream-zip');
-const rcunrar = require('rcunrar');
 const sharp = require('sharp');
 
 const images = ['png', 'gif', 'jpg', 'jpeg', 'webp'];
 
-module.exports.RarCover = (file, coverP) => {
-    let rar = new rcunrar(file);
-    var list = rar.ListFiles().sort((a, b) => {
-        return String(a.Name).localeCompare(String(b.Name));
-    });
+// module.exports.RarCover = (file, coverP) => {
+//     let rar = new rcunrar(file);
+//     var list = rar.ListFiles().sort((a, b) => {
+//         return String(a.Name).localeCompare(String(b.Name));
+//     });
 
-    var firstImg = list.find(e => {
-        return images.includes(e.Extension.toLocaleLowerCase()) && e.Size > 1024 *
-            30
-    });
+//     var firstImg = list.find(e => {
+//         return images.includes(e.Extension.toLocaleLowerCase()) && e.Size > 1024 *
+//             30
+//     });
 
-    if (firstImg == undefined) return false;
+//     if (firstImg == undefined) return false;
 
-    var data = rar.ExtractFile(firstImg);
-    return new Promise((resolve, reject) => {
-        sharp(data).resize(240).jpeg({
-            quality: 80
-        }).toFile(coverP, (error) => {
-            resolve(coverP);
-        });
-    });
-}
+//     var data = rar.ExtractFile(firstImg);
+//     return new Promise((resolve, reject) => {
+//         sharp(data).resize(240).jpeg({
+//             quality: 80
+//         }).toFile(coverP, (error) => {
+//             resolve(coverP);
+//         });
+//     });
+// }
 
 module.exports.ZipCover = (file, coverP) => {
     var zip = new StreamZip({

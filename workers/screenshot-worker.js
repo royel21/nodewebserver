@@ -110,9 +110,10 @@ var foldersThumbNails = async (folders) => {
             } else {
                 if (/zip/ig.test(s.filePath)) {
                     await thumbnails.ZipCover(s.filePath, s.coverPath)
-                } else if (/rar/ig.test(s.filePath)) {
-                    await thumbnails.RarCover(s.filePath, s.coverPath);
                 }
+                // else if (/rar/ig.test(s.filePath)) {
+                //     await thumbnails.RarCover(s.filePath, s.coverPath);
+                // }
             }
         } catch (err) {
             console.log(err);
