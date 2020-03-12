@@ -27,8 +27,6 @@
         "express": "^4.17.1",
         "express-fileupload": "^1.1.6",
         "express-session": "^1.17.0",
-        "ffmpeg-static": "file:local_modules/ffmpeg-static",
-        "ffprobe-static": "file:local_modules/ffprobe-static",
         "fluent-ffmpeg": "2.1.2",
         "fs-extra": "^7.0.1",
         "http-errors": "^1.7.3",
@@ -55,7 +53,7 @@
         "gulp-concat": "^2.6.1",
         "gulp-minify": "^3.1.0",
         "nodemon": "^1.19.4",
-        "sequelize": "^4.44.3",
+        "sequelize": "^4.44.4",
         "sequelize-cli": "^5.5.1"
     }
 }
