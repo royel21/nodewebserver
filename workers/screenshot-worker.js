@@ -5,17 +5,20 @@ const fs = require('fs-extra');
 const os = require("os");
 const thumbnails = require('../modules/thumbsnail');
 
-var ffmpeg = require("ffmpeg-static").path;
-var ffprobe = require("ffprobe-static").path;
+var ffmpeg;
+var ffprobe;
 
 if (os.platform().includes("linux")) {
     ffmpeg = "ffmpeg";
     ffprobe = "ffprobe";
+} else {
+    ffmpeg = require("ffmpeg-static").path;
+    ffprobe = require("ffprobe-static").path;
 }
 
 var vCover;
 
-const getScreenShot = async(video, toPath, duration) => {
+const getScreenShot = async (video, toPath, duration) => {
     let pos = (duration * 0.237).toFixed(2);
     let cmd = ffmpeg + ` -ss ${pos} -i "${video}" -y -vframes 1 -q:v 0 -vf scale=240:-1 "${toPath}"`
     return await new Promise((resolve, reject) => {
@@ -29,14 +32,14 @@ const getScreenShot = async(video, toPath, duration) => {
     });
 }
 
-const getVideoDuration = async(video) => {
+const getVideoDuration = async (video) => {
     return execFileSync(ffprobe, ['-i', video, '-show_entries', 'format=duration', '-v', 'quiet', '-of', 'csv=p=0'], {
         timeout: 1000 *
             60
     });
 }
 
-const myworker = async(id) => {
+const myworker = async (id) => {
     let files = await db.file.findAll({ where: { DirectoryId: id, Duration: 0 } });
 
     for (let f of files) {
@@ -97,7 +100,7 @@ process.on("message", (data) => {
     });
 });
 
-var foldersThumbNails = async(folders) => {
+var foldersThumbNails = async (folders) => {
     for (let s of folders) {
         try {
             if (!s.isManga) {
