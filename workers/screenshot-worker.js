@@ -12,9 +12,7 @@ var vCover;
 
 const getScreenShot = async (video, toPath, duration) => {
   let pos = (duration * 0.237).toFixed(2);
-  let cmd =
-    ffmpeg +
-    ` -ss ${pos} -i "${video}" -y -vframes 1 -q:v 0 -vf scale=240:-1 "${toPath}"`;
+  let cmd = ffmpeg + ` -ss ${pos} -i "${video}" -y -vframes 1 -q:v 0 -vf scale=240:-1 "${toPath}"`;
   return await new Promise((resolve, reject) => {
     exec(cmd, (err, stdout, stderr) => {
       if (err) {
@@ -29,16 +27,7 @@ const getScreenShot = async (video, toPath, duration) => {
 const getVideoDuration = async video => {
   return execFileSync(
     ffprobe,
-    [
-      "-i",
-      video,
-      "-show_entries",
-      "format=duration",
-      "-v",
-      "quiet",
-      "-of",
-      "csv=p=0"
-    ],
+    ["-i", video, "-show_entries", "format=duration", "-v", "quiet", "-of", "csv=p=0"],
     {
       timeout: 1000 * 60
     }
@@ -51,7 +40,7 @@ const myworker = async id => {
   });
 
   for (let f of files) {
-    let coverPath = path.join(vCover, f.Name + ".jpg");
+    let coverPath = path.join(vCover, f.Type, f.Name + ".jpg");
 
     if (fs.existsSync(coverPath) && f.Duration < 1) continue;
 
@@ -89,10 +78,7 @@ const myworker = async id => {
 
 process.on("message", data => {
   foldersThumbNails(data.folders).then(() => {
-    vCover = path.resolve("./public", "covers", "files");
-    if (!fs.existsSync(vCover)) {
-      fs.mkdirsSync(vCover);
-    }
+    vCover = path.resolve("./public", "covers");
     folId = data.id;
     myworker(data.id)
       .then(() => {

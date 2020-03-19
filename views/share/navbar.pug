@@ -26,7 +26,7 @@ mixin navbar(user, url)
                 label.nav-link(for="categories")
                     i.fas.fa-tags
                     span  Categories
-            if !['manager', 'admin'].includes(user.Role)
+            if !['Manager', 'Administrator'].includes(user.Role)
                 li.nav-item
                     input#favorities(type="radio", name="menu-group" value="/favorites/nu/" checked=(/\/favorites/ig).test(url))
                     label.nav-link(for="favorities")
@@ -34,7 +34,7 @@ mixin navbar(user, url)
                         span  Favorites
         ul.navbar-nav.bg-dark
             li.nav-item
-                if ['manager', 'admin'].includes(user.Role)
+                if ['Manager', 'Administrator'].includes(user.Role)
                     input#admin(type="radio", name="menu-group" value="/admin" checked=(url.includes('admin')))
                     a.nav-link(href="/admin")
                         i.fas.fa-user-cog.f-2x

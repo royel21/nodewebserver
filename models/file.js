@@ -1,5 +1,4 @@
 module.exports = (sequelize, DataTypes) => {
-  const { genCover } = require("./util");
   const File = sequelize.define(
     "File",
     {
@@ -45,11 +44,11 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: false,
       hooks: {
         beforeValidate: function(item, options) {
-          item.Cover = genCover(item);
+          item.Cover = `/covers/${item.Type}/${item.Name.replace("#", "%23")}.jpg`;
         },
         beforeBulkCreate: (instances, options) => {
           for (var item of instances) {
-            item.Cover = genCover(item);
+            item.Cover = `/covers/${item.Type}/${item.Name.replace("#", "%23")}.jpg`;
           }
         }
       }

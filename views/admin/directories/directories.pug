@@ -12,8 +12,7 @@ mixin directories(directories, pagedatas)
         #directories
             span.dir-header.fa.fa-folder  Directories
             ul#paths.list-group.text-dark.font-weight-bold(data-csrf=pagedatas.csrfToken)
-                if directories.length > 0
-                    li.list-group-item.text-center Directories
+                li.list-group-item No Directory Added
                 each d in directories
                     li.list-group-item(id=d.Id)
                         span

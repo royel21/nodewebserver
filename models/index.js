@@ -82,7 +82,7 @@ db.init = async () => {
     await db.user.create({
       Name: "Administrator",
       Password: "Admin",
-      Role: "admin"
+      Role: "Administrator"
     });
   }
 };

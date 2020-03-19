@@ -21,15 +21,13 @@ block content
                     div.input-group.my-2
                         .input-group-prepend
                             label.input-group-text(for="username") ID Usuario
-                        select#username.form-control(name="username" value="")
-                            each user in users
-                                option(value=user.Name)= user.Name
+                        input#username.form-control(name="username" value="" required)
                     if message.userError
                         .alert.alert-danger.p-0.m-0= message.userError
                     .input-group.my-2
                         .input-group-prepend
                             label.input-group-text(for="password" value="") Clave 
-                        input#password.form-control(type="password" name="password" value="")
+                        input#password.form-control(type="password" name="password" value="" required)
                     if message.passwordError
                         .alert.alert-danger.p-0.m-0= message.passwordError
                 .text-center.my-2

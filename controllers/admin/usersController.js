@@ -24,9 +24,7 @@ exports.users = (req, res) => {
     })
     .then(users => {
       var totalPages = Math.ceil(users.count / itemsPerPage);
-      let view = req.query.partial
-        ? "admin/users/partial-users-table"
-        : "admin/index";
+      let view = req.query.partial ? "admin/users/partial-users-table" : "admin/index";
       res.render(
         view,
         {
@@ -62,9 +60,7 @@ exports.postSearch = (req, res) => {
   let itemsPerPage = req.body.items || 10;
   let currentPage = req.body.page || 1;
   let val = req.body.search || "";
-  res.redirect(
-    `/admin/users/${currentPage}/${itemsPerPage}/${val}?partial=true`
-  );
+  res.redirect(`/admin/users/${currentPage}/${itemsPerPage}/${val}?partial=true`);
 };
 
 exports.user_modal = (req, res) => {
@@ -95,17 +91,19 @@ const createUser = async (req, res) => {
   } else if (!req.body.password) {
     return res.send({ err: "password no puede estar vacio" });
   }
+  let user = {
+    Name: req.body.username,
+    Password: req.body.password,
+    Role: req.body.role,
+    CreatedAt: new Date()
+  };
+  if (req.body.role === "User")
+    user.Favorites = [
+      { Name: "Mangas", Type: "Manga" },
+      { Name: "Videos", Type: "Video" }
+    ];
 
-  let newUser = await db.user.create(
-    {
-      Name: req.body.username,
-      Password: req.body.password,
-      Role: req.body.role,
-      CreatedAt: new Date(),
-      Favorites: [{ Name: "Mangas" }, { Name: "Videos" }]
-    },
-    { include: [db.favorite] }
-  );
+  let newUser = await db.user.create(user, { include: [db.favorite] });
 
   if (newUser) {
     return res.render("admin/users/user-row", { newUser }, (err, html) => {
@@ -125,15 +123,14 @@ const updateUser = async (req, res) => {
   let user_found = await db.user.findOne({ where: { Id: req.body.id } });
 
   if (user_found) {
-    if (req.user.Name === user_found.Name) {
+    if (req.user.Name === user_found.Name && user.Role !== req.Role) {
       return res.send({
         status: "error",
-        data: "No puede actualizar usuario en uso"
+        data: "Can't change the privilaged of administrator in use"
       });
     }
 
-    let pass =
-      req.body.password === "" ? user_found.Password : req.body.password;
+    let pass = req.body.password === "" ? user_found.Password : req.body.password;
 
     let updatedUser = await user_found.update({
       Name: req.body.username,
